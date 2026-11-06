@@ -1,0 +1,1083 @@
+<!doctype html>
+<html lang="nl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#0b0f14">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22%3E%3Ccircle cx=%2250%22 cy=%2250%22 r=%2245%22 fill=%22%232ee6a6%22/%3E%3C/svg%3E">
+<title>Landenraden</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;700&display=swap">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css">
+<style>
+:root{
+  --bg:#0b0f14;--bg2:#121821;--card:#161e29;--line:#253041;--text:#e8eef6;--mute:#8696aa;
+  --acc:#2ee6a6;--acc2:#ffb648;--bad:#ff5d6c;--ok:#2ee6a6;--r:16px;
+  --font:'Outfit',system-ui,sans-serif;--mono:'JetBrains Mono',ui-monospace,monospace;
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;height:100%;background:var(--bg);color:var(--text);font-family:var(--font);font-size:16px}
+body{overflow:hidden}
+button,input,select{font:inherit;color:inherit}
+.screen{position:fixed;inset:0;display:none;flex-direction:column;overflow-y:auto;padding:max(16px,env(safe-area-inset-top)) 16px max(16px,env(safe-area-inset-bottom))}
+.screen.on{display:flex}
+.wrap{width:100%;max-width:520px;margin:0 auto;display:flex;flex-direction:column;gap:14px}
+h1{font-size:40px;line-height:1;margin:8px 0 0;font-weight:800;letter-spacing:-1px}
+h1 span{color:var(--acc)}
+h2{font-size:22px;margin:0;font-weight:700}
+.sub{color:var(--mute);margin:0}
+.card{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:16px;display:flex;flex-direction:column;gap:12px}
+label{font-size:13px;color:var(--mute);font-weight:500}
+input[type=text]{width:100%;background:var(--bg2);border:1px solid var(--line);border-radius:12px;padding:13px 14px;outline:none}
+input[type=text]:focus{border-color:var(--acc)}
+.btn{border:0;border-radius:12px;padding:14px 16px;font-weight:700;cursor:pointer;background:var(--line);transition:transform .08s,opacity .2s}
+.btn:active{transform:scale(.97)}
+.btn.pri{background:var(--acc);color:#04130d}
+.btn.sec{background:transparent;border:1px solid var(--line)}
+.btn.warn{background:var(--acc2);color:#1a1000}
+.btn:disabled{opacity:.4;pointer-events:none}
+.row{display:flex;gap:10px;align-items:center}
+.row>*{flex:1}
+.colors{display:flex;gap:8px;flex-wrap:wrap}
+.colors button{width:34px;height:34px;border-radius:50%;border:3px solid transparent;cursor:pointer;flex:none}
+.colors button.on{border-color:var(--text)}
+.topbar{display:flex;justify-content:space-between;align-items:center}
+.pill{display:inline-flex;align-items:center;gap:6px;background:var(--bg2);border:1px solid var(--line);border-radius:99px;padding:6px 12px;font-size:13px;font-weight:600;cursor:pointer}
+.code{font-family:var(--mono);font-size:44px;font-weight:700;letter-spacing:8px;text-align:center;color:var(--acc)}
+.players{display:flex;flex-direction:column;gap:8px}
+.pl{display:flex;align-items:center;gap:10px;background:var(--bg2);border-radius:12px;padding:10px 12px}
+.dot{width:12px;height:12px;border-radius:50%;flex:none}
+.pl .nm{flex:1;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.badge{font-size:11px;font-weight:700;padding:3px 8px;border-radius:99px;background:var(--acc2);color:#1a1000}
+.badge.off{background:var(--line);color:var(--mute)}
+.x{background:none;border:0;color:var(--mute);cursor:pointer;font-size:18px;padding:0 4px}
+.setgrid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.seg{display:flex;background:var(--bg2);border:1px solid var(--line);border-radius:12px;padding:3px}
+.seg button{flex:1;border:0;background:none;padding:8px 4px;border-radius:9px;font-size:14px;font-weight:600;color:var(--mute);cursor:pointer}
+.seg button.on{background:var(--line);color:var(--text)}
+.seg.ro button{pointer-events:none}
+.seg.sm button{font-size:12px;padding:8px 1px}
+.field{display:flex;flex-direction:column;gap:6px}
+.err{color:var(--bad);font-size:14px;min-height:1em;margin:0}
+.toggle{display:flex;justify-content:space-between;align-items:center}
+.sw{width:46px;height:28px;border-radius:99px;background:var(--line);position:relative;cursor:pointer;border:0;flex:none}
+.sw::after{content:'';position:absolute;top:3px;left:3px;width:22px;height:22px;border-radius:50%;background:var(--text);transition:left .2s}
+.sw.on{background:var(--acc)}.sw.on::after{left:21px}
+/* game */
+#game{padding:0}
+#map{position:absolute;inset:0;background:#0a1a24}
+.hud{position:absolute;left:0;right:0;top:0;padding:max(10px,env(safe-area-inset-top)) 10px 0;display:flex;gap:8px;z-index:500;pointer-events:none}
+.hud>*{pointer-events:auto}
+.chip{background:rgba(11,15,20,.82);backdrop-filter:blur(8px);border:1px solid var(--line);border-radius:12px;padding:8px 12px;font-weight:700;font-size:14px;display:flex;align-items:center;gap:6px}
+.chip.timer{font-family:var(--mono);font-size:18px;min-width:70px;justify-content:center}
+.chip.timer.low{color:var(--bad);border-color:var(--bad)}
+.grow{flex:1}
+.netdot{width:9px;height:9px;border-radius:50%;background:var(--ok)}
+.netdot.mid{background:var(--acc2)}.netdot.bad{background:var(--bad)}
+.panel{position:absolute;left:0;right:0;bottom:0;z-index:500;padding:10px 10px max(10px,env(safe-area-inset-bottom));display:flex;flex-direction:column;gap:8px;max-width:560px;margin:0 auto}
+.hints{background:rgba(11,15,20,.88);backdrop-filter:blur(10px);border:1px solid var(--line);border-radius:var(--r);padding:12px;display:flex;flex-direction:column;gap:6px;max-height:34vh;overflow-y:auto}
+.hint{display:flex;gap:10px;align-items:baseline;font-size:15px;animation:pop .35s ease}
+.hint b{color:var(--acc);font-family:var(--mono);font-size:12px;flex:none;width:18px}
+.hint .k{color:var(--mute);font-size:13px;flex:none;min-width:92px}
+.next{font-size:12px;color:var(--mute);display:flex;align-items:center;gap:8px}
+.bar{height:4px;background:var(--line);border-radius:4px;flex:1;overflow:hidden}
+.bar i{display:block;height:100%;background:var(--acc2);width:0}
+@keyframes pop{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+.answer{position:relative;display:flex;gap:8px}
+.answer input{background:rgba(11,15,20,.92)!important;backdrop-filter:blur(10px)}
+.answer .btn{flex:none}
+.ac{position:absolute;left:0;right:0;bottom:calc(100% + 6px);background:var(--card);border:1px solid var(--line);border-radius:12px;overflow:hidden;display:none}
+.ac.on{display:block}
+.ac div{padding:12px 14px;cursor:pointer;display:flex;gap:10px}
+.ac div.sel,.ac div:hover{background:var(--line)}
+.locked{background:rgba(46,230,166,.14);border:1px solid var(--acc);border-radius:12px;padding:12px 14px;font-weight:600}
+.who{display:flex;gap:6px;flex-wrap:wrap}
+.who span{font-size:12px;font-weight:600;padding:4px 9px;border-radius:99px;background:rgba(11,15,20,.82);border:1px solid var(--line);display:flex;align-items:center;gap:5px}
+.who span.done{border-color:var(--acc)}
+.who span.off{opacity:.45}
+/* result */
+#rmap{height:38vh;min-height:220px;border-radius:var(--r);overflow:hidden;border:1px solid var(--line)}
+.answerbig{display:flex;align-items:center;gap:12px}
+.answerbig .fl{font-size:44px;line-height:1}
+.answerbig .nm{font-size:26px;font-weight:800}
+table{width:100%;border-collapse:collapse;font-size:14px}
+th{color:var(--mute);font-weight:500;text-align:left;padding:6px 4px;font-size:12px}
+td{padding:9px 4px;border-top:1px solid var(--line)}
+td.n{text-align:right;font-family:var(--mono)}
+.good{color:var(--ok)}.half{color:var(--acc2)}.miss{color:var(--bad)}
+.plus{font-family:var(--mono);font-weight:700}
+/* final */
+.podium{display:flex;align-items:flex-end;gap:8px;height:200px;margin-top:10px}
+.pod{flex:1;display:flex;flex-direction:column;align-items:center;gap:6px}
+.pod .blk{width:100%;border-radius:12px 12px 4px 4px;display:flex;align-items:flex-start;justify-content:center;padding-top:8px;font-family:var(--mono);font-weight:700;font-size:22px;color:#0b0f14}
+.pod .pn{font-weight:700;font-size:14px;text-align:center;overflow:hidden;text-overflow:ellipsis;max-width:100%;white-space:nowrap}
+.pod .ps{font-family:var(--mono);font-size:13px;color:var(--mute)}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.stat{background:var(--bg2);border-radius:12px;padding:10px;display:flex;flex-direction:column;gap:2px}
+.stat small{color:var(--mute);font-size:11px}
+.stat b{font-size:15px}
+.stat i{font-style:normal;font-size:12px;color:var(--mute)}
+/* overlay */
+.ov{position:fixed;inset:0;z-index:2000;background:rgba(5,8,12,.82);backdrop-filter:blur(6px);display:none;align-items:center;justify-content:center;padding:24px}
+.ov.on{display:flex}
+.ov .card{max-width:420px;width:100%;text-align:center;align-items:center}
+.spin{width:38px;height:38px;border:4px solid var(--line);border-top-color:var(--acc);border-radius:50%;animation:sp 0.9s linear infinite}
+@keyframes sp{to{transform:rotate(360deg)}}
+.modal .card{text-align:left;align-items:stretch;max-height:85vh;overflow-y:auto}
+.modal p,.modal li{color:#c7d2df;line-height:1.5;margin:0}
+.modal ul{margin:0;padding-left:18px;display:flex;flex-direction:column;gap:6px}
+.toast{position:fixed;left:50%;top:max(14px,env(safe-area-inset-top));transform:translateX(-50%) translateY(calc(-100% - 40px));z-index:3000;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:10px 16px;font-weight:600;transition:transform .3s;white-space:nowrap}
+.toast.on{transform:translateX(-50%) translateY(0)}
+.leaflet-container{font-family:var(--font);background:#0a1a24}
+.leaflet-control-attribution{font-size:9px!important;background:rgba(11,15,20,.6)!important;color:var(--mute)!important}
+.leaflet-control-attribution a{color:var(--mute)!important}
+.footer{color:var(--mute);font-size:12px;text-align:center}
+</style>
+</head>
+<body>
+
+<!-- START -->
+<section class="screen" id="start">
+  <div class="wrap">
+    <div class="topbar">
+      <span class="pill" id="langBtn">NL / EN</span>
+      <span class="row" style="flex:none;gap:8px">
+        <span class="pill" id="soundBtn"></span>
+        <span class="pill" id="rulesBtn" data-i="rules"></span>
+      </span>
+    </div>
+    <h1>Landen<span>raden</span></h1>
+    <p class="sub" data-i="tagline"></p>
+    <div class="card">
+      <div class="field"><label data-i="yourName"></label><input type="text" id="name" maxlength="16" autocomplete="off"></div>
+      <div class="field"><label data-i="yourColor"></label><div class="colors" id="colors"></div></div>
+    </div>
+    <div class="card">
+      <button class="btn pri" id="createBtn" data-i="create"></button>
+      <div class="row"><input type="text" id="codeIn" maxlength="4" style="text-transform:uppercase;font-family:var(--mono);letter-spacing:4px;text-align:center" placeholder="ABCD" autocomplete="off"><button class="btn" id="joinBtn" data-i="join" style="flex:none;min-width:110px"></button></div>
+      <button class="btn sec" id="soloBtn" data-i="solo"></button>
+      <p class="err" id="startErr"></p>
+    </div>
+    <p class="footer" data-i="footer"></p>
+  </div>
+</section>
+
+<!-- LOBBY -->
+<section class="screen" id="lobby">
+  <div class="wrap">
+    <div class="topbar"><span class="pill" id="leaveBtn" data-i="leave"></span><span class="pill" id="rulesBtn2" data-i="rules"></span></div>
+    <div class="card" style="align-items:center">
+      <label data-i="roomCode"></label>
+      <div class="code" id="lobbyCode">----</div>
+      <div class="row" style="width:100%"><button class="btn sec" id="copyBtn" data-i="copyCode"></button><button class="btn sec" id="shareBtn" data-i="share"></button></div>
+    </div>
+    <div class="card">
+      <div class="topbar"><h2 data-i="players"></h2><span class="sub" id="pCount"></span></div>
+      <div class="players" id="lobbyPlayers"></div>
+    </div>
+    <div class="card" id="settingsCard">
+      <h2 data-i="settings"></h2>
+      <div class="field"><label data-i="rounds"></label><div class="seg" data-set="rounds" data-opts="5,10,15"></div></div>
+      <div class="field"><label data-i="roundTime"></label><div class="seg" data-set="roundTime" data-opts="30,60,90" data-suf="s"></div></div>
+      <div class="field"><label data-i="hintEvery"></label><div class="seg" data-set="hintEvery" data-opts="5,10,15" data-suf="s"></div></div>
+      <div class="field"><label data-i="difficulty"></label><div class="seg" data-set="difficulty" data-opts="easy,normal,hard"></div></div>
+      <div class="field"><label data-i="continent"></label><div class="seg sm" data-set="continent" data-opts="ALL,EU,AF,AS,AM,OC"></div></div>
+      <div class="field"><label data-i="weighting"></label><div class="seg" data-set="weighting" data-opts="uniform,area"></div></div>
+      <div class="toggle"><label data-i="smallCountries"></label><button class="sw" data-sw="small"></button></div>
+    </div>
+    <button class="btn pri" id="startBtn"></button>
+    <p class="sub" id="waitHost" style="text-align:center" data-i="waitHost"></p>
+  </div>
+</section>
+
+<!-- GAME -->
+<section class="screen" id="game">
+  <div id="map"></div>
+  <div class="hud">
+    <div class="chip" id="roundChip"></div>
+    <div class="grow"></div>
+    <div class="chip" id="scoreChip"></div>
+    <div class="chip timer" id="timerChip">0:00</div>
+    <div class="chip" title="net"><span class="netdot" id="netDot"></span></div>
+  </div>
+  <div class="panel">
+    <div class="who" id="who"></div>
+    <div class="hints">
+      <div id="hintList"></div>
+      <div class="next" id="nextHint"><span data-i="nextHint"></span><div class="bar"><i id="hintBar"></i></div></div>
+    </div>
+    <div class="answer" id="answerBox">
+      <div class="ac" id="ac"></div>
+      <input type="text" id="guess" autocomplete="off" autocorrect="off" spellcheck="false">
+      <button class="btn pri" id="guessBtn" data-i="lock"></button>
+    </div>
+    <div class="locked" id="lockedBox" style="display:none"></div>
+  </div>
+</section>
+
+<!-- RESULT -->
+<section class="screen" id="result">
+  <div class="wrap">
+    <div class="topbar"><h2 id="resTitle"></h2><span class="pill" id="resTimer"></span></div>
+    <div id="rmap"></div>
+    <div class="card"><div class="answerbig"><span class="fl" id="resFlag"></span><div><div class="nm" id="resName"></div><div class="sub" id="resSub"></div></div></div></div>
+    <div class="card" style="padding:10px 12px">
+      <table><thead><tr><th data-i="player"></th><th data-i="guessCol"></th><th class="n" data-i="timeCol"></th><th class="n">+</th><th class="n" data-i="total"></th></tr></thead><tbody id="resBody"></tbody></table>
+    </div>
+    <button class="btn pri" id="nextBtn"></button>
+  </div>
+</section>
+
+<!-- FINAL -->
+<section class="screen" id="final">
+  <div class="wrap">
+    <h1 style="font-size:34px" data-i="finalTitle"></h1>
+    <div class="podium" id="podium"></div>
+    <div class="card" style="padding:10px 12px">
+      <table><thead><tr><th>#</th><th data-i="player"></th><th class="n" data-i="correct"></th><th class="n" data-i="total"></th></tr></thead><tbody id="finBody"></tbody></table>
+    </div>
+    <div class="stats" id="finStats"></div>
+    <button class="btn pri" id="rematchBtn" data-i="rematch"></button>
+    <button class="btn sec" id="leaveBtn2" data-i="leave"></button>
+  </div>
+</section>
+
+<!-- OVERLAYS -->
+<div class="ov" id="ovLoad"><div class="card"><div class="spin"></div><b id="ovText"></b><p class="sub" id="ovSub"></p><button class="btn sec" id="ovCancel" style="display:none" data-i="cancel"></button></div></div>
+<div class="ov modal" id="ovRules"><div class="card">
+  <h2 data-i="rules"></h2>
+  <div id="rulesBody"></div>
+  <button class="btn pri" id="rulesClose" data-i="close"></button>
+</div></div>
+<div class="toast" id="toast"></div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
+<script type="module">
+import { joinRoom, selfId } from 'https://cdn.jsdelivr.net/npm/trystero@0.26.0/nostr/+esm';
+
+/* ================= CONFIG (alles aanpasbaar) ================= */
+const CONFIG = {
+  appId: 'landenraden-p2p-v1',
+  maxPlayers: 6,
+  reserveMs: 30000,
+  joinTimeoutMs: 15000,
+  resultAutoMs: 8000,
+  score: { correct: 1000, perHint: 125, continent: 100, min: 300, timeBase: 0.6, timeWeight: 0.4 },
+  zoom: { easy: 6, normal: 7, hard: 8 },
+  pan:  { easy: 3, normal: 1.2, hard: 0 },
+  hintsPerRound: 6,
+  // Kaartlaag. Satelliet zonder labels. Wissel hier voor Mapbox/Google tiles (zie README).
+  tiles: {
+    main: { url: 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', attr: 'Tiles &copy; Esri', maxZoom: 18 },
+    fallback: { url: 'https://{s}.basemaps.cartocdn.com/dark_nolabels/{z}/{x}/{y}{r}.png', attr: '&copy; OpenStreetMap &copy; CARTO', maxZoom: 19 },
+  },
+  // TURN fallback voor strikte netwerken (zie README). Leeg laten werkt meestal ook.
+  turn: [
+    // { urls: 'turn:global.relay.metered.ca:80', username: 'JOUW_USERNAME', credential: 'JOUW_CREDENTIAL' },
+    // { urls: 'turn:global.relay.metered.ca:443?transport=tcp', username: 'JOUW_USERNAME', credential: 'JOUW_CREDENTIAL' },
+  ],
+};
+const COLORS = ['#2ee6a6','#ffb648','#ff5d6c','#58a6ff','#c084fc','#f472b6','#facc15','#94a3b8'];
+
+/* ================= I18N ================= */
+const I18N = {
+ nl: {
+  tagline:'Raad het land op basis van een stuk satellietkaart en hints. Speel met 2 tot 6 vrienden.',
+  yourName:'Je naam', yourColor:'Je kleur', create:'Maak kamer', join:'Join', solo:'Solo oefenen',
+  footer:'Peer to peer, geen account, geen server.',
+  rules:'Uitleg', leave:'Verlaten', roomCode:'Kamercode', copyCode:'Kopieer link', share:'Delen',
+  players:'Spelers', settings:'Instellingen', rounds:'Rondes', roundTime:'Tijd per ronde', hintEvery:'Hint elke',
+  difficulty:'Moeilijkheid', easy:'Makkelijk', normal:'Normaal', hard:'Moeilijk', continent:'Continent',
+  ALL:'Alles', EU:'Europa', AF:'Afrika', AS:'Azië', AM:'Amerika', OC:'Oceanië',
+  weighting:'Landkeuze', uniform:'Gelijk per land', area:'Op oppervlakte', smallCountries:'Kleine landen en eilanden',
+  startGame:'Start spel', startSolo:'Start solo', waitHost:'Wachten tot de host start...', host:'host', offline:'offline', you:'jij',
+  round:'Ronde {n}/{t}', pts:'{n} pt', nextHint:'Volgende hint', lock:'Vastzetten', guessPh:'Typ een land...',
+  lockedAs:'Vastgezet: {c}', unknown:'Kies een land uit de lijst', nextRound:'Volgende ronde', toFinal:'Naar eindstand',
+  nextIn:'Volgende in {s}s', resTitle:'Ronde {n}', player:'Speler', guessCol:'Gok', timeCol:'Tijd', total:'Totaal',
+  noAnswer:'geen', finalTitle:'Eindstand', correct:'Goed', rematch:'Opnieuw spelen',
+  bestRound:'Beste ronde', fastest:'Snelste goed', mostCorrect:'Meeste goed',
+  creating:'Kamer openen...', searching:'Kamer {c} zoeken...', searchingSub:'Verbinden via peer to peer. Dit kan 5 tot 10 seconden duren.',
+  notFound:'Kamer niet gevonden. Klopt de code en is de host online?', full:'Kamer is vol (max 6).', started:'Spel is al bezig in deze kamer.',
+  kicked:'Je bent uit de kamer gezet.', hostLeft:'Host is weg, nieuwe host wordt gekozen...', youHost:'Jij bent nu de host.',
+  reconnect:'Verbinding kwijt, opnieuw verbinden...', loading:'Kaart laden...', copied:'Link gekopieerd', cancel:'Annuleren', close:'Sluiten',
+  nameNeeded:'Vul eerst je naam in.', codeNeeded:'Vul een kamercode van 4 tekens in.', sound:'Geluid', on:'aan', off:'uit',
+  h_cont:'Continent', h_sub:'Regio', h_drive:'Rijrichting', h_coast:'Ligging', h_pop:'Inwoners', h_lang:'Talen', h_cur:'Valuta',
+  h_tel:'Landnummer', h_tld:'Domein', h_cap:'Hoofdstad', h_name:'Naam', h_nb:'Buurlanden',
+  left:'links', right:'rechts', landlocked:'geen kust', coast:'aan zee', island:'eiland of geen landgrenzen', nbCount:'{n} buurlanden',
+  pop0:'minder dan 1 miljoen', pop1:'1 tot 10 miljoen', pop2:'10 tot 50 miljoen', pop3:'50 tot 150 miljoen', pop4:'meer dan 150 miljoen',
+  capLetter:'begint met {l}', nameLetter:'begint met {l}, {n} letters',
+  rulesHtml:`<ul>
+   <li>Iedereen ziet hetzelfde stuk satellietkaart op een willekeurige plek op aarde.</li>
+   <li>Om de paar seconden komt er een hint vrij, van vaag naar concreet.</li>
+   <li>Typ het land en zet je antwoord vast. Je eerste antwoord telt.</li>
+   <li><b>Score</b>: goed land 1000 punten, min 125 per extra hint die je zag, maal 60% plus 40% van je resterende tijd. Minimaal 300.</li>
+   <li>Fout land maar goed continent: 100 punten. Fout: 0.</li>
+   <li>De ronde stopt zodra iedereen heeft geantwoord of de tijd op is.</li>
+   <li>Moeilijk: verder ingezoomd en je kunt niet bewegen. Makkelijk: verder uitgezoomd en je mag schuiven.</li>
+  </ul>`,
+ },
+ en: {
+  tagline:'Guess the country from a piece of satellite map and hints. Play with 2 to 6 friends.',
+  yourName:'Your name', yourColor:'Your color', create:'Create room', join:'Join', solo:'Practice solo',
+  footer:'Peer to peer, no account, no server.',
+  rules:'How to play', leave:'Leave', roomCode:'Room code', copyCode:'Copy link', share:'Share',
+  players:'Players', settings:'Settings', rounds:'Rounds', roundTime:'Time per round', hintEvery:'Hint every',
+  difficulty:'Difficulty', easy:'Easy', normal:'Normal', hard:'Hard', continent:'Continent',
+  ALL:'All', EU:'Europe', AF:'Africa', AS:'Asia', AM:'Americas', OC:'Oceania',
+  weighting:'Country pick', uniform:'Equal per country', area:'By area', smallCountries:'Small countries and islands',
+  startGame:'Start game', startSolo:'Start solo', waitHost:'Waiting for the host to start...', host:'host', offline:'offline', you:'you',
+  round:'Round {n}/{t}', pts:'{n} pts', nextHint:'Next hint', lock:'Lock in', guessPh:'Type a country...',
+  lockedAs:'Locked: {c}', unknown:'Pick a country from the list', nextRound:'Next round', toFinal:'Final standings',
+  nextIn:'Next in {s}s', resTitle:'Round {n}', player:'Player', guessCol:'Guess', timeCol:'Time', total:'Total',
+  noAnswer:'none', finalTitle:'Final standings', correct:'Correct', rematch:'Play again',
+  bestRound:'Best round', fastest:'Fastest correct', mostCorrect:'Most correct',
+  creating:'Opening room...', searching:'Looking for room {c}...', searchingSub:'Connecting peer to peer. This can take 5 to 10 seconds.',
+  notFound:'Room not found. Is the code right and is the host online?', full:'Room is full (max 6).', started:'A game is already running in this room.',
+  kicked:'You were removed from the room.', hostLeft:'Host left, picking a new host...', youHost:'You are now the host.',
+  reconnect:'Connection lost, reconnecting...', loading:'Loading map...', copied:'Link copied', cancel:'Cancel', close:'Close',
+  nameNeeded:'Enter your name first.', codeNeeded:'Enter a 4 character room code.', sound:'Sound', on:'on', off:'off',
+  h_cont:'Continent', h_sub:'Region', h_drive:'Drives on', h_coast:'Geography', h_pop:'Population', h_lang:'Languages', h_cur:'Currency',
+  h_tel:'Calling code', h_tld:'Domain', h_cap:'Capital', h_name:'Name', h_nb:'Neighbours',
+  left:'left', right:'right', landlocked:'landlocked', coast:'has coastline', island:'island or no land borders', nbCount:'{n} neighbours',
+  pop0:'under 1 million', pop1:'1 to 10 million', pop2:'10 to 50 million', pop3:'50 to 150 million', pop4:'over 150 million',
+  capLetter:'starts with {l}', nameLetter:'starts with {l}, {n} letters',
+  rulesHtml:`<ul>
+   <li>Everyone sees the same piece of satellite map at a random spot on earth.</li>
+   <li>Every few seconds a hint unlocks, from vague to specific.</li>
+   <li>Type the country and lock in. Your first answer counts.</li>
+   <li><b>Score</b>: right country 1000 points, minus 125 per extra hint you saw, times 60% plus 40% of your remaining time. Minimum 300.</li>
+   <li>Wrong country, right continent: 100 points. Wrong: 0.</li>
+   <li>The round ends when everyone answered or time runs out.</li>
+   <li>Hard: zoomed in further and no moving. Easy: zoomed out and panning allowed.</li>
+  </ul>`,
+ }
+};
+const SUB_NL = {'Australia and New Zealand':'Australië en Nieuw-Zeeland','Caribbean':'Caribisch gebied','Central America':'Midden-Amerika','Central Asia':'Centraal-Azië','Central Europe':'Centraal-Europa','Eastern Africa':'Oost-Afrika','Eastern Asia':'Oost-Azië','Eastern Europe':'Oost-Europa','Melanesia':'Melanesië','Micronesia':'Micronesië','Middle Africa':'Centraal-Afrika','North America':'Noord-Amerika','Northern Africa':'Noord-Afrika','Northern Europe':'Noord-Europa','Polynesia':'Polynesië','South America':'Zuid-Amerika','South-Eastern Asia':'Zuidoost-Azië','Southeast Europe':'Zuidoost-Europa','Southern Africa':'Zuidelijk Afrika','Southern Asia':'Zuid-Azië','Southern Europe':'Zuid-Europa','Western Africa':'West-Afrika','Western Asia':'West-Azië','Western Europe':'West-Europa'};
+const LANG_NL = {English:'Engels',French:'Frans',Arabic:'Arabisch',Spanish:'Spaans',Portuguese:'Portugees',Russian:'Russisch',Dutch:'Nederlands',German:'Duits',Italian:'Italiaans',Chinese:'Chinees',Swahili:'Swahili',Swedish:'Zweeds',Tamil:'Tamil',Malay:'Maleis',Serbian:'Servisch',Turkish:'Turks',Korean:'Koreaans',Slovak:'Slowaaks',Greek:'Grieks',Danish:'Deens',Croatian:'Kroatisch',Vietnamese:'Vietnamees',Latin:'Latijn',Ukrainian:'Oekraïens',Thai:'Thai',Slovene:'Sloveens',Romanian:'Roemeens',Polish:'Pools',Filipino:'Filipijns',Japanese:'Japans',Hindi:'Hindi',Persian:'Perzisch','Persian (Farsi)':'Perzisch',Hungarian:'Hongaars',Czech:'Tsjechisch',Finnish:'Fins',Norwegian:'Noors','Norwegian Nynorsk':'Noors (Nynorsk)','Norwegian Bokmål':'Noors (Bokmål)',Icelandic:'IJslands',Irish:'Iers',Bulgarian:'Bulgaars',Albanian:'Albanees',Armenian:'Armeens',Georgian:'Georgisch',Hebrew:'Hebreeuws',Indonesian:'Indonesisch',Bengali:'Bengaals',Urdu:'Urdu',Mongolian:'Mongools',Kazakh:'Kazachs',Uzbek:'Oezbeeks',Estonian:'Ests',Latvian:'Lets',Lithuanian:'Litouws',Belarusian:'Wit-Russisch',Macedonian:'Macedonisch',Bosnian:'Bosnisch',Maltese:'Maltees',Luxembourgish:'Luxemburgs',Catalan:'Catalaans',Afrikaans:'Afrikaans',Amharic:'Amhaars',Somali:'Somalisch',Berber:'Berbers',Burmese:'Birmaans',Khmer:'Khmer',Lao:'Laotiaans',Nepali:'Nepalees',Pashto:'Pasjtoe',Dari:'Dari',Turkmen:'Turkmeens',Tajik:'Tadzjieks',Kyrgyz:'Kirgizisch',Azerbaijani:'Azerbeidzjaans',Sinhala:'Singalees','Swiss German':'Zwitserduits',Romansh:'Reto-Romaans',Guaraní:'Guarani',Quechua:'Quechua',Aymara:'Aymara',Papiamento:'Papiaments'};
+
+let lang = localStorage.getItem('lr_lang') || (navigator.language||'nl').slice(0,2);
+if (!I18N[lang]) lang = 'nl';
+const t = (k, v={}) => (I18N[lang][k] ?? I18N.nl[k] ?? k).replace(/\{(\w+)\}/g, (_, x) => v[x] ?? '');
+function applyI18n(){
+  document.documentElement.lang = lang;
+  document.querySelectorAll('[data-i]').forEach(el => el.textContent = t(el.dataset.i));
+  $('#guess').placeholder = t('guessPh');
+  $('#rulesBody').innerHTML = t('rulesHtml');
+  $('#soundBtn').textContent = t('sound') + ' ' + t(sound ? 'on' : 'off');
+  rerender();
+}
+
+/* ================= HELPERS ================= */
+const $ = s => document.querySelector(s);
+const esc = s => String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const norm = s => String(s).normalize('NFD').replace(/[̀-ͯ]/g,'').toLowerCase().replace(/[^a-z]/g,'');
+const rnd = a => a[Math.floor(Math.random()*a.length)];
+const shuffle = a => { a = a.slice(); for (let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];} return a; };
+const now = () => performance.now();
+const fmtTime = ms => { const s = Math.max(0, Math.ceil(ms/1000)); return Math.floor(s/60)+':'+String(s%60).padStart(2,'0'); };
+let toastT;
+function toast(msg){ const el=$('#toast'); el.textContent=msg; el.classList.add('on'); clearTimeout(toastT); toastT=setTimeout(()=>el.classList.remove('on'),2600); }
+function show(id){ document.querySelectorAll('.screen').forEach(s=>s.classList.toggle('on', s.id===id)); }
+function overlay(text, sub='', cancel=false){ const o=$('#ovLoad'); if(!text){o.classList.remove('on');return;} $('#ovText').textContent=text; $('#ovSub').textContent=sub; $('#ovCancel').style.display=cancel?'':'none'; o.classList.add('on'); }
+const cname = code => code && COUNTRIES[code] ? COUNTRIES[code][lang] || COUNTRIES[code].en : '?';
+
+/* sound */
+let sound = localStorage.getItem('lr_sound') !== '0', actx;
+function beep(f=660, d=.08, type='sine', vol=.08){
+  if (!sound) return;
+  try { actx = actx || new AudioContext(); const o=actx.createOscillator(), g=actx.createGain();
+    o.type=type; o.frequency.value=f; g.gain.value=vol; o.connect(g); g.connect(actx.destination);
+    g.gain.exponentialRampToValueAtTime(0.0001, actx.currentTime+d); o.start(); o.stop(actx.currentTime+d); } catch(e){}
+}
+
+/* ================= DATA ================= */
+let COUNTRIES = {}, GEO = {}, SEARCH = [];
+async function loadData(){
+  overlay(t('loading'));
+  const [c, g] = await Promise.all([fetch('data/countries.json').then(r=>r.json()), fetch('data/countries.geojson').then(r=>r.json())]);
+  COUNTRIES = c;
+  for (const f of g.features){
+    const polys = f.geometry.coordinates.map(rings => {
+      const outer = rings[0]; let minX=180,minY=90,maxX=-180,maxY=-90, a=0;
+      for (let i=0;i<outer.length;i++){ const [x,y]=outer[i]; if(x<minX)minX=x; if(x>maxX)maxX=x; if(y<minY)minY=y; if(y>maxY)maxY=y;
+        const n=outer[(i+1)%outer.length]; a += x*n[1]-n[0]*y; }
+      const area = Math.abs(a/2) * Math.cos(((minY+maxY)/2)*Math.PI/180);
+      return { rings, bbox:[minX,minY,maxX,maxY], area };
+    });
+    GEO[f.properties.c] = { feature: f, polys, area: polys.reduce((s,p)=>s+p.area,0) };
+  }
+  for (const [code, c] of Object.entries(COUNTRIES)){
+    if (!GEO[code]) continue;
+    const names = new Set([c.nl, c.en, ...c.alias]);
+    SEARCH.push({ code, keys: [...names].map(norm).filter(Boolean) });
+  }
+  overlay(null);
+}
+
+/* ================= GEOMETRY ================= */
+function inRing(x, y, ring){
+  let inside = false;
+  for (let i=0, j=ring.length-1; i<ring.length; j=i++){
+    const xi=ring[i][0], yi=ring[i][1], xj=ring[j][0], yj=ring[j][1];
+    if (((yi>y)!==(yj>y)) && (x < (xj-xi)*(y-yi)/(yj-yi)+xi)) inside = !inside;
+  }
+  return inside;
+}
+const inPoly = (x,y,p) => inRing(x,y,p.rings[0]) && !p.rings.slice(1).some(h=>inRing(x,y,h));
+function countryAt(lat, lng){
+  for (const [code, g] of Object.entries(GEO)) for (const p of g.polys){
+    const [a,b,c,d]=p.bbox; if (lng>=a&&lng<=c&&lat>=b&&lat<=d && inPoly(lng,lat,p)) return code;
+  }
+  return null;
+}
+function pickWeighted(items, w){ let s=items.reduce((a,i)=>a+w(i),0), r=Math.random()*s; for(const i of items){ r-=w(i); if(r<=0) return i; } return items[items.length-1]; }
+function randomLocation(settings, used){
+  let pool = Object.keys(GEO).filter(c => COUNTRIES[c] && !used.includes(c)
+    && (settings.continent==='ALL' || COUNTRIES[c].cont===settings.continent)
+    && (settings.small || !COUNTRIES[c].small));
+  if (!pool.length) pool = Object.keys(GEO).filter(c => settings.continent==='ALL' || COUNTRIES[c].cont===settings.continent);
+  for (let attempt=0; attempt<30; attempt++){
+    const code = settings.weighting==='area' ? pickWeighted(pool, c=>GEO[c].area) : rnd(pool);
+    const poly = pickWeighted(GEO[code].polys, p=>p.area);
+    const [a,b,c,d] = poly.bbox;
+    for (let i=0;i<200;i++){
+      const lng = a + Math.random()*(c-a), lat = b + Math.random()*(d-b);
+      if (inPoly(lng, lat, poly)) return { code, lat:+lat.toFixed(4), lng:+lng.toFixed(4) };
+    }
+    pool = pool.filter(x=>x!==code);
+  }
+  return null;
+}
+
+/* ================= HINTS ================= */
+// Rang: laag = vaag. Host kiest welke hints, clients vertalen zelf.
+const HINT_DEFS = [
+  { k:'cont', r:0, ok:c=>true },
+  { k:'drive', r:1, ok:c=>true },
+  { k:'coast', r:1, ok:c=>true },
+  { k:'pop', r:2, ok:c=>true },
+  { k:'sub', r:2, ok:c=>!!c.sub },
+  { k:'lang', r:3, ok:c=>c.lang.length>0 },
+  { k:'cur', r:3, ok:c=>c.cur.length>0 },
+  { k:'tel', r:4, ok:c=>!!c.tel && c.tel.length>2 },
+  { k:'nb', r:5, ok:c=>c.nb.length>0 },
+  { k:'tld', r:5, ok:c=>!!c.tld },
+  { k:'cap', r:6, ok:c=>!!c.cap },
+  { k:'name', r:7, ok:c=>true },
+];
+function chooseHints(code, count){
+  const c = COUNTRIES[code];
+  const avail = HINT_DEFS.filter(h=>h.ok(c));
+  const first = avail.find(h=>h.k==='cont');
+  const last = Math.random()<.5 ? avail.find(h=>h.k==='name') : (avail.find(h=>h.k==='cap') || avail.find(h=>h.k==='name'));
+  const middle = shuffle(avail.filter(h=>h!==first && h!==last && h.k!=='name' && h.k!=='cap')).slice(0, Math.max(0,count-2)).sort((a,b)=>a.r-b.r);
+  return [first, ...middle, last].slice(0, count).map(h=>h.k);
+}
+// Host: ruwe, taalneutrale waarde. Client: tekst in eigen taal.
+function hintValue(k, code){
+  const c = COUNTRIES[code];
+  const nm = l => { const n = c[l] || c.en; return { l: n[0], n: n.replace(/[^\p{L}]/gu,'').length }; };
+  switch(k){
+    case 'cont': return c.cont; case 'sub': return c.sub; case 'drive': return c.drive;
+    case 'coast': return { land: c.land, nb: c.nb.length }; case 'pop': return c.pop;
+    case 'lang': return c.lang; case 'cur': return c.cur; case 'tel': return c.tel; case 'tld': return c.tld;
+    case 'nb': return c.nb; case 'cap': return c.cap[0]; case 'name': return { nl: nm('nl'), en: nm('en') };
+  }
+}
+function renderHintValue(k, v){
+  const cur = cc => { try { return new Intl.DisplayNames([lang], {type:'currency'}).of(cc[0]) + (cc[1] ? ' ('+cc[1]+')' : ''); } catch(e){ return cc[0]; } };
+  switch(k){
+    case 'cont': return t(v);
+    case 'sub': return lang==='nl' ? (SUB_NL[v]||v) : v;
+    case 'drive': return t(v==='L'?'left':'right');
+    case 'coast': return (v.land ? t('landlocked') : t('coast')) + ', ' + (v.nb ? t('nbCount',{n:v.nb}) : t('island'));
+    case 'pop': return t('pop'+v);
+    case 'lang': return v.map(l => lang==='nl' ? (LANG_NL[l]||l) : l).join(', ');
+    case 'cur': return v.map(cur).join(', ');
+    case 'tel': case 'tld': return v;
+    case 'nb': return v.map(cname).join(', ');
+    case 'cap': return t('capLetter', { l: v });
+    case 'name': { const x = v[lang] || v.en; return t('nameLetter', { l: x.l, n: x.n }); }
+  }
+  return '';
+}
+
+/* ================= STATE ================= */
+const me = {
+  id: localStorage.getItem('lr_pid') || (crypto.randomUUID ? crypto.randomUUID() : String(Math.random()).slice(2)),
+  name: localStorage.getItem('lr_name') || '',
+  color: localStorage.getItem('lr_color') || rnd(COLORS),
+};
+localStorage.setItem('lr_pid', me.id);
+
+const DEFAULT_SETTINGS = { rounds:5, roundTime:60, hintEvery:10, difficulty:'normal', continent:'ALL', weighting:'uniform', small:false };
+let room = null, roomCode = null, isHost = false, solo = false;
+let S = null;               // laatste publieke snapshot (iedereen)
+let H = null;               // host-only private state
+let recvAt = 0, latency = 0;
+let myAnswer = null;        // { roundId, code, hintsSeen, frac }
+let sendMsg = null, joinTimer = null, hostWatch = null;
+
+/* ================= NETWORK ================= */
+function connect(code){
+  roomCode = code;
+  room = joinRoom({ appId: CONFIG.appId, turnConfig: CONFIG.turn.length ? CONFIG.turn : undefined }, 'LR-' + code);
+  const action = room.makeAction('m');
+  sendMsg = (msg, target) => action.send(msg, target ? { target } : undefined).catch(()=>{});
+  action.onMessage = (msg, ctx) => onNet(msg, ctx.peerId);
+  room.onPeerJoin = peerId => {
+    if (isHost) return; // host wacht op hello
+    sendMsg({ t:'hello', p: helloPayload() }, peerId);
+  };
+  room.onPeerLeave = peerId => onPeerLeave(peerId);
+  location.hash = 'room=' + code;
+}
+const helloPayload = () => ({ id: me.id, name: me.name, color: me.color });
+async function disconnect(){
+  clearTimeout(joinTimer); clearInterval(hostWatch);
+  if (H) { clearInterval(H.loop); clearTimeout(H.autoNext); }
+  if (room) { try { await room.leave(); } catch(e){} }
+  room = null; sendMsg = null; isHost = false; solo = false; S = null; H = null; myAnswer = null; roomCode = null;
+  history.replaceState(null, '', location.pathname + location.search);
+}
+
+// Actie van mezelf: host verwerkt lokaal, peer stuurt naar host.
+function act(msg){
+  if (isHost) hostHandle(msg, selfId);
+  else if (S && sendMsg) sendMsg(msg, S.hostPeer);
+}
+// Host stuurt snapshot naar iedereen en verwerkt hem zelf.
+function broadcast(){
+  if (H) H.lastBeat = now();
+  const snap = publicState();
+  if (sendMsg) sendMsg({ t:'state', p: snap });
+  onState(snap);
+}
+
+function onNet(msg, peerId){
+  if (!msg || typeof msg !== 'object') return;
+  if (isHost) return hostHandle(msg, peerId);
+  switch (msg.t){
+    case 'state':
+      if (msg.p.hostPeer !== peerId) return;  // alleen de host is bron van waarheid
+      clearTimeout(joinTimer); overlay(null); lastHostMsg = now();
+      onState(msg.p); break;
+    case 'reject': clearTimeout(joinTimer); overlay(null); disconnect().then(()=>{ show('start'); $('#startErr').textContent = t(msg.p); }); break;
+    case 'kick': overlay(null); disconnect().then(()=>{ show('start'); $('#startErr').textContent = t('kicked'); }); break;
+  }
+}
+
+// Watchdog: geen state van host voor 9s = host weg
+let lastHostMsg = 0;
+setInterval(() => {
+  if (!room || isHost || !S || solo) return;
+  if (now() - lastHostMsg > 9000 && !$('#ovLoad').classList.contains('on')) electHost(S.hostPeer);
+}, 1000);
+function onPeerLeave(peerId){
+  if (isHost) {
+    const p = H && H.players.find(p=>p.peerId===peerId);
+    if (p) { p.connected = false; p.leftAt = Date.now(); checkAllAnswered(); broadcast(); }
+    return;
+  }
+  if (S && peerId === S.hostPeer) electHost(peerId);
+}
+
+// Host migratie: verbonden speler met laagste joinIdx wordt host.
+function electHost(oldHostPeer){
+  if (isHost || !S || S.hostPeer !== oldHostPeer) return;
+  lastHostMsg = now();
+  const peers = room ? Object.keys(room.getPeers()) : [];
+  const alive = S.players.filter(p => p.peerId !== oldHostPeer && (p.peerId === selfId || peers.includes(p.peerId)) && p.connected);
+  alive.sort((a,b)=>a.joinIdx-b.joinIdx);
+  const next = alive[0];
+  if (!next) return;
+  toast(t('hostLeft'));
+  if (next.peerId === selfId) becomeHost(oldHostPeer);
+  else {
+    S.hostPeer = next.peerId;
+    // stuur eigen antwoord opnieuw zodat de nieuwe host het kent
+    setTimeout(()=>{ if (myAnswer && S.round && myAnswer.roundId===S.round.id) sendMsg({ t:'answer', p:{...myAnswer, resend:true} }, S.hostPeer); }, 1500);
+  }
+}
+function becomeHost(oldHostPeer){
+  isHost = true;
+  const snap = S;
+  H = {
+    players: snap.players.map(p => ({ ...p, connected: p.peerId===oldHostPeer ? false : p.connected, leftAt: p.peerId===oldHostPeer ? Date.now() : null })),
+    settings: snap.settings, phase: snap.phase, roundN: snap.roundN, used: snap.used || [], history: snap.history || [],
+    nextJoin: Math.max(...snap.players.map(p=>p.joinIdx)) + 1, result: snap.result, final: snap.final, round: null, blocked: [],
+  };
+  if (snap.phase === 'round' && snap.round){
+    const r = snap.round;
+    const code = countryAt(r.lat, r.lng);
+    const elapsed = r.durationMs - Math.max(0, r.remainingMs - (now()-recvAt));
+    H.round = { ...r, code, hintKeys: [...r.hints.map(h=>h.k), ...chooseHints(code, CONFIG.hintsPerRound).filter(k=>!r.hints.some(h=>h.k===k))].slice(0, r.hintTotal),
+      startAt: now() - elapsed, answers: {}, order: 0 };
+    if (myAnswer && myAnswer.roundId === r.id) H.round.answers[me.id] = { ...myAnswer, at: now(), order: H.round.order++ };
+  }
+  toast(t('youHost'));
+  startHostLoop();
+  if (H.phase === 'result') scheduleAutoNext();
+  broadcast();
+}
+
+/* ================= HOST LOGIC ================= */
+function hostInit(){
+  isHost = true;
+  H = { players: [], settings: { ...DEFAULT_SETTINGS, ...JSON.parse(localStorage.getItem('lr_settings')||'{}') }, phase:'lobby', roundN:0, used:[], history:[], nextJoin:0, round:null, result:null, final:null, blocked:[] };
+  hostAddPlayer({ ...helloPayload() }, selfId);
+  startHostLoop();
+  broadcast();
+}
+function hostAddPlayer(p, peerId){
+  let pl = H.players.find(x => x.id === p.id);
+  if (pl) { pl.peerId = peerId; pl.connected = true; pl.leftAt = null; pl.name = String(p.name).slice(0,16); pl.color = p.color; return true; }
+  if (H.blocked.includes(p.id)) return 'kicked';
+  if (H.phase !== 'lobby') return 'started';
+  if (H.players.filter(x=>x.connected || (Date.now()-x.leftAt) < CONFIG.reserveMs).length >= CONFIG.maxPlayers) return 'full';
+  H.players.push({ id: p.id, peerId, name: String(p.name||'?').slice(0,16), color: COLORS.includes(p.color)?p.color:COLORS[0], joinIdx: H.nextJoin++, score:0, connected:true, leftAt:null, correct:0, best:0, fastest:null });
+  return true;
+}
+function hostHandle(msg, peerId){
+  const p = msg.p || {};
+  const player = H.players.find(x => x.peerId === peerId);
+  switch (msg.t){
+    case 'hello': {
+      const res = hostAddPlayer(p, peerId);
+      if (res !== true) { sendMsg && sendMsg({ t: res==='kicked'?'kick':'reject', p: res }, peerId); return; }
+      broadcast(); beep(880,.06); break;
+    }
+    case 'sync': broadcast(); break;
+    case 'settings':
+      if (peerId !== selfId || H.phase !== 'lobby') return;
+      H.settings = { ...H.settings, ...p }; localStorage.setItem('lr_settings', JSON.stringify(H.settings)); broadcast(); break;
+    case 'start':
+      if (peerId !== selfId) return;
+      if (H.phase === 'lobby' || H.phase === 'result') nextRound(); break;
+    case 'kick': {
+      if (peerId !== selfId) return;
+      const target = H.players.find(x=>x.id===p.id); if (!target || target.peerId===selfId) return;
+      H.blocked.push(target.id); H.players = H.players.filter(x=>x!==target);
+      sendMsg && sendMsg({ t:'kick' }, target.peerId); broadcast(); break;
+    }
+    case 'answer': {
+      if (!player || H.phase !== 'round' || !H.round || p.roundId !== H.round.id) return;
+      if (H.round.answers[player.id]) return;  // eerste telt
+      if (!COUNTRIES[p.code]) return;
+      const el = now() - H.round.startAt;
+      let hintsSeen = H.round.hints.length, frac = Math.max(0, 1 - el / H.round.durationMs);
+      if (p.resend) { hintsSeen = Math.max(1, Math.min(hintsSeen, +p.hintsSeen||hintsSeen)); frac = Math.min(1, Math.max(0, +p.frac||0)); }
+      H.round.answers[player.id] = { code: p.code, hintsSeen, frac, ms: Math.round(H.round.durationMs*(1-frac)), order: H.round.order++ };
+      if (!checkAllAnswered()) broadcast();
+      break;
+    }
+    case 'rematch':
+      if (peerId !== selfId) return;
+      H.phase = 'lobby'; H.roundN = 0; H.used = []; H.history = []; H.result = null; H.final = null; H.round = null;
+      H.players = H.players.filter(x=>x.connected);
+      H.players.forEach(x=>Object.assign(x,{score:0,correct:0,best:0,fastest:null}));
+      broadcast(); break;
+  }
+}
+function nextRound(){
+  clearTimeout(H.autoNext);
+  if (H.roundN >= H.settings.rounds) return finish();
+  const loc = randomLocation(H.settings, H.used);
+  if (!loc) return finish();
+  H.used.push(loc.code); H.roundN++;
+  const durationMs = H.settings.roundTime*1000, hintIntervalMs = H.settings.hintEvery*1000;
+  const hintTotal = Math.min(CONFIG.hintsPerRound, Math.max(2, Math.ceil(durationMs / hintIntervalMs)));
+  H.round = { id: Math.random().toString(36).slice(2,9), n: H.roundN, lat: loc.lat, lng: loc.lng, code: loc.code,
+    zoom: CONFIG.zoom[H.settings.difficulty], pan: CONFIG.pan[H.settings.difficulty], difficulty: H.settings.difficulty,
+    durationMs, hintIntervalMs, hintTotal, hintKeys: chooseHints(loc.code, hintTotal), hints: [], startAt: now(), answers: {}, order: 0 };
+  H.phase = 'round'; H.result = null;
+  releaseHints(); broadcast();
+}
+function releaseHints(){
+  const r = H.round, el = now() - r.startAt;
+  let changed = false;
+  while (r.hints.length < r.hintKeys.length && el >= r.hints.length * r.hintIntervalMs){
+    { const k = r.hintKeys[r.hints.length]; r.hints.push({ k, v: hintValue(k, r.code) }); } changed = true;
+  }
+  return changed;
+}
+function connectedPlayers(){
+  const peers = room ? Object.keys(room.getPeers()) : [];
+  return H.players.filter(p => p.peerId === selfId || (p.connected && peers.includes(p.peerId)));
+}
+function checkAllAnswered(){
+  if (H.phase !== 'round' || !H.round) return false;
+  const cp = connectedPlayers();
+  if (cp.length && cp.every(p => H.round.answers[p.id])) { endRound(); return true; }
+  return false;
+}
+function startHostLoop(){
+  clearInterval(H.loop);
+  H.loop = setInterval(() => {
+    // reserveringen opruimen in lobby
+    if (H.phase === 'lobby'){
+      const before = H.players.length;
+      H.players = H.players.filter(p => p.connected || Date.now()-p.leftAt < CONFIG.reserveMs);
+      if (H.players.length !== before) broadcast();
+    }
+    if (now() - (H.lastBeat||0) > 3000) { H.lastBeat = now(); broadcast(); return; }
+    if (H.phase !== 'round' || !H.round) return;
+    if (releaseHints()) broadcast();
+    if (now() - H.round.startAt >= H.round.durationMs) endRound();
+  }, 200);
+}
+function scoreFor(ans, code, totalHints){
+  const S_ = CONFIG.score;
+  if (!ans) return { pts:0, kind:'none' };
+  if (ans.code === code){
+    const extra = Math.max(0, ans.hintsSeen - 1);
+    const raw = (S_.correct - S_.perHint*extra) * (S_.timeBase + S_.timeWeight*ans.frac);
+    return { pts: Math.round(Math.max(S_.min, raw)), kind:'good' };
+  }
+  if (COUNTRIES[ans.code] && COUNTRIES[ans.code].cont === COUNTRIES[code].cont) return { pts: S_.continent, kind:'half' };
+  return { pts:0, kind:'miss' };
+}
+function endRound(){
+  const r = H.round; if (!r || H.phase !== 'round') return;
+  const rows = H.players.map(p => {
+    const a = r.answers[p.id], s = scoreFor(a, r.code, r.hints.length);
+    p.score += s.pts;
+    if (s.kind==='good'){ p.correct++; if (p.fastest==null || a.ms < p.fastest) p.fastest = a.ms; }
+    if (s.pts > p.best) p.best = s.pts;
+    return { id:p.id, guess: a ? a.code : null, ms: a ? a.ms : null, hints: a ? a.hintsSeen : null, pts: s.pts, kind: s.kind, total: p.score, order: a ? a.order : 99 };
+  }).sort((a,b)=> b.pts-a.pts || a.order-b.order);
+  H.result = { roundId: r.id, n: r.n, code: r.code, lat: r.lat, lng: r.lng, rows, last: H.roundN >= H.settings.rounds, nextAt: CONFIG.resultAutoMs };
+  H.history.push({ n:r.n, code:r.code });
+  H.phase = 'result'; H.round = null;
+  scheduleAutoNext(); broadcast();
+}
+function scheduleAutoNext(){
+  clearTimeout(H.autoNext);
+  H.resultStart = now();
+  if (H.result && !H.result.last) H.autoNext = setTimeout(()=>{ if (H.phase==='result') nextRound(); }, CONFIG.resultAutoMs);
+}
+function finish(){
+  clearTimeout(H.autoNext);
+  H.phase = 'final';
+  H.final = { ranking: H.players.slice().sort((a,b)=>b.score-a.score).map(p=>({ id:p.id, score:p.score, correct:p.correct, best:p.best, fastest:p.fastest })) };
+  broadcast();
+}
+function publicState(){
+  const r = H.round;
+  return {
+    hostPeer: selfId, phase: H.phase, settings: H.settings, roundN: H.roundN, used: H.used, history: H.history,
+    players: H.players.map(({id,peerId,name,color,joinIdx,score,connected,correct,best,fastest}) => ({id,peerId,name,color,joinIdx,score,connected,correct,best,fastest})),
+    round: r ? { id:r.id, n:r.n, lat:r.lat, lng:r.lng, zoom:r.zoom, pan:r.pan, difficulty:r.difficulty, durationMs:r.durationMs, hintIntervalMs:r.hintIntervalMs, hintTotal:r.hintTotal,
+      hints: r.hints, remainingMs: Math.max(0, r.durationMs - (now()-r.startAt)), answered: Object.keys(r.answers) } : null,
+    result: H.result ? { ...H.result, nextAt: Math.max(0, CONFIG.resultAutoMs - (now()-(H.resultStart||now()))) } : null,
+    final: H.final,
+  };
+}
+
+/* ================= CLIENT RENDER ================= */
+let renderedRound = null, renderedResult = null, map = null, rmap = null;
+function onState(snap){
+  const prev = S;
+  S = snap; recvAt = now();
+  // hintgeluid
+  if (prev && prev.round && S.round && prev.round.id===S.round.id && S.round.hints.length > prev.round.hints.length) beep(740,.07);
+  rerender();
+}
+function rerender(){
+  if (!S) return;
+  if (S.phase === 'lobby') renderLobby();
+  else if (S.phase === 'round') renderGame();
+  else if (S.phase === 'result') renderResult();
+  else if (S.phase === 'final') renderFinal();
+}
+const isMeHost = () => S && S.hostPeer === selfId;
+const playerById = id => S.players.find(p=>p.id===id);
+function dotHtml(p){ return `<span class="dot" style="background:${p.color}"></span>`; }
+
+function renderLobby(){
+  show('lobby'); renderedRound = null; renderedResult = null; myAnswer = null;
+  $('#lobbyCode').textContent = solo ? 'SOLO' : roomCode;
+  $('#copyBtn').parentElement.style.display = solo ? 'none' : '';
+  const host = isMeHost();
+  const peers = room ? Object.keys(room.getPeers()) : [];
+  $('#pCount').textContent = S.players.length + '/' + CONFIG.maxPlayers;
+  $('#lobbyPlayers').innerHTML = S.players.map(p => {
+    const off = !p.connected;
+    return `<div class="pl">${dotHtml(p)}<span class="nm">${esc(p.name)}${p.id===me.id?' <span class="sub">('+t('you')+')</span>':''}</span>
+      ${p.peerId===S.hostPeer?`<span class="badge">${t('host')}</span>`:''}${off?`<span class="badge off">${t('offline')}</span>`:''}
+      ${host && p.peerId!==selfId ? `<button class="x" data-kick="${esc(p.id)}">&times;</button>`:''}</div>`;
+  }).join('');
+  document.querySelectorAll('.seg[data-set]').forEach(seg => {
+    const key = seg.dataset.set, suf = seg.dataset.suf || '';
+    seg.classList.toggle('ro', !host);
+    seg.innerHTML = seg.dataset.opts.split(',').map(o => {
+      const val = isNaN(o) ? o : +o, label = isNaN(o) ? t(o) : o + suf;
+      return `<button class="${S.settings[key]===val?'on':''}" data-val="${o}">${label}</button>`;
+    }).join('');
+  });
+  document.querySelectorAll('.sw[data-sw]').forEach(sw => { sw.classList.toggle('on', !!S.settings[sw.dataset.sw]); sw.style.pointerEvents = host?'':'none'; });
+  const n = S.players.filter(p=>p.connected).length;
+  $('#startBtn').style.display = host ? '' : 'none';
+  $('#startBtn').textContent = n < 2 ? t('startSolo') : t('startGame');
+  $('#waitHost').style.display = host ? 'none' : '';
+}
+
+function ensureMap(){
+  if (map) return map;
+  map = L.map('map', { zoomControl:false, attributionControl:true, worldCopyJump:true });
+  addTiles(map);
+  return map;
+}
+function addTiles(m){
+  m.attributionControl.setPrefix(false);
+  let failed = 0, usingFallback = false;
+  const main = L.tileLayer(CONFIG.tiles.main.url, { attribution: CONFIG.tiles.main.attr, maxZoom: CONFIG.tiles.main.maxZoom, crossOrigin: true });
+  main.on('tileerror', () => {
+    if (usingFallback || ++failed < 4) return;
+    usingFallback = true; m.removeLayer(main);
+    L.tileLayer(CONFIG.tiles.fallback.url, { attribution: CONFIG.tiles.fallback.attr, maxZoom: CONFIG.tiles.fallback.maxZoom, subdomains:'abcd' }).addTo(m);
+  });
+  main.addTo(m);
+}
+function renderGame(){
+  show('game');
+  const r = S.round;
+  const m = ensureMap();
+  if (renderedRound !== r.id){
+    renderedRound = r.id;
+    if (!myAnswer || myAnswer.roundId !== r.id) myAnswer = null;
+    m.invalidateSize();
+    const lock = r.pan === 0;
+    m.setMinZoom(0); m.setMaxZoom(18); m.setMaxBounds(null);
+    m.setView([r.lat, r.lng], r.zoom, { animate:false });
+    if (lock){ m.dragging.disable(); m.touchZoom.disable(); m.doubleClickZoom.disable(); m.scrollWheelZoom.disable(); m.boxZoom.disable(); m.keyboard.disable(); }
+    else {
+      m.dragging.enable(); m.touchZoom.enable(); m.doubleClickZoom.enable(); m.scrollWheelZoom.enable(); m.keyboard.enable();
+      m.setMinZoom(r.zoom - 1); m.setMaxZoom(r.zoom + 2);
+      m.setMaxBounds([[r.lat - r.pan, r.lng - r.pan*1.5], [r.lat + r.pan, r.lng + r.pan*1.5]]);
+    }
+    $('#guess').value = ''; closeAc();
+    beep(520,.12,'triangle');
+    setTimeout(()=>m.invalidateSize(), 50);
+  }
+  $('#roundChip').textContent = t('round', { n: r.n, t: S.settings.rounds });
+  const mine = playerById(me.id);
+  $('#scoreChip').textContent = t('pts', { n: mine ? mine.score : 0 });
+  $('#hintList').innerHTML = r.hints.map((h,i)=>`<div class="hint"><b>${i+1}</b><span class="k">${t('h_'+h.k)}</span><span>${esc(hintTextFromKey(h.k))}</span></div>`).join('');
+  const hl = $('#hintList').parentElement; hl.scrollTop = hl.scrollHeight;
+  $('#who').innerHTML = S.players.length > 1 ? S.players.map(p=>`<span class="${r.answered.includes(p.id)?'done':''} ${p.connected?'':'off'}">${dotHtml(p)}${esc(p.name)}${r.answered.includes(p.id)?' &#10003;':''}</span>`).join('') : '';
+  const locked = myAnswer && myAnswer.roundId === r.id;
+  $('#answerBox').style.display = locked ? 'none' : '';
+  $('#lockedBox').style.display = locked ? '' : 'none';
+  if (locked) $('#lockedBox').textContent = t('lockedAs', { c: (COUNTRIES[myAnswer.code]?.flag||'') + ' ' + cname(myAnswer.code) });
+}
+// Client kent het land niet: host stuurt per hint een taalneutrale waarde mee.
+function hintTextFromKey(k){
+  const h = S.round.hints.find(x=>x.k===k);
+  return h && h.v != null ? renderHintValue(k, h.v) : '';
+}
+
+/* ================= TIMER LOOP (lokaal) ================= */
+function tick(){
+  requestAnimationFrame(tick);
+  if (!S) return;
+  if (S.phase === 'round' && S.round){
+    const r = S.round;
+    const rem = r.remainingMs - (now() - recvAt) - latency;
+    const tc = $('#timerChip'); tc.textContent = fmtTime(rem); tc.classList.toggle('low', rem < 10000);
+    const elapsed = r.durationMs - rem;
+    const nextIdx = r.hints.length;
+    if (nextIdx < r.hintTotal){
+      const into = elapsed - (nextIdx-1)*r.hintIntervalMs;
+      $('#hintBar').style.width = Math.min(100, Math.max(0, into / r.hintIntervalMs * 100)) + '%';
+      $('#nextHint').style.display = '';
+    } else $('#nextHint').style.display = 'none';
+  }
+  if (S.phase === 'result' && S.result){
+    const left = S.result.nextAt - (now()-recvAt);
+    $('#resTimer').textContent = S.result.last ? '' : t('nextIn', { s: Math.max(0, Math.ceil(left/1000)) });
+    $('#resTimer').style.display = S.result.last ? 'none' : '';
+  }
+}
+requestAnimationFrame(tick);
+
+/* latency meten naar host */
+setInterval(async () => {
+  const d = $('#netDot');
+  if (!room || isHost || !S) { d.className = 'netdot'; return; }
+  try { const ms = await Promise.race([room.ping(S.hostPeer), new Promise((_,rej)=>setTimeout(()=>rej(),3000))]); latency = ms/2; d.className = 'netdot' + (ms>400?' mid':''); }
+  catch(e){ d.className = 'netdot bad'; }
+}, 4000);
+
+/* ================= ANSWER INPUT ================= */
+let acItems = [], acSel = 0;
+function search(q){
+  const n = norm(q); if (!n) return [];
+  const res = [];
+  for (const s of SEARCH){
+    let best = 99;
+    for (const k of s.keys){ const i = k.indexOf(n); if (i===0) best = Math.min(best, 0); else if (i>0) best = Math.min(best, 1); }
+    if (best < 99) res.push({ code:s.code, score: best + cname(s.code).length/100 });
+  }
+  return res.sort((a,b)=>a.score-b.score).slice(0,5).map(r=>r.code);
+}
+function closeAc(){ $('#ac').classList.remove('on'); acItems = []; }
+function renderAc(){
+  const ac = $('#ac');
+  if (!acItems.length){ ac.classList.remove('on'); return; }
+  ac.innerHTML = acItems.map((c,i)=>`<div class="${i===acSel?'sel':''}" data-code="${c}"><span>${COUNTRIES[c].flag||''}</span><span>${esc(cname(c))}</span></div>`).join('');
+  ac.classList.add('on');
+}
+$('#guess').addEventListener('input', e => { acItems = search(e.target.value); acSel = 0; renderAc(); });
+$('#guess').addEventListener('keydown', e => {
+  if (e.key==='ArrowDown'){ acSel = Math.min(acSel+1, acItems.length-1); renderAc(); e.preventDefault(); }
+  else if (e.key==='ArrowUp'){ acSel = Math.max(acSel-1, 0); renderAc(); e.preventDefault(); }
+  else if (e.key==='Enter'){ e.preventDefault(); submitGuess(acItems[acSel]); }
+  else if (e.key==='Escape') closeAc();
+});
+$('#ac').addEventListener('pointerdown', e => { const d = e.target.closest('[data-code]'); if (d){ e.preventDefault(); submitGuess(d.dataset.code); } });
+$('#guessBtn').addEventListener('click', () => submitGuess(acItems[acSel]));
+function submitGuess(code){
+  if (!S || S.phase!=='round' || !S.round) return;
+  if (!code){ const exact = SEARCH.find(s => s.keys.includes(norm($('#guess').value))); code = exact && exact.code; }
+  if (!code){ toast(t('unknown')); return; }
+  const r = S.round, rem = r.remainingMs - (now()-recvAt) - latency;
+  myAnswer = { roundId: r.id, code, hintsSeen: r.hints.length, frac: Math.max(0, rem / r.durationMs) };
+  closeAc(); $('#guess').blur(); beep(990,.08);
+  act({ t:'answer', p: myAnswer });
+  if (S.phase === 'round' && S.round) renderGame();
+}
+
+/* ================= RESULT + FINAL ================= */
+function renderResult(){
+  show('result');
+  const R = S.result;
+  const c = COUNTRIES[R.code];
+  $('#resTitle').textContent = t('resTitle', { n: R.n });
+  $('#resFlag').textContent = c.flag || '';
+  $('#resName').textContent = cname(R.code);
+  $('#resSub').textContent = t(c.cont) + ' · ' + (lang==='nl' ? (SUB_NL[c.sub]||c.sub) : c.sub) + (c.cap ? ' · ' + c.cap : '');
+  $('#resBody').innerHTML = R.rows.map(row => {
+    const p = playerById(row.id) || { name:'?', color:'#888' };
+    const g = row.guess ? `<span class="${row.kind}">${COUNTRIES[row.guess]?.flag||''} ${esc(cname(row.guess))}</span>` : `<span class="sub">${t('noAnswer')}</span>`;
+    return `<tr><td><span class="row" style="gap:6px">${dotHtml(p)}<span>${esc(p.name)}</span></span></td><td>${g}</td><td class="n">${row.ms!=null?(row.ms/1000).toFixed(1)+'s':''}</td><td class="n plus ${row.kind}">+${row.pts}</td><td class="n">${row.total}</td></tr>`;
+  }).join('');
+  const host = isMeHost();
+  $('#nextBtn').style.display = host ? '' : 'none';
+  $('#nextBtn').textContent = R.last ? t('toFinal') : t('nextRound');
+  if (renderedResult !== R.roundId){
+    renderedResult = R.roundId;
+    const mineRow = R.rows.find(r=>r.id===me.id);
+    if (mineRow) beep(mineRow.kind==='good'?1046:mineRow.kind==='half'?660:220, .18, mineRow.kind==='miss'?'sawtooth':'sine');
+    setTimeout(() => drawResultMap(R), 30);
+  }
+}
+function drawResultMap(R){
+  if (!$('#result').classList.contains('on')) return;
+  if (!rmap){ rmap = L.map('rmap', { zoomControl:false, attributionControl:true }); addTiles(rmap); }
+  rmap.invalidateSize();
+  rmap.eachLayer(l => { if (!(l instanceof L.TileLayer)) rmap.removeLayer(l); });
+  const g = GEO[R.code];
+  // eerst view zetten (Leaflet heeft een view nodig voor vectorlagen)
+  const poly = g.polys.find(p => inPoly(R.lng, R.lat, p)) || g.polys.reduce((a,b)=>a.area>b.area?a:b);
+  const [a,b,c,d] = poly.bbox;
+  rmap.fitBounds([[b,a],[d,c]], { padding:[20,20], maxZoom:7, animate:false });
+  L.geoJSON(g.feature, { style: { color:'#2ee6a6', weight:2, fillColor:'#2ee6a6', fillOpacity:.22 } }).addTo(rmap);
+  L.circleMarker([R.lat, R.lng], { radius:7, color:'#0b0f14', weight:2, fillColor:'#ffb648', fillOpacity:1 }).addTo(rmap);
+}
+function renderFinal(){
+  show('final');
+  const F = S.final, P = id => playerById(id) || { name:'?', color:'#888' };
+  const top = F.ranking.slice(0,3), order = [top[1], top[0], top[2]], heights = [110, 150, 80];
+  $('#podium').innerHTML = order.map((r,i) => r ? `<div class="pod"><span class="pn">${esc(P(r.id).name)}</span><span class="ps">${r.score}</span><div class="blk" style="height:${heights[i]}px;background:${P(r.id).color}">${[2,1,3][i]}</div></div>` : '<div class="pod"></div>').join('');
+  $('#finBody').innerHTML = F.ranking.map((r,i)=>`<tr><td>${i+1}</td><td><span class="row" style="gap:6px">${dotHtml(P(r.id))}<span>${esc(P(r.id).name)}</span></span></td><td class="n">${r.correct}/${S.roundN}</td><td class="n">${r.score}</td></tr>`).join('');
+  const best = F.ranking.reduce((a,b)=>b.best>a.best?b:a, F.ranking[0]);
+  const fast = F.ranking.filter(r=>r.fastest!=null).sort((a,b)=>a.fastest-b.fastest)[0];
+  const most = F.ranking.reduce((a,b)=>b.correct>a.correct?b:a, F.ranking[0]);
+  $('#finStats').innerHTML = [
+    [t('bestRound'), best && P(best.id).name, best && best.best+' pt'],
+    [t('fastest'), fast ? P(fast.id).name : '-', fast ? (fast.fastest/1000).toFixed(1)+'s' : ''],
+    [t('mostCorrect'), most && P(most.id).name, most && most.correct+'x'],
+  ].map(([k,v,s])=>`<div class="stat"><small>${k}</small><b>${esc(v||'-')}</b><i>${s||''}</i></div>`).join('');
+  $('#rematchBtn').style.display = isMeHost() ? '' : 'none';
+  if (renderedResult !== 'final'){ renderedResult = 'final'; beep(523,.12); setTimeout(()=>beep(659,.12),130); setTimeout(()=>beep(784,.2),260); }
+}
+
+/* ================= UI EVENTS ================= */
+function renderColors(){
+  $('#colors').innerHTML = COLORS.map(c=>`<button style="background:${c}" class="${c===me.color?'on':''}" data-c="${c}"></button>`).join('');
+}
+$('#colors').addEventListener('click', e => { const c = e.target.dataset.c; if (!c) return; me.color = c; localStorage.setItem('lr_color', c); renderColors(); });
+$('#name').addEventListener('input', e => { me.name = e.target.value.trim(); localStorage.setItem('lr_name', me.name); });
+$('#codeIn').addEventListener('input', e => { e.target.value = e.target.value.toUpperCase().replace(/[^A-Z0-9]/g,''); });
+$('#codeIn').addEventListener('keydown', e => { if (e.key==='Enter') $('#joinBtn').click(); });
+$('#langBtn').addEventListener('click', () => { lang = lang==='nl'?'en':'nl'; localStorage.setItem('lr_lang', lang); applyI18n(); });
+$('#soundBtn').addEventListener('click', () => { sound = !sound; localStorage.setItem('lr_sound', sound?'1':'0'); applyI18n(); beep(); });
+['#rulesBtn','#rulesBtn2'].forEach(s => $(s).addEventListener('click', () => $('#ovRules').classList.add('on')));
+$('#rulesClose').addEventListener('click', () => $('#ovRules').classList.remove('on'));
+$('#ovRules').addEventListener('click', e => { if (e.target.id==='ovRules') $('#ovRules').classList.remove('on'); });
+
+function needName(){ if (!me.name){ $('#startErr').textContent = t('nameNeeded'); $('#name').focus(); return true; } $('#startErr').textContent=''; return false; }
+function makeCode(){ const A='ABCDEFGHJKLMNPQRSTUVWXYZ23456789'; let s=''; for(let i=0;i<4;i++) s+=A[Math.floor(Math.random()*A.length)]; return s; }
+
+$('#createBtn').addEventListener('click', () => {
+  if (needName()) return;
+  const code = makeCode();
+  connect(code); hostInit();
+});
+$('#soloBtn').addEventListener('click', () => {
+  if (needName()) return;
+  solo = true; hostInit();
+});
+$('#joinBtn').addEventListener('click', () => {
+  if (needName()) return;
+  const code = $('#codeIn').value.trim().toUpperCase();
+  if (code.length !== 4){ $('#startErr').textContent = t('codeNeeded'); return; }
+  joinAsPeer(code);
+});
+function joinAsPeer(code){
+  connect(code);
+  overlay(t('searching', { c: code }), t('searchingSub'), true);
+  joinTimer = setTimeout(() => { overlay(null); disconnect().then(()=>{ show('start'); $('#startErr').textContent = t('notFound'); }); }, CONFIG.joinTimeoutMs);
+}
+$('#ovCancel').addEventListener('click', () => { overlay(null); disconnect().then(()=>show('start')); });
+async function leave(){ await disconnect(); renderedRound = null; renderedResult = null; show('start'); }
+$('#leaveBtn').addEventListener('click', leave);
+$('#leaveBtn2').addEventListener('click', leave);
+$('#copyBtn').addEventListener('click', async () => {
+  const url = location.origin + location.pathname + '#room=' + roomCode;
+  try { await navigator.clipboard.writeText(url); toast(t('copied')); } catch(e){ prompt('', url); }
+});
+$('#shareBtn').addEventListener('click', async () => {
+  const url = location.origin + location.pathname + '#room=' + roomCode;
+  if (navigator.share) { try { await navigator.share({ title:'Landenraden', text: t('roomCode')+': '+roomCode, url }); } catch(e){} }
+  else { try { await navigator.clipboard.writeText(url); toast(t('copied')); } catch(e){} }
+});
+$('#lobbyPlayers').addEventListener('click', e => { const id = e.target.dataset.kick; if (id) act({ t:'kick', p:{ id } }); });
+document.querySelectorAll('.seg[data-set]').forEach(seg => seg.addEventListener('click', e => {
+  const b = e.target.closest('button'); if (!b || !isMeHost()) return;
+  const v = isNaN(b.dataset.val) ? b.dataset.val : +b.dataset.val;
+  act({ t:'settings', p:{ [seg.dataset.set]: v } });
+}));
+document.querySelectorAll('.sw[data-sw]').forEach(sw => sw.addEventListener('click', () => { if (isMeHost()) act({ t:'settings', p:{ [sw.dataset.sw]: !S.settings[sw.dataset.sw] } }); }));
+$('#startBtn').addEventListener('click', () => act({ t:'start' }));
+$('#nextBtn').addEventListener('click', () => act({ t:'start' }));
+$('#rematchBtn').addEventListener('click', () => act({ t:'rematch' }));
+
+// Telefoon terug uit vergrendeling: state opnieuw opvragen
+document.addEventListener('visibilitychange', () => { if (document.visibilityState==='visible' && room && !isHost && S) act({ t:'sync' }); });
+window.addEventListener('resize', () => { map && map.invalidateSize(); rmap && rmap.invalidateSize(); });
+
+/* ================= BOOT ================= */
+(async function boot(){
+  $('#name').value = me.name; renderColors(); applyI18n(); show('start');
+  try { await loadData(); } catch(e){ overlay('Data laden mislukt. Draai via een webserver (zie README).'); return; }
+  const m = location.hash.match(/room=([A-Z0-9]{4})/i);
+  if (m){ $('#codeIn').value = m[1].toUpperCase(); if (me.name) joinAsPeer(m[1].toUpperCase()); }
+})();
+
+/* expose voor tests */
+window.__lr = { get S(){return S}, get H(){return H}, countryAt, randomLocation, scoreFor, search };
+</script>
+</body>
+</html>
