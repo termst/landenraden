@@ -47,8 +47,24 @@ Alles staat in het `CONFIG` object bovenaan het script in `index.html`:
 * `score`: punten voor goed, aftrek per hint, minimum
 * `zoom` en `pan`: zoomniveau en bewegingsruimte per moeilijkheid
 * `tiles`: kaartlaag. Standaard Esri satelliet (geen labels, geen key nodig). Wil je Mapbox: zet je URL met key in `tiles.main.url` en beperk de key in Mapbox op je GitHub Pages domein.
-* `maxPlayers`, `resultAutoMs`, `hintsPerRound`
+* `street`: zoekinstellingen voor straatbeeld
+* `maxPlayers`, `resultAutoMs`
 * `CUR_FIX` (valuta-correcties op landcode) en `HINT_DEFS` (alle hinttypes, rang en groep)
+
+## Straatbeeld
+
+Kies in de lobby de modus **Straatbeeld**. De foto's komen van [Panoramax](https://panoramax.xyz) (open data, geen key, geen kosten). De host zoekt de foto, controleert of hij laadt en stuurt hem naar iedereen.
+
+* Dekking wisselt per land. De host zoekt in een willekeurig land en probeert een volgend land als er niets is. Lukt het niet, dan speelt die ronde op satelliet.
+* 360-foto's gaan voor. Niet elk land heeft ze, dan krijg je een gewone foto waarin je beperkt kunt rondkijken.
+* Moeilijk: je kunt niet rondkijken.
+* De maker en licentie van de foto staan op het uitslagscherm.
+
+Google Street View zit er niet in: dat vraagt een eigen API key met betaalaccount.
+
+## Font
+
+Display-tekst staat in The Bold Font (gratis versie, © Sven Pels). Het font is als base64 in `index.html` gezet, dus het laadt meteen en is voor iedereen gelijk. De gratis versie heeft alleen kapitalen en geen accenten: accenten worden in display-tekst weggehaald (Azië wordt AZIE). Getypte tekst (namen, chat, invoer) staat in het systeemfont. Controleer de licentie op [the-bold-font.com](https://the-bold-font.com/) voordat je de site breder of commercieel inzet.
 
 ## Goed om te weten
 
@@ -59,4 +75,4 @@ Alles staat in het `CONFIG` object bovenaan het script in `index.html`:
 
 ## Bronnen
 
-Natural Earth (publiek domein), world-countries (ODbL), Esri World Imagery, Leaflet, Trystero.
+Natural Earth (publiek domein), world-countries (ODbL), Esri World Imagery, Panoramax, Leaflet, Pannellum, Trystero, The Bold Font.
