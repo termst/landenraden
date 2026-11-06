@@ -64,7 +64,12 @@ Google Street View zit er niet in: dat vraagt een eigen API key met betaalaccoun
 
 ## Font
 
-Display-tekst staat in The Bold Font (gratis versie, © Sven Pels). Het font is als base64 in `index.html` gezet, dus het laadt meteen en is voor iedereen gelijk. De gratis versie heeft alleen kapitalen en geen accenten: accenten worden in display-tekst weggehaald (Azië wordt AZIE). Getypte tekst (namen, chat, invoer) staat in het systeemfont. Controleer de licentie op [the-bold-font.com](https://the-bold-font.com/) voordat je de site breder of commercieel inzet.
+Beide fonts staan als base64 in `index.html`, dus ze laden meteen en zijn voor iedereen gelijk.
+
+* **The Bold Font** (gratis versie, © Sven Pels): titels, knoppen en grote tekst. Alleen kapitalen en geen accenten, dus namen in dit font verliezen hun accent.
+* **Madani** (demo, NamelaType): uitleg, hints, labels, invoer en chat. Teruggebracht tot Latijnse letters om de pagina klein te houden. De cijfers in de demo zijn doorgestreepte blokjes en leestekens als `- ' ( ) : / ? !` ontbreken: die komen uit The Bold Font. Met een gekochte versie kun je de cijfers en leestekens gewoon meenemen.
+
+De demo van Madani is alleen voor persoonlijk gebruik. Koop een licentie op [namelatype.com](https://namelatype.com) voor promotioneel of commercieel gebruik, en controleer ook de licentie op [the-bold-font.com](https://the-bold-font.com/).
 
 ## Goed om te weten
 
