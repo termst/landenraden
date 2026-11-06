@@ -3,135 +3,202 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<meta name="theme-color" content="#0b0f14">
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22%3E%3Ccircle cx=%2250%22 cy=%2250%22 r=%2245%22 fill=%22%232ee6a6%22/%3E%3C/svg%3E">
+<meta name="theme-color" content="#f2ede2">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22%3E%3Ccircle cx=%2250%22 cy=%2250%22 r=%2245%22 fill=%22%23c2432b%22/%3E%3C/svg%3E">
 <title>Landenraden</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;700&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,500;0,9..144,600;1,9..144,500&family=DM+Sans:wght@400;500;600;700&family=DM+Mono:wght@400;500">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css">
 <style>
 :root{
-  --bg:#0b0f14;--bg2:#121821;--card:#161e29;--line:#253041;--text:#e8eef6;--mute:#8696aa;
-  --acc:#2ee6a6;--acc2:#ffb648;--bad:#ff5d6c;--ok:#2ee6a6;--r:16px;
-  --font:'Outfit',system-ui,sans-serif;--mono:'JetBrains Mono',ui-monospace,monospace;
+  --paper:#f2ede2;--card:#fbf8f1;--card2:#efe9db;--line:#d8cfbb;--ink:#1b2428;--mute:#6a7276;
+  --acc:#c2432b;--acc-d:#a43520;--sea:#1f5868;--gold:#b9801a;--bad:#b3261e;--ok:#2d7a4d;--r:12px;
+  --serif:'Fraunces',Georgia,serif;--font:'DM Sans',system-ui,sans-serif;--mono:'DM Mono',ui-monospace,monospace;
+  --shadow:0 1px 0 rgba(27,36,40,.06),0 6px 18px -8px rgba(27,36,40,.25);
 }
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
-html,body{margin:0;height:100%;background:var(--bg);color:var(--text);font-family:var(--font);font-size:16px}
+html,body{margin:0;height:100%;background:var(--paper);color:var(--ink);font-family:var(--font);font-size:16px}
 body{overflow:hidden}
 button,input,select{font:inherit;color:inherit}
-.screen{position:fixed;inset:0;display:none;flex-direction:column;overflow-y:auto;padding:max(16px,env(safe-area-inset-top)) 16px max(16px,env(safe-area-inset-bottom))}
-.screen.on{display:flex}
-.wrap{width:100%;max-width:520px;margin:0 auto;display:flex;flex-direction:column;gap:14px}
-h1{font-size:40px;line-height:1;margin:8px 0 0;font-weight:800;letter-spacing:-1px}
-h1 span{color:var(--acc)}
-h2{font-size:22px;margin:0;font-weight:700}
-.sub{color:var(--mute);margin:0}
-.card{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:16px;display:flex;flex-direction:column;gap:12px}
-label{font-size:13px;color:var(--mute);font-weight:500}
-input[type=text]{width:100%;background:var(--bg2);border:1px solid var(--line);border-radius:12px;padding:13px 14px;outline:none}
-input[type=text]:focus{border-color:var(--acc)}
-.btn{border:0;border-radius:12px;padding:14px 16px;font-weight:700;cursor:pointer;background:var(--line);transition:transform .08s,opacity .2s}
-.btn:active{transform:scale(.97)}
-.btn.pri{background:var(--acc);color:#04130d}
-.btn.sec{background:transparent;border:1px solid var(--line)}
-.btn.warn{background:var(--acc2);color:#1a1000}
-.btn:disabled{opacity:.4;pointer-events:none}
+:focus-visible{outline:2px solid var(--sea);outline-offset:2px}
+.screen{position:fixed;inset:0;display:none;flex-direction:column;overflow-y:auto;padding:max(18px,env(safe-area-inset-top)) 18px max(24px,env(safe-area-inset-bottom))}
+.screen.on{display:flex;animation:fade .25s ease}
+@keyframes fade{from{opacity:0}to{opacity:1}}
+.wrap{width:100%;max-width:540px;margin:0 auto;display:flex;flex-direction:column;gap:14px}
+h1{font-family:var(--serif);font-size:46px;line-height:1;margin:0;font-weight:600;letter-spacing:-1.2px;font-variation-settings:'opsz' 120}
+h1 em{font-style:italic;color:var(--acc);font-weight:500}
+h2{font-family:var(--serif);font-size:21px;margin:0;font-weight:600;letter-spacing:-.3px}
+.sub{color:var(--mute);margin:0;line-height:1.45}
+.card{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:16px;display:flex;flex-direction:column;gap:14px}
+.eyebrow,label{font-size:11.5px;color:var(--mute);font-weight:600;letter-spacing:.08em;text-transform:uppercase}
+input[type=text]{width:100%;background:#fff;border:1.5px solid var(--line);border-radius:10px;padding:13px 14px;outline:none;transition:border-color .15s,box-shadow .15s}
+input[type=text]:focus{border-color:var(--sea);box-shadow:0 0 0 3px rgba(31,88,104,.15)}
+.btn{border:1.5px solid var(--ink);border-radius:10px;padding:13px 16px;font-weight:600;cursor:pointer;background:var(--card);color:var(--ink);transition:transform .08s,background .15s,box-shadow .15s;box-shadow:0 2px 0 var(--ink)}
+.btn:hover{background:#fff}
+.btn:active{transform:translateY(2px);box-shadow:0 0 0 var(--ink)}
+.btn.pri{background:var(--acc);border-color:var(--acc-d);color:#fff;box-shadow:0 2px 0 var(--acc-d)}
+.btn.pri:hover{background:var(--acc-d)}
+.btn.pri:active{box-shadow:0 0 0 var(--acc-d)}
+.btn.sec{background:transparent;box-shadow:none;border-color:var(--line)}
+.btn.sec:hover{border-color:var(--ink);background:var(--card)}
+.btn.sec:active{transform:scale(.98)}
+.btn:disabled{opacity:.45;pointer-events:none}
 .row{display:flex;gap:10px;align-items:center}
 .row>*{flex:1}
+.topbar{display:flex;justify-content:space-between;align-items:center;gap:8px}
+.pill{display:inline-flex;align-items:center;gap:6px;background:var(--card);border:1px solid var(--line);border-radius:99px;padding:6px 13px;font-size:13px;font-weight:600;cursor:pointer;user-select:none;transition:border-color .15s,background .15s}
+.pill:hover{border-color:var(--ink);background:#fff}
+/* start */
+.hero{display:flex;align-items:center;gap:16px;margin-top:6px}
+.globe{width:76px;height:76px;flex:none;cursor:pointer;transition:transform .4s cubic-bezier(.3,1.6,.5,1)}
+.globe:hover{transform:rotate(20deg) scale(1.06)}
+.globe circle{fill:var(--card);stroke:var(--ink);stroke-width:2}
+.globe .g{fill:none;stroke:var(--sea);stroke-width:1.5;opacity:.75}
+.globe .m{transform-origin:50px 50px;animation:turn 6s linear infinite}
+.globe .m:nth-of-type(2){animation-delay:-2s}.globe .m:nth-of-type(3){animation-delay:-4s}
+@keyframes turn{0%{transform:scaleX(1)}50%{transform:scaleX(-1)}100%{transform:scaleX(1)}}
+.avatar{width:46px;height:46px;border-radius:50%;flex:none;display:grid;place-items:center;font-family:var(--serif);font-weight:600;font-size:21px;color:#fff;transition:background .2s,transform .2s}
+.avatar.bump{transform:scale(1.15)}
+.nameRow{display:flex;gap:12px;align-items:center}
 .colors{display:flex;gap:8px;flex-wrap:wrap}
-.colors button{width:34px;height:34px;border-radius:50%;border:3px solid transparent;cursor:pointer;flex:none}
-.colors button.on{border-color:var(--text)}
-.topbar{display:flex;justify-content:space-between;align-items:center}
-.pill{display:inline-flex;align-items:center;gap:6px;background:var(--bg2);border:1px solid var(--line);border-radius:99px;padding:6px 12px;font-size:13px;font-weight:600;cursor:pointer}
-.code{font-family:var(--mono);font-size:44px;font-weight:700;letter-spacing:8px;text-align:center;color:var(--acc)}
+.colors button{width:30px;height:30px;border-radius:50%;border:2px solid var(--card);box-shadow:0 0 0 1.5px var(--line);cursor:pointer;flex:none;transition:transform .15s,box-shadow .15s}
+.colors button:hover{transform:scale(1.12)}
+.colors button.on{box-shadow:0 0 0 2.5px var(--ink)}
+.divider{display:flex;align-items:center;gap:10px;color:var(--mute);font-size:12px}
+.divider::before,.divider::after{content:'';flex:1;height:1px;background:var(--line)}
+/* lobby */
+.code{font-family:var(--mono);font-size:46px;font-weight:500;letter-spacing:10px;text-align:center;padding-left:10px}
 .players{display:flex;flex-direction:column;gap:8px}
-.pl{display:flex;align-items:center;gap:10px;background:var(--bg2);border-radius:12px;padding:10px 12px}
+.pl{display:flex;align-items:center;gap:10px;background:var(--card2);border-radius:10px;padding:9px 12px;animation:pop .3s ease}
 .dot{width:12px;height:12px;border-radius:50%;flex:none}
 .pl .nm{flex:1;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.badge{font-size:11px;font-weight:700;padding:3px 8px;border-radius:99px;background:var(--acc2);color:#1a1000}
+.badge{font-size:10.5px;font-weight:700;padding:3px 8px;border-radius:99px;background:var(--ink);color:var(--paper);letter-spacing:.04em;text-transform:uppercase}
 .badge.off{background:var(--line);color:var(--mute)}
-.x{background:none;border:0;color:var(--mute);cursor:pointer;font-size:18px;padding:0 4px}
-.setgrid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-.seg{display:flex;background:var(--bg2);border:1px solid var(--line);border-radius:12px;padding:3px}
-.seg button{flex:1;border:0;background:none;padding:8px 4px;border-radius:9px;font-size:14px;font-weight:600;color:var(--mute);cursor:pointer}
-.seg button.on{background:var(--line);color:var(--text)}
+.x{background:none;border:0;color:var(--mute);cursor:pointer;font-size:20px;padding:0 4px;line-height:1}
+.x:hover{color:var(--bad)}
+.seg{display:flex;background:var(--card2);border-radius:10px;padding:3px;gap:2px}
+.seg button{flex:1;border:0;background:none;padding:8px 4px;border-radius:8px;font-size:14px;font-weight:600;color:var(--mute);cursor:pointer;transition:background .15s,color .15s}
+.seg button:hover{color:var(--ink)}
+.seg button.on{background:var(--card);color:var(--ink);box-shadow:0 1px 3px rgba(27,36,40,.18)}
 .seg.ro button{pointer-events:none}
 .seg.sm button{font-size:12px;padding:8px 1px}
-.field{display:flex;flex-direction:column;gap:6px}
-.err{color:var(--bad);font-size:14px;min-height:1em;margin:0}
+.field{display:flex;flex-direction:column;gap:7px}
+.err{color:var(--bad);font-size:14px;min-height:1.2em;margin:0}
 .toggle{display:flex;justify-content:space-between;align-items:center}
-.sw{width:46px;height:28px;border-radius:99px;background:var(--line);position:relative;cursor:pointer;border:0;flex:none}
-.sw::after{content:'';position:absolute;top:3px;left:3px;width:22px;height:22px;border-radius:50%;background:var(--text);transition:left .2s}
-.sw.on{background:var(--acc)}.sw.on::after{left:21px}
+.toggle label{text-transform:none;letter-spacing:0;font-size:14px;color:var(--ink);font-weight:500}
+.sw{width:46px;height:28px;border-radius:99px;background:var(--line);position:relative;cursor:pointer;border:0;flex:none;transition:background .2s}
+.sw::after{content:'';position:absolute;top:3px;left:3px;width:22px;height:22px;border-radius:50%;background:#fff;box-shadow:0 1px 3px rgba(0,0,0,.3);transition:left .2s}
+.sw.on{background:var(--sea)}.sw.on::after{left:21px}
+.chips{display:flex;flex-wrap:wrap;gap:7px}
+.chipbtn{border:1.5px solid var(--line);background:transparent;border-radius:99px;padding:6px 13px;font-size:13.5px;font-weight:600;cursor:pointer;color:var(--mute);transition:all .15s}
+.chipbtn:hover{border-color:var(--ink);color:var(--ink)}
+.chipbtn.on{background:var(--sea);border-color:var(--sea);color:#fff}
+.chips.ro .chipbtn{pointer-events:none}
+.note{font-size:12.5px;color:var(--mute);margin:-4px 0 0}
 /* game */
 #game{padding:0}
-#map{position:absolute;inset:0;background:#0a1a24}
-.hud{position:absolute;left:0;right:0;top:0;padding:max(10px,env(safe-area-inset-top)) 10px 0;display:flex;gap:8px;z-index:500;pointer-events:none}
+#map{position:absolute;inset:0;background:#1c2b30}
+.hud{position:absolute;left:0;right:0;top:0;padding:max(10px,env(safe-area-inset-top)) 10px 0;display:flex;gap:8px;z-index:500;pointer-events:none;align-items:stretch}
 .hud>*{pointer-events:auto}
-.chip{background:rgba(11,15,20,.82);backdrop-filter:blur(8px);border:1px solid var(--line);border-radius:12px;padding:8px 12px;font-weight:700;font-size:14px;display:flex;align-items:center;gap:6px}
-.chip.timer{font-family:var(--mono);font-size:18px;min-width:70px;justify-content:center}
-.chip.timer.low{color:var(--bad);border-color:var(--bad)}
+.chip{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:7px 12px;font-weight:600;font-size:14px;display:flex;flex-direction:column;justify-content:center;line-height:1.15;box-shadow:var(--shadow)}
+.chip small{font-size:10px;letter-spacing:.09em;text-transform:uppercase;color:var(--mute);font-weight:700}
+.chip b{font-family:var(--mono);font-weight:500;font-size:17px}
+.chip.timer{min-width:84px;align-items:center;position:relative;overflow:hidden}
+.chip.timer.low b{color:var(--bad);animation:throb 1s infinite}
+@keyframes throb{50%{opacity:.45}}
+.tbar{position:absolute;left:0;bottom:0;height:3px;background:var(--sea);width:100%;transform-origin:left;transition:background .3s}
+.chip.timer.low .tbar{background:var(--bad)}
 .grow{flex:1}
-.netdot{width:9px;height:9px;border-radius:50%;background:var(--ok)}
-.netdot.mid{background:var(--acc2)}.netdot.bad{background:var(--bad)}
-.panel{position:absolute;left:0;right:0;bottom:0;z-index:500;padding:10px 10px max(10px,env(safe-area-inset-bottom));display:flex;flex-direction:column;gap:8px;max-width:560px;margin:0 auto}
-.hints{background:rgba(11,15,20,.88);backdrop-filter:blur(10px);border:1px solid var(--line);border-radius:var(--r);padding:12px;display:flex;flex-direction:column;gap:6px;max-height:34vh;overflow-y:auto}
-.hint{display:flex;gap:10px;align-items:baseline;font-size:15px;animation:pop .35s ease}
-.hint b{color:var(--acc);font-family:var(--mono);font-size:12px;flex:none;width:18px}
-.hint .k{color:var(--mute);font-size:13px;flex:none;min-width:92px}
-.next{font-size:12px;color:var(--mute);display:flex;align-items:center;gap:8px}
+.netdot{width:9px;height:9px;border-radius:50%;background:var(--ok);margin:auto}
+.netdot.mid{background:var(--gold)}.netdot.bad{background:var(--bad)}
+.mapctl{position:absolute;right:10px;top:calc(max(10px,env(safe-area-inset-top)) + 62px);z-index:500;display:flex;flex-direction:column;gap:6px}
+.mapctl button{width:38px;height:38px;border-radius:10px;border:1px solid var(--line);background:var(--card);box-shadow:var(--shadow);font-size:20px;font-weight:600;cursor:pointer;line-height:1;transition:background .15s,transform .1s}
+.mapctl button:hover{background:#fff}.mapctl button:active{transform:scale(.92)}
+.mapctl.off{display:none}
+.panel{position:absolute;left:0;right:0;bottom:0;z-index:500;padding:10px 10px max(10px,env(safe-area-inset-bottom));display:flex;flex-direction:column;gap:8px;max-width:580px;margin:0 auto}
+.hints{background:var(--card);border:1px solid var(--line);border-radius:var(--r);box-shadow:var(--shadow);display:flex;flex-direction:column;overflow:hidden}
+.hhead{display:flex;align-items:center;gap:8px;padding:9px 10px 9px 14px;cursor:pointer;user-select:none}
+.hhead .eyebrow{flex:1}
+.hhead .eyebrow b{color:var(--ink);font-family:var(--mono);font-weight:500;margin-left:6px}
+.mini{border:1.5px solid var(--ink);background:transparent;border-radius:8px;padding:5px 10px;font-size:12.5px;font-weight:700;cursor:pointer;transition:background .15s,color .15s,opacity .15s}
+.mini:hover{background:var(--ink);color:var(--paper)}
+.mini:disabled{opacity:.35;pointer-events:none}
+.mini.voted{background:var(--sea);border-color:var(--sea);color:#fff;pointer-events:none}
+.chev{width:26px;text-align:center;color:var(--mute);transition:transform .2s;font-size:13px}
+.hints.shut .chev{transform:rotate(180deg)}
+.hints.shut #hintList,.hints.shut .next{display:none}
+#hintList{max-height:30vh;overflow-y:auto;border-top:1px solid var(--line)}
+.hint{display:flex;gap:12px;align-items:baseline;padding:9px 14px;font-size:15.5px;border-bottom:1px solid var(--line);animation:slide .4s cubic-bezier(.2,.9,.3,1)}
+.hint:last-child{border-bottom:0}
+.hint.new{background:#fff5d6;animation:slide .4s cubic-bezier(.2,.9,.3,1),flash 2.2s ease forwards}
+@keyframes flash{to{background:transparent}}
+.hint b{font-family:var(--mono);font-weight:500;font-size:12px;flex:none;width:20px;height:20px;border-radius:50%;background:var(--ink);color:var(--paper);display:grid;place-items:center;align-self:center}
+.hint .k{color:var(--mute);font-size:11px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;flex:none;min-width:84px}
+.hint .v{font-family:var(--serif);font-weight:500;font-size:16.5px;line-height:1.3}
+.hint .v img{height:34px;border-radius:3px;box-shadow:0 0 0 1px var(--line);vertical-align:middle}
+.next{font-size:12px;color:var(--mute);display:flex;align-items:center;gap:10px;padding:8px 14px;border-top:1px solid var(--line);background:var(--card2)}
+.next b{font-family:var(--mono);font-weight:500;color:var(--ink);min-width:24px;text-align:right}
 .bar{height:4px;background:var(--line);border-radius:4px;flex:1;overflow:hidden}
-.bar i{display:block;height:100%;background:var(--acc2);width:0}
-@keyframes pop{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+.bar i{display:block;height:100%;background:var(--acc);width:0}
+@keyframes pop{from{opacity:0;transform:scale(.96)}to{opacity:1;transform:none}}
+@keyframes slide{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
 .answer{position:relative;display:flex;gap:8px}
-.answer input{background:rgba(11,15,20,.92)!important;backdrop-filter:blur(10px)}
+.answer input{box-shadow:var(--shadow);border-color:var(--ink)}
 .answer .btn{flex:none}
-.ac{position:absolute;left:0;right:0;bottom:calc(100% + 6px);background:var(--card);border:1px solid var(--line);border-radius:12px;overflow:hidden;display:none}
+.ac{position:absolute;left:0;right:0;bottom:calc(100% + 6px);background:var(--card);border:1px solid var(--ink);border-radius:10px;overflow:hidden;display:none;box-shadow:var(--shadow)}
 .ac.on{display:block}
-.ac div{padding:12px 14px;cursor:pointer;display:flex;gap:10px}
-.ac div.sel,.ac div:hover{background:var(--line)}
-.locked{background:rgba(46,230,166,.14);border:1px solid var(--acc);border-radius:12px;padding:12px 14px;font-weight:600}
+.ac div{padding:11px 14px;cursor:pointer;display:flex;gap:12px;align-items:center}
+.ac div img{width:24px;height:18px;object-fit:cover;border-radius:2px;box-shadow:0 0 0 1px var(--line)}
+.ac div.sel,.ac div:hover{background:var(--card2)}
+.ac mark{background:none;font-weight:700;color:var(--acc)}
+.locked{background:var(--ink);color:var(--paper);border-radius:10px;padding:13px 14px;font-weight:600;display:flex;gap:10px;align-items:center;box-shadow:var(--shadow);animation:pop .25s ease}
+.locked img{height:18px;border-radius:2px}
+.locked span{margin-left:auto;font-size:12px;opacity:.65;font-weight:500}
 .who{display:flex;gap:6px;flex-wrap:wrap}
-.who span{font-size:12px;font-weight:600;padding:4px 9px;border-radius:99px;background:rgba(11,15,20,.82);border:1px solid var(--line);display:flex;align-items:center;gap:5px}
-.who span.done{border-color:var(--acc)}
+.who span{font-size:12px;font-weight:600;padding:4px 10px;border-radius:99px;background:var(--card);border:1px solid var(--line);display:flex;align-items:center;gap:6px;box-shadow:var(--shadow);transition:all .2s}
+.who span.done{border-color:var(--ok);background:#e5f1e8}
 .who span.off{opacity:.45}
 /* result */
-#rmap{height:38vh;min-height:220px;border-radius:var(--r);overflow:hidden;border:1px solid var(--line)}
-.answerbig{display:flex;align-items:center;gap:12px}
-.answerbig .fl{font-size:44px;line-height:1}
-.answerbig .nm{font-size:26px;font-weight:800}
+#rmap{height:36vh;min-height:220px;border-radius:var(--r);overflow:hidden;border:1px solid var(--line);flex:none}
+.answerbig{display:flex;align-items:center;gap:14px}
+.answerbig img{height:44px;border-radius:4px;box-shadow:0 0 0 1px var(--line);animation:pop .4s ease}
+.answerbig .nm{font-family:var(--serif);font-size:28px;font-weight:600;letter-spacing:-.5px;line-height:1.1}
 table{width:100%;border-collapse:collapse;font-size:14px}
-th{color:var(--mute);font-weight:500;text-align:left;padding:6px 4px;font-size:12px}
-td{padding:9px 4px;border-top:1px solid var(--line)}
+th{color:var(--mute);font-weight:700;text-align:left;padding:6px 4px;font-size:10.5px;letter-spacing:.08em;text-transform:uppercase}
+td{padding:10px 4px;border-top:1px solid var(--line)}
 td.n{text-align:right;font-family:var(--mono)}
-.good{color:var(--ok)}.half{color:var(--acc2)}.miss{color:var(--bad)}
-.plus{font-family:var(--mono);font-weight:700}
+td img{height:14px;border-radius:2px;vertical-align:-2px;margin-right:4px}
+tbody tr{animation:slide .4s ease backwards}
+.good{color:var(--ok)}.half{color:var(--gold)}.miss{color:var(--bad)}
+.plus{font-family:var(--mono);font-weight:500}
 /* final */
-.podium{display:flex;align-items:flex-end;gap:8px;height:200px;margin-top:10px}
-.pod{flex:1;display:flex;flex-direction:column;align-items:center;gap:6px}
-.pod .blk{width:100%;border-radius:12px 12px 4px 4px;display:flex;align-items:flex-start;justify-content:center;padding-top:8px;font-family:var(--mono);font-weight:700;font-size:22px;color:#0b0f14}
+.podium{display:flex;align-items:flex-end;gap:10px;height:210px;margin-top:6px}
+.pod{flex:1;display:flex;flex-direction:column;align-items:center;gap:4px}
+.pod .blk{width:100%;border-radius:10px 10px 0 0;display:flex;align-items:flex-start;justify-content:center;padding-top:8px;font-family:var(--serif);font-weight:600;font-size:26px;color:#fff;transform-origin:bottom;animation:grow .7s cubic-bezier(.2,.9,.3,1) backwards}
+@keyframes grow{from{transform:scaleY(0)}}
 .pod .pn{font-weight:700;font-size:14px;text-align:center;overflow:hidden;text-overflow:ellipsis;max-width:100%;white-space:nowrap}
 .pod .ps{font-family:var(--mono);font-size:13px;color:var(--mute)}
 .stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
-.stat{background:var(--bg2);border-radius:12px;padding:10px;display:flex;flex-direction:column;gap:2px}
-.stat small{color:var(--mute);font-size:11px}
-.stat b{font-size:15px}
-.stat i{font-style:normal;font-size:12px;color:var(--mute)}
+.stat{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:11px;display:flex;flex-direction:column;gap:3px}
+.stat small{color:var(--mute);font-size:10.5px;font-weight:700;letter-spacing:.07em;text-transform:uppercase}
+.stat b{font-size:15px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.stat i{font-style:normal;font-size:12px;color:var(--mute);font-family:var(--mono)}
 /* overlay */
-.ov{position:fixed;inset:0;z-index:2000;background:rgba(5,8,12,.82);backdrop-filter:blur(6px);display:none;align-items:center;justify-content:center;padding:24px}
-.ov.on{display:flex}
-.ov .card{max-width:420px;width:100%;text-align:center;align-items:center}
-.spin{width:38px;height:38px;border:4px solid var(--line);border-top-color:var(--acc);border-radius:50%;animation:sp 0.9s linear infinite}
+.ov{position:fixed;inset:0;z-index:2000;background:rgba(27,36,40,.55);display:none;align-items:center;justify-content:center;padding:24px}
+.ov.on{display:flex;animation:fade .2s}
+.ov .card{max-width:420px;width:100%;text-align:center;align-items:center;box-shadow:var(--shadow)}
+.spin{width:34px;height:34px;border:3px solid var(--line);border-top-color:var(--acc);border-radius:50%;animation:sp .8s linear infinite}
 @keyframes sp{to{transform:rotate(360deg)}}
 .modal .card{text-align:left;align-items:stretch;max-height:85vh;overflow-y:auto}
-.modal p,.modal li{color:#c7d2df;line-height:1.5;margin:0}
-.modal ul{margin:0;padding-left:18px;display:flex;flex-direction:column;gap:6px}
-.toast{position:fixed;left:50%;top:max(14px,env(safe-area-inset-top));transform:translateX(-50%) translateY(calc(-100% - 40px));z-index:3000;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:10px 16px;font-weight:600;transition:transform .3s;white-space:nowrap}
+.modal p,.modal li{color:#3a454a;line-height:1.5;margin:0}
+.modal ul{margin:0;padding-left:18px;display:flex;flex-direction:column;gap:7px}
+.toast{position:fixed;left:50%;top:max(14px,env(safe-area-inset-top));transform:translateX(-50%) translateY(calc(-100% - 40px));z-index:3000;background:var(--ink);color:var(--paper);border-radius:10px;padding:10px 16px;font-weight:600;transition:transform .3s;white-space:nowrap;box-shadow:var(--shadow)}
 .toast.on{transform:translateX(-50%) translateY(0)}
-.leaflet-container{font-family:var(--font);background:#0a1a24}
-.leaflet-control-attribution{font-size:9px!important;background:rgba(11,15,20,.6)!important;color:var(--mute)!important}
+.leaflet-container{font-family:var(--font);background:#1c2b30}
+.leaflet-control-attribution{font-size:9px!important;background:rgba(251,248,241,.8)!important;color:var(--mute)!important}
 .leaflet-control-attribution a{color:var(--mute)!important}
-.footer{color:var(--mute);font-size:12px;text-align:center}
+.footer{color:var(--mute);font-size:12.5px;text-align:center}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
 </style>
 </head>
 <body>
@@ -146,15 +213,24 @@ td.n{text-align:right;font-family:var(--mono)}
         <span class="pill" id="rulesBtn" data-i="rules"></span>
       </span>
     </div>
-    <h1>Landen<span>raden</span></h1>
+    <div class="hero">
+      <svg class="globe" id="globe" viewBox="0 0 100 100" aria-hidden="true">
+        <circle cx="50" cy="50" r="45"/>
+        <ellipse class="g m" cx="50" cy="50" rx="45" ry="45"/><ellipse class="g m" cx="50" cy="50" rx="45" ry="45"/><ellipse class="g m" cx="50" cy="50" rx="45" ry="45"/>
+        <line class="g" x1="5" y1="50" x2="95" y2="50"/><path class="g" d="M10 30 Q50 38 90 30"/><path class="g" d="M10 70 Q50 62 90 70"/>
+      </svg>
+      <div><h1>Landen<em>raden</em></h1></div>
+    </div>
     <p class="sub" data-i="tagline"></p>
     <div class="card">
-      <div class="field"><label data-i="yourName"></label><input type="text" id="name" maxlength="16" autocomplete="off"></div>
+      <div class="field"><label data-i="yourName" for="name"></label>
+        <div class="nameRow"><div class="avatar" id="avatar"></div><input type="text" id="name" maxlength="16" autocomplete="off"></div></div>
       <div class="field"><label data-i="yourColor"></label><div class="colors" id="colors"></div></div>
     </div>
     <div class="card">
       <button class="btn pri" id="createBtn" data-i="create"></button>
-      <div class="row"><input type="text" id="codeIn" maxlength="4" style="text-transform:uppercase;font-family:var(--mono);letter-spacing:4px;text-align:center" placeholder="ABCD" autocomplete="off"><button class="btn" id="joinBtn" data-i="join" style="flex:none;min-width:110px"></button></div>
+      <div class="row"><input type="text" id="codeIn" maxlength="4" style="text-transform:uppercase;font-family:var(--mono);letter-spacing:5px;text-align:center" placeholder="ABCD" autocomplete="off"><button class="btn" id="joinBtn" data-i="join" style="flex:none;min-width:110px"></button></div>
+      <div class="divider">·</div>
       <button class="btn sec" id="soloBtn" data-i="solo"></button>
       <p class="err" id="startErr"></p>
     </div>
@@ -166,10 +242,10 @@ td.n{text-align:right;font-family:var(--mono)}
 <section class="screen" id="lobby">
   <div class="wrap">
     <div class="topbar"><span class="pill" id="leaveBtn" data-i="leave"></span><span class="pill" id="rulesBtn2" data-i="rules"></span></div>
-    <div class="card" style="align-items:center">
+    <div class="card" style="align-items:center;gap:8px">
       <label data-i="roomCode"></label>
       <div class="code" id="lobbyCode">----</div>
-      <div class="row" style="width:100%"><button class="btn sec" id="copyBtn" data-i="copyCode"></button><button class="btn sec" id="shareBtn" data-i="share"></button></div>
+      <div class="row" style="width:100%;margin-top:6px"><button class="btn sec" id="copyBtn" data-i="copyCode"></button><button class="btn sec" id="shareBtn" data-i="share"></button></div>
     </div>
     <div class="card">
       <div class="topbar"><h2 data-i="players"></h2><span class="sub" id="pCount"></span></div>
@@ -179,11 +255,17 @@ td.n{text-align:right;font-family:var(--mono)}
       <h2 data-i="settings"></h2>
       <div class="field"><label data-i="rounds"></label><div class="seg" data-set="rounds" data-opts="5,10,15"></div></div>
       <div class="field"><label data-i="roundTime"></label><div class="seg" data-set="roundTime" data-opts="30,60,90" data-suf="s"></div></div>
-      <div class="field"><label data-i="hintEvery"></label><div class="seg" data-set="hintEvery" data-opts="5,10,15" data-suf="s"></div></div>
       <div class="field"><label data-i="difficulty"></label><div class="seg" data-set="difficulty" data-opts="easy,normal,hard"></div></div>
       <div class="field"><label data-i="continent"></label><div class="seg sm" data-set="continent" data-opts="ALL,EU,AF,AS,AM,OC"></div></div>
       <div class="field"><label data-i="weighting"></label><div class="seg" data-set="weighting" data-opts="uniform,area"></div></div>
-      <div class="toggle"><label data-i="smallCountries"></label><button class="sw" data-sw="small"></button></div>
+      <div class="toggle"><label data-i="smallCountries"></label><button class="sw" data-sw="small" aria-label="toggle"></button></div>
+    </div>
+    <div class="card" id="hintCard">
+      <h2 data-i="hintSettings"></h2>
+      <div class="field"><label data-i="hintCount"></label><div class="seg" data-set="hintCount" data-opts="4,6,8"></div></div>
+      <div class="field"><label data-i="hintEvery"></label><div class="seg" data-set="hintEvery" data-opts="5,10,15,20" data-suf="s"></div></div>
+      <div class="field"><label data-i="hintTypes"></label><div class="chips" id="hintChips"></div></div>
+      <p class="note" data-i="hintNote"></p>
     </div>
     <button class="btn pri" id="startBtn"></button>
     <p class="sub" id="waitHost" style="text-align:center" data-i="waitHost"></p>
@@ -194,17 +276,21 @@ td.n{text-align:right;font-family:var(--mono)}
 <section class="screen" id="game">
   <div id="map"></div>
   <div class="hud">
-    <div class="chip" id="roundChip"></div>
+    <div class="chip"><small data-i="roundLbl"></small><b id="roundChip"></b></div>
     <div class="grow"></div>
-    <div class="chip" id="scoreChip"></div>
-    <div class="chip timer" id="timerChip">0:00</div>
-    <div class="chip" title="net"><span class="netdot" id="netDot"></span></div>
+    <div class="chip"><small data-i="scoreLbl"></small><b id="scoreChip"></b></div>
+    <div class="chip timer"><small data-i="timeLbl"></small><b id="timerChip">0:00</b><i class="tbar" id="timerBar"></i></div>
+    <div class="chip" title="net" style="padding:7px 10px"><span class="netdot" id="netDot"></span></div>
+  </div>
+  <div class="mapctl" id="mapctl">
+    <button id="zIn" aria-label="zoom in">+</button><button id="zOut" aria-label="zoom out">&minus;</button><button id="zHome" aria-label="recenter">&#9678;</button>
   </div>
   <div class="panel">
     <div class="who" id="who"></div>
-    <div class="hints">
+    <div class="hints" id="hintsBox">
+      <div class="hhead" id="hintHead"><span class="eyebrow"><span data-i="hintsTitle"></span><b id="hintCountTxt"></b></span><button class="mini" id="hintNow"></button><span class="chev">&#9660;</span></div>
       <div id="hintList"></div>
-      <div class="next" id="nextHint"><span data-i="nextHint"></span><div class="bar"><i id="hintBar"></i></div></div>
+      <div class="next" id="nextHint"><span data-i="nextHint"></span><div class="bar"><i id="hintBar"></i></div><b id="nextSecs"></b></div>
     </div>
     <div class="answer" id="answerBox">
       <div class="ac" id="ac"></div>
@@ -220,7 +306,7 @@ td.n{text-align:right;font-family:var(--mono)}
   <div class="wrap">
     <div class="topbar"><h2 id="resTitle"></h2><span class="pill" id="resTimer"></span></div>
     <div id="rmap"></div>
-    <div class="card"><div class="answerbig"><span class="fl" id="resFlag"></span><div><div class="nm" id="resName"></div><div class="sub" id="resSub"></div></div></div></div>
+    <div class="card"><div class="answerbig"><span id="resFlag"></span><div><div class="nm" id="resName"></div><div class="sub" id="resSub"></div></div></div></div>
     <div class="card" style="padding:10px 12px">
       <table><thead><tr><th data-i="player"></th><th data-i="guessCol"></th><th class="n" data-i="timeCol"></th><th class="n">+</th><th class="n" data-i="total"></th></tr></thead><tbody id="resBody"></tbody></table>
     </div>
@@ -231,7 +317,7 @@ td.n{text-align:right;font-family:var(--mono)}
 <!-- FINAL -->
 <section class="screen" id="final">
   <div class="wrap">
-    <h1 style="font-size:34px" data-i="finalTitle"></h1>
+    <h1 style="font-size:36px" data-i="finalTitle"></h1>
     <div class="podium" id="podium"></div>
     <div class="card" style="padding:10px 12px">
       <table><thead><tr><th>#</th><th data-i="player"></th><th class="n" data-i="correct"></th><th class="n" data-i="total"></th></tr></thead><tbody id="finBody"></tbody></table>
@@ -262,10 +348,10 @@ const CONFIG = {
   reserveMs: 30000,
   joinTimeoutMs: 15000,
   resultAutoMs: 8000,
-  score: { correct: 1000, perHint: 125, continent: 100, min: 300, timeBase: 0.6, timeWeight: 0.4 },
+  score: { correct: 1000, perHint: 100, continent: 100, min: 300, timeBase: 0.6, timeWeight: 0.4 },
   zoom: { easy: 6, normal: 7, hard: 8 },
   pan:  { easy: 3, normal: 1.2, hard: 0 },
-  hintsPerRound: 6,
+  hintsPerRound: 8,
   // Kaartlaag. Satelliet zonder labels. Wissel hier voor Mapbox/Google tiles (zie README).
   tiles: {
     main: { url: 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', attr: 'Tiles &copy; Esri', maxZoom: 18 },
@@ -277,7 +363,11 @@ const CONFIG = {
     // { urls: 'turn:global.relay.metered.ca:443?transport=tcp', username: 'JOUW_USERNAME', credential: 'JOUW_CREDENTIAL' },
   ],
 };
-const COLORS = ['#2ee6a6','#ffb648','#ff5d6c','#58a6ff','#c084fc','#f472b6','#facc15','#94a3b8'];
+const COLORS = ['#c2432b','#1f5868','#b9801a','#5b6ee1','#8a4fa8','#2d7a4d','#d46a8f','#4a5258'];
+// Hintgroepen die de host aan/uit kan zetten in de lobby
+const HINT_GROUPS = ['geo','people','money','codes','nb','name'];
+// Valuta-correcties (de brondata heeft enkele fouten of verouderde codes)
+const CUR_FIX = { ZW:['ZWG','USD'], FM:['USD'], SL:['SLE'], BG:['EUR'], CU:['CUP'], PS:['ILS','JOD'], EH:['MAD'], SV:['USD'], CD:['CDF','USD'], LR:['LRD','USD'], VE:['VES','USD'], TL:['USD'], ZM:['ZMW'], KH:['KHR','USD'], PA:['PAB','USD'], EC:['USD'], MH:['USD'], PW:['USD'], KI:['AUD'], TV:['AUD'], NR:['AUD'], LI:['CHF'], MC:['EUR'], SM:['EUR'], VA:['EUR'], AD:['EUR'], XK:['EUR'], ME:['EUR'], HR:['EUR'], SK:['EUR'] };
 
 /* ================= I18N ================= */
 const I18N = {
@@ -306,11 +396,19 @@ const I18N = {
   left:'links', right:'rechts', landlocked:'geen kust', coast:'aan zee', island:'eiland of geen landgrenzen', nbCount:'{n} buurlanden',
   pop0:'minder dan 1 miljoen', pop1:'1 tot 10 miljoen', pop2:'10 tot 50 miljoen', pop3:'50 tot 150 miljoen', pop4:'meer dan 150 miljoen',
   capLetter:'begint met {l}', nameLetter:'begint met {l}, {n} letters',
+  hintMin:'Houd minstens één soort aan', roundLbl:'Ronde', scoreLbl:'Score', timeLbl:'Tijd', hintsTitle:'Hints', hintNow:'Hint nu', hintNowVote:'Hint nu ({a}/{b})', hintVoted:'Wacht op anderen ({a}/{b})',
+  hintSettings:'Hints', hintCount:'Aantal hints', hintTypes:'Soorten hints', hintNote:'Vaag naar concreet. Elke extra hint die je ziet kost 100 punten.',
+  g_geo:'Geografie', g_people:'Mensen', g_money:'Geld', g_codes:'Codes', g_nb:'Buren', g_name:'Naam en vlag',
+  h_hemi:'Halfrond', h_climate:'Klimaat', h_size:'Grootte', h_cursym:'Symbool', h_curshare:'Munt gedeeld', h_nb1:'Grenst aan', h_namelen:'Lengte naam', h_flag:'Vlag',
+  hN:'noordelijk halfrond', hS:'zuidelijk halfrond', hE:'oostelijk', hW:'westelijk',
+  cl0:'tropisch, dicht bij de evenaar', cl1:'subtropisch', cl2:'gematigd', cl3:'koud', cl4:'poolgebied',
+  s0:'kleiner dan 10.000 km²', s1:'10.000 tot 100.000 km²', s2:'100.000 tot 500.000 km²', s3:'500.000 tot 2 miljoen km²', s4:'groter dan 2 miljoen km²',
+  curOnly:'alleen hier in gebruik', curShared:'ook in {n} andere landen of gebieden', nameLen:'{n} letters', borders:'grenst aan {c}',
   rulesHtml:`<ul>
    <li>Iedereen ziet hetzelfde stuk satellietkaart op een willekeurige plek op aarde.</li>
-   <li>Om de paar seconden komt er een hint vrij, van vaag naar concreet.</li>
+   <li>Om de paar seconden komt er een hint vrij, van vaag naar concreet. Wil je er nu een? Klik op <b>Hint nu</b> (alle spelers moeten het willen).</li>
    <li>Typ het land en zet je antwoord vast. Je eerste antwoord telt.</li>
-   <li><b>Score</b>: goed land 1000 punten, min 125 per extra hint die je zag, maal 60% plus 40% van je resterende tijd. Minimaal 300.</li>
+   <li><b>Score</b>: goed land 1000 punten, min 100 per extra hint die je zag, maal 60% plus 40% van je resterende tijd. Minimaal 300.</li>
    <li>Fout land maar goed continent: 100 punten. Fout: 0.</li>
    <li>De ronde stopt zodra iedereen heeft geantwoord of de tijd op is.</li>
    <li>Moeilijk: verder ingezoomd en je kunt niet bewegen. Makkelijk: verder uitgezoomd en je mag schuiven.</li>
@@ -341,11 +439,19 @@ const I18N = {
   left:'left', right:'right', landlocked:'landlocked', coast:'has coastline', island:'island or no land borders', nbCount:'{n} neighbours',
   pop0:'under 1 million', pop1:'1 to 10 million', pop2:'10 to 50 million', pop3:'50 to 150 million', pop4:'over 150 million',
   capLetter:'starts with {l}', nameLetter:'starts with {l}, {n} letters',
+  hintMin:'Keep at least one type on', roundLbl:'Round', scoreLbl:'Score', timeLbl:'Time', hintsTitle:'Hints', hintNow:'Hint now', hintNowVote:'Hint now ({a}/{b})', hintVoted:'Waiting for others ({a}/{b})',
+  hintSettings:'Hints', hintCount:'Number of hints', hintTypes:'Hint types', hintNote:'Vague to specific. Every extra hint you see costs 100 points.',
+  g_geo:'Geography', g_people:'People', g_money:'Money', g_codes:'Codes', g_nb:'Neighbours', g_name:'Name and flag',
+  h_hemi:'Hemisphere', h_climate:'Climate', h_size:'Size', h_cursym:'Symbol', h_curshare:'Shared currency', h_nb1:'Borders', h_namelen:'Name length', h_flag:'Flag',
+  hN:'northern hemisphere', hS:'southern hemisphere', hE:'eastern', hW:'western',
+  cl0:'tropical, close to the equator', cl1:'subtropical', cl2:'temperate', cl3:'cold', cl4:'polar',
+  s0:'smaller than 10,000 km²', s1:'10,000 to 100,000 km²', s2:'100,000 to 500,000 km²', s3:'500,000 to 2 million km²', s4:'larger than 2 million km²',
+  curOnly:'used only here', curShared:'also used in {n} other countries or territories', nameLen:'{n} letters', borders:'borders {c}',
   rulesHtml:`<ul>
    <li>Everyone sees the same piece of satellite map at a random spot on earth.</li>
-   <li>Every few seconds a hint unlocks, from vague to specific.</li>
+   <li>Every few seconds a hint unlocks, from vague to specific. Want one now? Press <b>Hint now</b> (all players must agree).</li>
    <li>Type the country and lock in. Your first answer counts.</li>
-   <li><b>Score</b>: right country 1000 points, minus 125 per extra hint you saw, times 60% plus 40% of your remaining time. Minimum 300.</li>
+   <li><b>Score</b>: right country 1000 points, minus 100 per extra hint you saw, times 60% plus 40% of your remaining time. Minimum 300.</li>
    <li>Wrong country, right continent: 100 points. Wrong: 0.</li>
    <li>The round ends when everyone answered or time runs out.</li>
    <li>Hard: zoomed in further and no moving. Easy: zoomed out and panning allowed.</li>
@@ -380,6 +486,19 @@ function toast(msg){ const el=$('#toast'); el.textContent=msg; el.classList.add(
 function show(id){ document.querySelectorAll('.screen').forEach(s=>s.classList.toggle('on', s.id===id)); }
 function overlay(text, sub='', cancel=false){ const o=$('#ovLoad'); if(!text){o.classList.remove('on');return;} $('#ovText').textContent=text; $('#ovSub').textContent=sub; $('#ovCancel').style.display=cancel?'':'none'; o.classList.add('on'); }
 const cname = code => code && COUNTRIES[code] ? COUNTRIES[code][lang] || COUNTRIES[code].en : '?';
+// Vlaggen als plaatje (Windows toont vlag-emoji als letters)
+const flagImg = (code, w=40) => code ? `<img src="https://flagcdn.com/w${w}/${code.toLowerCase()}.png" alt="" loading="lazy" onerror="this.replaceWith(document.createTextNode('${COUNTRIES[code]?.flag||''}'))">` : '';
+// Valuta's: gecorrigeerde lijst + hoeveel landen dezelfde hoofdmunt gebruiken
+let CODES = {}, CURCOUNT = {};
+function buildCurrencies(){
+  CODES = {}; CURCOUNT = {};
+  for (const [code, c] of Object.entries(COUNTRIES)){
+    CODES[code] = CUR_FIX[code] || [...new Set(c.cur.map(x=>x[0]).filter(x=>x!=='CUC'))];
+    if (CODES[code][0]) CURCOUNT[CODES[code][0]] = (CURCOUNT[CODES[code][0]]||0) + 1;
+  }
+}
+const curSym = cc => { try { return new Intl.NumberFormat(lang,{style:'currency',currency:cc,currencyDisplay:'narrowSymbol'}).formatToParts(1).find(p=>p.type==='currency').value; } catch(e){ return cc; } };
+const curName = cc => { try { return new Intl.DisplayNames([lang],{type:'currency'}).of(cc); } catch(e){ return cc; } };
 
 /* sound */
 let sound = localStorage.getItem('lr_sound') !== '0', actx;
@@ -395,7 +514,7 @@ let COUNTRIES = {}, GEO = {}, SEARCH = [];
 async function loadData(){
   overlay(t('loading'));
   const [c, g] = await Promise.all([fetch('data/countries.json').then(r=>r.json()), fetch('data/countries.geojson').then(r=>r.json())]);
-  COUNTRIES = c;
+  COUNTRIES = c; buildCurrencies();
   for (const f of g.features){
     const polys = f.geometry.coordinates.map(rings => {
       const outer = rings[0]; let minX=180,minY=90,maxX=-180,maxY=-90, a=0;
@@ -450,42 +569,68 @@ function randomLocation(settings, used){
 }
 
 /* ================= HINTS ================= */
-// Rang: laag = vaag. Host kiest welke hints, clients vertalen zelf.
+// r = rang (laag = vaag), g = groep (aan/uit in lobby), f = familie (max 1 per ronde in het midden)
 const HINT_DEFS = [
-  { k:'cont', r:0, ok:c=>true },
-  { k:'drive', r:1, ok:c=>true },
-  { k:'coast', r:1, ok:c=>true },
-  { k:'pop', r:2, ok:c=>true },
-  { k:'sub', r:2, ok:c=>!!c.sub },
-  { k:'lang', r:3, ok:c=>c.lang.length>0 },
-  { k:'cur', r:3, ok:c=>c.cur.length>0 },
-  { k:'tel', r:4, ok:c=>!!c.tel && c.tel.length>2 },
-  { k:'nb', r:5, ok:c=>c.nb.length>0 },
-  { k:'tld', r:5, ok:c=>!!c.tld },
-  { k:'cap', r:6, ok:c=>!!c.cap },
-  { k:'name', r:7, ok:c=>true },
+  { k:'cont',     r:0, g:'geo',    f:'cont',   ok:c=>true },
+  { k:'hemi',     r:1, g:'geo',    f:'hemi',   ok:c=>true },
+  { k:'climate',  r:1, g:'geo',    f:'climate',ok:c=>true },
+  { k:'drive',    r:1, g:'geo',    f:'drive',  ok:c=>true },
+  { k:'coast',    r:2, g:'geo',    f:'coast',  ok:c=>true },
+  { k:'size',     r:2, g:'geo',    f:'size',   ok:c=>c.area>0 },
+  { k:'sub',      r:2, g:'geo',    f:'sub',    ok:c=>!!c.sub },
+  { k:'pop',      r:2, g:'people', f:'pop',    ok:c=>true },
+  { k:'lang',     r:3, g:'people', f:'lang',   ok:c=>c.lang.length>0 },
+  { k:'curshare', r:3, g:'money',  f:'cur',    ok:(c,code)=>!!(CODES[code]&&CODES[code][0]) },
+  { k:'cursym',   r:3, g:'money',  f:'cur',    ok:(c,code)=>!!(CODES[code]&&CODES[code][0]) },
+  { k:'tel',      r:4, g:'codes',  f:'tel',    ok:c=>!!c.tel && c.tel.length>2 },
+  { k:'cur',      r:4, g:'money',  f:'cur',    ok:(c,code)=>!!(CODES[code]&&CODES[code][0]) },
+  { k:'tld',      r:4, g:'codes',  f:'tld',    ok:c=>!!c.tld },
+  { k:'nb1',      r:4, g:'nb',     f:'nb',     ok:c=>c.nb.length>0 },
+  { k:'nb',       r:5, g:'nb',     f:'nb',     ok:c=>c.nb.length>0 },
+  { k:'namelen',  r:5, g:'name',   f:'name',   ok:c=>true },
+  { k:'cap',      r:6, g:'name',   f:'cap',    ok:c=>!!c.cap, late:true },
+  { k:'flag',     r:6, g:'name',   f:'flag',   ok:c=>true, late:true },
+  { k:'name',     r:7, g:'name',   f:'name',   ok:c=>true, late:true },
 ];
-function chooseHints(code, count){
+function chooseHints(code, count, groups){
   const c = COUNTRIES[code];
-  const avail = HINT_DEFS.filter(h=>h.ok(c));
-  const first = avail.find(h=>h.k==='cont');
-  const last = Math.random()<.5 ? avail.find(h=>h.k==='name') : (avail.find(h=>h.k==='cap') || avail.find(h=>h.k==='name'));
-  const middle = shuffle(avail.filter(h=>h!==first && h!==last && h.k!=='name' && h.k!=='cap')).slice(0, Math.max(0,count-2)).sort((a,b)=>a.r-b.r);
-  return [first, ...middle, last].slice(0, count).map(h=>h.k);
+  const on = (groups && groups.length) ? groups : HINT_GROUPS;
+  let avail = HINT_DEFS.filter(h => h.ok(c, code) && on.includes(h.g));
+  if (!avail.length) avail = HINT_DEFS.filter(h => h.ok(c, code));
+  const first = avail.find(h=>h.k==='cont') || avail.slice().sort((a,b)=>a.r-b.r)[0];
+  const lates = avail.filter(h=>h.late && h!==first);
+  const last = lates.length ? rnd(lates) : avail.filter(h=>h!==first).sort((a,b)=>b.r-a.r)[0];
+  const used = new Set([first && first.f, last && last.f]);
+  const middle = [];
+  for (const h of shuffle(avail.filter(h => h!==first && h!==last && !h.late))){
+    if (middle.length >= Math.max(0, count-2)) break;
+    if (used.has(h.f)) continue;
+    used.add(h.f); middle.push(h);
+  }
+  middle.sort((a,b)=>a.r-b.r);
+  return [...new Set([first, ...middle, last].filter(Boolean))].slice(0, count).map(h=>h.k);
 }
 // Host: ruwe, taalneutrale waarde. Client: tekst in eigen taal.
-function hintValue(k, code){
+function hintValue(k, code, loc){
   const c = COUNTRIES[code];
   const nm = l => { const n = c[l] || c.en; return { l: n[0], n: n.replace(/[^\p{L}]/gu,'').length }; };
+  const lat = loc ? loc.lat : 0, lng = loc ? loc.lng : 0;
   switch(k){
     case 'cont': return c.cont; case 'sub': return c.sub; case 'drive': return c.drive;
     case 'coast': return { land: c.land, nb: c.nb.length }; case 'pop': return c.pop;
-    case 'lang': return c.lang; case 'cur': return c.cur; case 'tel': return c.tel; case 'tld': return c.tld;
-    case 'nb': return c.nb; case 'cap': return c.cap[0]; case 'name': return { nl: nm('nl'), en: nm('en') };
+    case 'lang': return c.lang; case 'tel': return c.tel; case 'tld': return c.tld;
+    case 'cur': case 'cursym': return CODES[code];
+    case 'curshare': return { n: Math.max(0, (CURCOUNT[CODES[code][0]]||1) - 1) };
+    case 'nb': return c.nb; case 'nb1': return rnd(c.nb);
+    case 'cap': return c.cap[0]; case 'name': return { nl: nm('nl'), en: nm('en') };
+    case 'namelen': return { nl: nm('nl').n, en: nm('en').n };
+    case 'flag': return code;
+    case 'hemi': return { ns: lat>=0?'N':'S', ew: lng>=0?'E':'W' };
+    case 'climate': { const a = Math.abs(lat); return a<23.5?0 : a<35?1 : a<55?2 : a<66?3 : 4; }
+    case 'size': { const a = c.area; return a<1e4?0 : a<1e5?1 : a<5e5?2 : a<2e6?3 : 4; }
   }
 }
 function renderHintValue(k, v){
-  const cur = cc => { try { return new Intl.DisplayNames([lang], {type:'currency'}).of(cc[0]) + (cc[1] ? ' ('+cc[1]+')' : ''); } catch(e){ return cc[0]; } };
   switch(k){
     case 'cont': return t(v);
     case 'sub': return lang==='nl' ? (SUB_NL[v]||v) : v;
@@ -493,11 +638,19 @@ function renderHintValue(k, v){
     case 'coast': return (v.land ? t('landlocked') : t('coast')) + ', ' + (v.nb ? t('nbCount',{n:v.nb}) : t('island'));
     case 'pop': return t('pop'+v);
     case 'lang': return v.map(l => lang==='nl' ? (LANG_NL[l]||l) : l).join(', ');
-    case 'cur': return v.map(cur).join(', ');
+    case 'cursym': return v.map(cc => { const s = curSym(cc); return s===cc ? cc : s; }).join('  ·  ');
+    case 'cur': return v.map(cc => { const n = curName(cc); return n === cc ? (cc==='ZWG' ? 'Zimbabwe Gold (ZWG)' : cc) : n + ' (' + cc + ')'; }).join(', ');
+    case 'curshare': return v.n ? t('curShared',{n:v.n}) : t('curOnly');
     case 'tel': case 'tld': return v;
     case 'nb': return v.map(cname).join(', ');
+    case 'nb1': return t('borders',{c:cname(v)});
     case 'cap': return t('capLetter', { l: v });
     case 'name': { const x = v[lang] || v.en; return t('nameLetter', { l: x.l, n: x.n }); }
+    case 'namelen': return t('nameLen', { n: v[lang] || v.en });
+    case 'flag': return flagImg(v, 160);
+    case 'hemi': return t(v.ns==='N'?'hN':'hS') + ', ' + t(v.ew==='E'?'hE':'hW');
+    case 'climate': return t('cl'+v);
+    case 'size': return t('s'+v);
   }
   return '';
 }
@@ -510,7 +663,7 @@ const me = {
 };
 localStorage.setItem('lr_pid', me.id);
 
-const DEFAULT_SETTINGS = { rounds:5, roundTime:60, hintEvery:10, difficulty:'normal', continent:'ALL', weighting:'uniform', small:false };
+const DEFAULT_SETTINGS = { rounds:5, roundTime:60, hintEvery:10, hintCount:6, hintGroups:[...HINT_GROUPS], difficulty:'normal', continent:'ALL', weighting:'uniform', small:false };
 let room = null, roomCode = null, isHost = false, solo = false;
 let S = null;               // laatste publieke snapshot (iedereen)
 let H = null;               // host-only private state
@@ -611,8 +764,8 @@ function becomeHost(oldHostPeer){
     const r = snap.round;
     const code = countryAt(r.lat, r.lng);
     const elapsed = r.durationMs - Math.max(0, r.remainingMs - (now()-recvAt));
-    H.round = { ...r, code, hintKeys: [...r.hints.map(h=>h.k), ...chooseHints(code, CONFIG.hintsPerRound).filter(k=>!r.hints.some(h=>h.k===k))].slice(0, r.hintTotal),
-      startAt: now() - elapsed, answers: {}, order: 0 };
+    H.round = { ...r, code, hintKeys: [...r.hints.map(h=>h.k), ...chooseHints(code, CONFIG.hintsPerRound, snap.settings.hintGroups).filter(k=>!r.hints.some(h=>h.k===k))].slice(0, r.hintTotal),
+      startAt: now() - elapsed, answers: {}, order: 0, forced: r.hints.length, wants: {} };
     if (myAnswer && myAnswer.roundId === r.id) H.round.answers[me.id] = { ...myAnswer, at: now(), order: H.round.order++ };
   }
   toast(t('youHost'));
@@ -650,7 +803,16 @@ function hostHandle(msg, peerId){
     case 'sync': broadcast(); break;
     case 'settings':
       if (peerId !== selfId || H.phase !== 'lobby') return;
+      if (Array.isArray(p.hintGroups)){ p.hintGroups = p.hintGroups.filter(g=>HINT_GROUPS.includes(g)); if (!p.hintGroups.length) return; }
       H.settings = { ...H.settings, ...p }; localStorage.setItem('lr_settings', JSON.stringify(H.settings)); broadcast(); break;
+    case 'wanthint': {
+      if (!player || H.phase !== 'round' || !H.round) return;
+      const r = H.round; if (r.hints.length >= r.hintKeys.length) return;
+      r.wants[player.id] = true;
+      const cp = connectedPlayers();
+      if (cp.length && cp.every(x => r.wants[x.id])) { r.forced = r.hints.length + 1; releaseHints(); }
+      broadcast(); break;
+    }
     case 'start':
       if (peerId !== selfId) return;
       if (H.phase === 'lobby' || H.phase === 'result') nextRound(); break;
@@ -686,19 +848,21 @@ function nextRound(){
   if (!loc) return finish();
   H.used.push(loc.code); H.roundN++;
   const durationMs = H.settings.roundTime*1000, hintIntervalMs = H.settings.hintEvery*1000;
-  const hintTotal = Math.min(CONFIG.hintsPerRound, Math.max(2, Math.ceil(durationMs / hintIntervalMs)));
+  const wanted = Math.min(CONFIG.hintsPerRound, H.settings.hintCount || 6, Math.max(2, Math.ceil(durationMs / hintIntervalMs)));
+  const hintKeys = chooseHints(loc.code, wanted, H.settings.hintGroups), hintTotal = hintKeys.length;
   H.round = { id: Math.random().toString(36).slice(2,9), n: H.roundN, lat: loc.lat, lng: loc.lng, code: loc.code,
     zoom: CONFIG.zoom[H.settings.difficulty], pan: CONFIG.pan[H.settings.difficulty], difficulty: H.settings.difficulty,
-    durationMs, hintIntervalMs, hintTotal, hintKeys: chooseHints(loc.code, hintTotal), hints: [], startAt: now(), answers: {}, order: 0 };
+    durationMs, hintIntervalMs, hintTotal, hintKeys, hints: [], startAt: now(), answers: {}, order: 0, forced: 0, wants: {} };
   H.phase = 'round'; H.result = null;
   releaseHints(); broadcast();
 }
 function releaseHints(){
   const r = H.round, el = now() - r.startAt;
   let changed = false;
-  while (r.hints.length < r.hintKeys.length && el >= r.hints.length * r.hintIntervalMs){
-    { const k = r.hintKeys[r.hints.length]; r.hints.push({ k, v: hintValue(k, r.code) }); } changed = true;
+  while (r.hints.length < r.hintKeys.length && (el >= r.hints.length * r.hintIntervalMs || r.hints.length < r.forced)){
+    { const k = r.hintKeys[r.hints.length]; r.hints.push({ k, v: hintValue(k, r.code, r) }); } changed = true;
   }
+  if (changed) r.wants = {};
   return changed;
 }
 function connectedPlayers(){
@@ -768,7 +932,7 @@ function publicState(){
     hostPeer: selfId, phase: H.phase, settings: H.settings, roundN: H.roundN, used: H.used, history: H.history,
     players: H.players.map(({id,peerId,name,color,joinIdx,score,connected,correct,best,fastest}) => ({id,peerId,name,color,joinIdx,score,connected,correct,best,fastest})),
     round: r ? { id:r.id, n:r.n, lat:r.lat, lng:r.lng, zoom:r.zoom, pan:r.pan, difficulty:r.difficulty, durationMs:r.durationMs, hintIntervalMs:r.hintIntervalMs, hintTotal:r.hintTotal,
-      hints: r.hints, remainingMs: Math.max(0, r.durationMs - (now()-r.startAt)), answered: Object.keys(r.answers) } : null,
+      hints: r.hints, remainingMs: Math.max(0, r.durationMs - (now()-r.startAt)), answered: Object.keys(r.answers), wants: Object.keys(r.wants||{}) } : null,
     result: H.result ? { ...H.result, nextAt: Math.max(0, CONFIG.resultAutoMs - (now()-(H.resultStart||now()))) } : null,
     final: H.final,
   };
@@ -815,6 +979,9 @@ function renderLobby(){
       return `<button class="${S.settings[key]===val?'on':''}" data-val="${o}">${label}</button>`;
     }).join('');
   });
+  const hc = $('#hintChips'); hc.classList.toggle('ro', !host);
+  const on = S.settings.hintGroups || HINT_GROUPS;
+  hc.innerHTML = HINT_GROUPS.map(g => `<button class="chipbtn ${on.includes(g)?'on':''}" data-g="${g}">${t('g_'+g)}</button>`).join('');
   document.querySelectorAll('.sw[data-sw]').forEach(sw => { sw.classList.toggle('on', !!S.settings[sw.dataset.sw]); sw.style.pointerEvents = host?'':'none'; });
   const n = S.players.filter(p=>p.connected).length;
   $('#startBtn').style.display = host ? '' : 'none';
@@ -856,20 +1023,31 @@ function renderGame(){
       m.setMinZoom(r.zoom - 1); m.setMaxZoom(r.zoom + 2);
       m.setMaxBounds([[r.lat - r.pan, r.lng - r.pan*1.5], [r.lat + r.pan, r.lng + r.pan*1.5]]);
     }
-    $('#guess').value = ''; closeAc();
+    $('#guess').value = ''; closeAc(); $('#hintList').innerHTML = ''; $('#hintsBox').classList.remove('shut');
+    if (matchMedia('(pointer:fine)').matches) setTimeout(()=>$('#guess').focus(), 100);
     beep(520,.12,'triangle');
     setTimeout(()=>m.invalidateSize(), 50);
   }
-  $('#roundChip').textContent = t('round', { n: r.n, t: S.settings.rounds });
+  $('#roundChip').textContent = r.n + '/' + S.settings.rounds;
   const mine = playerById(me.id);
-  $('#scoreChip').textContent = t('pts', { n: mine ? mine.score : 0 });
-  $('#hintList').innerHTML = r.hints.map((h,i)=>`<div class="hint"><b>${i+1}</b><span class="k">${t('h_'+h.k)}</span><span>${esc(hintTextFromKey(h.k))}</span></div>`).join('');
-  const hl = $('#hintList').parentElement; hl.scrollTop = hl.scrollHeight;
+  $('#scoreChip').textContent = mine ? mine.score : 0;
+  $('#mapctl').classList.toggle('off', r.pan === 0);
+  const prevCount = $('#hintList').children.length;
+  $('#hintList').innerHTML = r.hints.map((h,i)=>{
+    const txt = h.k==='flag' ? hintTextFromKey(h.k) : esc(hintTextFromKey(h.k));
+    return `<div class="hint ${i>=prevCount && prevCount>0 ? 'new':''}"><b>${i+1}</b><span class="k">${t('h_'+h.k)}</span><span class="v">${txt}</span></div>`;
+  }).join('');
+  $('#hintCountTxt').textContent = r.hints.length + '/' + r.hintTotal;
+  const hl = $('#hintList'); hl.scrollTop = hl.scrollHeight;
+  const conn = S.players.filter(p=>p.connected).length, wants = r.wants || [], iWant = wants.includes(me.id);
+  const hn = $('#hintNow'); hn.style.display = r.hints.length < r.hintTotal ? '' : 'none';
+  hn.classList.toggle('voted', iWant);
+  hn.textContent = conn > 1 ? t(iWant ? 'hintVoted' : 'hintNowVote', { a: wants.length, b: conn }) : t('hintNow');
   $('#who').innerHTML = S.players.length > 1 ? S.players.map(p=>`<span class="${r.answered.includes(p.id)?'done':''} ${p.connected?'':'off'}">${dotHtml(p)}${esc(p.name)}${r.answered.includes(p.id)?' &#10003;':''}</span>`).join('') : '';
   const locked = myAnswer && myAnswer.roundId === r.id;
   $('#answerBox').style.display = locked ? 'none' : '';
   $('#lockedBox').style.display = locked ? '' : 'none';
-  if (locked) $('#lockedBox').textContent = t('lockedAs', { c: (COUNTRIES[myAnswer.code]?.flag||'') + ' ' + cname(myAnswer.code) });
+  if (locked) $('#lockedBox').innerHTML = `${flagImg(myAnswer.code, 40)}<b>${esc(cname(myAnswer.code))}</b><span>${t('lockedAs', {c:''}).replace(/:\s*$/, '')}</span>`;
 }
 // Client kent het land niet: host stuurt per hint een taalneutrale waarde mee.
 function hintTextFromKey(k){
@@ -884,12 +1062,14 @@ function tick(){
   if (S.phase === 'round' && S.round){
     const r = S.round;
     const rem = r.remainingMs - (now() - recvAt) - latency;
-    const tc = $('#timerChip'); tc.textContent = fmtTime(rem); tc.classList.toggle('low', rem < 10000);
+    const tc = $('#timerChip'); tc.textContent = fmtTime(rem); tc.parentElement.classList.toggle('low', rem < 10000);
+    $('#timerBar').style.transform = `scaleX(${Math.max(0, Math.min(1, rem / r.durationMs))})`;
     const elapsed = r.durationMs - rem;
     const nextIdx = r.hints.length;
     if (nextIdx < r.hintTotal){
       const into = elapsed - (nextIdx-1)*r.hintIntervalMs;
       $('#hintBar').style.width = Math.min(100, Math.max(0, into / r.hintIntervalMs * 100)) + '%';
+      $('#nextSecs').textContent = Math.max(0, Math.ceil((nextIdx*r.hintIntervalMs - elapsed)/1000)) + 's';
       $('#nextHint').style.display = '';
     } else $('#nextHint').style.display = 'none';
   }
@@ -919,13 +1099,15 @@ function search(q){
     for (const k of s.keys){ const i = k.indexOf(n); if (i===0) best = Math.min(best, 0); else if (i>0) best = Math.min(best, 1); }
     if (best < 99) res.push({ code:s.code, score: best + cname(s.code).length/100 });
   }
-  return res.sort((a,b)=>a.score-b.score).slice(0,5).map(r=>r.code);
+  return res.sort((a,b)=>a.score-b.score).slice(0,6).map(r=>r.code);
 }
 function closeAc(){ $('#ac').classList.remove('on'); acItems = []; }
 function renderAc(){
   const ac = $('#ac');
   if (!acItems.length){ ac.classList.remove('on'); return; }
-  ac.innerHTML = acItems.map((c,i)=>`<div class="${i===acSel?'sel':''}" data-code="${c}"><span>${COUNTRIES[c].flag||''}</span><span>${esc(cname(c))}</span></div>`).join('');
+  const q = norm($('#guess').value);
+  const hl = name => { const n = esc(name); const i = norm(name).indexOf(q); if (i !== 0 || !q) return n; let seen = 0, end = 0; for (let j=0;j<name.length && seen<q.length;j++){ if (norm(name[j])) seen++; end = j+1; } return `<mark>${esc(name.slice(0,end))}</mark>${esc(name.slice(end))}`; };
+  ac.innerHTML = acItems.map((c,i)=>`<div class="${i===acSel?'sel':''}" data-code="${c}">${flagImg(c,40)}<span>${hl(cname(c))}</span></div>`).join('');
   ac.classList.add('on');
 }
 $('#guess').addEventListener('input', e => { acItems = search(e.target.value); acSel = 0; renderAc(); });
@@ -954,13 +1136,14 @@ function renderResult(){
   const R = S.result;
   const c = COUNTRIES[R.code];
   $('#resTitle').textContent = t('resTitle', { n: R.n });
-  $('#resFlag').textContent = c.flag || '';
+  $('#resFlag').innerHTML = flagImg(R.code, 80);
   $('#resName').textContent = cname(R.code);
   $('#resSub').textContent = t(c.cont) + ' · ' + (lang==='nl' ? (SUB_NL[c.sub]||c.sub) : c.sub) + (c.cap ? ' · ' + c.cap : '');
-  $('#resBody').innerHTML = R.rows.map(row => {
+  const firstPaint = renderedResult !== R.roundId;
+  $('#resBody').innerHTML = R.rows.map((row, i) => {
     const p = playerById(row.id) || { name:'?', color:'#888' };
-    const g = row.guess ? `<span class="${row.kind}">${COUNTRIES[row.guess]?.flag||''} ${esc(cname(row.guess))}</span>` : `<span class="sub">${t('noAnswer')}</span>`;
-    return `<tr><td><span class="row" style="gap:6px">${dotHtml(p)}<span>${esc(p.name)}</span></span></td><td>${g}</td><td class="n">${row.ms!=null?(row.ms/1000).toFixed(1)+'s':''}</td><td class="n plus ${row.kind}">+${row.pts}</td><td class="n">${row.total}</td></tr>`;
+    const g = row.guess ? `<span class="${row.kind}">${flagImg(row.guess,20)}${esc(cname(row.guess))}</span>` : `<span class="sub">${t('noAnswer')}</span>`;
+    return `<tr style="${firstPaint ? 'animation-delay:'+(i*90)+'ms' : 'animation:none'}"><td><span class="row" style="gap:6px">${dotHtml(p)}<span>${esc(p.name)}</span></span></td><td>${g}</td><td class="n">${row.ms!=null?(row.ms/1000).toFixed(1)+'s':''}</td><td class="n plus ${row.kind}" data-count="${row.pts}">+${row.pts}</td><td class="n">${row.total}</td></tr>`;
   }).join('');
   const host = isMeHost();
   $('#nextBtn').style.display = host ? '' : 'none';
@@ -971,6 +1154,10 @@ function renderResult(){
     if (mineRow) beep(mineRow.kind==='good'?1046:mineRow.kind==='half'?660:220, .18, mineRow.kind==='miss'?'sawtooth':'sine');
     setTimeout(() => drawResultMap(R), 30);
   }
+  if (firstPaint) document.querySelectorAll('#resBody [data-count]').forEach(el => {
+    const to = +el.dataset.count; if (!to) return; const t0 = performance.now(), dur = 900;
+    (function step(n){ const k = Math.min(1, (n - t0)/dur); el.textContent = '+' + Math.round(to * (1 - Math.pow(1-k, 3))); if (k < 1) requestAnimationFrame(step); })(t0);
+  });
 }
 function drawResultMap(R){
   if (!$('#result').classList.contains('on')) return;
@@ -982,8 +1169,8 @@ function drawResultMap(R){
   const poly = g.polys.find(p => inPoly(R.lng, R.lat, p)) || g.polys.reduce((a,b)=>a.area>b.area?a:b);
   const [a,b,c,d] = poly.bbox;
   rmap.fitBounds([[b,a],[d,c]], { padding:[20,20], maxZoom:7, animate:false });
-  L.geoJSON(g.feature, { style: { color:'#2ee6a6', weight:2, fillColor:'#2ee6a6', fillOpacity:.22 } }).addTo(rmap);
-  L.circleMarker([R.lat, R.lng], { radius:7, color:'#0b0f14', weight:2, fillColor:'#ffb648', fillOpacity:1 }).addTo(rmap);
+  L.geoJSON(g.feature, { style: { color:'#fbf8f1', weight:2.5, fillColor:'#c2432b', fillOpacity:.28 } }).addTo(rmap);
+  L.circleMarker([R.lat, R.lng], { radius:8, color:'#fbf8f1', weight:3, fillColor:'#c2432b', fillOpacity:1 }).addTo(rmap);
 }
 function renderFinal(){
   show('final');
@@ -1004,11 +1191,34 @@ function renderFinal(){
 }
 
 /* ================= UI EVENTS ================= */
-function renderColors(){
-  $('#colors').innerHTML = COLORS.map(c=>`<button style="background:${c}" class="${c===me.color?'on':''}" data-c="${c}"></button>`).join('');
+function renderAvatar(bump){
+  const a = $('#avatar'); a.style.background = me.color; a.textContent = (me.name[0] || '?').toUpperCase();
+  if (bump){ a.classList.add('bump'); setTimeout(()=>a.classList.remove('bump'), 160); }
 }
-$('#colors').addEventListener('click', e => { const c = e.target.dataset.c; if (!c) return; me.color = c; localStorage.setItem('lr_color', c); renderColors(); });
-$('#name').addEventListener('input', e => { me.name = e.target.value.trim(); localStorage.setItem('lr_name', me.name); });
+function renderColors(){
+  $('#colors').innerHTML = COLORS.map(c=>`<button style="background:${c}" class="${c===me.color?'on':''}" data-c="${c}" aria-label="${c}"></button>`).join('');
+  renderAvatar();
+}
+$('#colors').addEventListener('click', e => { const c = e.target.dataset.c; if (!c) return; me.color = c; localStorage.setItem('lr_color', c); renderColors(); renderAvatar(true); beep(600+COLORS.indexOf(c)*40,.05); });
+$('#name').addEventListener('input', e => { me.name = e.target.value.trim(); localStorage.setItem('lr_name', me.name); renderAvatar(true); });
+$('#name').addEventListener('keydown', e => { if (e.key==='Enter') $('#createBtn').click(); });
+$('#globe').addEventListener('click', () => { beep(480,.1,'triangle'); const g=$('#globe'); g.style.transform='rotate(360deg)'; setTimeout(()=>{ g.style.transition='none'; g.style.transform=''; requestAnimationFrame(()=>g.style.transition=''); }, 420); });
+$('#hintChips').addEventListener('click', e => {
+  const b = e.target.closest('[data-g]'); if (!b || !isMeHost()) return;
+  const cur = new Set(S.settings.hintGroups || HINT_GROUPS); const g = b.dataset.g;
+  if (cur.has(g)){ if (cur.size === 1){ toast(t('hintMin')); return; } cur.delete(g); } else cur.add(g);
+  act({ t:'settings', p:{ hintGroups: [...cur] } });
+});
+$('#hintNow').addEventListener('click', e => { e.stopPropagation(); act({ t:'wanthint' }); beep(700,.05); });
+$('#hintHead').addEventListener('click', () => $('#hintsBox').classList.toggle('shut'));
+$('#zIn').addEventListener('click', () => map && map.zoomIn());
+$('#zOut').addEventListener('click', () => map && map.zoomOut());
+$('#zHome').addEventListener('click', () => { if (map && S && S.round) map.setView([S.round.lat, S.round.lng], S.round.zoom, { animate:true }); });
+// Begin gewoon te typen tijdens een ronde
+document.addEventListener('keydown', e => {
+  if (!S || S.phase !== 'round' || e.ctrlKey || e.metaKey || e.altKey || e.key.length !== 1) return;
+  const g = $('#guess'); if (document.activeElement !== g && myAnswer == null && /\S/.test(e.key) && document.activeElement.tagName !== 'INPUT') g.focus();
+});
 $('#codeIn').addEventListener('input', e => { e.target.value = e.target.value.toUpperCase().replace(/[^A-Z0-9]/g,''); });
 $('#codeIn').addEventListener('keydown', e => { if (e.key==='Enter') $('#joinBtn').click(); });
 $('#langBtn').addEventListener('click', () => { lang = lang==='nl'?'en':'nl'; localStorage.setItem('lr_lang', lang); applyI18n(); });
@@ -1077,7 +1287,7 @@ window.addEventListener('resize', () => { map && map.invalidateSize(); rmap && r
 })();
 
 /* expose voor tests */
-window.__lr = { get S(){return S}, get H(){return H}, countryAt, randomLocation, scoreFor, search };
+window.__lr = { get S(){return S}, get H(){return H}, countryAt, randomLocation, scoreFor, search, chooseHints, hintValue, renderHintValue, HINT_DEFS, COUNTRIES: () => COUNTRIES };
 </script>
 </body>
 </html>

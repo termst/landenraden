@@ -48,6 +48,7 @@ Alles staat in het `CONFIG` object bovenaan het script in `index.html`:
 * `zoom` en `pan`: zoomniveau en bewegingsruimte per moeilijkheid
 * `tiles`: kaartlaag. Standaard Esri satelliet (geen labels, geen key nodig). Wil je Mapbox: zet je URL met key in `tiles.main.url` en beperk de key in Mapbox op je GitHub Pages domein.
 * `maxPlayers`, `resultAutoMs`, `hintsPerRound`
+* `CUR_FIX` (valuta-correcties op landcode) en `HINT_DEFS` (alle hinttypes, rang en groep)
 
 ## Goed om te weten
 
