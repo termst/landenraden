@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#f2ede2">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22%3E%3Ccircle cx=%2250%22 cy=%2250%22 r=%2245%22 fill=%22%23c2432b%22/%3E%3C/svg%3E">
-<title>Landenraden</title>
+<title>Geoflatter</title>
 <script>try{var th=localStorage.getItem("lr_theme")||(matchMedia("(prefers-color-scheme:dark)").matches?"dark":"light");document.documentElement.dataset.theme=th;}catch(e){}</script>
 <link rel="preload" href="data/countries.json" as="fetch" crossorigin>
 <link rel="preload" href="data/countries.geojson" as="fetch" crossorigin>
@@ -259,7 +259,7 @@ body[data-screen=game] #chat{top:66px;bottom:auto;left:10px}
         <button class="iconbtn" id="setBtn" aria-label="settings"><svg class="ic"><use href="#i-gear"/></svg></button>
       </span>
     </div>
-    <h1>Landen<em>raden</em></h1>
+    <h1>Geo<em>flatter</em></h1>
     <div class="card">
       <div class="field"><label data-i="yourName" for="name"></label>
         <div class="nameRow"><div class="avatar" id="avatar"></div><input type="text" id="name" maxlength="16" autocomplete="off"></div></div>
@@ -736,7 +736,7 @@ function renderHintValue(k, v){
     case 'pop': return t('pop'+v);
     case 'lang': return v.map(l => lang==='nl' ? (LANG_NL[l]||l) : l).join(', ');
     case 'cursym': return v.map(cc => { const s = curSym(cc); return s===cc ? cc : s; }).join(', ');
-    case 'cur': return v.map(cc => { const n = curName(cc); return n === cc ? (cc==='ZWG' ? 'Zimbabwe Gold, ZWG' : cc) : n + ', ' + cc; }).join(', ');
+    case 'cur': return v.map(cc => curSym(cc)).join(', ');
     case 'curshare': return v.n ? t('curShared',{n:v.n}) : t('curOnly');
     case 'tel': case 'tld': return v;
     case 'nb': return v.map(cname).join(', ');
@@ -1432,7 +1432,7 @@ $('#copyBtn').addEventListener('click', async () => {
 });
 $('#shareBtn').addEventListener('click', async () => {
   const url = location.origin + location.pathname + '#room=' + roomCode;
-  if (navigator.share) { try { await navigator.share({ title:'Landenraden', text: roomCode, url }); } catch(e){} }
+  if (navigator.share) { try { await navigator.share({ title:'Geoflatter', text: roomCode, url }); } catch(e){} }
   else { try { await navigator.clipboard.writeText(url); toast(t('copied')); } catch(e){} }
 });
 $('#lobbyPlayers').addEventListener('click', e => { const id = e.target.dataset.kick; if (id) act({ t:'kick', p:{ id } }); });

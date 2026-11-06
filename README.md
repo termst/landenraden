@@ -1,4 +1,4 @@
-# Landenraden
+# Geoflatter
 
 Online multiplayer landenraadspel voor 2 tot 6 spelers. Peer to peer (WebRTC via Trystero), geen server, geen account, geen kosten.
 
