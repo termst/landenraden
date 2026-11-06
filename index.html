@@ -6,6 +6,7 @@
 <meta name="theme-color" content="#f2ede2">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22%3E%3Ccircle cx=%2250%22 cy=%2250%22 r=%2245%22 fill=%22%23c2432b%22/%3E%3C/svg%3E">
 <title>Landenraden</title>
+<script>try{var th=localStorage.getItem("lr_theme")||(matchMedia("(prefers-color-scheme:dark)").matches?"dark":"light");document.documentElement.dataset.theme=th;}catch(e){}</script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,500;0,9..144,600;1,9..144,500&family=DM+Sans:wght@400;500;600;700&family=DM+Mono:wght@400;500">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css">
@@ -14,8 +15,23 @@
   --paper:#f2ede2;--card:#fbf8f1;--card2:#efe9db;--line:#d8cfbb;--ink:#1b2428;--mute:#6a7276;
   --acc:#c2432b;--acc-d:#a43520;--sea:#1f5868;--gold:#b9801a;--bad:#b3261e;--ok:#2d7a4d;--r:12px;
   --serif:'Fraunces',Georgia,serif;--font:'DM Sans',system-ui,sans-serif;--mono:'DM Mono',ui-monospace,monospace;
+  --field:#fff;--flash:#fff5d6;--done:#e5f1e8;--ink2:#3a454a;
   --shadow:0 1px 0 rgba(27,36,40,.06),0 6px 18px -8px rgba(27,36,40,.25);
 }
+[data-theme=dark]{
+  color-scheme:dark;
+  --paper:#14181a;--card:#1d2326;--card2:#262d30;--line:#37414a;--ink:#ece6d8;--mute:#919ba0;
+  --acc:#e0583d;--acc-d:#c24a31;--sea:#5fb0c4;--gold:#d9a441;--bad:#ef6b61;--ok:#5cb97f;
+  --field:#262d30;--flash:#4a3f1c;--done:#1f3a2a;--ink2:#cfc9bb;
+  --shadow:0 1px 0 rgba(0,0,0,.3),0 6px 18px -8px rgba(0,0,0,.7);
+}
+.iconbtn{width:34px;height:34px;display:inline-grid;place-items:center;padding:0;background:var(--card);border:1px solid var(--line);border-radius:99px;cursor:pointer;transition:border-color .15s,transform .2s}
+.iconbtn:hover{border-color:var(--ink);transform:rotate(30deg)}
+.iconbtn svg,.themeseg svg{width:18px;height:18px;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.themeseg{display:flex;align-items:center;justify-content:space-between;gap:12px}
+.themeseg .seg{width:112px}
+.themeseg .seg button{display:grid;place-items:center;padding:7px 4px}
+.chip .iconbtn{border:0;width:22px;height:22px;background:none}
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 html,body{margin:0;height:100%;background:var(--paper);color:var(--ink);font-family:var(--font);font-size:16px}
 body{overflow:hidden}
@@ -31,10 +47,10 @@ h2{font-family:var(--serif);font-size:21px;margin:0;font-weight:600;letter-spaci
 .sub{color:var(--mute);margin:0;line-height:1.45}
 .card{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:16px;display:flex;flex-direction:column;gap:14px}
 .eyebrow,label{font-size:11.5px;color:var(--mute);font-weight:600;letter-spacing:.08em;text-transform:uppercase}
-input[type=text]{width:100%;background:#fff;border:1.5px solid var(--line);border-radius:10px;padding:13px 14px;outline:none;transition:border-color .15s,box-shadow .15s}
+input[type=text]{width:100%;background:var(--field);border:1.5px solid var(--line);border-radius:10px;padding:13px 14px;outline:none;transition:border-color .15s,box-shadow .15s}
 input[type=text]:focus{border-color:var(--sea);box-shadow:0 0 0 3px rgba(31,88,104,.15)}
 .btn{border:1.5px solid var(--ink);border-radius:10px;padding:13px 16px;font-weight:600;cursor:pointer;background:var(--card);color:var(--ink);transition:transform .08s,background .15s,box-shadow .15s;box-shadow:0 2px 0 var(--ink)}
-.btn:hover{background:#fff}
+.btn:hover{background:var(--field)}
 .btn:active{transform:translateY(2px);box-shadow:0 0 0 var(--ink)}
 .btn.pri{background:var(--acc);border-color:var(--acc-d);color:#fff;box-shadow:0 2px 0 var(--acc-d)}
 .btn.pri:hover{background:var(--acc-d)}
@@ -46,8 +62,8 @@ input[type=text]:focus{border-color:var(--sea);box-shadow:0 0 0 3px rgba(31,88,1
 .row{display:flex;gap:10px;align-items:center}
 .row>*{flex:1}
 .topbar{display:flex;justify-content:space-between;align-items:center;gap:8px}
-.pill{display:inline-flex;align-items:center;gap:6px;background:var(--card);border:1px solid var(--line);border-radius:99px;padding:6px 13px;font-size:13px;font-weight:600;cursor:pointer;user-select:none;transition:border-color .15s,background .15s}
-.pill:hover{border-color:var(--ink);background:#fff}
+.pill{white-space:nowrap;display:inline-flex;align-items:center;gap:6px;background:var(--card);border:1px solid var(--line);border-radius:99px;padding:6px 13px;font-size:13px;font-weight:600;cursor:pointer;user-select:none;transition:border-color .15s,background .15s}
+.pill:hover{border-color:var(--ink);background:var(--field)}
 /* start */
 .hero{display:flex;align-items:center;gap:16px;margin-top:6px}
 .globe{width:76px;height:76px;flex:none;cursor:pointer;transition:transform .4s cubic-bezier(.3,1.6,.5,1)}
@@ -69,7 +85,7 @@ input[type=text]:focus{border-color:var(--sea);box-shadow:0 0 0 3px rgba(31,88,1
 /* lobby */
 .code{font-family:var(--mono);font-size:46px;font-weight:500;letter-spacing:10px;text-align:center;padding-left:10px}
 .players{display:flex;flex-direction:column;gap:8px}
-.pl{display:flex;align-items:center;gap:10px;background:var(--card2);border-radius:10px;padding:9px 12px;animation:pop .3s ease}
+.pl{display:flex;align-items:center;gap:10px;background:var(--card2);border-radius:10px;padding:9px 12px}
 .dot{width:12px;height:12px;border-radius:50%;flex:none}
 .pl .nm{flex:1;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .badge{font-size:10.5px;font-weight:700;padding:3px 8px;border-radius:99px;background:var(--ink);color:var(--paper);letter-spacing:.04em;text-transform:uppercase}
@@ -113,7 +129,7 @@ input[type=text]:focus{border-color:var(--sea);box-shadow:0 0 0 3px rgba(31,88,1
 .netdot.mid{background:var(--gold)}.netdot.bad{background:var(--bad)}
 .mapctl{position:absolute;right:10px;top:calc(max(10px,env(safe-area-inset-top)) + 62px);z-index:500;display:flex;flex-direction:column;gap:6px}
 .mapctl button{width:38px;height:38px;border-radius:10px;border:1px solid var(--line);background:var(--card);box-shadow:var(--shadow);font-size:20px;font-weight:600;cursor:pointer;line-height:1;transition:background .15s,transform .1s}
-.mapctl button:hover{background:#fff}.mapctl button:active{transform:scale(.92)}
+.mapctl button:hover{background:var(--field)}.mapctl button:active{transform:scale(.92)}
 .mapctl.off{display:none}
 .panel{position:absolute;left:0;right:0;bottom:0;z-index:500;padding:10px 10px max(10px,env(safe-area-inset-bottom));display:flex;flex-direction:column;gap:8px;max-width:580px;margin:0 auto}
 .hints{background:var(--card);border:1px solid var(--line);border-radius:var(--r);box-shadow:var(--shadow);display:flex;flex-direction:column;overflow:hidden}
@@ -130,7 +146,7 @@ input[type=text]:focus{border-color:var(--sea);box-shadow:0 0 0 3px rgba(31,88,1
 #hintList{max-height:30vh;overflow-y:auto;border-top:1px solid var(--line)}
 .hint{display:flex;gap:12px;align-items:baseline;padding:9px 14px;font-size:15.5px;border-bottom:1px solid var(--line);animation:slide .4s cubic-bezier(.2,.9,.3,1)}
 .hint:last-child{border-bottom:0}
-.hint.new{background:#fff5d6;animation:slide .4s cubic-bezier(.2,.9,.3,1),flash 2.2s ease forwards}
+.hint.new{background:var(--flash);animation:slide .4s cubic-bezier(.2,.9,.3,1),flash 2.2s ease forwards}
 @keyframes flash{to{background:transparent}}
 .hint b{font-family:var(--mono);font-weight:500;font-size:12px;flex:none;width:20px;height:20px;border-radius:50%;background:var(--ink);color:var(--paper);display:grid;place-items:center;align-self:center}
 .hint .k{color:var(--mute);font-size:11px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;flex:none;min-width:84px}
@@ -156,7 +172,7 @@ input[type=text]:focus{border-color:var(--sea);box-shadow:0 0 0 3px rgba(31,88,1
 .locked span{margin-left:auto;font-size:12px;opacity:.65;font-weight:500}
 .who{display:flex;gap:6px;flex-wrap:wrap}
 .who span{font-size:12px;font-weight:600;padding:4px 10px;border-radius:99px;background:var(--card);border:1px solid var(--line);display:flex;align-items:center;gap:6px;box-shadow:var(--shadow);transition:all .2s}
-.who span.done{border-color:var(--ok);background:#e5f1e8}
+.who span.done{border-color:var(--ok);background:var(--done)}
 .who span.off{opacity:.45}
 /* result */
 #rmap{height:36vh;min-height:220px;border-radius:var(--r);overflow:hidden;border:1px solid var(--line);flex:none}
@@ -190,14 +206,34 @@ tbody tr{animation:slide .4s ease backwards}
 .spin{width:34px;height:34px;border:3px solid var(--line);border-top-color:var(--acc);border-radius:50%;animation:sp .8s linear infinite}
 @keyframes sp{to{transform:rotate(360deg)}}
 .modal .card{text-align:left;align-items:stretch;max-height:85vh;overflow-y:auto}
-.modal p,.modal li{color:#3a454a;line-height:1.5;margin:0}
+.modal p,.modal li{color:var(--ink2);line-height:1.5;margin:0}
 .modal ul{margin:0;padding-left:18px;display:flex;flex-direction:column;gap:7px}
 .toast{position:fixed;left:50%;top:max(14px,env(safe-area-inset-top));transform:translateX(-50%) translateY(calc(-100% - 40px));z-index:3000;background:var(--ink);color:var(--paper);border-radius:10px;padding:10px 16px;font-weight:600;transition:transform .3s;white-space:nowrap;box-shadow:var(--shadow)}
 .toast.on{transform:translateX(-50%) translateY(0)}
 .leaflet-container{font-family:var(--font);background:#1c2b30}
-.leaflet-control-attribution{font-size:9px!important;background:rgba(251,248,241,.8)!important;color:var(--mute)!important}
+.leaflet-control-attribution{font-size:9px!important;background:var(--card)!important;color:var(--mute)!important}
 .leaflet-control-attribution a{color:var(--mute)!important}
 .footer{color:var(--mute);font-size:12.5px;text-align:center}
+#chatBtn{position:fixed;left:12px;bottom:12px;z-index:1500;width:46px;height:46px;border-radius:50%;border:1.5px solid var(--ink);background:var(--card);box-shadow:var(--shadow);display:none;place-items:center;cursor:pointer;padding:0;transition:transform .15s}
+#chatBtn:hover{transform:scale(1.08)}
+#chatBtn svg{width:21px;height:21px;stroke:var(--ink);fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+#chatBtn.show{display:grid}
+body[data-screen=game] #chatBtn{top:66px;bottom:auto;left:10px}
+#chatBadge{position:absolute;top:-5px;right:-5px;min-width:19px;height:19px;border-radius:99px;background:var(--acc);color:#fff;font-size:11px;font-weight:700;display:none;place-items:center;padding:0 5px;font-family:var(--mono)}
+#chatBadge.on{display:grid;animation:pop .25s}
+#chat{position:fixed;left:12px;bottom:12px;z-index:1600;width:min(340px,calc(100vw - 24px));height:min(420px,60vh);background:var(--card);border:1px solid var(--ink);border-radius:var(--r);box-shadow:var(--shadow);display:none;flex-direction:column;overflow:hidden}
+#chat.on{display:flex;animation:slide .2s ease}
+body[data-screen=game] #chat{top:66px;bottom:auto;left:10px}
+.chead{display:flex;align-items:center;justify-content:space-between;padding:10px 12px 10px 14px;border-bottom:1px solid var(--line)}
+#chatLog{flex:1;overflow-y:auto;padding:12px;display:flex;flex-direction:column;gap:8px}
+.msg{max-width:82%;align-self:flex-start;display:flex;flex-direction:column;gap:2px}
+.msg small{font-size:11px;font-weight:700;display:flex;align-items:center;gap:5px;color:var(--mute)}
+.msg p{margin:0;background:var(--card2);padding:7px 11px;border-radius:12px 12px 12px 3px;line-height:1.35;word-break:break-word;white-space:pre-wrap}
+.msg.me{align-self:flex-end;align-items:flex-end}
+.msg.me p{background:var(--sea);color:#fff;border-radius:12px 12px 3px 12px}
+.cempty{margin:auto;color:var(--mute);font-size:13px}
+#chatForm{display:flex;gap:8px;padding:10px;border-top:1px solid var(--line)}
+#chatForm .btn{padding:0 14px;flex:none}
 @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
 </style>
 </head>
@@ -211,6 +247,7 @@ tbody tr{animation:slide .4s ease backwards}
       <span class="row" style="flex:none;gap:8px">
         <span class="pill" id="soundBtn"></span>
         <span class="pill" id="rulesBtn" data-i="rules"></span>
+        <button class="iconbtn" id="setBtn" aria-label="settings"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg></button>
       </span>
     </div>
     <div class="hero">
@@ -241,7 +278,7 @@ tbody tr{animation:slide .4s ease backwards}
 <!-- LOBBY -->
 <section class="screen" id="lobby">
   <div class="wrap">
-    <div class="topbar"><span class="pill" id="leaveBtn" data-i="leave"></span><span class="pill" id="rulesBtn2" data-i="rules"></span></div>
+    <div class="topbar"><span class="pill" id="leaveBtn" data-i="leave"></span><span class="row" style="flex:none;gap:8px"><span class="pill" id="rulesBtn2" data-i="rules"></span><button class="iconbtn" id="setBtn2" aria-label="settings"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg></button></span></div>
     <div class="card" style="align-items:center;gap:8px">
       <label data-i="roomCode"></label>
       <div class="code" id="lobbyCode">----</div>
@@ -335,6 +372,13 @@ tbody tr{animation:slide .4s ease backwards}
   <div id="rulesBody"></div>
   <button class="btn pri" id="rulesClose" data-i="close"></button>
 </div></div>
+<div class="ov modal" id="ovSet"><div class="card">
+  <h2 data-i="appSettings"></h2>
+  <div class="themeseg"><label data-i="theme"></label><div class="seg" id="themeSeg"><button data-th="light" aria-label="light"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg></button><button data-th="dark" aria-label="dark"><svg viewBox="0 0 24 24"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg></button></div></div>
+  <button class="btn pri" id="setClose" data-i="close"></button>
+</div></div>
+<button id="chatBtn" aria-label="chat"><svg viewBox="0 0 24 24"><path d="M21 12a8 8 0 0 1-11.6 7.1L3 21l1.9-5.4A8 8 0 1 1 21 12z"/></svg><span id="chatBadge"></span></button>
+<div id="chat"><div class="chead"><h2 data-i="chat"></h2><button class="x" id="chatClose" aria-label="close">&times;</button></div><div id="chatLog"></div><form id="chatForm" autocomplete="off"><input type="text" id="chatIn" maxlength="500"><button class="btn pri" aria-label="send"><svg viewBox="0 0 24 24" style="width:18px;height:18px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round"><path d="M22 2 11 13M22 2l-7 20-4-9-9-4z"/></svg></button></form></div>
 <div class="toast" id="toast"></div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
@@ -396,7 +440,7 @@ const I18N = {
   left:'links', right:'rechts', landlocked:'geen kust', coast:'aan zee', island:'eiland of geen landgrenzen', nbCount:'{n} buurlanden',
   pop0:'minder dan 1 miljoen', pop1:'1 tot 10 miljoen', pop2:'10 tot 50 miljoen', pop3:'50 tot 150 miljoen', pop4:'meer dan 150 miljoen',
   capLetter:'begint met {l}', nameLetter:'begint met {l}, {n} letters',
-  hintMin:'Houd minstens één soort aan', roundLbl:'Ronde', scoreLbl:'Score', timeLbl:'Tijd', hintsTitle:'Hints', hintNow:'Hint nu', hintNowVote:'Hint nu ({a}/{b})', hintVoted:'Wacht op anderen ({a}/{b})',
+  chat:'Chat', chatPh:'Typ een bericht...', chatEmpty:'Nog geen berichten', appSettings:'Instellingen', theme:'Thema', hintMin:'Houd minstens één soort aan', roundLbl:'Ronde', scoreLbl:'Score', timeLbl:'Tijd', hintsTitle:'Hints', hintNow:'Hint nu', hintNowVote:'Hint nu ({a}/{b})', hintVoted:'Wacht op anderen ({a}/{b})',
   hintSettings:'Hints', hintCount:'Aantal hints', hintTypes:'Soorten hints', hintNote:'Vaag naar concreet. Elke extra hint die je ziet kost 100 punten.',
   g_geo:'Geografie', g_people:'Mensen', g_money:'Geld', g_codes:'Codes', g_nb:'Buren', g_name:'Naam en vlag',
   h_hemi:'Halfrond', h_climate:'Klimaat', h_size:'Grootte', h_cursym:'Symbool', h_curshare:'Munt gedeeld', h_nb1:'Grenst aan', h_namelen:'Lengte naam', h_flag:'Vlag',
@@ -439,7 +483,7 @@ const I18N = {
   left:'left', right:'right', landlocked:'landlocked', coast:'has coastline', island:'island or no land borders', nbCount:'{n} neighbours',
   pop0:'under 1 million', pop1:'1 to 10 million', pop2:'10 to 50 million', pop3:'50 to 150 million', pop4:'over 150 million',
   capLetter:'starts with {l}', nameLetter:'starts with {l}, {n} letters',
-  hintMin:'Keep at least one type on', roundLbl:'Round', scoreLbl:'Score', timeLbl:'Time', hintsTitle:'Hints', hintNow:'Hint now', hintNowVote:'Hint now ({a}/{b})', hintVoted:'Waiting for others ({a}/{b})',
+  chat:'Chat', chatPh:'Type a message...', chatEmpty:'No messages yet', appSettings:'Settings', theme:'Theme', hintMin:'Keep at least one type on', roundLbl:'Round', scoreLbl:'Score', timeLbl:'Time', hintsTitle:'Hints', hintNow:'Hint now', hintNowVote:'Hint now ({a}/{b})', hintVoted:'Waiting for others ({a}/{b})',
   hintSettings:'Hints', hintCount:'Number of hints', hintTypes:'Hint types', hintNote:'Vague to specific. Every extra hint you see costs 100 points.',
   g_geo:'Geography', g_people:'People', g_money:'Money', g_codes:'Codes', g_nb:'Neighbours', g_name:'Name and flag',
   h_hemi:'Hemisphere', h_climate:'Climate', h_size:'Size', h_cursym:'Symbol', h_curshare:'Shared currency', h_nb1:'Borders', h_namelen:'Name length', h_flag:'Flag',
@@ -467,7 +511,7 @@ const t = (k, v={}) => (I18N[lang][k] ?? I18N.nl[k] ?? k).replace(/\{(\w+)\}/g, 
 function applyI18n(){
   document.documentElement.lang = lang;
   document.querySelectorAll('[data-i]').forEach(el => el.textContent = t(el.dataset.i));
-  $('#guess').placeholder = t('guessPh');
+  $('#guess').placeholder = t('guessPh'); $('#chatIn').placeholder = t('chatPh'); renderChat();
   $('#rulesBody').innerHTML = t('rulesHtml');
   $('#soundBtn').textContent = t('sound') + ' ' + t(sound ? 'on' : 'off');
   rerender();
@@ -483,7 +527,7 @@ const now = () => performance.now();
 const fmtTime = ms => { const s = Math.max(0, Math.ceil(ms/1000)); return Math.floor(s/60)+':'+String(s%60).padStart(2,'0'); };
 let toastT;
 function toast(msg){ const el=$('#toast'); el.textContent=msg; el.classList.add('on'); clearTimeout(toastT); toastT=setTimeout(()=>el.classList.remove('on'),2600); }
-function show(id){ document.querySelectorAll('.screen').forEach(s=>s.classList.toggle('on', s.id===id)); }
+function show(id){ document.body.dataset.screen = id; updateChat(); document.querySelectorAll('.screen').forEach(s=>s.classList.toggle('on', s.id===id)); }
 function overlay(text, sub='', cancel=false){ const o=$('#ovLoad'); if(!text){o.classList.remove('on');return;} $('#ovText').textContent=text; $('#ovSub').textContent=sub; $('#ovCancel').style.display=cancel?'':'none'; o.classList.add('on'); }
 const cname = code => code && COUNTRIES[code] ? COUNTRIES[code][lang] || COUNTRIES[code].en : '?';
 // Vlaggen als plaatje (Windows toont vlag-emoji als letters)
@@ -678,6 +722,9 @@ function connect(code){
   const action = room.makeAction('m');
   sendMsg = (msg, target) => action.send(msg, target ? { target } : undefined).catch(()=>{});
   action.onMessage = (msg, ctx) => onNet(msg, ctx.peerId);
+  const chatAct = room.makeAction('c');
+  sendChat = msg => chatAct.send(msg).catch(()=>{});
+  chatAct.onMessage = m => receiveChat(m);
   room.onPeerJoin = peerId => {
     if (isHost) return; // host wacht op hello
     sendMsg({ t:'hello', p: helloPayload() }, peerId);
@@ -690,7 +737,7 @@ async function disconnect(){
   clearTimeout(joinTimer); clearInterval(hostWatch);
   if (H) { clearInterval(H.loop); clearTimeout(H.autoNext); }
   if (room) { try { await room.leave(); } catch(e){} }
-  room = null; sendMsg = null; isHost = false; solo = false; S = null; H = null; myAnswer = null; roomCode = null;
+  room = null; sendMsg = null; sendChat = null; chatLog = []; unread = 0; $('#chat').classList.remove('on'); isHost = false; solo = false; S = null; H = null; myAnswer = null; roomCode = null;
   history.replaceState(null, '', location.pathname + location.search);
 }
 
@@ -1023,7 +1070,7 @@ function renderGame(){
       m.setMinZoom(r.zoom - 1); m.setMaxZoom(r.zoom + 2);
       m.setMaxBounds([[r.lat - r.pan, r.lng - r.pan*1.5], [r.lat + r.pan, r.lng + r.pan*1.5]]);
     }
-    $('#guess').value = ''; closeAc(); $('#hintList').innerHTML = ''; $('#hintsBox').classList.remove('shut');
+    $('#guess').value = ''; closeAc(); $('#hintList').innerHTML = ''; delete $('#hintList').dataset.sig; $('#hintsBox').classList.remove('shut');
     if (matchMedia('(pointer:fine)').matches) setTimeout(()=>$('#guess').focus(), 100);
     beep(520,.12,'triangle');
     setTimeout(()=>m.invalidateSize(), 50);
@@ -1032,13 +1079,17 @@ function renderGame(){
   const mine = playerById(me.id);
   $('#scoreChip').textContent = mine ? mine.score : 0;
   $('#mapctl').classList.toggle('off', r.pan === 0);
-  const prevCount = $('#hintList').children.length;
-  $('#hintList').innerHTML = r.hints.map((h,i)=>{
-    const txt = h.k==='flag' ? hintTextFromKey(h.k) : esc(hintTextFromKey(h.k));
-    return `<div class="hint ${i>=prevCount && prevCount>0 ? 'new':''}"><b>${i+1}</b><span class="k">${t('h_'+h.k)}</span><span class="v">${txt}</span></div>`;
-  }).join('');
+  const hl = $('#hintList'), sig = r.id + ':' + lang + ':' + r.hints.length;
+  if (hl.dataset.sig !== sig){
+    const prevCount = hl.dataset.sig && hl.dataset.sig.startsWith(r.id + ':' + lang + ':') ? hl.children.length : 0;
+    hl.innerHTML = r.hints.map((h,i)=>{
+      const txt = h.k==='flag' ? hintTextFromKey(h.k) : esc(hintTextFromKey(h.k));
+      const fresh = i >= prevCount && prevCount > 0;
+      return `<div class="hint ${fresh?'new':''}" ${fresh?'':'style="animation:none"'}><b>${i+1}</b><span class="k">${t('h_'+h.k)}</span><span class="v">${txt}</span></div>`;
+    }).join('');
+    hl.dataset.sig = sig; hl.scrollTop = hl.scrollHeight;
+  }
   $('#hintCountTxt').textContent = r.hints.length + '/' + r.hintTotal;
-  const hl = $('#hintList'); hl.scrollTop = hl.scrollHeight;
   const conn = S.players.filter(p=>p.connected).length, wants = r.wants || [], iWant = wants.includes(me.id);
   const hn = $('#hintNow'); hn.style.display = r.hints.length < r.hintTotal ? '' : 'none';
   hn.classList.toggle('voted', iWant);
@@ -1224,6 +1275,12 @@ $('#codeIn').addEventListener('keydown', e => { if (e.key==='Enter') $('#joinBtn
 $('#langBtn').addEventListener('click', () => { lang = lang==='nl'?'en':'nl'; localStorage.setItem('lr_lang', lang); applyI18n(); });
 $('#soundBtn').addEventListener('click', () => { sound = !sound; localStorage.setItem('lr_sound', sound?'1':'0'); applyI18n(); beep(); });
 ['#rulesBtn','#rulesBtn2'].forEach(s => $(s).addEventListener('click', () => $('#ovRules').classList.add('on')));
+function setTheme(th){ document.documentElement.dataset.theme = th; try{localStorage.setItem('lr_theme',th);}catch(e){} document.querySelector('meta[name=theme-color]').content = th==='dark'?'#14181a':'#f2ede2'; document.querySelectorAll('#themeSeg button').forEach(b=>b.classList.toggle('on', b.dataset.th===th)); }
+setTheme(document.documentElement.dataset.theme || 'light');
+['#setBtn','#setBtn2'].forEach(s => $(s).addEventListener('click', () => $('#ovSet').classList.add('on')));
+$('#setClose').addEventListener('click', () => $('#ovSet').classList.remove('on'));
+$('#ovSet').addEventListener('click', e => { if (e.target.id==='ovSet') $('#ovSet').classList.remove('on'); });
+$('#themeSeg').addEventListener('click', e => { const b = e.target.closest('[data-th]'); if (b){ setTheme(b.dataset.th); beep(b.dataset.th==='dark'?330:660,.06); } });
 $('#rulesClose').addEventListener('click', () => $('#ovRules').classList.remove('on'));
 $('#ovRules').addEventListener('click', e => { if (e.target.id==='ovRules') $('#ovRules').classList.remove('on'); });
 
@@ -1278,6 +1335,33 @@ $('#rematchBtn').addEventListener('click', () => act({ t:'rematch' }));
 document.addEventListener('visibilitychange', () => { if (document.visibilityState==='visible' && room && !isHost && S) act({ t:'sync' }); });
 window.addEventListener('resize', () => { map && map.invalidateSize(); rmap && rmap.invalidateSize(); });
 
+/* ================= CHAT (peer to peer, geen regels) ================= */
+let sendChat = null, chatLog = [], unread = 0;
+function updateChat(){
+  const on = !!room && !solo && document.body.dataset.screen && document.body.dataset.screen !== 'start';
+  $('#chatBtn').classList.toggle('show', on);
+  if (!on) $('#chat').classList.remove('on');
+}
+function renderChat(){
+  const log = $('#chatLog'); if (!log) return;
+  log.innerHTML = chatLog.length ? chatLog.map(m => `<div class="msg ${m.mine?'me':''}"><small>${m.mine?'':dotHtml({color:m.color})}${m.mine?'':esc(m.name)}</small><p>${esc(m.text)}</p></div>`).join('') : `<div class="cempty">${t('chatEmpty')}</div>`;
+  log.scrollTop = log.scrollHeight;
+  const b = $('#chatBadge'); b.textContent = unread; b.classList.toggle('on', unread > 0);
+}
+function addChat(m){ chatLog.push(m); if (chatLog.length > 200) chatLog.shift(); if (!m.mine && !$('#chat').classList.contains('on')){ unread++; beep(880,.05); } renderChat(); }
+function receiveChat(m){
+  if (!m || typeof m.text !== 'string' || !m.text.trim()) return;
+  addChat({ name: String(m.name||'?').slice(0,16), color: COLORS.includes(m.color)?m.color:'#888', text: m.text.slice(0,500), mine:false });
+}
+$('#chatBtn').addEventListener('click', () => { $('#chat').classList.add('on'); unread = 0; renderChat(); $('#chatIn').focus(); });
+$('#chatClose').addEventListener('click', () => $('#chat').classList.remove('on'));
+$('#chatForm').addEventListener('submit', e => {
+  e.preventDefault(); const text = $('#chatIn').value.trim(); if (!text || !sendChat) return;
+  $('#chatIn').value = ''; sendChat({ name: me.name, color: me.color, text });
+  addChat({ name: me.name, color: me.color, text, mine:true });
+});
+$('#chatIn').addEventListener('keydown', e => e.stopPropagation());
+
 /* ================= BOOT ================= */
 (async function boot(){
   $('#name').value = me.name; renderColors(); applyI18n(); show('start');
@@ -1287,7 +1371,7 @@ window.addEventListener('resize', () => { map && map.invalidateSize(); rmap && r
 })();
 
 /* expose voor tests */
-window.__lr = { get S(){return S}, get H(){return H}, countryAt, randomLocation, scoreFor, search, chooseHints, hintValue, renderHintValue, HINT_DEFS, COUNTRIES: () => COUNTRIES };
+window.__lr = { get S(){return S}, get H(){return H}, countryAt, randomLocation, scoreFor, search, receiveChat, chooseHints, hintValue, renderHintValue, HINT_DEFS, COUNTRIES: () => COUNTRIES };
 </script>
 </body>
 </html>
