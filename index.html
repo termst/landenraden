@@ -134,11 +134,21 @@ span.pill{cursor:default}
 .seg button.on{background:var(--sel);color:var(--ink);box-shadow:0 1px 3px rgba(0,0,0,.28),0 1px 0 rgba(255,255,255,.06) inset}
 .seg.ro button{pointer-events:none}
 .seg.sm button{font-size:12.5px;padding:8px 1px}
-.seg.modes{display:grid;grid-template-columns:1fr 1fr;gap:3px}
-.seg.modes button{display:flex;align-items:center;justify-content:flex-start;gap:9px;padding:10px 11px;min-height:46px;text-align:left}
-.seg.modes button .ic{color:var(--mute);width:20px;height:20px}
-.seg.modes button.on{color:var(--ink);box-shadow:0 0 0 1.5px var(--acc)}
-.seg.modes button.on .ic{color:var(--acc)}
+.seg.modes{display:grid;grid-template-columns:1fr 1fr;gap:8px;background:none;padding:0;box-shadow:none;border-radius:0}
+.seg.modes button{--mc:var(--acc);display:flex;align-items:center;justify-content:flex-start;gap:9px;min-height:58px;padding:8px;text-align:left;font-weight:700;font-size:15px;line-height:1.1;color:var(--ink2);background:var(--card2);border:1.5px solid transparent;border-radius:14px;box-shadow:var(--shadow);transition:background .15s,border-color .15s,color .15s,transform .1s}
+.seg.modes button:active{transform:scale(.97)}
+.seg.modes button[data-val=map]{--mc:#2f7fc4}
+.seg.modes button[data-val=street]{--mc:#2a9560}
+.seg.modes button[data-val=dutch]{--mc:#e07b1a}
+.seg.modes button[data-val=hunt]{--mc:#8a5bd0}
+.seg.modes .mi{width:38px;height:38px;flex:none;display:grid;place-items:center;border-radius:11px;color:var(--mc);background:color-mix(in srgb,var(--mc) 18%,transparent);transition:background .15s,color .15s}
+.seg.modes .mi svg{width:28px;height:28px;fill:currentColor;stroke:none}
+.seg.modes .ml{min-width:0}
+.seg.modes button.on{color:var(--ink);background:var(--sel);border-color:var(--acc)}
+.seg.modes button.on .mi{color:#fff;background:var(--mc)}
+@media (hover:hover){.seg.modes button:not(.on):hover{border-color:var(--line)}}
+@media (max-width:380px){.seg.modes button{gap:7px;padding:7px;font-size:13px}.seg.modes .mi{width:32px;height:32px;border-radius:9px}.seg.modes .mi svg{width:23px;height:23px}}
+@media (max-width:335px){.seg.modes button{flex-direction:column;align-items:flex-start;gap:6px}}
 .seg.cont button{display:grid;place-items:center;padding:7px 1px;min-height:54px}
 .seg.cont button .ic{width:36px;height:36px;color:var(--mute);transition:color .15s}
 .seg.cont button.on .ic{color:var(--acc)}
@@ -387,10 +397,11 @@ body[data-screen=game] #chat{top:calc(max(10px,env(safe-area-inset-top)) + 62px)
   <symbol id="i-lock" viewBox="0 0 24 24"><path d="m5 12.5 4.5 4.5L19 7.5"/></symbol>
   <symbol id="i-pin" viewBox="0 0 24 24"><path d="M12 21.5s7-6.3 7-11.5a7 7 0 1 0-14 0c0 5.2 7 11.5 7 11.5z"/><circle cx="12" cy="10" r="2.5"/></symbol>
   <symbol id="i-arrow" viewBox="0 0 24 24"><path d="M12 20V4M6 10l6-6 6 6"/></symbol>
-  <symbol id="i-map" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c2.5 2.5 3.8 5.5 3.8 9s-1.3 6.5-3.8 9c-2.5-2.5-3.8-5.5-3.8-9S9.5 5.5 12 3z"/></symbol>
-  <symbol id="i-street" viewBox="0 0 24 24"><path d="M3 8a2 2 0 0 1 2-2h2.5L9 4h6l1.5 2H19a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><circle cx="12" cy="13" r="3.5"/></symbol>
-  <symbol id="i-dutch" viewBox="0 0 24 24"><path d="M10 21l1.2-9h1.6L14 21zM12 12 7 7M12 12l5-5M12 12l-5 5M12 12l5 5M7 7 5.5 8.5 8.5 11.5 10 10M17 7l1.5 1.5-3 3L14 10M7 17l-1.5-1.5 3-3L10 14M17 17l1.5-1.5-3-3L14 14"/></symbol>
-  <symbol id="i-hunt" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7.5"/><path d="m21 21-4.7-4.7M11 7v8M7 11h8"/></symbol>
+  <!-- Modusiconen: vlak, twee tinten. Hoofdvorm in currentColor, tweede tint met opacity. -->
+  <symbol id="m-map" viewBox="0 0 24 24"><g transform="rotate(-45 12 12)"><rect x="9" y="7.5" width="6" height="9" rx="1.6"/><rect x="1.2" y="9" width="6" height="6" rx="1" opacity=".45"/><rect x="16.8" y="9" width="6" height="6" rx="1" opacity=".45"/><rect x="7" y="11.3" width="2.2" height="1.4"/><rect x="14.8" y="11.3" width="2.2" height="1.4"/><rect x="11.2" y="16" width="1.6" height="2.6"/><circle cx="12" cy="19.4" r="1.3"/></g><g fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><path d="M17.5 20.9A3.4 3.4 0 0 0 20.9 17.5"/><path d="M17.5 23A5.5 5.5 0 0 0 23 17.5"/></g></symbol>
+  <symbol id="m-street" viewBox="0 0 24 24"><clipPath id="m-street-c"><rect x="1.5" y="3" width="21" height="18" rx="4"/></clipPath><rect x="1.5" y="3" width="21" height="18" rx="4" opacity=".45"/><circle cx="17.6" cy="8" r="2.3"/><path clip-path="url(#m-street-c)" fill-rule="evenodd" d="M10.4 10.2h3.2l6.4 13H4zM11.3 12.6h1.4v2.1h-1.4zM11 16.4h2v2.6h-2z"/></symbol>
+  <symbol id="m-dutch" viewBox="0 0 24 24"><path fill-rule="evenodd" d="M9.8 11h4.4L16.6 22.5H7.4zM10.9 22.5v-3.2a1.1 1.1 0 0 1 2.2 0v3.2z"/><g transform="translate(12 9.6) rotate(45)"><g><rect x="-1.9" y="-9.6" width="3.8" height="7.6" rx=".9" opacity=".5"/><rect x="-.55" y="-9.6" width="1.1" height="9.6" rx=".5"/></g><g transform="rotate(90)"><rect x="-1.9" y="-9.6" width="3.8" height="7.6" rx=".9" opacity=".5"/><rect x="-.55" y="-9.6" width="1.1" height="9.6" rx=".5"/></g><g transform="rotate(180)"><rect x="-1.9" y="-9.6" width="3.8" height="7.6" rx=".9" opacity=".5"/><rect x="-.55" y="-9.6" width="1.1" height="9.6" rx=".5"/></g><g transform="rotate(270)"><rect x="-1.9" y="-9.6" width="3.8" height="7.6" rx=".9" opacity=".5"/><rect x="-.55" y="-9.6" width="1.1" height="9.6" rx=".5"/></g></g><circle cx="12" cy="9.6" r="2"/></symbol>
+  <symbol id="m-hunt" viewBox="0 0 24 24"><circle cx="10.5" cy="10.5" r="6.4" fill-opacity=".45" stroke="currentColor" stroke-width="2.2"/><path d="M16.2 16.2l5 5" stroke="currentColor" stroke-width="3" stroke-linecap="round"/><path fill-rule="evenodd" d="M10.5 15s3.1-2.6 3.1-5.2a3.1 3.1 0 1 0-6.2 0c0 2.6 3.1 5.2 3.1 5.2zM10.5 8.7a1.1 1.1 0 1 1 0 2.2 1.1 1.1 0 0 1 0-2.2z"/></symbol>
   <symbol id="i-road" viewBox="0 0 24 24"><path d="M8 3 4 21M16 3l4 18M12 4v3M12 11v3M12 18v3"/></symbol>
   <symbol id="i-building" viewBox="0 0 24 24"><path d="M5 21V5a2 2 0 0 1 2-2h7a2 2 0 0 1 2 2v16M16 10h2a2 2 0 0 1 2 2v9M3 21h18M9 7h3M9 11h3M9 15h3"/></symbol>
   <symbol id="i-church" viewBox="0 0 24 24"><path d="M12 2v4M10 4h4M12 6l-5 5v10h10V11zM7 13l-3 3v5h3M17 13l3 3v5h-3M10 21v-4a2 2 0 0 1 4 0v4"/></symbol>
@@ -1904,9 +1915,10 @@ function renderLobby(){
     seg.classList.toggle('ro', !host);
     seg.innerHTML = seg.dataset.opts.split(',').map(o => {
       const val = isNaN(o) ? o : +o, label = isNaN(o) ? t(o) : o + suf;
-      const icon = key==='mode' ? o : key==='continent' ? o : '';
-      if (key==='continent') return `<button class="${S.settings[key]===val?'on':''}" data-val="${o}" aria-label="${esc(label)}" title="${esc(label)}"><svg class="ic"><use href="#i-${icon}"/></svg></button>`;
-      return `<button class="${S.settings[key]===val?'on':''}" data-val="${o}">${icon ? `<svg class="ic"><use href="#i-${icon}"/></svg><span>${label}</span>` : label}</button>`;
+      const cls = S.settings[key]===val ? 'on' : '';
+      if (key==='continent') return `<button class="${cls}" data-val="${o}" aria-label="${esc(label)}" title="${esc(label)}"><svg class="ic"><use href="#i-${o}"/></svg></button>`;
+      if (key==='mode') return `<button class="${cls}" data-val="${o}"><span class="mi"><svg aria-hidden="true"><use href="#m-${o}"/></svg></span><span class="ml">${label}</span></button>`;
+      return `<button class="${cls}" data-val="${o}">${label}</button>`;
     }).join('');
   });
   const hc = $('#hintChips'); hc.classList.toggle('ro', !host);
