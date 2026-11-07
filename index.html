@@ -260,7 +260,6 @@ th.n{text-align:right}
 td{padding:10px 4px;border-top:1px solid var(--line);overflow-wrap:anywhere}
 td.n{text-align:right;font-size:15px;white-space:nowrap}
 td img{height:14px;border-radius:2px;vertical-align:-2px;margin-right:4px}
-tbody tr{animation:slide .3s ease backwards}
 .good{color:var(--ok)}.half{color:var(--gold)}.miss{color:var(--bad)}
 /* final */
 .podium{display:flex;align-items:flex-end;gap:10px;min-height:210px}
@@ -523,6 +522,71 @@ body[data-screen=game] #chat{top:calc(max(10px,env(safe-area-inset-top)) + 62px)
 <div id="chat"><div class="chead"><h2 data-i="chat"></h2><button class="x" id="chatClose" aria-label="close">&times;</button></div><div id="chatLog"></div><form id="chatForm" autocomplete="off"><input type="text" id="chatIn" maxlength="500" enterkeyhint="send"><button class="btn pri" aria-label="send"><svg class="ic"><use href="#i-send"/></svg></button></form></div>
 <div class="toast" id="toast"></div>
 
+<script>
+/* Intro animaties: elk element dat verschijnt krijgt hetzelfde effect (oplossen, drijven, veren), maar met telkens andere richting, afstand, draai, schaal, tijd en veer. */
+(()=>{
+  if (matchMedia('(prefers-reduced-motion:reduce)').matches || !Element.prototype.animate) return;
+  const R=(a,b)=>a+Math.random()*(b-a), P=a=>a[Math.floor(Math.random()*a.length)];
+  function reveal(el,delay=0,big=false){
+    if(!el||!el.isConnected) return;
+    const k=big?1.5:1, ang=R(0,Math.PI*2), d=R(8,20)*k, s=R(.9,.97), rot=R(-3.5,3.5)*(big?.6:1), blur=R(2,5);
+    const sx=Math.cos(ang)*d+'px', sy=Math.sin(ang)*d+'px';
+    const ease=`cubic-bezier(${R(.2,.4).toFixed(2)},${R(1,1.5).toFixed(2)},${R(.3,.6).toFixed(2)},1)`;
+    el.animate([
+      {opacity:0,translate:`${sx} ${sy}`,scale:String(s),rotate:rot+'deg',filter:`blur(${blur}px)`},
+      {opacity:1,translate:'0 0',scale:'1',rotate:'0deg',filter:'blur(0)'}
+    ],{duration:R(380,720),delay,easing:ease,fill:'backwards'});
+  }
+  const vis=e=>!e.hidden&&getComputedStyle(e).display!=='none';
+  const seen=new WeakMap();
+  function fresh(el){
+    const c=el.parentElement; if(!c) return true;
+    let set=seen.get(c); if(!set){set=new Set();seen.set(c,set);}
+    const key=Array.prototype.indexOf.call(c.children,el)+'|'+el.textContent;
+    if(set.has(key)) return false; set.add(key); return true;
+  }
+  const LIST='.pl,.who span,tbody tr,.stat,.msg,.chipbtn,.colors button';
+  function stagger(list,step=55,base=0){
+    let i=0; list.forEach(e=>{ if(vis(e)) reveal(e,base+i++*R(step*.5,step*1.4)); });
+  }
+  function screenOn(s){
+    s.querySelectorAll('*').forEach(e=>{const c=e.parentElement; if(c) seen.delete(c);});
+    const t=s.id==='game'
+      ?s.querySelectorAll('.hud>.chip,.hud>.iconbtn,.mapctl button,.panel>*')
+      :s.querySelectorAll('.wrap>*,.brand .logo');
+    stagger([...t],70);
+    const pods=s.querySelectorAll('.stat,.pl,tbody tr,.chipbtn,.colors button');
+    pods.forEach(e=>fresh(e));
+  }
+  new MutationObserver(ms=>{
+    for(const m of ms){
+      if(m.type==='childList'){
+        m.addedNodes.forEach(n=>{
+          if(n.nodeType!==1) return;
+          const items=n.matches(LIST)?[n]:[...n.querySelectorAll(LIST)];
+          const list=items.filter(fresh);
+          if(list.length) stagger(list,45);
+        });
+      }else if(m.type==='attributes'){
+        const e=m.target, old=m.oldValue||'';
+        if(m.attributeName==='class'){
+          const was=(' '+old+' ').includes(' on '), now=e.classList.contains('on');
+          if(!was&&now){
+            if(e.classList.contains('screen')) screenOn(e);
+            else if(e.classList.contains('ov')) reveal(e.querySelector('.card'),40,true);
+            else if(e.id==='chat'||e.id==='ac'||e.classList.contains('ac')) reveal(e,0,true);
+          }
+          if(e.id==='chatBtn'&&!(' '+old+' ').includes(' show ')&&e.classList.contains('show')) reveal(e,0,true);
+        }else if(m.attributeName==='hidden'){
+          if(!e.hidden&&old!==null&&e.id!=='map'&&e.id!=='pano') reveal(e,0);
+        }else if(m.attributeName==='style'){
+          if(e.id==='lockedBox'&&/display:\s*none/.test(old)&&e.style.display!=='none') reveal(e,0,true);
+        }
+      }
+    }
+  }).observe(document.body,{subtree:true,childList:true,attributes:true,attributeOldValue:true,attributeFilter:['class','hidden','style']});
+})();
+</script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
 <script type="module">
 // Trystero apart laden: valt de CDN weg (netwerk, adblocker), dan blijft solo gewoon werken.
