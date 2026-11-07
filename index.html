@@ -139,10 +139,9 @@ span.pill{cursor:default}
 .seg.modes button .ic{color:var(--mute);width:20px;height:20px}
 .seg.modes button.on{color:var(--ink);box-shadow:0 0 0 1.5px var(--acc)}
 .seg.modes button.on .ic{color:var(--acc)}
-.seg.cont button{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;padding:8px 1px 7px;min-height:56px;font-size:11.5px}
-.seg.cont button .ic{width:26px;height:26px;color:var(--mute);transition:color .15s}
+.seg.cont button{display:grid;place-items:center;padding:8px 1px;min-height:48px}
+.seg.cont button .ic{width:28px;height:28px;color:var(--mute);transition:color .15s}
 .seg.cont button.on .ic{color:var(--acc)}
-@media (max-width:420px){.seg.cont button{font-size:10.5px;letter-spacing:-.1px}}
 .field{display:flex;flex-direction:column;gap:7px}
 .err{color:var(--bad);font-size:14px;margin:0}
 .err:empty{display:none}
@@ -1905,6 +1904,7 @@ function renderLobby(){
     seg.innerHTML = seg.dataset.opts.split(',').map(o => {
       const val = isNaN(o) ? o : +o, label = isNaN(o) ? t(o) : o + suf;
       const icon = key==='mode' ? o : key==='continent' ? (o==='ALL' ? 'map' : o) : '';
+      if (key==='continent') return `<button class="${S.settings[key]===val?'on':''}" data-val="${o}" aria-label="${esc(label)}" title="${esc(label)}"><svg class="ic"><use href="#i-${icon}"/></svg></button>`;
       return `<button class="${S.settings[key]===val?'on':''}" data-val="${o}">${icon ? `<svg class="ic"><use href="#i-${icon}"/></svg><span>${label}</span>` : label}</button>`;
     }).join('');
   });
