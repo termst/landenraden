@@ -1,6 +1,6 @@
 # Geoflatter
 
-Online multiplayer landenraadspel voor 2 tot 6 spelers. Peer to peer (WebRTC via Trystero), geen server, geen account, geen kosten.
+Online multiplayer aardrijkskundespel voor 2 tot 6 spelers, ook op de telefoon. Peer to peer (WebRTC via Trystero), geen server, geen account, geen kosten.
 
 ## Bestanden
 
@@ -73,14 +73,29 @@ Kies in de lobby de modus **Nederland**. Je krijgt een willekeurige plek in Nede
 * Goed geeft de volle score. Fout binnen 25 km of in dezelfde provincie geeft 100 punten (`CONFIG.nl.nearKm`).
 * Op het uitslagscherm zie je de juiste plek en de gok van elke speler.
 
+## Straatjacht
+
+Kies in de lobby de modus **Straatjacht**. Je krijgt de naam van een straat of gebouw en een satellietkaart zonder namen, en je moet het doel vinden.
+
+* **Tikken is scannen.** Elke tik zet je pin en laat zien wat daar ligt (straat of gebouw), met de omtrek op de kaart. Zo bouw je de kaart zelf op.
+* **Warm of koud.** Na elke scan zie je hoe dicht je zit. Makkelijk: temperatuur, afstand en richting. Normaal: temperatuur en warmer/kouder. Moeilijk: alleen warmer of kouder.
+* **Scans:** 8, 6 of 4 per ronde. Daarna kun je je pin nog wel verzetten, maar je krijgt geen informatie meer.
+* **Raak?** Tik je op het doel (of ergens anders op dezelfde straat), dan ben je meteen klaar. Anders zet je je pin vast, of telt bij het einde van de tijd je laatste pin, zonder tijdbonus.
+* **Score:** hoe dichterbij hoe meer (`falloff` in `CONFIG.hunt`), maal 60% plus 40% van je resterende tijd, plus 20 punten per ongebruikte scan als je binnen 300 m zit.
+* **Hints:** richting, afstand, buurt, postcode, een straat in de buurt en als laatste een cirkel op de kaart.
+* **Waar speel je:** kies je eigen plaats (leuk met mensen die er wonen) of een willekeurige. Moeilijker betekent ook een groter gebied (800, 1200 of 1700 m straal).
+
+De namen komen van [OpenStreetMap](https://www.openstreetmap.org/copyright) via [Nominatim](https://nominatim.org/release-docs/latest/api/Reverse/): geen key, geen kosten. Het spel doet per speler maximaal één verzoek per seconde, zoals hun [gebruiksregels](https://operations.osmfoundation.org/policies/nominatim/) vragen, en onthoudt antwoorden. Is Nominatim niet bereikbaar, dan speelt de ronde als gewone Nederland-ronde. Instellingen staan in `CONFIG.hunt`.
+
 ## Font
 
-Beide fonts staan als base64 in `index.html`, dus ze laden meteen en zijn voor iedereen gelijk.
+De fonts staan als base64 in `index.html`, dus ze laden meteen en zijn voor iedereen gelijk.
 
-* **The Bold Font** (gratis versie, © Sven Pels): titels, knoppen en grote tekst. Alleen kapitalen en geen accenten, dus namen in dit font verliezen hun accent.
+* **The Logo Font** (demo, © The Bold Font, Sven Pels): titels, knoppen en grote tekst. De demo heeft alleen letters.
+* **The Bold Font** (gratis versie, © Sven Pels): vult de cijfers en leestekens aan die in de demo van The Logo Font ontbreken.
 * **Madani** (demo, NamelaType): uitleg, hints, labels, invoer en chat. Teruggebracht tot Latijnse letters om de pagina klein te houden. De cijfers in de demo zijn doorgestreepte blokjes en leestekens als `- ' ( ) : / ? !` ontbreken: die komen uit The Bold Font. Met een gekochte versie kun je de cijfers en leestekens gewoon meenemen.
 
-De demo van Madani is alleen voor persoonlijk gebruik. Koop een licentie op [namelatype.com](https://namelatype.com) voor promotioneel of commercieel gebruik, en controleer ook de licentie op [the-bold-font.com](https://the-bold-font.com/).
+**Let op, licentie.** De demo van The Logo Font mag volgens zijn licentie niet in een website worden ingebed of worden verspreid, ook niet gratis. Koop de volledige versie op [the-bold-font.com](https://www.the-bold-font.com/) voordat je dit online zet (die heeft ook cijfers). De demo van Madani is alleen voor persoonlijk gebruik: koop een licentie op [namelatype.com](https://namelatype.com) voor promotioneel of commercieel gebruik.
 
 ## Goed om te weten
 
@@ -91,4 +106,4 @@ De demo van Madani is alleen voor persoonlijk gebruik. Koop een licentie op [nam
 
 ## Bronnen
 
-Natural Earth (publiek domein), world-countries (ODbL), Esri World Imagery, Panoramax, Leaflet, Pannellum, Trystero, The Bold Font.
+Natural Earth (publiek domein), world-countries (ODbL), Esri World Imagery, OpenStreetMap en Nominatim (ODbL), CARTO, Panoramax, Leaflet, Pannellum, Trystero, The Logo Font, The Bold Font.
