@@ -51,7 +51,7 @@ body::after{content:'';position:fixed;inset:0;z-index:-1;pointer-events:none;opa
 button,input,select{font:inherit;color:inherit}
 :focus-visible{outline:2px solid var(--sea);outline-offset:2px}
 /* Grote tekst: The Logo Font, cijfers en leestekens vallen terug op The Bold Font. De rest is Madani. */
-h1,h2,.btn,.code,.chip b,#pCount,.nm-big,.locked,td.n,.pod,.stat b,.avatar,#codeIn,#huntName{font-family:var(--display);font-weight:400;text-transform:uppercase;letter-spacing:.015em}
+h1,h2,.btn,.code,.chip b,#pCount,.nm-big,.locked,td.n,.pod,.stat b,.avatar,.avatars button,#codeIn,#huntName{font-family:var(--display);font-weight:400;text-transform:uppercase;letter-spacing:.015em}
 .pill,.mini,.eyebrow b,.next b{font-weight:700;text-transform:uppercase;letter-spacing:.03em}
 label,.eyebrow,.chip small,.hint .k,th,.stat small,.badge{font-weight:700}
 .screen{position:fixed;inset:0;display:none;flex-direction:column;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:max(18px,env(safe-area-inset-top)) max(16px,env(safe-area-inset-right)) max(24px,env(safe-area-inset-bottom)) max(16px,env(safe-area-inset-left))}
@@ -103,6 +103,16 @@ span.pill{cursor:default}
 .iconbtn{width:38px;height:38px;display:inline-grid;place-items:center;padding:0;background:var(--card);border:1px solid var(--line);border-radius:99px;cursor:pointer;transition:border-color .15s;box-shadow:var(--shadow)}
 .avatar{width:46px;height:46px;border-radius:50%;flex:none;display:grid;place-items:center;font-size:22px;color:#fff;transition:background .2s,transform .2s;box-shadow:0 0 0 3px color-mix(in srgb,var(--ink) 12%,transparent)}
 .avatar.bump{transform:scale(1.12)}
+.avatar .av{width:32px;height:32px;flex:none}
+.avatar.sm .av{width:19px;height:19px}
+.avatar.xs .av{width:16px;height:16px}
+.avatar.sm{width:26px;height:26px;font-size:13px;box-shadow:0 0 0 2px color-mix(in srgb,var(--ink) 14%,transparent)}
+.avatar.xs{width:22px;height:22px;font-size:11px;box-shadow:0 0 0 2px color-mix(in srgb,var(--ink) 14%,transparent)}
+.avatars{display:flex;gap:8px;flex-wrap:wrap}
+.avatars button{width:40px;height:40px;padding:0;border-radius:50%;border:2px solid var(--card);box-shadow:0 0 0 1px var(--line);cursor:pointer;flex:none;display:grid;place-items:center;color:#fff;font-size:18px;transition:transform .15s}
+.avatars button.on{box-shadow:0 0 0 2.5px var(--acc-hi)}
+.avatars button>*{pointer-events:none}
+.avatars button .av{width:28px;height:28px;flex:none}
 .nameRow{display:flex;gap:12px;align-items:center}
 .colors{display:flex;gap:8px;flex-wrap:wrap}
 .colors button{width:32px;height:32px;border-radius:50%;border:2px solid var(--card);box-shadow:0 0 0 1px var(--line);cursor:pointer;flex:none;transition:transform .15s}
@@ -339,6 +349,16 @@ body[data-screen=game] #chat{top:calc(max(10px,env(safe-area-inset-top)) + 62px)
 <body>
 <svg width="0" height="0" style="position:absolute" aria-hidden="true">
   <defs><linearGradient id="lg-logo" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#a890ff"/><stop offset="1" stop-color="#27409c"/></linearGradient></defs>
+  <defs><radialGradient id="av-lure"><stop offset=".2" stop-color="#fff4d2"/><stop offset=".45" stop-color="#ffcf5e" stop-opacity=".9"/><stop offset="1" stop-color="#ffcf5e" stop-opacity="0"/></radialGradient></defs>
+  <!-- Avatars: eenvoudige silhouetten, wit op de kleur van de speler -->
+  <symbol id="av-angler" viewBox="0 0 32 32">
+    <path d="M16.8 9.4C15.6 5 11.8 3.2 8.6 5" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" opacity=".9"/>
+    <circle cx="7.4" cy="5.7" r="6" fill="url(#av-lure)"/>
+    <circle cx="7.4" cy="5.7" r="2.5" fill="#fff7e2"/>
+    <path d="M6.2 15.6C6.6 10.6 11 7.8 16.2 8.4 21.2 9 24.9 12.3 26 16.4L30.4 12.1Q28.2 19.6 30.4 27.1L26 22.9C24.7 26.7 20.7 29.1 16 29.1 12.3 29.1 9.3 27.6 7.6 25L10.3 23.9 11.6 21.5 12.9 23 14.3 20.9 15.6 22.1 17.2 21.2 14.5 18.4 13.3 20.9 12 17.4 10.5 19.9 9.3 16.5Z" fill="#fff" opacity=".96"/>
+    <circle cx="14.2" cy="13.9" r="2.5" fill="#15151f" opacity=".85"/>
+    <circle cx="15" cy="13.1" r=".85" fill="#fff"/>
+  </symbol>
   <symbol id="i-gear" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></symbol>
   <symbol id="i-sun" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></symbol>
   <symbol id="i-moon" viewBox="0 0 24 24"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></symbol>
@@ -394,6 +414,7 @@ body[data-screen=game] #chat{top:calc(max(10px,env(safe-area-inset-top)) + 62px)
       <div class="field"><label data-i="yourName" for="name"></label>
         <div class="nameRow"><div class="avatar" id="avatar"></div><input type="text" id="name" maxlength="16" autocomplete="off" autocorrect="off" enterkeyhint="go"></div></div>
       <div class="field"><label data-i="yourColor"></label><div class="colors" id="colors"></div></div>
+      <div class="field"><label data-i="yourAvatar"></label><div class="avatars" id="avatars"></div></div>
     </div>
     <div class="card">
       <button class="btn pri" id="createBtn"><svg class="ic"><use href="#i-plus"/></svg><span data-i="create"></span></button>
@@ -625,6 +646,9 @@ const CONFIG = {
   ],
 };
 const COLORS = ['#c2432b','#1f5868','#b9801a','#5b6ee1','#8a4fa8','#2d7a4d','#d46a8f','#4a5258'];
+// Avatars: 'letter' is de eerste letter van de naam, de rest zijn symbolen uit de sprite (#av-<id>).
+const AVATARS = ['letter','angler'];
+const avKey = a => AVATARS.includes(a) ? a : 'letter';
 // Hintgroepen die de host aan/uit kan zetten in de lobby
 const HINT_GROUPS = ['geo','people','money','codes','nb','name'];
 // Valuta-correcties (de brondata heeft enkele fouten of verouderde codes)
@@ -633,7 +657,7 @@ const CUR_FIX = { ZW:['ZWG','USD'], FM:['USD'], SL:['SLE'], BG:['EUR'], CU:['CUP
 /* ================= I18N ================= */
 const I18N = {
  nl: {
-  yourName:'Naam', yourColor:'Kleur', create:'Maak kamer', join:'Join', solo:'Solo',
+  yourName:'Naam', yourColor:'Kleur', yourAvatar:'Avatar', av_letter:'Letter', av_angler:'Hengelaarsvis', create:'Maak kamer', join:'Join', solo:'Solo',
   rules:'Uitleg', leave:'Verlaten', copyCode:'Kopieer link', share:'Delen', more:'Meer opties', language:'Taal',
   players:'Spelers', rounds:'Rondes', roundTime:'Tijd per ronde', hintEvery:'Hint elke', mode:'Modus', map:'Satelliet', street:'Straatbeeld',
   difficulty:'Moeilijkheid', easy:'Makkelijk', normal:'Normaal', hard:'Moeilijk', continent:'Continent',
@@ -693,7 +717,7 @@ const I18N = {
   </ul>`,
  },
  en: {
-  yourName:'Name', yourColor:'Color', create:'Create room', join:'Join', solo:'Solo',
+  yourName:'Name', yourColor:'Color', yourAvatar:'Avatar', av_letter:'Letter', av_angler:'Anglerfish', create:'Create room', join:'Join', solo:'Solo',
   rules:'Rules', leave:'Leave', copyCode:'Copy link', share:'Share', more:'More options', language:'Language',
   players:'Players', rounds:'Rounds', roundTime:'Round time', hintEvery:'Hint every', mode:'Mode', map:'Satellite', street:'Street view',
   difficulty:'Difficulty', easy:'Easy', normal:'Normal', hard:'Hard', continent:'Continent',
@@ -768,6 +792,7 @@ function applyI18n(){
   $('#rulesBody').innerHTML = I18N[lang].rulesHtml;
   $('#soundBtn').classList.toggle('on', sound);
   document.querySelectorAll('#langSeg button').forEach(b => b.classList.toggle('on', b.dataset.lang === lang));
+  renderAvatars();
   rerender();
 }
 
@@ -1467,6 +1492,7 @@ const me = {
   id: localStorage.getItem('lr_pid') || (crypto.randomUUID ? crypto.randomUUID() : String(Math.random()).slice(2)),
   name: localStorage.getItem('lr_name') || '',
   color: localStorage.getItem('lr_color') || rnd(COLORS),
+  avatar: avKey(localStorage.getItem('lr_avatar')),
 };
 localStorage.setItem('lr_pid', me.id);
 // Twee tabbladen delen localStorage en dus dezelfde speler-id: dan pakte tab 2 de plek van tab 1 af.
@@ -1506,7 +1532,7 @@ function connect(code){
   room.onPeerLeave = peerId => onPeerLeave(peerId);
   location.hash = 'room=' + code;
 }
-const helloPayload = () => ({ id: me.id, name: me.name, color: me.color });
+const helloPayload = () => ({ id: me.id, name: me.name, color: me.color, avatar: me.avatar });
 async function disconnect(){
   clearTimeout(joinTimer); clearInterval(hostWatch);
   if (H) { clearInterval(H.loop); clearTimeout(H.autoNext); }
@@ -1631,11 +1657,11 @@ function hostInit(){
 }
 function hostAddPlayer(p, peerId){
   let pl = H.players.find(x => x.id === p.id);
-  if (pl) { pl.peerId = peerId; pl.connected = true; pl.leftAt = null; pl.name = String(p.name).slice(0,16); pl.color = COLORS.includes(p.color)?p.color:pl.color; return true; }
+  if (pl) { pl.peerId = peerId; pl.connected = true; pl.leftAt = null; pl.name = String(p.name).slice(0,16); pl.color = COLORS.includes(p.color)?p.color:pl.color; pl.avatar = avKey(p.avatar); return true; }
   if (H.blocked.includes(p.id)) return 'kicked';
   if (H.phase !== 'lobby') return 'started';
   if (H.players.filter(x=>x.connected || (Date.now()-x.leftAt) < CONFIG.reserveMs).length >= CONFIG.maxPlayers) return 'full';
-  H.players.push({ id: p.id, peerId, name: String(p.name||'?').slice(0,16), color: COLORS.includes(p.color)?p.color:COLORS[0], joinIdx: H.nextJoin++, score:0, connected:true, leftAt:null, correct:0, best:0, fastest:null });
+  H.players.push({ id: p.id, peerId, name: String(p.name||'?').slice(0,16), color: COLORS.includes(p.color)?p.color:COLORS[0], avatar: avKey(p.avatar), joinIdx: H.nextJoin++, score:0, connected:true, leftAt:null, correct:0, best:0, fastest:null });
   return true;
 }
 function hostHandle(msg, peerId){
@@ -1804,7 +1830,7 @@ function publicState(){
   const r = H.round;
   return {
     hostPeer: selfId, term: H.term||0, finding: !!H.finding, phase: H.phase, settings: H.settings, roundN: H.roundN, used: H.used,
-    players: H.players.map(({id,peerId,name,color,joinIdx,score,connected,correct,best,fastest}) => ({id,peerId,name,color,joinIdx,score,connected,correct,best,fastest})),
+    players: H.players.map(({id,peerId,name,color,avatar,joinIdx,score,connected,correct,best,fastest}) => ({id,peerId,name,color,avatar,joinIdx,score,connected,correct,best,fastest})),
     round: r ? { id:r.id, n:r.n, lat:r.lat, lng:r.lng, photo:r.photo, hunt:r.hunt||null, zoom:r.zoom, pan:r.pan, difficulty:r.difficulty, durationMs:r.durationMs, hintIntervalMs:r.hintIntervalMs, hintTotal:r.hintTotal,
       hints: r.hints, remainingMs: Math.max(0, r.durationMs - (now()-r.startAt)), answered: Object.keys(r.answers), wants: Object.keys(r.wants||{}) } : null,
     result: H.result ? { ...H.result, nextAt: Math.max(0, CONFIG.resultAutoMs - (now()-(H.resultStart||now()))) } : null,
@@ -1837,6 +1863,11 @@ function rerender(){
 const isMeHost = () => S && S.hostPeer === selfId;
 const playerById = id => S.players.find(p=>p.id===id);
 function dotHtml(p){ return `<span class="dot" style="background:${p.color}"></span>`; }
+function avaInner(p){
+  const a = avKey(p.avatar);
+  return a === 'letter' ? esc(plain(String(p.name||'').trim()[0] || '?').toUpperCase()) : `<svg class="av"><use href="#av-${a}"/></svg>`;
+}
+function avaHtml(p, size){ return `<span class="avatar ${size||'sm'}" style="background:${p.color}">${avaInner(p)}</span>`; }
 
 function renderLobby(){
   show('lobby'); renderedRound = null; renderedResult = null; myAnswer = null;
@@ -1846,7 +1877,7 @@ function renderLobby(){
   $('#pCount').textContent = S.players.length + '/' + CONFIG.maxPlayers;
   $('#lobbyPlayers').innerHTML = S.players.map(p => {
     const off = !p.connected;
-    return `<div class="pl">${dotHtml(p)}<span class="nm">${esc(p.name)}${p.id===me.id?' <span class="sub">'+t('you')+'</span>':''}</span>
+    return `<div class="pl">${avaHtml(p)}<span class="nm">${esc(p.name)}${p.id===me.id?' <span class="sub">'+t('you')+'</span>':''}</span>
       ${p.peerId===S.hostPeer?`<span class="badge">${t('host')}</span>`:''}${off?`<span class="badge off">${t('offline')}</span>`:''}
       ${host && p.peerId!==selfId ? `<button class="x" data-kick="${esc(p.id)}">&times;</button>`:''}</div>`;
   }).join('');
@@ -2273,7 +2304,7 @@ function renderFinal(){
   const F = S.final, P = id => playerById(id) || { name:'?', color:'#888' };
   const top = F.ranking.slice(0,3), order = [top[1], top[0], top[2]], heights = [110, 150, 80];
   $('#podium').innerHTML = order.map((r,i) => r ? `<div class="pod"><span class="pn">${esc(plain(P(r.id).name))}</span><span class="ps">${r.score}</span><div class="blk" style="height:${heights[i]}px;background:${P(r.id).color}">${[2,1,3][i]}</div></div>` : '<div class="pod"></div>').join('');
-  $('#finBody').innerHTML = F.ranking.map((r,i)=>`<tr><td>${i+1}</td><td><span class="row" style="gap:6px">${dotHtml(P(r.id))}<span>${esc(P(r.id).name)}</span></span></td><td class="n">${r.correct}/${S.roundN}</td><td class="n">${r.score}</td></tr>`).join('');
+  $('#finBody').innerHTML = F.ranking.map((r,i)=>`<tr><td>${i+1}</td><td><span class="row" style="gap:7px">${avaHtml(P(r.id),'xs')}<span>${esc(P(r.id).name)}</span></span></td><td class="n">${r.correct}/${S.roundN}</td><td class="n">${r.score}</td></tr>`).join('');
   const best = F.ranking.reduce((a,b)=>b.best>a.best?b:a, F.ranking[0]);
   const fast = F.ranking.filter(r=>r.fastest!=null).sort((a,b)=>a.fastest-b.fastest)[0];
   const most = F.ranking.reduce((a,b)=>b.correct>a.correct?b:a, F.ranking[0]);
@@ -2288,15 +2319,24 @@ function renderFinal(){
 
 /* ================= UI EVENTS ================= */
 function renderAvatar(bump){
-  const a = $('#avatar'); a.style.background = me.color; a.textContent = plain(me.name[0] || '?').toUpperCase();
+  const a = $('#avatar'); a.style.background = me.color; a.innerHTML = avaInner(me);
   if (bump){ a.classList.add('bump'); setTimeout(()=>a.classList.remove('bump'), 160); }
+}
+function renderAvatars(){
+  $('#avatars').innerHTML = AVATARS.map(a => `<button style="background:${me.color}" class="${a===me.avatar?'on':''}" data-a="${a}" title="${esc(t('av_'+a))}" aria-label="${esc(t('av_'+a))}">${avaInner({ ...me, avatar:a })}</button>`).join('');
 }
 function renderColors(){
   $('#colors').innerHTML = COLORS.map(c=>`<button style="background:${c}" class="${c===me.color?'on':''}" data-c="${c}" aria-label="${c}"></button>`).join('');
+  renderAvatars();
   renderAvatar();
 }
 $('#colors').addEventListener('click', e => { const c = e.target.dataset.c; if (!c) return; me.color = c; localStorage.setItem('lr_color', c); renderColors(); renderAvatar(true); beep(600+COLORS.indexOf(c)*40,.05); });
-$('#name').addEventListener('input', e => { me.name = e.target.value.trim(); localStorage.setItem('lr_name', me.name); renderAvatar(true); });
+$('#avatars').addEventListener('click', e => {
+  const b = e.target.closest('[data-a]'); if (!b) return;
+  me.avatar = avKey(b.dataset.a); localStorage.setItem('lr_avatar', me.avatar);
+  renderAvatars(); renderAvatar(true); beep(520 + AVATARS.indexOf(me.avatar)*70, .05);
+});
+$('#name').addEventListener('input', e => { me.name = e.target.value.trim(); localStorage.setItem('lr_name', me.name); renderAvatar(true); renderAvatars(); });
 $('#name').addEventListener('keydown', e => { if (e.key==='Enter') $('#createBtn').click(); });
 $('#hintChips').addEventListener('click', e => {
   const b = e.target.closest('[data-g]'); if (!b || !isMeHost()) return;
