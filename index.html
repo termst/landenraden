@@ -287,19 +287,21 @@ body[data-screen=game] #chat{top:66px;bottom:auto;left:10px}
       <div class="players" id="lobbyPlayers"></div>
     </div>
     <div class="card" id="settingsCard">
-      <div class="field"><label data-i="mode"></label><div class="seg" data-set="mode" data-opts="map,street"></div></div>
+      <div class="field"><label data-i="mode"></label><div class="seg" data-set="mode" data-opts="map,street,dutch"></div></div>
+      <div class="field" data-for="dutch"><label data-i="nlPlaces"></label><div class="seg" data-set="nlPlaces" data-opts="all,big,towns"></div></div>
+      <div class="field" data-for="dutch"><label data-i="nlView"></label><div class="seg" data-set="nlView" data-opts="sat,photo"></div></div>
       <div class="field"><label data-i="rounds"></label><div class="seg" data-set="rounds" data-opts="5,10,15"></div></div>
       <div class="field"><label data-i="roundTime"></label><div class="seg" data-set="roundTime" data-opts="30,60,90" data-suf="s"></div></div>
       <div class="field"><label data-i="difficulty"></label><div class="seg" data-set="difficulty" data-opts="easy,normal,hard"></div></div>
-      <div class="field"><label data-i="continent"></label><div class="seg sm" data-set="continent" data-opts="ALL,EU,AF,AS,AM,OC"></div></div>
+      <div class="field" data-for="world"><label data-i="continent"></label><div class="seg sm" data-set="continent" data-opts="ALL,EU,AF,AS,AM,OC"></div></div>
     </div>
     <details class="card" id="hintCard">
       <summary data-i="more"></summary>
-      <div class="field"><label data-i="weighting"></label><div class="seg" data-set="weighting" data-opts="uniform,area"></div></div>
-      <div class="toggle"><label data-i="smallCountries"></label><button class="sw" data-sw="small" aria-label="toggle"></button></div>
+      <div class="field" data-for="world"><label data-i="weighting"></label><div class="seg" data-set="weighting" data-opts="uniform,area"></div></div>
+      <div class="toggle" data-for="world"><label data-i="smallCountries"></label><button class="sw" data-sw="small" aria-label="toggle"></button></div>
       <div class="field"><label data-i="hintCount"></label><div class="seg" data-set="hintCount" data-opts="4,6,8"></div></div>
       <div class="field"><label data-i="hintEvery"></label><div class="seg" data-set="hintEvery" data-opts="5,10,15,20" data-suf="s"></div></div>
-      <div class="field"><label data-i="hintTypes"></label><div class="chips" id="hintChips"></div></div>
+      <div class="field" data-for="world"><label data-i="hintTypes"></label><div class="chips" id="hintChips"></div></div>
     </details>
     <button class="btn pri" id="startBtn"></button>
     <p class="sub" id="waitHost" style="text-align:center" data-i="waitHost"></p>
@@ -397,6 +399,8 @@ const CONFIG = {
   score: { correct: 1000, perHint: 100, continent: 100, min: 300, timeBase: 0.6, timeWeight: 0.4 },
   zoom: { easy: 6, normal: 7, hard: 8 },
   pan:  { easy: 3, normal: 1.2, hard: 0 },
+  // Nederland-modus: zoom en beweegruimte op plaatsniveau, en hoe ver rond een plaats we zoeken.
+  nl: { zoom: { easy: 13, normal: 14, hard: 15 }, pan: { easy: 0.15, normal: 0.06, hard: 0 }, photoRadius: 0.03, nearKm: 25, tries: 8 },
   // Straatbeeld: Panoramax (open data, geen key nodig). radius in graden rond een willekeurig punt.
   street: { api: 'https://api.panoramax.xyz/api/search', tries: 10, radius: 2, limit: 50, flatFov: 65, loadMs: 6000 },
   // Kaartlaag. Satelliet zonder labels. Wissel hier voor Mapbox/Google tiles (zie README).
@@ -444,6 +448,14 @@ const I18N = {
   capLetter:'begint met {l}', nameLetter:'begint met {l}, {n} letters',
   chat:'Chat', chatPh:'Bericht...', chatEmpty:'Nog geen berichten', appSettings:'Instellingen', theme:'Thema', hintMin:'Houd minstens één soort aan', roundLbl:'Ronde', scoreLbl:'Score', timeLbl:'Tijd', hintsTitle:'Hints', hintNow:'Hint nu', hintNowVote:'Hint nu ({a}/{b})', hintVoted:'Wachten ({a}/{b})',
   hintCount:'Aantal hints', hintTypes:'Soorten hints',
+  dutch:'Nederland', nlPlaces:'Plaatsen', nlView:'Beeld', all:'Alle', big:'Steden', towns:'Dorpen', sat:'Satelliet', photo:'Straatbeeld',
+  guessPhNl:'Plaats...', unknownNl:'Kies een plaats uit de lijst',
+  h_n_prov:'Provincie', h_n_region:'Landsdeel', h_n_pop:'Inwoners', h_n_near:'Ligging', h_n_near2:'Ligging', h_n_len:'Lengte naam', h_n_first:'Naam', h_n_name:'Naam',
+  np0:'minder dan 10.000', np1:'10.000 tot 25.000', np2:'25.000 tot 50.000', np3:'50.000 tot 100.000', np4:'100.000 tot 250.000', np5:'meer dan 250.000',
+  rg0:'het noorden', rg1:'het oosten', rg2:'het zuiden', rg3:'het westen', rg4:'het midden', rgTxt:'In {r} van Nederland',
+  nNear:'Ongeveer {km} km {d} {c}', nNearClose:'Vlak bij {c}',
+  d0:'ten noorden van', d1:'ten noordoosten van', d2:'ten oosten van', d3:'ten zuidoosten van', d4:'ten zuiden van', d5:'ten zuidwesten van', d6:'ten westen van', d7:'ten noordwesten van',
+  pGR:'Groningen', pFR:'Friesland', pDR:'Drenthe', pOV:'Overijssel', pFL:'Flevoland', pGE:'Gelderland', pUT:'Utrecht', pNH:'Noord-Holland', pZH:'Zuid-Holland', pZE:'Zeeland', pNB:'Noord-Brabant', pLI:'Limburg',
   g_geo:'Geografie', g_people:'Mensen', g_money:'Geld', g_codes:'Codes', g_nb:'Buren', g_name:'Naam en vlag',
   h_hemi:'Halfrond', h_climate:'Klimaat', h_size:'Grootte', h_cursym:'Symbool', h_curshare:'Munt gedeeld', h_nb1:'Grenst aan', h_namelen:'Lengte naam', h_flag:'Vlag',
   hN:'noordelijk', hS:'zuidelijk', hE:'oostelijk', hW:'westelijk',
@@ -458,6 +470,7 @@ const I18N = {
    <li><b>Goed continent</b> geeft 100 punten.</li>
    <li><b>Makkelijk</b> is ver uitgezoomd en bewegen mag. <b>Moeilijk</b> is ver ingezoomd en niet bewegen.</li>
    <li><b>Straatbeeld</b> gebruikt beelden van Panoramax. Op moeilijk kun je niet rondkijken.</li>
+   <li><b>Nederland</b>: een willekeurige plek in Nederland, jij raadt de plaats. Dichtstbijzijnde plaats uit de lijst is het juiste antwoord. Een gok binnen 25 km of in dezelfde provincie geeft 100 punten.</li>
   </ul>`,
  },
  en: {
@@ -486,6 +499,14 @@ const I18N = {
   capLetter:'starts with {l}', nameLetter:'starts with {l}, {n} letters',
   chat:'Chat', chatPh:'Message...', chatEmpty:'No messages yet', appSettings:'Settings', theme:'Theme', hintMin:'Keep at least one type on', roundLbl:'Round', scoreLbl:'Score', timeLbl:'Time', hintsTitle:'Hints', hintNow:'Hint now', hintNowVote:'Hint now ({a}/{b})', hintVoted:'Waiting ({a}/{b})',
   hintCount:'Number of hints', hintTypes:'Hint types',
+  dutch:'Netherlands', nlPlaces:'Places', nlView:'View', all:'All', big:'Cities', towns:'Villages', sat:'Satellite', photo:'Street view',
+  guessPhNl:'Place...', unknownNl:'Pick a place from the list',
+  h_n_prov:'Province', h_n_region:'Region', h_n_pop:'Inhabitants', h_n_near:'Location', h_n_near2:'Location', h_n_len:'Name length', h_n_first:'Name', h_n_name:'Name',
+  np0:'under 10,000', np1:'10,000 to 25,000', np2:'25,000 to 50,000', np3:'50,000 to 100,000', np4:'100,000 to 250,000', np5:'over 250,000',
+  rg0:'the north', rg1:'the east', rg2:'the south', rg3:'the west', rg4:'the middle', rgTxt:'In {r} of the Netherlands',
+  nNear:'About {km} km {d} {c}', nNearClose:'Right next to {c}',
+  d0:'north of', d1:'northeast of', d2:'east of', d3:'southeast of', d4:'south of', d5:'southwest of', d6:'west of', d7:'northwest of',
+  pGR:'Groningen', pFR:'Friesland', pDR:'Drenthe', pOV:'Overijssel', pFL:'Flevoland', pGE:'Gelderland', pUT:'Utrecht', pNH:'North Holland', pZH:'South Holland', pZE:'Zeeland', pNB:'North Brabant', pLI:'Limburg',
   g_geo:'Geography', g_people:'People', g_money:'Money', g_codes:'Codes', g_nb:'Neighbours', g_name:'Name and flag',
   h_hemi:'Hemisphere', h_climate:'Climate', h_size:'Size', h_cursym:'Symbol', h_curshare:'Shared currency', h_nb1:'Borders', h_namelen:'Name length', h_flag:'Flag',
   hN:'northern', hS:'southern', hE:'eastern', hW:'western',
@@ -500,6 +521,7 @@ const I18N = {
    <li><b>Right continent</b> gives 100 points.</li>
    <li><b>Easy</b> is zoomed out and moving is allowed. <b>Hard</b> is zoomed in with no moving.</li>
    <li><b>Street view</b> uses photos from Panoramax. On hard you cannot look around.</li>
+   <li><b>Netherlands</b>: a random spot in the Netherlands, you guess the place. The nearest place on the list is the right answer. A guess within 25 km or in the same province gives 100 points.</li>
   </ul>`,
  }
 };
@@ -514,7 +536,7 @@ const t = (k, v={}) => (I18N[lang][k] ?? I18N.nl[k] ?? k).replace(/\{(\w+)\}/g, 
 function applyI18n(){
   document.documentElement.lang = lang;
   document.querySelectorAll('[data-i]').forEach(el => el.textContent = t(el.dataset.i));
-  $('#guess').placeholder = t('guessPh'); $('#chatIn').placeholder = t('chatPh'); renderChat();
+  $('#guess').placeholder = t(isNL(S && S.settings) ? 'guessPhNl' : 'guessPh'); $('#chatIn').placeholder = t('chatPh'); renderChat();
   $('#rulesBody').innerHTML = I18N[lang].rulesHtml;
   $('#soundBtn').classList.toggle('on', sound);
   document.querySelectorAll('#langSeg button').forEach(b => b.classList.toggle('on', b.dataset.lang === lang));
@@ -533,9 +555,9 @@ let toastT;
 function toast(msg){ const el=$('#toast'); el.textContent=msg; el.classList.add('on'); clearTimeout(toastT); toastT=setTimeout(()=>el.classList.remove('on'),2600); }
 function show(id){ if (id !== 'game') dropPano(); if (document.body.dataset.screen === id) return; document.body.dataset.screen = id; updateChat(); document.querySelectorAll('.screen').forEach(s=>s.classList.toggle('on', s.id===id)); }
 function overlay(text, sub='', cancel=false){ const o=$('#ovLoad'); if(!text){o.classList.remove('on');return;} $('#ovText').textContent=text; $('#ovSub').textContent=sub; $('#ovCancel').style.display=cancel?'':'none'; o.classList.add('on'); }
-const cname = code => code && COUNTRIES[code] ? COUNTRIES[code][lang] || COUNTRIES[code].en : '?';
+const cname = code => code && CITIES[code] ? CITIES[code].name : code && COUNTRIES[code] ? COUNTRIES[code][lang] || COUNTRIES[code].en : '?';
 // Vlaggen als plaatje (Windows toont vlag-emoji als letters)
-const flagImg = (code, w=40) => code ? `<img src="https://flagcdn.com/w${w}/${code.toLowerCase()}.png" alt="" loading="lazy" onerror="this.replaceWith(document.createTextNode('${COUNTRIES[code]?.flag||''}'))">` : '';
+const flagImg = (code, w=40) => code && !CITIES[code] ?`<img src="https://flagcdn.com/w${w}/${code.toLowerCase()}.png" alt="" loading="lazy" onerror="this.replaceWith(document.createTextNode('${COUNTRIES[code]?.flag||''}'))">` : '';
 // Valuta's: gecorrigeerde lijst + hoeveel landen dezelfde hoofdmunt gebruiken
 let CODES = {}, CURCOUNT = {};
 function buildCurrencies(){
@@ -665,6 +687,298 @@ async function findPhoto(s, used){
   return null;
 }
 
+/* ================= NEDERLAND ================= */
+// naam|provincie|inwoners (x1000, afgerond)|breedtegraad|lengtegraad|bijnamen (komma)
+const NL_RAW = `Amsterdam|NH|920|52.3676|4.9041
+Rotterdam|ZH|655|51.9244|4.4777
+Den Haag|ZH|560|52.0705|4.3007|s-Gravenhage,Haag
+Utrecht|UT|365|52.0907|5.1214
+Eindhoven|NB|240|51.4416|5.4697
+Groningen|GR|235|53.2194|6.5665
+Tilburg|NB|225|51.5555|5.0913
+Almere|FL|220|52.3508|5.2647
+Breda|NB|185|51.5719|4.7683
+Nijmegen|GE|180|51.8126|5.8372
+Apeldoorn|GE|165|52.2112|5.9699
+Arnhem|GE|164|51.9851|5.8987
+Haarlem|NH|162|52.3874|4.6462
+Enschede|OV|160|52.2215|6.8937
+Amersfoort|UT|158|52.1561|5.3878
+Zaanstad|NH|157|52.4391|4.8267|Zaandam
+'s-Hertogenbosch|NB|157|51.6978|5.3037|Den Bosch,Shertogenbosch
+Hoofddorp|NH|75|52.3025|4.6907|Haarlemmermeer
+Zwolle|OV|130|52.5168|6.0830
+Leeuwarden|FR|125|53.2012|5.7999|Ljouwert
+Zoetermeer|ZH|126|52.0575|4.4931
+Leiden|ZH|125|52.1601|4.4970
+Maastricht|LI|122|50.8514|5.6909
+Dordrecht|ZH|120|51.8133|4.6901|Dordt
+Ede|GE|120|52.0348|5.6580
+Alphen aan den Rijn|ZH|112|52.1294|4.6586|Alphen
+Alkmaar|NH|110|52.6324|4.7534
+Emmen|DR|107|52.7792|6.8975
+Delft|ZH|105|52.0116|4.3571
+Venlo|LI|102|51.3704|6.1724
+Deventer|OV|102|52.2551|6.1639
+Naaldwijk|ZH|20|51.9944|4.2064|Westland
+Helmond|NB|92|51.4793|5.6570
+Oss|NB|93|51.7650|5.5181
+Amstelveen|NH|92|52.3081|4.8722
+Hilversum|NH|92|52.2292|5.1669
+Heerlen|LI|87|50.8882|5.9795
+Sittard|LI|37|51.0000|5.8686
+Geleen|LI|32|50.9733|5.8267
+Purmerend|NH|91|52.5050|4.9597
+Hengelo|OV|82|52.2658|6.7931
+Schiedam|ZH|80|51.9192|4.3889
+Lelystad|FL|80|52.5185|5.4714
+Roosendaal|NB|77|51.5308|4.4653
+Gouda|ZH|74|52.0115|4.7104
+Vlaardingen|ZH|74|51.9125|4.3419
+Almelo|OV|73|52.3567|6.6625
+Hoorn|NH|74|52.6425|5.0597
+Spijkenisse|ZH|73|51.8450|4.3292
+Zeist|UT|65|52.0883|5.2325
+Assen|DR|69|52.9967|6.5625
+Bergen op Zoom|NB|67|51.4950|4.2917
+Capelle aan den IJssel|ZH|67|51.9300|4.5780|Capelle
+Veenendaal|UT|66|52.0267|5.5583
+Katwijk|ZH|66|52.2042|4.4047
+Nieuwegein|UT|63|52.0292|5.0806
+Hardenberg|OV|61|52.5750|6.6167
+Kampen|OV|54|52.5550|5.9114
+Den Helder|NH|56|52.9563|4.7601
+Vlissingen|ZE|45|51.4423|3.5736
+Middelburg|ZE|49|51.4988|3.6109
+Goes|ZE|38|51.5047|3.8886
+Terneuzen|ZE|54|51.3358|3.8275
+Zierikzee|ZE|11|51.6500|3.9167
+Hulst|ZE|20|51.2806|4.0536
+Tholen|ZE|8|51.5333|4.2167
+Domburg|ZE|2|51.5658|3.4961
+Veere|ZE|1|51.5472|3.6628
+Harderwijk|GE|48|52.3500|5.6208
+Doetinchem|GE|58|51.9650|6.2886
+Winterswijk|GE|29|51.9717|6.7183
+Aalten|GE|27|51.9261|6.5806
+Zutphen|GE|48|52.1383|6.2000
+Lochem|GE|33|52.1608|6.4128
+Tiel|GE|42|51.8878|5.4308
+Wageningen|GE|40|51.9692|5.6636
+Culemborg|GE|29|51.9558|5.2272
+Zaltbommel|GE|29|51.8125|5.2500
+Barneveld|GE|59|52.1400|5.5833
+Nijkerk|GE|43|52.2200|5.4833
+Putten|GE|24|52.2561|5.6103
+Nunspeet|GE|28|52.3750|5.7872
+Elburg|GE|23|52.4472|5.8369
+Epe|GE|33|52.3483|5.9833
+Zevenaar|GE|44|51.9267|6.0719
+Doesburg|GE|11|51.9583|6.1383
+Hattem|GE|12|52.4753|6.0658
+Wijchen|GE|41|51.8089|5.7253
+Soest|UT|47|52.1733|5.2917
+Baarn|UT|25|52.2125|5.2886
+Leusden|UT|30|52.1317|5.4272
+Woerden|UT|52|52.0858|4.8836
+IJsselstein|UT|34|52.0194|5.0422
+Houten|UT|50|52.0283|5.1678
+De Bilt|UT|43|52.1103|5.1819
+Vianen|UT|20|51.9917|5.0917
+Rhenen|UT|20|51.9622|5.5642
+Doorn|UT|10|52.0333|5.3500
+Montfoort|UT|14|52.0467|4.9500
+Bussum|NH|33|52.2736|5.1611
+Huizen|NH|41|52.2989|5.2411
+Weesp|NH|19|52.3069|5.0417
+Diemen|NH|31|52.3386|4.9619
+Uithoorn|NH|30|52.2397|4.8233
+Aalsmeer|NH|32|52.2589|4.7597
+Volendam|NH|22|52.4969|5.0722
+Edam|NH|7|52.5111|5.0464
+Monnickendam|NH|10|52.4583|5.0372
+Enkhuizen|NH|19|52.7036|5.2906
+Medemblik|NH|45|52.7708|5.1044
+Heerhugowaard|NH|56|52.6667|4.8333
+Schagen|NH|46|52.7878|4.7978
+Bergen|NH|31|52.6678|4.7033
+Castricum|NH|22|52.5472|4.6583
+Egmond aan Zee|NH|6|52.6217|4.6281|Egmond
+Uitgeest|NH|13|52.5303|4.7061
+Beverwijk|NH|41|52.4875|4.6564
+IJmuiden|NH|32|52.4600|4.6100|Velsen
+Zandvoort|NH|17|52.3719|4.5333
+Den Burg|NH|7|53.0553|4.7969|Texel
+Lisse|ZH|23|52.2564|4.5578
+Noordwijk|ZH|43|52.2361|4.4361
+Wassenaar|ZH|26|52.1428|4.4017
+Hoek van Holland|ZH|9|51.9775|4.1286
+Brielle|ZH|17|51.9017|4.1631
+Hellevoetsluis|ZH|40|51.8333|4.1333
+Gorinchem|ZH|38|51.8353|4.9753|Gorkum
+Krimpen aan den IJssel|ZH|29|51.9167|4.5833|Krimpen
+Ridderkerk|ZH|46|51.8683|4.6050
+Barendrecht|ZH|49|51.8567|4.5342
+Waddinxveen|ZH|31|52.0436|4.6475
+Bodegraven|ZH|20|52.0833|4.7500
+Sneek|FR|33|53.0333|5.6583
+Drachten|FR|45|53.1000|6.0967
+Heerenveen|FR|51|52.9594|5.9189
+Harlingen|FR|16|53.1744|5.4247
+Franeker|FR|13|53.1869|5.5417
+Dokkum|FR|13|53.3258|5.9983
+Bolsward|FR|10|53.0633|5.5267
+Joure|FR|13|52.9672|5.7956
+Lemmer|FR|10|52.8444|5.7094
+Hindeloopen|FR|1|52.9425|5.4003
+West-Terschelling|FR|5|53.3611|5.2189|Terschelling
+Nes|FR|1|53.4500|5.7667|Ameland
+Schiermonnikoog|FR|1|53.4833|6.2000
+Vlieland|FR|1|53.2972|5.0667
+Appingedam|GR|12|53.3200|6.8575
+Delfzijl|GR|24|53.3333|6.9167
+Veendam|GR|28|53.1042|6.8764
+Hoogezand|GR|34|53.1625|6.7625
+Winschoten|GR|18|53.1439|7.0356
+Stadskanaal|GR|32|52.9917|6.9578
+Ter Apel|GR|9|52.8789|7.0653
+Hoogeveen|DR|55|52.7236|6.4764
+Meppel|DR|34|52.6958|6.1944
+Coevorden|DR|36|52.6606|6.7403
+Zuidlaren|DR|10|53.0944|6.6869
+Steenwijk|OV|25|52.7878|6.1186
+Giethoorn|OV|3|52.7394|6.0786
+Staphorst|OV|17|52.6425|6.2072
+Raalte|OV|38|52.3869|6.2764
+Rijssen|OV|30|52.3086|6.5236
+Oldenzaal|OV|32|52.3133|6.9292
+Losser|OV|22|52.2617|7.0097
+Ommen|OV|17|52.5222|6.4264
+Dronten|FL|42|52.5250|5.7167
+Emmeloord|FL|26|52.7108|5.7486
+Urk|FL|21|52.6625|5.5964
+Zeewolde|FL|23|52.3333|5.5333
+Venray|LI|43|51.5250|5.9750
+Roermond|LI|59|51.1942|5.9872
+Weert|LI|50|51.2517|5.7064
+Kerkrade|LI|45|50.8658|6.0628
+Valkenburg|LI|17|50.8650|5.8308
+Vaals|LI|10|50.7706|6.0161
+Brunssum|LI|28|50.9475|5.9703
+Landgraaf|LI|37|50.8978|6.0328
+Thorn|LI|2|51.1608|5.8372
+Horst|LI|12|51.4528|6.0486
+Gennep|LI|17|51.6975|5.9722
+Cuijk|NB|25|51.7292|5.8803
+Boxmeer|NB|29|51.6453|5.9461
+Uden|NB|41|51.6611|5.6153
+Veghel|NB|38|51.6153|5.5400
+Veldhoven|NB|46|51.4192|5.4031
+Valkenswaard|NB|31|51.3517|5.4586
+Best|NB|30|51.5100|5.3917
+Oisterwijk|NB|26|51.5822|5.1900
+Waalwijk|NB|33|51.6844|5.0683
+Etten-Leur|NB|44|51.5694|4.6361
+Oosterhout|NB|56|51.6450|4.8594
+Steenbergen|NB|10|51.5917|4.3253
+Heusden|NB|6|51.7333|5.1500
+Deurne|NB|33|51.4642|5.7956
+Gemert|NB|17|51.5575|5.6853
+Goirle|NB|24|51.5231|5.0661
+Dongen|NB|26|51.6267|4.9367`;
+const PROV = ['GR','FR','DR','OV','FL','GE','UT','NH','ZH','ZE','NB','LI'];
+const CITIES = {}, CITY_LIST = [], CITY_SEARCH = [];
+for (const line of NL_RAW.split('\n')){
+  const [name, prov, pop, lat, lng, alias] = line.split('|');
+  const c = { id: norm(name), name, prov, pop: +pop, lat: +lat, lng: +lng };
+  CITIES[c.id] = c; CITY_LIST.push(c);
+  CITY_SEARCH.push({ code: c.id, keys: [...new Set([name, ...(alias ? alias.split(',') : [])].map(norm).filter(Boolean))] });
+}
+const isNL = s => s && s.mode === 'dutch';
+const nlOnLand = (lng, lat) => !GEO.NL || inCountry('NL', lng, lat);
+const kmBetween = (lat1, lng1, lat2, lng2) => { const dy = (lat2-lat1)*110.57, dx = (lng2-lng1)*111.32*Math.cos((lat1+lat2)*Math.PI/360); return Math.hypot(dx, dy); };
+function nlNearest(lat, lng, skip){
+  let best = null, bd = Infinity;
+  for (const c of CITY_LIST){ if (skip && skip(c)) continue; const d = kmBetween(lat, lng, c.lat, c.lng); if (d < bd){ bd = d; best = c; } }
+  return best;
+}
+// Kompasrichting (0 = noord, met de klok mee, 8 stappen) van punt A naar punt B
+function bearing8(lat1, lng1, lat2, lng2){
+  const dy = (lat2-lat1)*110.57, dx = (lng2-lng1)*111.32*Math.cos((lat1+lat2)*Math.PI/360);
+  return Math.round(((Math.atan2(dx, dy)*180/Math.PI + 360) % 360) / 45) % 8;
+}
+function nlPool(s, used){
+  const fits = c => s.nlPlaces === 'big' ? c.pop >= 50 : s.nlPlaces === 'towns' ? c.pop < 50 : true;
+  const pool = CITY_LIST.filter(c => fits(c) && !used.includes(c.id));
+  return pool.length ? pool : CITY_LIST.filter(fits);
+}
+// Willekeurige plek rond de plaats, zo dat de plaats ook echt de dichtstbijzijnde is.
+function nlSpot(city){
+  const radius = Math.min(5, Math.max(0.8, 0.6 + Math.sqrt(city.pop)*0.25));
+  for (let i=0; i<40; i++){
+    const a = Math.random()*2*Math.PI, d = radius*Math.sqrt(Math.random());
+    const lat = city.lat + d*Math.sin(a)/110.57, lng = city.lng + d*Math.cos(a)/(111.32*Math.cos(city.lat*Math.PI/180));
+    if (nlOnLand(lng, lat) && nlNearest(lat, lng).id === city.id) return { code: city.id, lat:+lat.toFixed(4), lng:+lng.toFixed(4) };
+  }
+  return { code: city.id, lat: city.lat, lng: city.lng };
+}
+function nlLocation(s, used){
+  const pool = nlPool(s, used);
+  return nlSpot(pickWeighted(pool, c => Math.sqrt(c.pop) + 1));
+}
+async function nlPhotoNear(city){
+  const r = CONFIG.nl.photoRadius, dl = r / Math.cos(city.lat*Math.PI/180);
+  const box = [city.lng-dl, city.lat-r, city.lng+dl, city.lat+r];
+  const res = await fetch(`${CONFIG.street.api}?bbox=${box.join(',')}&limit=${CONFIG.street.limit}`);
+  if (!res.ok) throw new Error('search ' + res.status);
+  const hits = ((await res.json()).features || []).filter(f => { const [x,y] = f.geometry.coordinates; return nlNearest(y, x).id === city.id && nlOnLand(x, y); });
+  if (!hits.length) return null;
+  const panos = hits.filter(is360), f = rnd(panos.length ? panos : hits), photo = await loadPhoto(f);
+  if (!photo) return null;
+  const [x,y] = f.geometry.coordinates;
+  return { code: city.id, lng:+x.toFixed(4), lat:+y.toFixed(4), photo };
+}
+async function nlFindPhoto(s, used){
+  let pool = nlPool(s, used);
+  for (let i=0; i<CONFIG.nl.tries && pool.length; i++){
+    const city = pickWeighted(pool, c => Math.sqrt(c.pop) + 1);
+    const found = await nlPhotoNear(city).catch(()=>null);
+    if (found) return found;
+    pool = pool.filter(c => c !== city);
+  }
+  return null;
+}
+const nlDefs = [
+  { k:'n_prov',   r:0, f:'prov',   ok:c=>true },
+  { k:'n_region', r:1, f:'region', ok:c=>true },
+  { k:'n_pop',    r:2, f:'pop',    ok:c=>true },
+  { k:'n_near',   r:3, f:'near',   ok:c=>true },
+  { k:'n_near2',  r:4, f:'near2',  ok:c=>true },
+  { k:'n_len',    r:5, f:'len',    ok:c=>true },
+  { k:'n_first',  r:6, f:'first',  ok:c=>true, late:true },
+  { k:'n_name',   r:7, f:'name',   ok:c=>true, late:true },
+];
+function nlHintValue(k, id, loc){
+  const c = CITIES[id], letters = c.name.replace(/[^\p{L}]/gu, '');
+  const near = (n) => {
+    const dist = x => ({ x, d: kmBetween(c.lat, c.lng, x.lat, x.lng) }), byD = (a,b) => a.d-b.d;
+    const first = CITY_LIST.filter(x => x !== c && x.pop >= 100).map(dist).sort(byD)[0];
+    // De tweede verwijzing is een andere plaats (vanaf 30.000 inwoners) dan de eerste.
+    const pick = n ? (CITY_LIST.filter(x => x !== c && x !== first.x && x.pop >= 30).map(dist).sort(byD)[0] || first) : first, km = Math.round(pick.d);
+    return { c: pick.x.id, km, d: bearing8(pick.x.lat, pick.x.lng, c.lat, c.lng) };
+  };
+  switch (k){
+    case 'n_prov': return c.prov;
+    case 'n_region': return c.lat >= 52.85 ? 0 : c.lat <= 51.75 ? 2 : c.lng >= 5.9 ? 1 : c.lng <= 4.9 ? 3 : 4;
+    case 'n_pop': return c.pop < 10 ? 0 : c.pop < 25 ? 1 : c.pop < 50 ? 2 : c.pop < 100 ? 3 : c.pop < 250 ? 4 : 5;
+    case 'n_near': return near(0);
+    case 'n_near2': return near(1);
+    case 'n_len': return letters.length;
+    case 'n_first': return letters[0].toUpperCase();
+    case 'n_name': return { l: letters[0].toUpperCase(), n: letters.length };
+  }
+}
+
 /* ================= HINTS ================= */
 // r = rang (laag = vaag), g = groep (aan/uit in lobby), f = familie (max 1 per ronde in het midden)
 const HINT_DEFS = [
@@ -690,10 +1004,10 @@ const HINT_DEFS = [
   { k:'name',     r:7, g:'name',   f:'name',   ok:c=>true, late:true },
 ];
 function chooseHints(code, count, groups){
-  const c = COUNTRIES[code];
+  const nl = !!CITIES[code], c = nl ? CITIES[code] : COUNTRIES[code], defs = nl ? nlDefs : HINT_DEFS;
   const on = (groups && groups.length) ? groups : HINT_GROUPS;
-  let avail = HINT_DEFS.filter(h => h.ok(c, code) && on.includes(h.g));
-  if (!avail.length) avail = HINT_DEFS.filter(h => h.ok(c, code));
+  let avail = defs.filter(h => h.ok(c, code) && (nl || on.includes(h.g)));
+  if (!avail.length) avail = defs.filter(h => h.ok(c, code));
   const first = avail.find(h=>h.k==='cont') || avail.slice().sort((a,b)=>a.r-b.r)[0];
   const lates = avail.filter(h=>h.late && h!==first);
   const last = lates.length ? rnd(lates) : avail.filter(h=>h!==first).sort((a,b)=>b.r-a.r)[0];
@@ -709,6 +1023,7 @@ function chooseHints(code, count, groups){
 }
 // Host: ruwe, taalneutrale waarde. Client: tekst in eigen taal.
 function hintValue(k, code, loc){
+  if (CITIES[code]) return nlHintValue(k, code, loc);
   const c = COUNTRIES[code];
   const nm = l => { const n = c[l] || c.en; return { l: n[0], n: n.replace(/[^\p{L}]/gu,'').length }; };
   const lat = loc ? loc.lat : 0, lng = loc ? loc.lng : 0;
@@ -729,6 +1044,13 @@ function hintValue(k, code, loc){
 }
 function renderHintValue(k, v){
   switch(k){
+    case 'n_prov': return t('p'+v);
+    case 'n_region': return t('rgTxt', { r: t('rg'+v) });
+    case 'n_pop': return t('np'+v);
+    case 'n_near': case 'n_near2': return v.km < 3 ? t('nNearClose', { c: cname(v.c) }) : t('nNear', { km: v.km, d: t('d'+v.d), c: cname(v.c) });
+    case 'n_len': return t('nameLen', { n: v });
+    case 'n_first': return t('capLetter', { l: v });
+    case 'n_name': return t('nameLetter', { l: v.l, n: v.n });
     case 'cont': return t(v);
     case 'sub': return lang==='nl' ? (SUB_NL[v]||v) : v;
     case 'drive': return t(v==='L'?'left':'right');
@@ -760,7 +1082,7 @@ const me = {
 };
 localStorage.setItem('lr_pid', me.id);
 
-const DEFAULT_SETTINGS = { mode:'map', rounds:5, roundTime:60, hintEvery:10, hintCount:6, hintGroups:[...HINT_GROUPS], difficulty:'normal', continent:'ALL', weighting:'uniform', small:false };
+const DEFAULT_SETTINGS = { mode:'map', rounds:5, roundTime:60, hintEvery:10, hintCount:6, hintGroups:[...HINT_GROUPS], difficulty:'normal', continent:'ALL', weighting:'uniform', small:false, nlPlaces:'all', nlView:'sat' };
 let room = null, roomCode = null, isHost = false, solo = false;
 let S = null;               // laatste publieke snapshot (iedereen)
 let H = null;               // host-only private state
@@ -862,7 +1184,7 @@ function becomeHost(oldHostPeer){
   };
   if (snap.phase === 'round' && snap.round){
     const r = snap.round;
-    const code = countryAt(r.lat, r.lng);
+    const code = isNL(snap.settings) ? nlNearest(r.lat, r.lng).id : countryAt(r.lat, r.lng);
     const elapsed = r.durationMs - Math.max(0, r.remainingMs - (now()-recvAt));
     H.round = { ...r, code, hintKeys: [...r.hints.map(h=>h.k), ...chooseHints(code, r.hintTotal, snap.settings.hintGroups).filter(k=>!r.hints.some(h=>h.k===k))].slice(0, r.hintTotal),
       startAt: now() - elapsed, answers: {}, order: 0, forced: r.hints.length, wants: {} };
@@ -925,7 +1247,7 @@ function hostHandle(msg, peerId){
     case 'answer': {
       if (!player || H.phase !== 'round' || !H.round || p.roundId !== H.round.id) return;
       if (H.round.answers[player.id]) return;  // eerste telt
-      if (!COUNTRIES[p.code]) return;
+      if (!(isNL(H.settings) ? CITIES[p.code] : COUNTRIES[p.code])) return;
       const el = now() - H.round.startAt;
       let hintsSeen = H.round.hints.length, frac = Math.max(0, 1 - el / H.round.durationMs);
       if (p.resend) { hintsSeen = Math.max(1, Math.min(hintsSeen, +p.hintsSeen||hintsSeen)); frac = Math.min(1, Math.max(0, +p.frac||0)); }
@@ -947,21 +1269,22 @@ async function nextRound(){
   if (h.finding) return;
   if (h.roundN >= h.settings.rounds) return finish();
   let loc = null;
-  if (h.settings.mode === 'street'){
+  const nl = isNL(h.settings), photoMode = nl ? h.settings.nlView === 'photo' : h.settings.mode === 'street';
+  if (photoMode){
     h.finding = true; overlay(t('findingPhoto'));
-    loc = await findPhoto(h.settings, h.used).catch(()=>null);
+    loc = await (nl ? nlFindPhoto : findPhoto)(h.settings, h.used).catch(()=>null);
     overlay(null); h.finding = false;
     if (H !== h) return;  // host is tijdens het zoeken vertrokken
     if (!loc) toast(t('noPhoto'));
   }
-  loc = loc || randomLocation(H.settings, H.used);
+  loc = loc || (nl ? nlLocation(H.settings, H.used) : randomLocation(H.settings, H.used));
   if (!loc) return finish();
   H.used.push(loc.code); H.roundN++;
   const durationMs = H.settings.roundTime*1000, hintIntervalMs = H.settings.hintEvery*1000;
   const wanted = Math.min(H.settings.hintCount || 6, Math.max(2, Math.ceil(durationMs / hintIntervalMs)));
   const hintKeys = chooseHints(loc.code, wanted, H.settings.hintGroups), hintTotal = hintKeys.length;
   H.round = { id: Math.random().toString(36).slice(2,9), n: H.roundN, lat: loc.lat, lng: loc.lng, code: loc.code, photo: loc.photo || null,
-    zoom: CONFIG.zoom[H.settings.difficulty], pan: CONFIG.pan[H.settings.difficulty], difficulty: H.settings.difficulty,
+    zoom: (nl ? CONFIG.nl.zoom : CONFIG.zoom)[H.settings.difficulty], pan: (nl ? CONFIG.nl.pan : CONFIG.pan)[H.settings.difficulty], difficulty: H.settings.difficulty,
     durationMs, hintIntervalMs, hintTotal, hintKeys, hints: [], startAt: now(), answers: {}, order: 0, forced: 0, wants: {} };
   H.phase = 'round'; H.result = null;
   releaseHints(); broadcast();
@@ -1005,6 +1328,13 @@ function startHostLoop(){
 function scoreFor(ans, code){
   const S_ = CONFIG.score;
   if (!ans) return { pts:0, kind:'none' };
+  const nlTarget = CITIES[code];
+  if (nlTarget && ans.code !== code){
+    // Fout, maar dichtbij (25 km) of in dezelfde provincie: halve score
+    const g = CITIES[ans.code];
+    if (g && (kmBetween(g.lat, g.lng, nlTarget.lat, nlTarget.lng) <= CONFIG.nl.nearKm || g.prov === nlTarget.prov)) return { pts: S_.continent, kind:'half' };
+    return { pts:0, kind:'miss' };
+  }
   if (ans.code === code){
     const extra = Math.max(0, ans.hintsSeen - 1);
     const raw = (S_.correct - S_.perHint*extra) * (S_.timeBase + S_.timeWeight*ans.frac);
@@ -1084,6 +1414,7 @@ function renderLobby(){
       ${p.peerId===S.hostPeer?`<span class="badge">${t('host')}</span>`:''}${off?`<span class="badge off">${t('offline')}</span>`:''}
       ${host && p.peerId!==selfId ? `<button class="x" data-kick="${esc(p.id)}">&times;</button>`:''}</div>`;
   }).join('');
+  document.querySelectorAll('[data-for]').forEach(el => { el.hidden = (el.dataset.for === 'dutch') !== isNL(S.settings); });
   document.querySelectorAll('.seg[data-set]').forEach(seg => {
     const key = seg.dataset.set, suf = seg.dataset.suf || '';
     seg.classList.toggle('ro', !host);
@@ -1185,6 +1516,7 @@ function renderGame(){
     if (!myAnswer || myAnswer.roundId !== r.id) myAnswer = null;
     if (r.photo) showPano(r); else { dropPano(); showMap(r); }
     $('#photoCredit').hidden = !r.photo;
+    $('#guess').placeholder = t(isNL(S.settings) ? 'guessPhNl' : 'guessPh');
     $('#guess').value = ''; closeAc(); $('#hintList').innerHTML = ''; delete $('#hintList').dataset.sig; $('#hintsBox').classList.remove('shut');
     if (matchMedia('(pointer:fine)').matches) setTimeout(()=>$('#guess').focus(), 100);
     beep(520,.12,'triangle');
@@ -1258,7 +1590,7 @@ let acItems = [], acSel = 0;
 function search(q){
   const n = norm(q); if (!n) return [];
   const res = [];
-  for (const s of SEARCH){
+  for (const s of (isNL(S && S.settings) ? CITY_SEARCH : SEARCH)){
     let best = 99;
     for (const k of s.keys){ const i = k.indexOf(n); if (i===0) best = Math.min(best, 0); else if (i>0) best = Math.min(best, 1); }
     if (best < 99) res.push({ code:s.code, score: best + cname(s.code).length/100 });
@@ -1285,8 +1617,9 @@ $('#ac').addEventListener('pointerdown', e => { const d = e.target.closest('[dat
 $('#guessBtn').addEventListener('click', () => submitGuess(acItems[acSel]));
 function submitGuess(code){
   if (!S || S.phase!=='round' || !S.round) return;
-  if (!code){ const exact = SEARCH.find(s => s.keys.includes(norm($('#guess').value))); code = exact && exact.code; }
-  if (!code){ toast(t('unknown')); return; }
+  const nl = isNL(S.settings);
+  if (!code){ const exact = (nl ? CITY_SEARCH : SEARCH).find(s => s.keys.includes(norm($('#guess').value))); code = exact && exact.code; }
+  if (!code){ toast(t(nl ? 'unknownNl' : 'unknown')); return; }
   const r = S.round, rem = r.remainingMs - (now()-recvAt) - latency;
   myAnswer = { roundId: r.id, code, hintsSeen: r.hints.length, frac: Math.max(0, rem / r.durationMs) };
   closeAc(); $('#guess').blur(); beep(990,.08);
@@ -1298,11 +1631,11 @@ function submitGuess(code){
 function renderResult(){
   show('result');
   const R = S.result;
-  const c = COUNTRIES[R.code];
+  const city = CITIES[R.code], c = COUNTRIES[R.code];
   $('#resTitle').textContent = t('resTitle', { n: R.n });
   $('#resFlag').innerHTML = flagImg(R.code, 80);
   $('#resName').textContent = plain(cname(R.code));
-  $('#resSub').textContent = t(c.cont) + ', ' + (lang==='nl' ? (SUB_NL[c.sub]||c.sub) : c.sub) + (c.cap ? ', ' + c.cap : '');
+  $('#resSub').textContent = city ? t('p'+city.prov) + ', ' + t('np' + nlHintValue('n_pop', city.id)) : t(c.cont) + ', ' + (lang==='nl' ? (SUB_NL[c.sub]||c.sub) : c.sub) + (c.cap ? ', ' + c.cap : '');
   const P = R.photo;
   $('#resCredit').hidden = !P;
   if (P) $('#resCredit').textContent = t('photoBy') + ' ' + [P.by, 'Panoramax', P.lic].filter(Boolean).join(', ');
@@ -1327,6 +1660,21 @@ function drawResultMap(R){
   if (!rmap){ rmap = L.map('rmap', { zoomControl:false, attributionControl:true }); addTiles(rmap); }
   rmap.invalidateSize();
   rmap.eachLayer(l => { if (!(l instanceof L.TileLayer)) rmap.removeLayer(l); });
+  if (CITIES[R.code]){
+    // Nederland: het juiste punt, plus de gok van elke speler met een lijn ernaartoe
+    const pts = [[R.lat, R.lng]];
+    rmap.fitBounds([[R.lat-.02, R.lng-.03], [R.lat+.02, R.lng+.03]], { animate:false });
+    for (const row of R.rows){
+      const g = row.guess && CITIES[row.guess], p = playerById(row.id);
+      if (!g || row.guess === R.code) continue;
+      pts.push([g.lat, g.lng]);
+      L.polyline([[R.lat, R.lng], [g.lat, g.lng]], { color: p ? p.color : '#888', weight:2, dashArray:'4 6' }).addTo(rmap);
+      L.circleMarker([g.lat, g.lng], { radius:6, color:'#fbf8f1', weight:2, fillColor: p ? p.color : '#888', fillOpacity:1 }).bindTooltip(esc(p ? p.name : '?') + ': ' + esc(g.name)).addTo(rmap);
+    }
+    L.circleMarker([R.lat, R.lng], { radius:8, color:'#fbf8f1', weight:3, fillColor:'#c2432b', fillOpacity:1 }).addTo(rmap);
+    rmap.fitBounds(pts, { padding:[30,30], maxZoom:13, animate:false });
+    return;
+  }
   const g = GEO[R.code];
   // eerst view zetten (Leaflet heeft een view nodig voor vectorlagen)
   const poly = g.polys.find(p => inPoly(R.lng, R.lat, p)) || g.polys.reduce((a,b)=>a.area>b.area?a:b);

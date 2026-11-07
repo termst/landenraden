@@ -62,6 +62,17 @@ Kies in de lobby de modus **Straatbeeld**. De foto's komen van [Panoramax](https
 
 Google Street View zit er niet in: dat vraagt een eigen API key met betaalaccount.
 
+## Nederland-modus
+
+Kies in de lobby de modus **Nederland**. Je krijgt een willekeurige plek in Nederland en raadt de plaats.
+
+* Ongeveer 200 plaatsen (steden, dorpen en eilanden), met inwoners, provincie en coördinaten in `NL_RAW` in `index.html`. Een plaats toevoegen is één regel.
+* De plek ligt binnen een paar km van de plaats, en de plaats is altijd de dichtstbijzijnde uit de lijst. Dat is het juiste antwoord.
+* **Plaatsen**: alle, alleen steden (50.000+) of alleen dorpen. **Beeld**: satelliet of straatbeeld (Panoramax).
+* Hints: provincie, landsdeel, inwoners, afstand en richting vanaf een grotere plaats, lengte van de naam, beginletter.
+* Goed geeft de volle score. Fout binnen 25 km of in dezelfde provincie geeft 100 punten (`CONFIG.nl.nearKm`).
+* Op het uitslagscherm zie je de juiste plek en de gok van elke speler.
+
 ## Font
 
 Beide fonts staan als base64 in `index.html`, dus ze laden meteen en zijn voor iedereen gelijk.
