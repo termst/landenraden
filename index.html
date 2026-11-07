@@ -317,9 +317,12 @@ td img{height:14px;border-radius:2px;vertical-align:-2px;margin-right:4px}
 #map .leaflet-top.leaflet-left{top:calc(max(10px,env(safe-area-inset-top)) + 62px)}
 #map .leaflet-top.leaflet-left .leaflet-control{margin:0 0 0 max(10px,env(safe-area-inset-left));border-radius:6px;max-width:60vw}
 body.chat-on #map .leaflet-top.leaflet-left{top:calc(max(10px,env(safe-area-inset-top)) + 116px)}
-#chatBtn{position:fixed;left:max(12px,env(safe-area-inset-left));bottom:max(12px,env(safe-area-inset-bottom));z-index:1500;width:48px;height:48px;border-radius:50%;border:1px solid var(--line);background:var(--card);box-shadow:var(--shadow-up);display:none;place-items:center;cursor:pointer;padding:0}
-#chatBtn.show{display:grid}
-body[data-screen=game] #chatBtn{top:calc(max(10px,env(safe-area-inset-top)) + 62px);bottom:auto;left:max(10px,env(safe-area-inset-left));width:44px;height:44px;background:var(--glass)}
+#chatBtn,#emoBtn{position:fixed;left:max(12px,env(safe-area-inset-left));bottom:max(12px,env(safe-area-inset-bottom));z-index:1500;width:48px;height:48px;border-radius:50%;border:1px solid var(--line);background:var(--card);box-shadow:var(--shadow-up);display:none;place-items:center;cursor:pointer;padding:0}
+#chatBtn.show,#emoBtn.show{display:grid}
+#emoBtn{left:calc(max(12px,env(safe-area-inset-left)) + 56px)}
+#emoBtn.on{border-color:var(--acc)}
+body[data-screen=game] #chatBtn,body[data-screen=game] #emoBtn{top:calc(max(10px,env(safe-area-inset-top)) + 62px);bottom:auto;left:max(10px,env(safe-area-inset-left));width:44px;height:44px;background:var(--glass)}
+body[data-screen=game] #emoBtn{left:calc(max(10px,env(safe-area-inset-left)) + 50px)}
 #chatBadge{position:absolute;top:-5px;right:-5px;min-width:19px;height:19px;border-radius:99px;background:var(--acc);color:#fff;font-size:11px;font-weight:700;display:none;place-items:center;padding:0 5px}
 #chatBadge.on{display:grid}
 #chat{position:fixed;left:max(12px,env(safe-area-inset-left));bottom:calc(max(12px,env(safe-area-inset-bottom)) + var(--kb,0px));z-index:1600;width:min(340px,calc(100vw - 24px));height:min(420px,60vh);background:var(--card);border:1px solid var(--line);border-radius:var(--r);box-shadow:var(--shadow-up);display:none;flex-direction:column;overflow:hidden}
@@ -333,8 +336,82 @@ body[data-screen=game] #chat{top:calc(max(10px,env(safe-area-inset-top)) + 62px)
 .msg.me{align-self:flex-end;align-items:flex-end}
 .msg.me p{background:var(--acc);color:#fff;border-radius:12px 12px 3px 12px}
 .cempty{margin:auto;color:var(--mute);font-size:14px}
-#chatForm{display:flex;gap:8px;padding:10px;border-top:1px solid var(--line)}
+#chatForm{display:flex;gap:8px;padding:8px 10px 10px}
 #chatForm .btn{padding:0 14px;flex:none}
+/* Emotes: ronde kaartstickers in vlakke tinten. Kleuren komen uit het thema, dus ze werken licht en donker. */
+.emo{display:block;flex:none}
+.emo svg{display:block;width:100%;height:100%;overflow:visible}
+.em-disc{fill:var(--card2);stroke:var(--line);stroke-width:1.5}
+.em-acc{fill:var(--acc)}.em-blue{fill:var(--delft)}.em-sea{fill:var(--sea)}.em-gold{fill:var(--gold)}.em-ink{fill:var(--ink)}.em-card{fill:var(--card)}.em-ok{fill:var(--ok)}
+.em-glass{fill:color-mix(in srgb,var(--sea) 24%,var(--card))}
+.em-ln{fill:none;stroke-linecap:round;stroke-linejoin:round}
+.em-ln.b{stroke:var(--delft)}.em-ln.s{stroke:var(--sea)}.em-ln.g{stroke:var(--gold)}.em-ln.a{stroke:var(--acc)}.em-ln.k{stroke:var(--ink)}.em-ln.c{stroke:var(--card)}
+.em-fb{transform-box:fill-box;transform-origin:center}
+.em-fb.bot{transform-origin:50% 100%}
+#emoBtn .ic{width:22px;height:22px}
+#emoTray{position:fixed;left:max(12px,env(safe-area-inset-left));bottom:calc(max(12px,env(safe-area-inset-bottom)) + 56px);z-index:1650;display:none;gap:4px;padding:6px;background:var(--card);border:1px solid var(--line);border-radius:20px;box-shadow:var(--shadow-up)}
+#emoTray.on{display:flex;animation:slide .18s ease}
+body[data-screen=game] #emoTray{top:calc(max(10px,env(safe-area-inset-top)) + 62px + 50px);bottom:auto;left:max(10px,env(safe-area-inset-left))}
+.emob{width:52px;height:52px;padding:3px;border:0;border-radius:16px;background:none;cursor:pointer;display:grid;place-items:center;transition:transform .12s,background .15s,opacity .15s}
+.emob .emo{width:100%;height:100%}
+.emob:hover{background:var(--card2)}
+.emob:active{transform:scale(.86)}
+.emob.cool{opacity:.35;pointer-events:none}
+.emostrip{display:flex;justify-content:space-between;padding:4px 8px;border-top:1px solid var(--line)}
+.emostrip .emob{width:46px;height:46px}
+.msg p.emoMsg{display:flex;align-items:center;gap:8px;padding:3px 12px 3px 3px;font-weight:700}
+.msg p.emoMsg .emo{width:34px;height:34px}
+#emoLayer{position:fixed;left:50%;top:calc(max(10px,env(safe-area-inset-top)) + 70px);transform:translateX(-50%);z-index:1700;display:flex;flex-direction:column;align-items:center;gap:8px;width:max-content;max-width:calc(100vw - 116px);pointer-events:none}
+.emo-pop{display:flex;align-items:center;gap:10px;max-width:100%;padding:6px 16px 6px 8px;background:var(--glass);-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);border:1px solid var(--line);border-left:5px solid var(--c);border-radius:18px;box-shadow:var(--shadow-up);animation:emIn .5s cubic-bezier(.2,1.5,.4,1) both}
+.emo-pop.out{animation:emOut .25s ease forwards}
+.emo-pop .emo{width:clamp(48px,14vw,58px);height:clamp(48px,14vw,58px)}
+.emo-txt{display:flex;flex-direction:column;gap:1px;min-width:0}
+.emo-who{display:flex;align-items:center;gap:6px;font-size:13px;font-weight:700;color:var(--mute);min-width:0}
+.emo-who b{font-weight:700;color:var(--ink);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.emo-lbl{font-family:var(--display);text-transform:uppercase;letter-spacing:.02em;font-size:clamp(17px,5.2vw,23px);line-height:1.05;color:var(--acc);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+body[data-screen=game] #emoLayer{left:max(10px,env(safe-area-inset-left));transform:none;align-items:flex-start;top:calc(max(10px,env(safe-area-inset-top)) + 192px);max-width:calc(100vw - 84px)}
+@keyframes emIn{from{opacity:0;transform:translateY(-14px) scale(.7)}to{opacity:1;transform:none}}
+@keyframes emOut{to{opacity:0;transform:translateY(-8px) scale(.92)}}
+/* Raak: de pin valt op de roos en de ringen veren mee */
+:is(.emo.play,.emob:hover) .em-pin{animation:emDrop .8s cubic-bezier(.3,1.4,.5,1) both}
+:is(.emo.play,.emob:hover) .em-ring{animation:emPulse .8s ease-out both}
+:is(.emo.play,.emob:hover) .em-hitspark{animation:emSpark .8s ease-out both}
+@keyframes emDrop{0%{transform:translateY(-30px);opacity:0}30%{opacity:1}58%{transform:translateY(0) scaleY(.9)}78%{transform:translateY(-4px)}100%{transform:none}}
+@keyframes emPulse{0%,50%{transform:scale(1)}65%{transform:scale(1.14)}100%{transform:scale(1)}}
+@keyframes emSpark{0%,52%{opacity:0;transform:scale(.4)}66%{opacity:1;transform:scale(1)}100%{opacity:0;transform:scale(1.35)}}
+/* Waar: de naald draait de verkeerde kant op */
+:is(.emo.play,.emob:hover) .em-needle{animation:emSpin 2.4s cubic-bezier(.4,.1,.3,1) both}
+:is(.emo.play,.emob:hover) .em-q{animation:emBob .9s ease-in-out infinite}
+@keyframes emSpin{0%{transform:rotate(-30deg)}22%{transform:rotate(250deg)}46%{transform:rotate(110deg)}70%{transform:rotate(420deg)}100%{transform:rotate(330deg)}}
+@keyframes emBob{50%{transform:translateY(-3px) rotate(6deg)}}
+/* Schiet op: het zand loopt door en het glas schudt */
+:is(.emo.play,.emob:hover) .em-shake{animation:emShake 1.1s ease-in-out infinite}
+:is(.emo.play,.emob:hover) .em-sandtop{animation:emDrain 3.2s linear both}
+:is(.emo.play,.emob:hover) .em-sandbot{animation:emFill 3.2s linear both}
+:is(.emo.play,.emob:hover) .em-stream{stroke-dasharray:2.5 2.5;animation:emFlow .4s linear infinite}
+:is(.emo.play,.emob:hover) .em-tick{animation:emBlink .55s steps(1) infinite}
+@keyframes emShake{0%,60%,100%{transform:rotate(0)}10%{transform:rotate(-10deg)}22%{transform:rotate(9deg)}34%{transform:rotate(-7deg)}46%{transform:rotate(5deg)}}
+@keyframes emDrain{from{transform:scaleY(1)}to{transform:scaleY(.15)}}
+@keyframes emFill{from{transform:scaleY(.3)}to{transform:scaleY(1)}}
+@keyframes emFlow{to{stroke-dashoffset:-5}}
+@keyframes emBlink{50%{opacity:0}}
+/* Plons: de pin valt in zee, druppels springen op */
+:is(.emo.play,.emob:hover) .em-fall{animation:emFall .85s cubic-bezier(.5,0,.8,.6) both}
+:is(.emo.play,.emob:hover) .em-drop{animation:emJump 1.2s ease-out both}
+:is(.emo.play,.emob:hover) .em-rip{animation:emRip 1.3s ease-out infinite}
+:is(.emo.play,.emob:hover) .em-rip.two{animation-delay:.35s}
+@keyframes emFall{0%{transform:translateY(-44px);opacity:0}25%{opacity:1}100%{transform:none}}
+@keyframes emJump{0%,60%{transform:translate(0,0) scale(.3);opacity:0}66%{opacity:1}100%{transform:translate(var(--dx),var(--dy)) scale(1);opacity:0}}
+@keyframes emRip{0%,45%{transform:scale(.2);opacity:0}55%{opacity:.9}100%{transform:scale(1.4);opacity:0}}
+/* Kaartkoning: de kroon landt, de wereld wiegt en het twinkelt */
+:is(.emo.play,.emob:hover) .em-crown{animation:emCrown .85s cubic-bezier(.3,1.5,.5,1) both}
+:is(.emo.play,.emob:hover) .em-globe{animation:emSway 1.8s ease-in-out infinite}
+:is(.emo.play,.emob:hover) .em-star{animation:emTwinkle 1.2s ease-in-out infinite}
+:is(.emo.play,.emob:hover) .em-star.two{animation-delay:.4s}
+:is(.emo.play,.emob:hover) .em-star.three{animation-delay:.8s}
+@keyframes emCrown{0%{transform:translateY(-24px) rotate(-18deg);opacity:0}35%{opacity:1}100%{transform:none}}
+@keyframes emSway{50%{transform:rotate(7deg)}}
+@keyframes emTwinkle{0%,100%{transform:scale(.2);opacity:0}50%{transform:scale(1);opacity:1}}
 /* Telefoon */
 @media (max-width:420px){
   #result table th:nth-child(3),#result table td:nth-child(3){display:none}
@@ -377,6 +454,7 @@ body[data-screen=game] #chat{top:calc(max(10px,env(safe-area-inset-top)) + 62px)
   <symbol id="i-sun" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></symbol>
   <symbol id="i-moon" viewBox="0 0 24 24"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></symbol>
   <symbol id="i-chat" viewBox="0 0 24 24"><path d="M21 12a8 8 0 0 1-11.6 7.1L3 21l1.9-5.4A8 8 0 1 1 21 12z"/></symbol>
+  <symbol id="i-emote" viewBox="0 0 24 24"><path d="M12 21.5s7-6.3 7-11.5a7 7 0 1 0-14 0c0 5.2 7 11.5 7 11.5z"/><path d="M9.6 8.6v.01M14.4 8.6v.01M9.2 11.4c1.7 1.9 3.9 1.9 5.6 0"/></symbol>
   <symbol id="i-send" viewBox="0 0 24 24"><path d="M22 2 11 13M22 2l-7 20-4-9-9-4z"/></symbol>
   <symbol id="i-plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></symbol>
   <symbol id="i-minus" viewBox="0 0 24 24"><path d="M5 12h14"/></symbol>
@@ -562,7 +640,10 @@ body[data-screen=game] #chat{top:calc(max(10px,env(safe-area-inset-top)) + 62px)
   <button class="btn pri" id="setClose" data-i="close"></button>
 </div></div>
 <button id="chatBtn" aria-label="chat"><svg class="ic" style="width:21px;height:21px"><use href="#i-chat"/></svg><span id="chatBadge"></span></button>
-<div id="chat"><div class="chead"><h2 data-i="chat"></h2><button class="x" id="chatClose" aria-label="close">&times;</button></div><div id="chatLog"></div><form id="chatForm" autocomplete="off"><input type="text" id="chatIn" maxlength="500" enterkeyhint="send"><button class="btn pri" aria-label="send"><svg class="ic"><use href="#i-send"/></svg></button></form></div>
+<button id="emoBtn" aria-label="emotes" aria-expanded="false" aria-controls="emoTray"><svg class="ic"><use href="#i-emote"/></svg></button>
+<div id="emoTray" role="toolbar"></div>
+<div id="emoLayer" aria-live="polite"></div>
+<div id="chat"><div class="chead"><h2 data-i="chat"></h2><button class="x" id="chatClose" aria-label="close">&times;</button></div><div id="chatLog"></div><div class="emostrip" id="emoStrip" role="toolbar"></div><form id="chatForm" autocomplete="off"><input type="text" id="chatIn" maxlength="500" enterkeyhint="send"><button class="btn pri" aria-label="send"><svg class="ic"><use href="#i-send"/></svg></button></form></div>
 <div class="toast" id="toast"></div>
 
 <script>
@@ -619,7 +700,7 @@ body[data-screen=game] #chat{top:calc(max(10px,env(safe-area-inset-top)) + 62px)
             else if(e.classList.contains('ov')) reveal(e.querySelector('.card'),40,true);
             else if(e.id==='chat'||e.id==='ac'||e.classList.contains('ac')) reveal(e,0,true);
           }
-          if(e.id==='chatBtn'&&!(' '+old+' ').includes(' show ')&&e.classList.contains('show')) reveal(e,0,true);
+          if((e.id==='chatBtn'||e.id==='emoBtn')&&!(' '+old+' ').includes(' show ')&&e.classList.contains('show')) reveal(e,0,true);
         }else if(m.attributeName==='hidden'){
           if(!e.hidden&&old!==null&&e.id!=='map'&&e.id!=='pano') reveal(e,0);
         }else if(m.attributeName==='style'){
@@ -702,7 +783,7 @@ const I18N = {
   left:'links', right:'rechts', landlocked:'geen kust', coast:'aan zee', island:'geen landgrenzen', nbCount:'{n} buurlanden',
   pop0:'minder dan 1 miljoen', pop1:'1 tot 10 miljoen', pop2:'10 tot 50 miljoen', pop3:'50 tot 150 miljoen', pop4:'meer dan 150 miljoen',
   capLetter:'begint met {l}', nameLetter:'begint met {l}, {n} letters',
-  chat:'Chat', chatPh:'Bericht...', chatEmpty:'Nog geen berichten', appSettings:'Instellingen', theme:'Thema', hintMin:'Houd minstens één soort aan', roundLbl:'Ronde', scoreLbl:'Score', timeLbl:'Tijd', hintsTitle:'Hints', hintNow:'Hint nu', hintNowVote:'Hint nu ({a}/{b})', hintVoted:'Wachten ({a}/{b})',
+  chat:'Chat', chatPh:'Bericht...', chatEmpty:'Nog geen berichten', emotes:'Emotes', em_hit:'Raak!', em_lost:'Waar?!', em_hurry:'Schiet op', em_splash:'Plons!', em_king:'Kaartkoning', appSettings:'Instellingen', theme:'Thema', hintMin:'Houd minstens één soort aan', roundLbl:'Ronde', scoreLbl:'Score', timeLbl:'Tijd', hintsTitle:'Hints', hintNow:'Hint nu', hintNowVote:'Hint nu ({a}/{b})', hintVoted:'Wachten ({a}/{b})',
   hintCount:'Aantal hints', hintTypes:'Soorten hints',
   dutch:'Nederland', nlPlaces:'Plaatsen', nlView:'Beeld', all:'Alle', big:'Steden', towns:'Dorpen', sat:'Satelliet', photo:'Straatbeeld',
   guessPhNl:'Plaats...', unknownNl:'Kies een plaats uit de lijst',
@@ -762,7 +843,7 @@ const I18N = {
   left:'left', right:'right', landlocked:'landlocked', coast:'coastal', island:'no land borders', nbCount:'{n} neighbours',
   pop0:'under 1 million', pop1:'1 to 10 million', pop2:'10 to 50 million', pop3:'50 to 150 million', pop4:'over 150 million',
   capLetter:'starts with {l}', nameLetter:'starts with {l}, {n} letters',
-  chat:'Chat', chatPh:'Message...', chatEmpty:'No messages yet', appSettings:'Settings', theme:'Theme', hintMin:'Keep at least one type on', roundLbl:'Round', scoreLbl:'Score', timeLbl:'Time', hintsTitle:'Hints', hintNow:'Hint now', hintNowVote:'Hint now ({a}/{b})', hintVoted:'Waiting ({a}/{b})',
+  chat:'Chat', chatPh:'Message...', chatEmpty:'No messages yet', emotes:'Emotes', em_hit:'Bullseye!', em_lost:'Where?!', em_hurry:'Hurry up', em_splash:'Splash!', em_king:'Map king', appSettings:'Settings', theme:'Theme', hintMin:'Keep at least one type on', roundLbl:'Round', scoreLbl:'Score', timeLbl:'Time', hintsTitle:'Hints', hintNow:'Hint now', hintNowVote:'Hint now ({a}/{b})', hintVoted:'Waiting ({a}/{b})',
   hintCount:'Number of hints', hintTypes:'Hint types',
   dutch:'Netherlands', nlPlaces:'Places', nlView:'View', all:'All', big:'Cities', towns:'Villages', sat:'Satellite', photo:'Street view',
   guessPhNl:'Place...', unknownNl:'Pick a place from the list',
@@ -810,7 +891,7 @@ const t = (k, v={}) => (I18N[lang][k] ?? I18N.nl[k] ?? k).replace(/\{(\w+)\}/g, 
 function applyI18n(){
   document.documentElement.lang = lang;
   document.querySelectorAll('[data-i]').forEach(el => el.textContent = t(el.dataset.i));
-  $('#guess').placeholder = t(isNL(S && S.settings) ? 'guessPhNl' : 'guessPh'); $('#chatIn').placeholder = t('chatPh'); renderChat();
+  $('#guess').placeholder = t(isNL(S && S.settings) ? 'guessPhNl' : 'guessPh'); $('#chatIn').placeholder = t('chatPh'); renderChat(); renderEmoBar(); $('#emoBtn').setAttribute('aria-label', t('emotes'));
   $('#rulesBody').innerHTML = I18N[lang].rulesHtml;
   $('#soundBtn').classList.toggle('on', sound);
   document.querySelectorAll('#langSeg button').forEach(b => b.classList.toggle('on', b.dataset.lang === lang));
@@ -1546,7 +1627,7 @@ function connect(code){
   action.onMessage = (msg, ctx) => onNet(msg, ctx.peerId);
   const chatAct = room.makeAction('c');
   sendChat = msg => chatAct.send(msg).catch(()=>{});
-  chatAct.onMessage = m => receiveChat(m);
+  chatAct.onMessage = (m, ctx) => receiveChat(m, typeof ctx === 'string' ? ctx : ctx && ctx.peerId);
   room.onPeerJoin = peerId => {
     if (isHost) return; // host wacht op hello
     sendMsg({ t:'hello', p: helloPayload() }, peerId);
@@ -1559,7 +1640,7 @@ async function disconnect(){
   clearTimeout(joinTimer); clearInterval(hostWatch);
   if (H) { clearInterval(H.loop); clearTimeout(H.autoNext); }
   if (room) { try { await room.leave(); } catch(e){} }
-  room = null; sendMsg = null; sendChat = null; chatLog = []; unread = 0; $('#chat').classList.remove('on'); isHost = false; solo = false; S = null; H = null; myAnswer = null; roomCode = null; lastSig = ''; HS = null; ovFinding = false;
+  room = null; sendMsg = null; sendChat = null; chatLog = []; unread = 0; $('#chat').classList.remove('on'); closeEmoTray(); $('#emoLayer').innerHTML = ''; isHost = false; solo = false; S = null; H = null; myAnswer = null; roomCode = null; lastSig = ''; HS = null; ovFinding = false;
   history.replaceState(null, '', location.pathname + location.search);
 }
 
@@ -2477,21 +2558,29 @@ window.addEventListener('orientationchange', () => { fullH = innerHeight; });
 let sendChat = null, chatLog = [], unread = 0;
 function updateChat(){
   const on = !!room && !solo && document.body.dataset.screen && document.body.dataset.screen !== 'start';
-  $('#chatBtn').classList.toggle('show', on); document.body.classList.toggle('chat-on', on);
-  if (!on) $('#chat').classList.remove('on');
+  $('#chatBtn').classList.toggle('show', on); $('#emoBtn').classList.toggle('show', on); document.body.classList.toggle('chat-on', on);
+  if (!on){ $('#chat').classList.remove('on'); closeEmoTray(); }
 }
 function renderChat(){
   const log = $('#chatLog'); if (!log) return;
-  log.innerHTML = chatLog.length ? chatLog.map(m => `<div class="msg ${m.mine?'me':''}"><small>${m.mine?'':dotHtml({color:m.color})}${m.mine?'':esc(m.name)}</small><p>${esc(m.text)}</p></div>`).join('') : `<div class="cempty">${t('chatEmpty')}</div>`;
+  log.innerHTML = chatLog.length ? chatLog.map(m => `<div class="msg ${m.mine?'me':''}"><small>${m.mine?'':dotHtml({color:m.color})}${m.mine?'':esc(m.name)}</small>${m.emote ? `<p class="emoMsg"><span class="emo">${EMOTES[m.emote]}</span>${esc(t('em_'+m.emote))}</p>` : `<p>${esc(m.text)}</p>`}</div>`).join('') : `<div class="cempty">${t('chatEmpty')}</div>`;
   log.scrollTop = log.scrollHeight;
   const b = $('#chatBadge'); b.textContent = unread; b.classList.toggle('on', unread > 0);
 }
-function addChat(m){ chatLog.push(m); if (chatLog.length > 200) chatLog.shift(); if (!m.mine && !$('#chat').classList.contains('on')){ unread++; beep(880,.05); } renderChat(); }
-function receiveChat(m){
-  if (!m || typeof m.text !== 'string' || !m.text.trim()) return;
-  addChat({ name: String(m.name||'?').slice(0,16), color: COLORS.includes(m.color)?m.color:'#888', text: m.text.slice(0,500), mine:false });
+function addChat(m){ chatLog.push(m); if (chatLog.length > 200) chatLog.shift(); if (!m.mine && !m.emote && !$('#chat').classList.contains('on')){ unread++; beep(880,.05); } renderChat(); }
+function receiveChat(m, peerId){
+  if (!m) return;
+  const who = { name: String(m.name||'?').slice(0,16), color: COLORS.includes(m.color)?m.color:'#888', avatar: avKey(m.avatar) };
+  if (m.emote !== undefined){
+    // Alleen bekende emotes, en per speler maximaal één per 0,7 s, zodat niemand het scherm kan volspammen.
+    if (typeof m.emote !== 'string' || !Object.prototype.hasOwnProperty.call(EMOTES, m.emote)) return;
+    const k = peerId || who.name, now = Date.now(); if (now - (emoSeen[k] || 0) < 700) return; emoSeen[k] = now;
+    addChat({ ...who, emote: m.emote, mine:false }); showEmote(who, m.emote); return;
+  }
+  if (typeof m.text !== 'string' || !m.text.trim()) return;
+  addChat({ ...who, text: m.text.slice(0,500), mine:false });
 }
-$('#chatBtn').addEventListener('click', () => { $('#chat').classList.add('on'); unread = 0; renderChat(); $('#chatIn').focus(); });
+$('#chatBtn').addEventListener('click', () => { closeEmoTray(); $('#chat').classList.add('on'); unread = 0; renderChat(); $('#chatIn').focus(); });
 $('#chatClose').addEventListener('click', () => $('#chat').classList.remove('on'));
 $('#chatForm').addEventListener('submit', e => {
   e.preventDefault(); const text = $('#chatIn').value.trim(); if (!text || !sendChat) return;
@@ -2499,6 +2588,87 @@ $('#chatForm').addEventListener('submit', e => {
   addChat({ name: me.name, color: me.color, text, mine:true });
 });
 $('#chatIn').addEventListener('keydown', e => e.stopPropagation());
+
+/* ================= EMOTES =================
+   Vijf kaartstickers (inline SVG, 64x64) in de vlakke tinten van het spel. De animaties staan in de CSS (.em-*)
+   en lopen bij .play (popup) of hover (balk). Een element met een CSS animatie krijgt geen transform attribuut. */
+const PIN = '<path class="em-acc" d="M32 41C26.5 34 22 28.5 22 19a10 10 0 0 1 20 0c0 9.5-4.5 15-10 22z"/><circle class="em-card" cx="32" cy="19" r="3.6"/>';
+const STAR = 'M0-5Q.8-.8 5 0Q.8.8 0 5Q-.8.8-5 0Q-.8-.8 0-5Z';
+const DISC = '<circle class="em-disc" cx="32" cy="32" r="30"/>';
+const EMOTES = {
+  // Raak: een pin landt midden in de roos
+  hit: `<svg viewBox="0 0 64 64">${DISC}
+    <g class="em-fb em-ring"><circle class="em-blue" cx="32" cy="41" r="17"/><circle class="em-card" cx="32" cy="41" r="11.5"/><circle class="em-gold" cx="32" cy="41" r="6"/></g>
+    <g class="em-fb em-hitspark em-ln a" style="stroke-width:2.6"><path d="M17 33l-4.5-3M47 33l4.5-3M32 52v4"/></g>
+    <g class="em-fb bot em-pin">${PIN}</g></svg>`,
+  // Waar: een kompas dat niet weet waar het heen moet
+  lost: `<svg viewBox="0 0 64 64">${DISC}
+    <circle class="em-card" cx="31" cy="38" r="17" style="stroke:var(--delft);stroke-width:4"/>
+    <path class="em-ln k" style="stroke-width:2" d="M31 24v3M31 49v3M17 38h3M42 38h3"/>
+    <g class="em-fb em-needle"><path class="em-acc" d="M31 26l4.5 12h-9z"/><path class="em-blue" d="M31 50l-4.5-12h9z"/></g>
+    <circle class="em-card" cx="31" cy="38" r="2.2" style="stroke:var(--ink);stroke-width:1.5"/>
+    <g class="em-fb bot em-q"><path class="em-ln g" style="stroke-width:3.4" transform="translate(25 -2) scale(1.4)" d="M9.5 9.2a2.6 2.6 0 0 1 5 .8c0 1.8-2.5 2.2-2.5 4M12 17.5v.01"/></g></svg>`,
+  // Schiet op: een zandloper die schudt terwijl het zand wegloopt
+  hurry: `<svg viewBox="0 0 64 64">${DISC}
+    <g class="em-ln k em-tick" style="stroke-width:2.4;opacity:.55"><path d="M11 25l-4-2M11 39l-4 2M53 25l4-2M53 39l4 2"/></g>
+    <g class="em-fb em-shake"><path class="em-glass" d="M21 15H43C43 24 34.5 28 33.2 32C34.5 36 43 40 43 49H21C21 40 29.5 36 30.8 32C29.5 28 21 24 21 15Z"/>
+    <g class="em-fb bot em-sandtop"><path class="em-gold" d="M25 17H39C38.5 22 35 25.5 32.8 29H31.2C29 25.5 25.5 22 25 17Z"/></g>
+    <g class="em-fb bot em-sandbot"><path class="em-gold" d="M23 49C25 43 29 40.5 32 40.5S39 43 41 49Z"/></g>
+    <path class="em-ln g em-stream" style="stroke-width:1.8" d="M32 29V41"/>
+    <rect class="em-acc" x="16" y="10" width="32" height="5.5" rx="2.7"/><rect class="em-acc" x="16" y="48.5" width="32" height="5.5" rx="2.7"/></g></svg>`,
+  // Plons: de pin valt in zee
+  splash: `<svg viewBox="0 0 64 64">${DISC}
+    <g class="em-fall"><g transform="translate(32 52) rotate(18) scale(.9) translate(-32 -41)">${PIN}</g></g>
+    <path class="em-blue" d="M3.7 42q7.075-4 14.15 0t14.15 0t14.15 0t14.15 0A30 30 0 0 1 3.7 42Z"/>
+    <path class="em-ln c" style="stroke-width:1.8;opacity:.4" d="M12 50q4-2.5 8 0t8 0M38 54q4-2.5 8 0t8 0"/>
+    <ellipse class="em-ln c em-fb em-rip" style="stroke-width:1.8" cx="35" cy="43" rx="11" ry="3.2"/><ellipse class="em-ln c em-fb em-rip two" style="stroke-width:1.8" cx="35" cy="43" rx="11" ry="3.2"/>
+    <circle class="em-sea em-fb em-drop" style="--dx:-14px;--dy:-18px" cx="35" cy="41" r="3.2"/><circle class="em-sea em-fb em-drop" style="--dx:-1px;--dy:-27px" cx="35" cy="41" r="2.6"/><circle class="em-sea em-fb em-drop" style="--dx:13px;--dy:-17px" cx="35" cy="41" r="3.2"/></svg>`,
+  // Kaartkoning: een wereldbol met een kroon
+  king: `<svg viewBox="0 0 64 64">${DISC}
+    <g class="em-fb em-globe"><circle class="em-blue" cx="32" cy="41" r="16"/>
+    <path class="em-ok" d="M22.5 36c2.5-2 6-1.5 7 1s-1 4-2.5 5.5-1 4.5-3.5 5.5c-2-1.5-3.5-4-3-7s-.5-3.5 2-5z"/>
+    <path class="em-ok" d="M35 34.5c3-1.5 7.5-.5 8.5 3s-2 4-3.5 6-.5 5-3.5 6c-2-2.5-1.5-5.5-3-7.5s-2.5-4.5 1.5-7.5z"/>
+    <path class="em-ln c" style="stroke-width:1.8;opacity:.4" d="M21 33a13 13 0 0 1 8-6"/></g>
+    <g class="em-fb bot em-crown"><path class="em-gold" style="stroke:var(--gold);stroke-width:2;stroke-linejoin:round" d="M20.5 28L19 14l7 6 6-10 6 10 7-6-1.5 14z"/><rect class="em-acc" x="20.5" y="24.5" width="23" height="4.5" rx="1.2"/><circle class="em-card" cx="32" cy="19.5" r="2"/></g>
+    <g transform="translate(51 22) scale(1.3)"><path class="em-gold em-fb em-star" d="${STAR}"/></g>
+    <g transform="translate(13 27)"><path class="em-card em-fb em-star two" d="${STAR}"/></g>
+    <g transform="translate(50 47) scale(.8)"><path class="em-gold em-fb em-star three" d="${STAR}"/></g></svg>`,
+};
+const EMO_SFX = { hit:[[660,0],[990,90]], lost:[[330,0],[294,120],[349,240]], hurry:[[880,0],[880,150],[880,300]], splash:[[220,0],[165,70]], king:[[523,0],[659,90],[784,180],[1047,270]] };
+const EMO_COOLDOWN = 1500, emoSeen = {};
+let emoLast = 0;
+const emoOpen = () => $('#emoTray').classList.contains('on');
+function closeEmoTray(){ $('#emoTray').classList.remove('on'); $('#emoBtn').classList.remove('on'); $('#emoBtn').setAttribute('aria-expanded', 'false'); }
+function renderEmoBar(){
+  const html = Object.keys(EMOTES).map(id => `<button class="emob" data-e="${id}" title="${esc(t('em_'+id))}" aria-label="${esc(t('em_'+id))}"><span class="emo">${EMOTES[id]}</span></button>`).join('');
+  $('#emoTray').innerHTML = html; $('#emoStrip').innerHTML = html;
+}
+// Anderen zien de sticker met jouw naam en kleur. Zelf zie je hem in de chat en de knoppen rusten even.
+function sendEmote(id){
+  if (!sendChat || !Object.prototype.hasOwnProperty.call(EMOTES, id)) return;
+  const now = Date.now(); if (now - emoLast < EMO_COOLDOWN) return; emoLast = now;
+  sendChat({ name: me.name, color: me.color, avatar: me.avatar, emote: id });
+  addChat({ name: me.name, color: me.color, emote: id, mine:true });
+  closeEmoTray(); beep(740, .04);
+  document.querySelectorAll('.emob').forEach(b => b.classList.add('cool'));
+  setTimeout(() => document.querySelectorAll('.emob').forEach(b => b.classList.remove('cool')), EMO_COOLDOWN);
+}
+function showEmote(who, id){
+  const layer = $('#emoLayer');
+  while (layer.children.length >= 3) layer.firstElementChild.remove();
+  const el = document.createElement('div'); el.className = 'emo-pop'; el.style.setProperty('--c', who.color);
+  el.innerHTML = `<div class="emo play">${EMOTES[id]}</div><div class="emo-txt"><span class="emo-who">${avaHtml(who, 'xs')}<b>${esc(who.name)}</b></span><span class="emo-lbl">${esc(t('em_'+id))}</span></div>`;
+  layer.appendChild(el);
+  (EMO_SFX[id] || []).forEach(([f, d]) => setTimeout(() => beep(f, .09, id === 'splash' ? 'triangle' : 'sine', .07), d));
+  setTimeout(() => { el.classList.add('out'); setTimeout(() => el.remove(), 280); }, 3400);
+}
+$('#emoBtn').addEventListener('click', () => {
+  const open = !emoOpen(); $('#chat').classList.remove('on');
+  $('#emoTray').classList.toggle('on', open); $('#emoBtn').classList.toggle('on', open); $('#emoBtn').setAttribute('aria-expanded', String(open));
+});
+document.addEventListener('click', e => { const b = e.target.closest('.emob'); if (b) sendEmote(b.dataset.e); });
+document.addEventListener('pointerdown', e => { if (emoOpen() && !e.target.closest('#emoTray,#emoBtn')) closeEmoTray(); });
+document.addEventListener('keydown', e => { if (e.key === 'Escape') closeEmoTray(); });
 
 /* ================= BOOT ================= */
 (async function boot(){

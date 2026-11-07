@@ -40,6 +40,22 @@ Sommige mobiele netwerken blokkeren directe verbindingen. Een gratis TURN server
 4. Haal de `//` weg voor beide regels en vul je gegevens in.
 5. Upload `index.html` opnieuw naar GitHub.
 
+## Emotes
+
+In een kamer staat naast de chatknop een knop met een lachende pin. Eén tik opent vijf stickers, een tweede tik verstuurt er één. Dezelfde vijf staan ook onder in het chatpaneel.
+
+| Sticker | NL | EN | Bedoeld voor |
+|---|---|---|---|
+| Pin op de roos | Raak! | Bullseye! | Goede gok |
+| Kompas met vraagteken | Waar?! | Where?! | Geen idee |
+| Zandloper | Schiet op | Hurry up | Iemand is te traag |
+| Pin in zee | Plons! | Splash! | Gok ver naast |
+| Wereldbol met kroon | Kaartkoning | Map king | Respect |
+
+* Anderen zien de sticker met jouw naam, avatar en kleur, ongeveer 3,5 seconden, met een eigen animatie en geluid (volgt de geluidsinstelling). Zelf zie je hem in de chat.
+* Je kunt er één per 1,5 seconde sturen. Een ontvanger negeert meer dan één per 0,7 seconde per speler en toont maximaal 3 stickers tegelijk.
+* Een emote toevoegen: één regel in `EMOTES` (SVG), één in `EMO_SFX` en de teksten `em_<id>` in `I18N`. De animaties staan in de CSS onder `.em-*`.
+
 ## Aanpassen
 
 Alles staat in het `CONFIG` object bovenaan het script in `index.html`:
