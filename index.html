@@ -128,6 +128,9 @@ span.pill{cursor:default}
 .pl .nm{flex:1;min-width:0;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .badge{font-size:12px;padding:3px 8px;border-radius:99px;background:var(--delft);color:#fff}
 .badge.off{background:var(--line);color:var(--mute)}
+.badge.op{background:none;color:var(--ink);box-shadow:0 0 0 1px var(--delft) inset}
+.opbtn{font:inherit;font-size:12px;font-weight:700;padding:3px 8px;border-radius:99px;border:0;background:none;color:var(--mute);box-shadow:0 0 0 1px var(--line) inset;cursor:pointer}
+.opbtn.on{background:var(--delft);color:#fff;box-shadow:none}
 .x{background:none;border:0;color:var(--mute);cursor:pointer;font-size:22px;padding:2px 8px;line-height:1}
 .seg{display:flex;background:var(--card2);border-radius:11px;padding:3px;gap:2px;box-shadow:0 1px 3px rgba(0,0,0,.16) inset}
 .seg button{flex:1;min-width:0;min-height:38px;border:0;background:none;padding:8px 4px;border-radius:9px;font-size:14px;color:var(--mute);cursor:pointer;transition:background .15s,color .15s}
@@ -891,6 +894,7 @@ const I18N = {
   searching:'Kamer {c} zoeken', searchingSub:'Kan 5 tot 10 seconden duren.',
   notFound:'Kamer niet gevonden. Controleer de code.', connFail:'Kamer gevonden, maar dit netwerk blokkeert de verbinding. Probeer wifi of stel TURN in (zie README).', full:'Kamer is vol, max 6.', started:'Spel is al bezig.',
   kicked:'Je bent uit de kamer gezet.', hostLeft:'Host weg, nieuwe host kiezen', youHost:'Jij bent nu host.',
+  op:'OP', opGive:'OP geven', opTake:'OP afnemen', opGot:'Je bent nu OP: je kunt de instellingen aanpassen en starten.', opLost:'Je bent geen OP meer.',
   loading:'Laden', copied:'Link gekopieerd', cancel:'Annuleren', close:'Sluiten', dataFail:'Data laden mislukt. Draai via een webserver.',
   nameNeeded:'Vul je naam in.', codeNeeded:'Vul een code van 4 tekens in.', sound:'Geluid',
   findingPhoto:'Foto zoeken', noPhoto:'Geen foto gevonden, deze ronde satelliet', photoBy:'Foto',
@@ -956,6 +960,7 @@ const I18N = {
   searching:'Looking for room {c}', searchingSub:'Can take 5 to 10 seconds.',
   notFound:'Room not found. Check the code.', connFail:'Room found, but this network blocks the connection. Try wifi or set up TURN (see README).', full:'Room is full, max 6.', started:'Game already running.',
   kicked:'You were removed from the room.', hostLeft:'Host left, picking a new host', youHost:'You are now host.',
+  op:'OP', opGive:'Make OP', opTake:'Remove OP', opGot:'You are now OP: you can edit the settings and start.', opLost:'You are no longer OP.',
   loading:'Loading', copied:'Link copied', cancel:'Cancel', close:'Close', dataFail:'Could not load data. Run from a web server.',
   nameNeeded:'Enter your name.', codeNeeded:'Enter a 4 character code.', sound:'Sound',
   findingPhoto:'Finding photo', noPhoto:'No photo found, satellite this round', photoBy:'Photo',
@@ -1760,6 +1765,18 @@ if (navigator.locks) navigator.locks.request('lr_pid_' + me.id, { ifAvailable:tr
 });
 
 const DEFAULT_SETTINGS = { mode:'map', rounds:5, roundTime:60, hintEvery:10, hintCount:6, hintGroups:[...HINT_GROUPS], difficulty:'normal', continent:'ALL', weighting:'uniform', small:false, nlPlaces:'all', nlView:'sat', huntCity:'' };
+// Toegestane waarden per instelling. Een OP stuurt instellingen over het netwerk, dus alles wat hier niet in staat wordt genegeerd.
+const SETTING_OPTS = { mode:['map','street','dutch','hunt','darts'], nlPlaces:['all','big','towns'], nlView:['sat','photo'], rounds:[5,10,15], roundTime:[30,60,90],
+  difficulty:['easy','normal','hard'], continent:['ALL','EU','AM','AS','OC','AF'], weighting:['uniform','area'], hintCount:[4,6,8], hintEvery:[5,10,15,20] };
+function cleanSettings(p){
+  const out = {};
+  if (!p || typeof p !== 'object') return out;
+  for (const [k, opts] of Object.entries(SETTING_OPTS)) if (opts.includes(p[k])) out[k] = p[k];
+  if (typeof p.small === 'boolean') out.small = p.small;
+  if (typeof p.huntCity === 'string' && (p.huntCity === '' || Object.prototype.hasOwnProperty.call(CITIES, p.huntCity))) out.huntCity = p.huntCity;
+  if (Array.isArray(p.hintGroups)){ const g = HINT_GROUPS.filter(x => p.hintGroups.includes(x)); if (g.length) out.hintGroups = g; }
+  return out;
+}
 let room = null, roomCode = null, isHost = false, solo = false;
 let S = null;               // laatste publieke snapshot (iedereen)
 let H = null;               // host-only private state
@@ -1920,9 +1937,11 @@ function hostAddPlayer(p, peerId){
   if (H.blocked.includes(p.id)) return 'kicked';
   if (H.phase !== 'lobby') return 'started';
   if (H.players.filter(x=>x.connected || (Date.now()-x.leftAt) < CONFIG.reserveMs).length >= CONFIG.maxPlayers) return 'full';
-  H.players.push({ id: p.id, peerId, name: String(p.name||'?').slice(0,16), color: COLORS.includes(p.color)?p.color:COLORS[0], avatar: avKey(p.avatar), joinIdx: H.nextJoin++, score:0, connected:true, leftAt:null, correct:0, best:0, fastest:null });
+  H.players.push({ id: p.id, peerId, name: String(p.name||'?').slice(0,16), color: COLORS.includes(p.color)?p.color:COLORS[0], avatar: avKey(p.avatar), joinIdx: H.nextJoin++, score:0, connected:true, leftAt:null, correct:0, best:0, fastest:null, op:false });
   return true;
 }
+// De host mag alles. Een OP mag de instellingen aanpassen en de lobby starten.
+const isOp = peerId => peerId === selfId || H.players.some(x => x.peerId === peerId && x.op);
 function hostHandle(msg, peerId){
   const p = msg.p || {};
   const player = H.players.find(x => x.peerId === peerId);
@@ -1940,10 +1959,14 @@ function hostHandle(msg, peerId){
       else if (r.darts && dartValidPin(p.pin)) r.pins[player.id] = { pin:p.pin, dbl:!!p.dbl };
       break;
     }
-    case 'settings':
-      if (peerId !== selfId || H.phase !== 'lobby') return;
-      if (Array.isArray(p.hintGroups)){ p.hintGroups = p.hintGroups.filter(g=>HINT_GROUPS.includes(g)); if (!p.hintGroups.length) return; }
-      H.settings = { ...H.settings, ...p }; localStorage.setItem('lr_settings', JSON.stringify(H.settings)); broadcast(); break;
+    case 'settings': {
+      if (H.phase !== 'lobby' || !isOp(peerId)) return;
+      const clean = cleanSettings(p);
+      if (!Object.keys(clean).length) return;
+      H.settings = { ...H.settings, ...clean };
+      try { localStorage.setItem('lr_settings', JSON.stringify(H.settings)); } catch(e){}
+      broadcast(); break;
+    }
     case 'wanthint': {
       if (!player || H.phase !== 'round' || !H.round) return;
       const r = H.round; if (r.hints.length >= r.hintKeys.length) return;
@@ -1953,8 +1976,13 @@ function hostHandle(msg, peerId){
       broadcast(); break;
     }
     case 'start':
-      if (peerId !== selfId) return;
+      if (H.phase === 'lobby' ? !isOp(peerId) : peerId !== selfId) return;
       if (H.phase === 'lobby' || H.phase === 'result') nextRound(); break;
+    case 'op': {
+      if (peerId !== selfId) return;
+      const target = H.players.find(x=>x.id===p.id); if (!target || target.peerId===selfId) return;
+      target.op = !!p.op; broadcast(); break;
+    }
     case 'kick': {
       if (peerId !== selfId) return;
       const target = H.players.find(x=>x.id===p.id); if (!target || target.peerId===selfId) return;
@@ -2096,7 +2124,7 @@ function publicState(){
   const r = H.round;
   return {
     hostPeer: selfId, term: H.term||0, finding: !!H.finding, phase: H.phase, settings: H.settings, roundN: H.roundN, used: H.used,
-    players: H.players.map(({id,peerId,name,color,avatar,joinIdx,score,connected,correct,best,fastest}) => ({id,peerId,name,color,avatar,joinIdx,score,connected,correct,best,fastest})),
+    players: H.players.map(({id,peerId,name,color,avatar,joinIdx,score,connected,correct,best,fastest,op}) => ({id,peerId,name,color,avatar,joinIdx,score,connected,correct,best,fastest,op:!!op})),
     round: r ? { id:r.id, n:r.n, lat:r.lat, lng:r.lng, photo:r.photo, hunt:r.hunt||null, darts:!!r.darts, zoom:r.zoom, pan:r.pan, difficulty:r.difficulty, durationMs:r.durationMs, hintIntervalMs:r.hintIntervalMs, hintTotal:r.hintTotal,
       hints: r.hints, remainingMs: Math.max(0, r.durationMs - (now()-r.startAt)), answered: Object.keys(r.answers), wants: Object.keys(r.wants||{}) } : null,
     result: H.result ? { ...H.result, nextAt: Math.max(0, CONFIG.resultAutoMs - (now()-(H.resultStart||now()))) } : null,
@@ -2111,6 +2139,7 @@ let renderedRound = null, renderedResult = null, map = null, rmap = null, pano =
 function onState(snap){
   const prev = S;
   S = snap; recvAt = now();
+  if (prev && !isHost && opOf(prev) !== opOf(snap)) toast(t(opOf(snap) ? 'opGot' : 'opLost'));
   // Spelers even laten weten dat de host een foto of buurt aan het zoeken is.
   if (!isHost && !!S.finding !== ovFinding){ ovFinding = !!S.finding; overlay(ovFinding ? t('loading') : null); }
   if (prev && prev.round && S.round && prev.round.id===S.round.id && S.round.hints.length > prev.round.hints.length) beep(740,.07);
@@ -2128,6 +2157,9 @@ function rerender(){
   else if (S.phase === 'final') renderFinal();
 }
 const isMeHost = () => S && S.hostPeer === selfId;
+const opOf = s => !!(s && s.players.find(p => p.id === me.id) || {}).op;
+// Instellingen aanpassen en de lobby starten: de host en elke OP.
+const canEdit = () => !!S && (isMeHost() || opOf(S));
 const playerById = id => S.players.find(p=>p.id===id);
 function dotHtml(p){ return `<span class="dot" style="background:${p.color}"></span>`; }
 function avaInner(p){
@@ -2140,13 +2172,17 @@ function renderLobby(){
   show('lobby'); renderedRound = null; renderedResult = null; myAnswer = null;
   $('#lobbyCode').textContent = solo ? 'SOLO' : roomCode;
   $('#copyBtn').parentElement.style.display = solo ? 'none' : '';
-  const host = isMeHost();
+  const host = isMeHost(), edit = canEdit();
   $('#pCount').textContent = S.players.length + '/' + CONFIG.maxPlayers;
   $('#lobbyPlayers').innerHTML = S.players.map(p => {
-    const off = !p.connected;
+    const off = !p.connected, isH = p.peerId === S.hostPeer, manage = host && p.peerId !== selfId;
+    // Host: knop per speler om OP te geven of af te nemen. Anderen zien alleen wie OP is.
+    const role = isH ? `<span class="badge">${t('host')}</span>`
+      : manage ? `<button class="opbtn ${p.op?'on':''}" data-op="${esc(p.id)}" aria-pressed="${!!p.op}" title="${esc(t(p.op?'opTake':'opGive'))}">${t('op')}</button>`
+      : p.op ? `<span class="badge op">${t('op')}</span>` : '';
     return `<div class="pl">${avaHtml(p)}<span class="nm">${esc(p.name)}${p.id===me.id?' <span class="sub">'+t('you')+'</span>':''}</span>
-      ${p.peerId===S.hostPeer?`<span class="badge">${t('host')}</span>`:''}${off?`<span class="badge off">${t('offline')}</span>`:''}
-      ${host && p.peerId!==selfId ? `<button class="x" data-kick="${esc(p.id)}">&times;</button>`:''}</div>`;
+      ${role}${off?`<span class="badge off">${t('offline')}</span>`:''}
+      ${manage ? `<button class="x" data-kick="${esc(p.id)}">&times;</button>`:''}</div>`;
   }).join('');
   const modeKey = isNL(S.settings) ? S.settings.mode : 'world';
   // data-for noemt een groep (world, dutch, hunt) of een losse modus (darts).
@@ -2155,10 +2191,10 @@ function renderLobby(){
   $('#modeDesc').textContent = t('md_' + S.settings.mode);
   const hc_ = $('#huntCity');
   if (hc_.dataset.lang !== lang){ hc_.dataset.lang = lang; hc_.innerHTML = `<option value="">${esc(t('huntAny'))}</option>` + CITY_LIST.slice().sort((a,b)=>a.name.localeCompare(b.name,'nl')).map(c=>`<option value="${c.id}">${esc(c.name)}</option>`).join(''); }
-  hc_.value = S.settings.huntCity || ''; hc_.disabled = !host;
+  hc_.value = S.settings.huntCity || ''; hc_.disabled = !edit;
   document.querySelectorAll('.seg[data-set]').forEach(seg => {
     const key = seg.dataset.set, suf = seg.dataset.suf || '';
-    seg.classList.toggle('ro', !host);
+    seg.classList.toggle('ro', !edit);
     seg.innerHTML = seg.dataset.opts.split(',').map(o => {
       const val = isNaN(o) ? o : +o, label = isNaN(o) ? t(o) : o + suf;
       const cls = S.settings[key]===val ? 'on' : '';
@@ -2167,14 +2203,14 @@ function renderLobby(){
       return `<button class="${cls}" data-val="${o}">${label}</button>`;
     }).join('');
   });
-  const hc = $('#hintChips'); hc.classList.toggle('ro', !host);
+  const hc = $('#hintChips'); hc.classList.toggle('ro', !edit);
   const on = S.settings.hintGroups || HINT_GROUPS;
   hc.innerHTML = HINT_GROUPS.map(g => `<button class="chipbtn ${on.includes(g)?'on':''}" data-g="${g}">${t('g_'+g)}</button>`).join('');
-  document.querySelectorAll('.sw[data-sw]').forEach(sw => { sw.classList.toggle('on', !!S.settings[sw.dataset.sw]); sw.style.pointerEvents = host?'':'none'; });
+  document.querySelectorAll('.sw[data-sw]').forEach(sw => { sw.classList.toggle('on', !!S.settings[sw.dataset.sw]); sw.style.pointerEvents = edit?'':'none'; });
   const n = S.players.filter(p=>p.connected).length;
-  $('#startBtn').style.display = host ? '' : 'none';
+  $('#startBtn').style.display = edit ? '' : 'none';
   $('#startTxt').textContent = n < 2 ? t('startSolo') : t('startGame');
-  $('#waitHost').style.display = host ? 'none' : '';
+  $('#waitHost').style.display = edit ? 'none' : '';
 }
 
 function ensureMap(){
@@ -2728,7 +2764,7 @@ $('#avatars').addEventListener('click', e => {
 $('#name').addEventListener('input', e => { me.name = e.target.value.trim(); localStorage.setItem('lr_name', me.name); renderAvatar(true); renderAvatars(); });
 $('#name').addEventListener('keydown', e => { if (e.key==='Enter') $('#createBtn').click(); });
 $('#hintChips').addEventListener('click', e => {
-  const b = e.target.closest('[data-g]'); if (!b || !isMeHost()) return;
+  const b = e.target.closest('[data-g]'); if (!b || !canEdit()) return;
   const cur = new Set(S.settings.hintGroups || HINT_GROUPS); const g = b.dataset.g;
   if (cur.has(g)){ if (cur.size === 1){ toast(t('hintMin')); return; } cur.delete(g); } else cur.add(g);
   act({ t:'settings', p:{ hintGroups: [...cur] } });
@@ -2762,7 +2798,7 @@ $('#huntLock').addEventListener('click', () => huntLock());
 $('#dartView').addEventListener('click', () => dartView(!(DS && DS.open)));
 $('#dartThrow').addEventListener('click', dartThrow);
 $('#dartDbl').addEventListener('click', dartDouble);
-$('#huntCity').addEventListener('change', e => { if (isMeHost()) act({ t:'settings', p:{ huntCity: e.target.value } }); });
+$('#huntCity').addEventListener('change', e => { if (canEdit()) act({ t:'settings', p:{ huntCity: e.target.value } }); });
 $('#setClose').addEventListener('click', () => $('#ovSet').classList.remove('on'));
 $('#ovSet').addEventListener('click', e => { if (e.target.id==='ovSet') $('#ovSet').classList.remove('on'); });
 $('#themeSeg').addEventListener('click', e => { const b = e.target.closest('[data-th]'); if (b){ setTheme(b.dataset.th); beep(b.dataset.th==='dark'?330:660,.06); } });
@@ -2813,13 +2849,18 @@ $('#shareBtn').addEventListener('click', async () => {
   if (navigator.share) { try { await navigator.share({ title:'Geoflatter', text: roomCode, url }); } catch(e){} }
   else { try { await navigator.clipboard.writeText(url); toast(t('copied')); } catch(e){} }
 });
-$('#lobbyPlayers').addEventListener('click', e => { const id = e.target.dataset.kick; if (id) act({ t:'kick', p:{ id } }); });
+$('#lobbyPlayers').addEventListener('click', e => {
+  const k = e.target.dataset.kick; if (k){ act({ t:'kick', p:{ id: k } }); return; }
+  const b = e.target.closest('[data-op]'); if (!b || !isMeHost()) return;
+  const target = S.players.find(p => p.id === b.dataset.op);
+  if (target) act({ t:'op', p:{ id: target.id, op: !target.op } });
+});
 document.querySelectorAll('.seg[data-set]').forEach(seg => seg.addEventListener('click', e => {
-  const b = e.target.closest('button'); if (!b || !isMeHost()) return;
+  const b = e.target.closest('button'); if (!b || !canEdit()) return;
   const v = isNaN(b.dataset.val) ? b.dataset.val : +b.dataset.val;
   act({ t:'settings', p:{ [seg.dataset.set]: v } });
 }));
-document.querySelectorAll('.sw[data-sw]').forEach(sw => sw.addEventListener('click', () => { if (isMeHost()) act({ t:'settings', p:{ [sw.dataset.sw]: !S.settings[sw.dataset.sw] } }); }));
+document.querySelectorAll('.sw[data-sw]').forEach(sw => sw.addEventListener('click', () => { if (canEdit()) act({ t:'settings', p:{ [sw.dataset.sw]: !S.settings[sw.dataset.sw] } }); }));
 $('#startBtn').addEventListener('click', () => act({ t:'start' }));
 $('#nextBtn').addEventListener('click', () => act({ t:'start' }));
 $('#rematchBtn').addEventListener('click', () => act({ t:'rematch' }));
