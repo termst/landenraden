@@ -346,6 +346,11 @@ td img{height:14px;border-radius:2px;vertical-align:-2px;margin-right:4px}
 @keyframes sp{to{transform:rotate(360deg)}}
 .modal .card{text-align:left;align-items:stretch;max-height:85vh;max-height:85dvh;overflow-y:auto}
 .modal li{color:var(--ink2);line-height:1.45}
+#stMore{display:flex;flex-direction:column;gap:6px}
+#stMore td{padding:7px 4px}
+.bk{display:flex;flex-direction:column;gap:8px;border-top:1px solid var(--line);padding-top:12px}
+#bkIn{width:100%;min-height:62px;resize:vertical;background:var(--field);border:1px solid var(--line);border-radius:10px;padding:10px 12px;font:12px/1.35 ui-monospace,Menlo,Consolas,monospace;color:inherit;word-break:break-all;outline:none}
+#bkIn:focus{border-color:var(--acc)}
 .modal ul{margin:0;padding-left:18px;display:flex;flex-direction:column;gap:7px}
 .toast{position:fixed;left:50%;top:max(14px,env(safe-area-inset-top));transform:translateX(-50%) translateY(calc(-100% - 40px));z-index:3000;background:var(--ink);color:var(--paper);border-radius:12px;padding:10px 16px;transition:transform .3s;width:max-content;max-width:calc(100vw - 24px);text-align:center;box-shadow:var(--shadow-up)}
 .toast.on{transform:translateX(-50%) translateY(0)}
@@ -643,7 +648,7 @@ body[data-screen=game] #emoLayer{left:max(10px,env(safe-area-inset-left));transf
 <section class="screen" id="start">
   <div class="wrap">
     <div class="topbar">
-      <span></span>
+      <button class="pill" id="statsBtn"><svg class="ic"><use href="#i-trophy"/></svg><span data-i="myStats"></span></button>
       <span class="row">
         <button class="pill" id="rulesBtn"><svg class="ic"><use href="#i-help"/></svg><span data-i="rules"></span></button>
         <button class="iconbtn" id="setBtn" aria-label="settings"><svg class="ic"><use href="#i-gear"/></svg></button>
@@ -783,6 +788,20 @@ body[data-screen=game] #emoLayer{left:max(10px,env(safe-area-inset-left));transf
   <h2 data-i="rules"></h2>
   <div id="rulesBody"></div>
   <button class="btn pri" id="rulesClose" data-i="close"></button>
+</div></div>
+<div class="ov modal" id="ovStats"><div class="card">
+  <h2 data-i="myStats"></h2>
+  <p class="sub" id="stNote"></p>
+  <div class="stats" id="stTiles"></div>
+  <div id="stMore"></div>
+  <div class="bk">
+    <label for="bkIn" data-i="backup"></label>
+    <p class="sub" data-i="backupHelp"></p>
+    <div class="row"><button class="btn sec" id="bkCopy" data-i="bkCopy"></button><button class="btn sec" id="bkLoad" data-i="bkLoad"></button></div>
+    <textarea id="bkIn" rows="3" spellcheck="false" autocomplete="off" autocapitalize="off" placeholder="GF1..."></textarea>
+  </div>
+  <button class="btn sec" id="stReset" data-i="stReset"></button>
+  <button class="btn pri" id="statsClose" data-i="close"></button>
 </div></div>
 <div class="ov modal" id="ovSet"><div class="card">
   <h2 data-i="appSettings"></h2>
@@ -934,6 +953,10 @@ const I18N = {
   nextIn:'Volgende in {s}s', resTitle:'Ronde {n}', player:'Speler', guessCol:'Gok', timeCol:'Tijd', total:'Totaal',
   noAnswer:'geen', finalTitle:'Eindstand', correct:'Goed', rematch:'Opnieuw',
   bestRound:'Beste ronde', fastest:'Snelste goed', mostCorrect:'Meeste goed',
+  myStats:'Statistieken', stNote:'Bewaard in deze browser, zonder account. Wis je je browsergegevens, dan is het weg. Bewaar dus een back-up code.', stNoStore:'Deze browser blokkeert opslag. Je statistieken verdwijnen als je de pagina sluit.',
+  stGames:'Potjes', stMulti:'{n} met anderen', stWins:'Gewonnen', stOf:'van {n}', stPoints:'Punten', stAvg:'Gemiddeld', stBestGame:'Beste potje', stRounds:'Rondes', stModes:'Per modus', stRecent:'Laatste potjes', stBest:'Beste',
+  stEmpty:'Nog geen potjes. Speel er een uit tot het eindscherm.', backup:'Back-up', backupHelp:'Kopieer de code en plak hem op een ander apparaat of na het wissen van je browser. Naam, kleur, avatar, instellingen en statistieken gaan mee.',
+  bkCopy:'Kopieer code', bkLoad:'Herstel', bkCopied:'Code gekopieerd', bkPaste:'Plak eerst een code', bkBad:'Ongeldige code', bkConfirm:'Dit vervangt je profiel en statistieken op dit apparaat. Doorgaan?', stReset:'Statistieken wissen', stResetQ:'Alle statistieken wissen? Dit kan niet terug.', newRecord:'Nieuw record!',
   searching:'Kamer {c} zoeken', searchingSub:'Kan 5 tot 10 seconden duren.',
   notFound:'Kamer niet gevonden. Controleer de code.', connFail:'Kamer gevonden, maar dit netwerk blokkeert de verbinding. Probeer wifi of stel TURN in (zie README).', full:'Kamer is vol, max 6.', started:'Spel is al bezig.',
   kicked:'Je bent uit de kamer gezet.', hostLeft:'Host weg, nieuwe host kiezen', youHost:'Jij bent nu host.',
@@ -1000,6 +1023,10 @@ const I18N = {
   nextIn:'Next in {s}s', resTitle:'Round {n}', player:'Player', guessCol:'Guess', timeCol:'Time', total:'Total',
   noAnswer:'none', finalTitle:'Standings', correct:'Correct', rematch:'Play again',
   bestRound:'Best round', fastest:'Fastest correct', mostCorrect:'Most correct',
+  myStats:'Stats', stNote:'Saved in this browser, no account. Clearing your browser data deletes it, so keep a backup code.', stNoStore:'This browser blocks storage. Your stats disappear when you close the page.',
+  stGames:'Games', stMulti:'{n} with others', stWins:'Won', stOf:'of {n}', stPoints:'Points', stAvg:'Average', stBestGame:'Best game', stRounds:'Rounds', stModes:'Per mode', stRecent:'Recent games', stBest:'Best',
+  stEmpty:'No games yet. Play one through to the final screen.', backup:'Backup', backupHelp:'Copy the code and paste it on another device or after clearing your browser. Name, color, avatar, settings and stats are included.',
+  bkCopy:'Copy code', bkLoad:'Restore', bkCopied:'Code copied', bkPaste:'Paste a code first', bkBad:'Invalid code', bkConfirm:'This replaces your profile and stats on this device. Continue?', stReset:'Clear stats', stResetQ:'Clear all stats? This cannot be undone.', newRecord:'New record!',
   searching:'Looking for room {c}', searchingSub:'Can take 5 to 10 seconds.',
   notFound:'Room not found. Check the code.', connFail:'Room found, but this network blocks the connection. Try wifi or set up TURN (see README).', full:'Room is full, max 6.', started:'Game already running.',
   kicked:'You were removed from the room.', hostLeft:'Host left, picking a new host', youHost:'You are now host.',
@@ -1057,7 +1084,22 @@ const I18N = {
 const SUB_NL = {'Australia and New Zealand':'Australië en Nieuw-Zeeland','Caribbean':'Caribisch gebied','Central America':'Midden-Amerika','Central Asia':'Centraal-Azië','Central Europe':'Centraal-Europa','Eastern Africa':'Oost-Afrika','Eastern Asia':'Oost-Azië','Eastern Europe':'Oost-Europa','Melanesia':'Melanesië','Micronesia':'Micronesië','Middle Africa':'Centraal-Afrika','North America':'Noord-Amerika','Northern Africa':'Noord-Afrika','Northern Europe':'Noord-Europa','Polynesia':'Polynesië','South America':'Zuid-Amerika','South-Eastern Asia':'Zuidoost-Azië','Southeast Europe':'Zuidoost-Europa','Southern Africa':'Zuidelijk Afrika','Southern Asia':'Zuid-Azië','Southern Europe':'Zuid-Europa','Western Africa':'West-Afrika','Western Asia':'West-Azië','Western Europe':'West-Europa'};
 const LANG_NL = {English:'Engels',French:'Frans',Arabic:'Arabisch',Spanish:'Spaans',Portuguese:'Portugees',Russian:'Russisch',Dutch:'Nederlands',German:'Duits',Italian:'Italiaans',Chinese:'Chinees',Swahili:'Swahili',Swedish:'Zweeds',Tamil:'Tamil',Malay:'Maleis',Serbian:'Servisch',Turkish:'Turks',Korean:'Koreaans',Slovak:'Slowaaks',Greek:'Grieks',Danish:'Deens',Croatian:'Kroatisch',Vietnamese:'Vietnamees',Latin:'Latijn',Ukrainian:'Oekraïens',Thai:'Thai',Slovene:'Sloveens',Romanian:'Roemeens',Polish:'Pools',Filipino:'Filipijns',Japanese:'Japans',Hindi:'Hindi',Persian:'Perzisch','Persian (Farsi)':'Perzisch',Hungarian:'Hongaars',Czech:'Tsjechisch',Finnish:'Fins',Norwegian:'Noors','Norwegian Nynorsk':'Noors (Nynorsk)','Norwegian Bokmål':'Noors (Bokmål)',Icelandic:'IJslands',Irish:'Iers',Bulgarian:'Bulgaars',Albanian:'Albanees',Armenian:'Armeens',Georgian:'Georgisch',Hebrew:'Hebreeuws',Indonesian:'Indonesisch',Bengali:'Bengaals',Urdu:'Urdu',Mongolian:'Mongools',Kazakh:'Kazachs',Uzbek:'Oezbeeks',Estonian:'Ests',Latvian:'Lets',Lithuanian:'Litouws',Belarusian:'Wit-Russisch',Macedonian:'Macedonisch',Bosnian:'Bosnisch',Maltese:'Maltees',Luxembourgish:'Luxemburgs',Catalan:'Catalaans',Afrikaans:'Afrikaans',Amharic:'Amhaars',Somali:'Somalisch',Berber:'Berbers',Burmese:'Birmaans',Khmer:'Khmer',Lao:'Laotiaans',Nepali:'Nepalees',Pashto:'Pasjtoe',Dari:'Dari',Turkmen:'Turkmeens',Tajik:'Tadzjieks',Kyrgyz:'Kirgizisch',Azerbaijani:'Azerbeidzjaans',Sinhala:'Singalees','Swiss German':'Zwitserduits',Romansh:'Reto-Romaans',Guaraní:'Guarani',Quechua:'Quechua',Aymara:'Aymara',Papiamento:'Papiaments'};
 
-let lang = localStorage.getItem('lr_lang') || (navigator.language||'nl').slice(0,2);
+/* ================= OPSLAG ================= */
+// Profiel, voorkeuren en statistieken staan in localStorage van deze browser: geen account, geen server.
+// Cookies zijn hier niet handig: max 4 KB en ze gaan bij elk verzoek mee naar de server.
+// Is opslag geblokkeerd (cookies uit, sommige privévensters), dan werkt het spel door vanuit het geheugen.
+const store = (() => {
+  let ls = null; const mem = {};
+  try { ls = window.localStorage; ls.setItem('lr__t', '1'); ls.removeItem('lr__t'); } catch(e){ ls = null; }
+  return {
+    ok: !!ls,
+    get(k){ if (k in mem) return mem[k]; if (ls) try { return ls.getItem(k); } catch(e){} return null; },
+    set(k, v){ mem[k] = String(v); if (ls) try { ls.setItem(k, mem[k]); delete mem[k]; } catch(e){} },
+    del(k){ delete mem[k]; if (ls) try { ls.removeItem(k); } catch(e){} },
+  };
+})();
+
+let lang = store.get('lr_lang') || (navigator.language||'nl').slice(0,2);
 if (!I18N[lang]) lang = 'nl';
 // Accenten weghalen voor de grote namen, zodat er nooit een los teken in een ander font staat.
 const plain = s => String(s).normalize('NFKD').replace(/\p{M}/gu, '');
@@ -1101,7 +1143,7 @@ const curSym = cc => { try { return new Intl.NumberFormat(lang,{style:'currency'
 const curName = cc => { try { return new Intl.DisplayNames([lang],{type:'currency'}).of(cc); } catch(e){ return cc; } };
 
 /* sound */
-let sound = localStorage.getItem('lr_sound') !== '0', actx;
+let sound = store.get('lr_sound') !== '0', actx;
 function beep(f=660, d=.08, type='sine', vol=.08){
   if (!sound) return;
   try { actx = actx || new AudioContext(); const o=actx.createOscillator(), g=actx.createGain();
@@ -1794,12 +1836,12 @@ function renderHintValue(k, v){
 
 /* ================= STATE ================= */
 const me = {
-  id: localStorage.getItem('lr_pid') || (crypto.randomUUID ? crypto.randomUUID() : String(Math.random()).slice(2)),
-  name: localStorage.getItem('lr_name') || '',
-  color: localStorage.getItem('lr_color') || rnd(COLORS),
-  avatar: avKey(localStorage.getItem('lr_avatar')),
+  id: store.get('lr_pid') || (crypto.randomUUID ? crypto.randomUUID() : String(Math.random()).slice(2)),
+  name: (store.get('lr_name') || '').slice(0,16),
+  color: okColor(store.get('lr_color'), rnd(COLORS)),
+  avatar: avKey(store.get('lr_avatar')),
 };
-localStorage.setItem('lr_pid', me.id);
+store.set('lr_pid', me.id);
 // Twee tabbladen delen localStorage en dus dezelfde speler-id: dan pakte tab 2 de plek van tab 1 af.
 // Het eerste tabblad houdt de vaste id, de rest krijgt een eigen achtervoegsel.
 if (navigator.locks) navigator.locks.request('lr_pid_' + me.id, { ifAvailable:true }, lock => {
@@ -1820,6 +1862,69 @@ function cleanSettings(p){
   if (Array.isArray(p.hintGroups)){ const g = HINT_GROUPS.filter(x => p.hintGroups.includes(x)); if (g.length) out.hintGroups = g; }
   return out;
 }
+
+/* ================= STATISTIEKEN ================= */
+// Eén JSON-blok onder lr_stats: totalen, beste per modus en de laatste potjes. Elke speler houdt alleen zijn eigen cijfers bij.
+const STATS_KEY = 'lr_stats', HIST_MAX = 25;
+const cnt = (v, max=1e12) => Number.isFinite(+v) && +v > 0 ? Math.min(Math.round(+v), max) : 0;
+function cleanStats(s){
+  s = s && typeof s === 'object' ? s : {};
+  const out = { v:1, games:cnt(s.games), multi:cnt(s.multi), wins:cnt(s.wins), rounds:cnt(s.rounds), correct:cnt(s.correct), points:cnt(s.points),
+    bestGame:cnt(s.bestGame), bestRound:cnt(s.bestRound), fastest:cnt(s.fastest) || null, modes:{}, hist:[] };
+  for (const m of SETTING_OPTS.mode){ const x = s.modes && s.modes[m]; if (x && cnt(x.games)) out.modes[m] = { games:cnt(x.games), best:cnt(x.best) }; }
+  if (Array.isArray(s.hist)) out.hist = s.hist.filter(h => h && typeof h.gid === 'string' && SETTING_OPTS.mode.includes(h.mode)).slice(0, HIST_MAX)
+    .map(h => ({ gid:h.gid.slice(0,40), at:cnt(h.at,1e14), mode:h.mode, rounds:cnt(h.rounds,99), players:cnt(h.players,9) || 1, rank:cnt(h.rank,9) || 1, score:cnt(h.score), correct:cnt(h.correct,99) }));
+  return out;
+}
+let stats = (() => { try { return cleanStats(JSON.parse(store.get(STATS_KEY))); } catch(e){ return cleanStats(); } })();
+const saveStats = () => store.set(STATS_KEY, JSON.stringify(stats));
+// Wordt bij elk eindscherm aangeroepen. De game-id voorkomt dubbel tellen (opnieuw tekenen, hostwissel, pagina herladen).
+function recordGame(){
+  const F = S && S.final; if (!F || !Array.isArray(F.ranking)) return;
+  const mine = F.ranking.find(r => r.id === me.id); if (!mine) return;
+  const gid = String(F.gid || (roomCode || 'solo') + F.ranking.map(r => r.score).join('.')).slice(0,40);   // oudere host zonder gid
+  if (stats.hist.some(h => h.gid === gid)) return;
+  const players = F.ranking.length, rank = 1 + F.ranking.filter(r => r.score > mine.score).length, mode = S.settings.mode;
+  const record = stats.games > 0 && mine.score > stats.bestGame;
+  stats.games++; stats.rounds += S.roundN; stats.correct += mine.correct; stats.points += mine.score;
+  if (players > 1){ stats.multi++; if (rank === 1) stats.wins++; }
+  stats.bestGame = Math.max(stats.bestGame, mine.score); stats.bestRound = Math.max(stats.bestRound, mine.best || 0);
+  if (mine.fastest != null && (!stats.fastest || mine.fastest < stats.fastest)) stats.fastest = mine.fastest;
+  const md = stats.modes[mode] = stats.modes[mode] || { games:0, best:0 };
+  md.games++; md.best = Math.max(md.best, mine.score);
+  stats.hist.unshift({ gid, at:Date.now(), mode, rounds:S.roundN, players, rank, score:mine.score, correct:mine.correct });
+  stats.hist.length = Math.min(stats.hist.length, HIST_MAX);
+  saveStats();
+  if (record) toast(t('newRecord'));
+  // Vraag de browser de opslag niet op te ruimen bij ruimtegebrek (Chrome en Safari beslissen zelf, Firefox vraagt het één keer).
+  if (stats.games === 1 && navigator.storage && navigator.storage.persist) navigator.storage.persist().catch(()=>{});
+}
+// Back-up code: alle lr_ sleutels behalve de speler-id (die is per apparaat), als base64 met een versieprefix.
+const BACKUP_KEYS = ['name','color','avatar','lang','sound','theme','settings','stats'];
+function backupCode(){
+  const d = { v:1 };
+  for (const k of BACKUP_KEYS){ const v = store.get('lr_'+k); if (v != null) d[k] = v; }
+  let bin = ''; new TextEncoder().encode(JSON.stringify(d)).forEach(b => bin += String.fromCharCode(b));
+  return 'GF1' + btoa(bin);
+}
+function restoreBackup(code){
+  code = String(code).replace(/\s+/g, '');
+  if (!code.startsWith('GF1')) return false;
+  let d;
+  try { d = JSON.parse(new TextDecoder().decode(Uint8Array.from(atob(code.slice(3)), c => c.charCodeAt(0)))); } catch(e){ return false; }
+  if (!d || d.v !== 1) return false;
+  const js = s => { try { return JSON.parse(s); } catch(e){ return null; } };
+  if (typeof d.name === 'string') store.set('lr_name', d.name.trim().slice(0,16));
+  if (okColor(d.color)) store.set('lr_color', okColor(d.color));
+  if (typeof d.avatar === 'string') store.set('lr_avatar', avKey(d.avatar));
+  if (I18N[d.lang]) store.set('lr_lang', d.lang);
+  if (d.sound === '0' || d.sound === '1') store.set('lr_sound', d.sound);
+  if (d.theme === 'light' || d.theme === 'dark') store.set('lr_theme', d.theme);
+  if (d.settings) store.set('lr_settings', JSON.stringify(cleanSettings(js(d.settings))));
+  if (d.stats){ stats = cleanStats(js(d.stats)); saveStats(); }
+  return true;
+}
+
 let room = null, roomCode = null, isHost = false, solo = false;
 let S = null;               // laatste publieke snapshot (iedereen)
 let H = null;               // host-only private state
@@ -1968,8 +2073,8 @@ function becomeHost(oldHostPeer){
 function hostInit(){
   isHost = true;
   let saved = {};
-  try { saved = JSON.parse(localStorage.getItem('lr_settings')||'{}') || {}; } catch(e){}
-  H = { players: [], settings: { ...DEFAULT_SETTINGS, ...saved }, phase:'lobby', roundN:0, used:[], nextJoin:0, round:null, result:null, final:null, blocked:[], term:0 };
+  try { saved = JSON.parse(store.get('lr_settings')||'{}') || {}; } catch(e){}
+  H = { players: [], settings: { ...DEFAULT_SETTINGS, ...cleanSettings(saved) }, phase:'lobby', roundN:0, used:[], nextJoin:0, round:null, result:null, final:null, blocked:[], term:0 };
   hostAddPlayer({ ...helloPayload() }, selfId);
   startHostLoop();
   broadcast();
@@ -2007,7 +2112,7 @@ function hostHandle(msg, peerId){
       const clean = cleanSettings(p);
       if (!Object.keys(clean).length) return;
       H.settings = { ...H.settings, ...clean };
-      try { localStorage.setItem('lr_settings', JSON.stringify(H.settings)); } catch(e){}
+      try { store.set('lr_settings', JSON.stringify(H.settings)); } catch(e){}
       broadcast(); break;
     }
     case 'wanthint': {
@@ -2160,7 +2265,7 @@ function scheduleAutoNext(){
 function finish(){
   clearTimeout(H.autoNext);
   H.phase = 'final';
-  H.final = { ranking: H.players.slice().sort((a,b)=>b.score-a.score).map(p=>({ id:p.id, score:p.score, correct:p.correct, best:p.best, fastest:p.fastest })) };
+  H.final = { gid: Math.random().toString(36).slice(2,10), ranking: H.players.slice().sort((a,b)=>b.score-a.score).map(p=>({ id:p.id, score:p.score, correct:p.correct, best:p.best, fastest:p.fastest })) };
   broadcast();
 }
 function publicState(){
@@ -2776,6 +2881,7 @@ function drawResultMap(R){
 }
 function renderFinal(){
   show('final');
+  recordGame();
   const F = S.final, P = id => playerById(id) || { name:'?', color:'#888' };
   const top = F.ranking.slice(0,3), order = [top[1], top[0], top[2]], heights = [110, 150, 80];
   $('#podium').innerHTML = order.map((r,i) => r ? `<div class="pod"><span class="pn">${esc(plain(P(r.id).name))}</span><span class="ps">${r.score}</span><div class="blk" style="height:${heights[i]}px;background:${P(r.id).color}">${[2,1,3][i]}</div></div>` : '<div class="pod"></div>').join('');
@@ -2810,7 +2916,7 @@ function renderColors(){
   renderAvatars();
   renderAvatar();
 }
-function setColor(c){ me.color = okColor(c, me.color); localStorage.setItem('lr_color', me.color); renderColors(); renderAvatar(true); }
+function setColor(c){ me.color = okColor(c, me.color); store.set('lr_color', me.color); renderColors(); renderAvatar(true); }
 $('#colors').addEventListener('click', e => { const c = e.target.dataset.c; if (!c) return; setColor(c); beep(600+COLORS.indexOf(c)*20,.05); });
 $('#colorPick').addEventListener('input', e => setColor(e.target.value));
 // Uitklapmenu's: een tegelijk open, dicht bij tik erbuiten.
@@ -2825,10 +2931,10 @@ DDS.forEach(([b,p]) => $(b).addEventListener('click', () => toggleDd($(b), $(p))
 document.addEventListener('pointerdown', e => { if (!e.target.closest('.ddwrap')) DDS.forEach(([b,p]) => { $(b).setAttribute('aria-expanded','false'); $(p).hidden = true; }); });
 $('#avatars').addEventListener('click', e => {
   const b = e.target.closest('[data-a]'); if (!b) return;
-  me.avatar = avKey(b.dataset.a); localStorage.setItem('lr_avatar', me.avatar);
+  me.avatar = avKey(b.dataset.a); store.set('lr_avatar', me.avatar);
   renderAvatars(); renderAvatar(true); beep(520 + AVATARS.indexOf(me.avatar)*30, .05);
 });
-$('#name').addEventListener('input', e => { me.name = e.target.value.trim(); localStorage.setItem('lr_name', me.name); renderAvatar(true); renderAvatars(); });
+$('#name').addEventListener('input', e => { me.name = e.target.value.trim(); store.set('lr_name', me.name); renderAvatar(true); renderAvatars(); });
 $('#name').addEventListener('keydown', e => { if (e.key==='Enter') $('#createBtn').click(); });
 $('#hintChips').addEventListener('click', e => {
   const b = e.target.closest('[data-g]'); if (!b || !canEdit()) return;
@@ -2854,10 +2960,10 @@ document.addEventListener('keydown', e => {
 });
 $('#codeIn').addEventListener('input', e => { e.target.value = e.target.value.toUpperCase().replace(/[^A-Z0-9]/g,''); });
 $('#codeIn').addEventListener('keydown', e => { if (e.key==='Enter') $('#joinBtn').click(); });
-$('#langSeg').addEventListener('click', e => { const b = e.target.closest('[data-lang]'); if (b){ lang = b.dataset.lang; localStorage.setItem('lr_lang', lang); applyI18n(); } });
-$('#soundBtn').addEventListener('click', () => { sound = !sound; localStorage.setItem('lr_sound', sound?'1':'0'); applyI18n(); beep(); });
+$('#langSeg').addEventListener('click', e => { const b = e.target.closest('[data-lang]'); if (b){ lang = b.dataset.lang; store.set('lr_lang', lang); applyI18n(); } });
+$('#soundBtn').addEventListener('click', () => { sound = !sound; store.set('lr_sound', sound?'1':'0'); applyI18n(); beep(); });
 ['#rulesBtn','#rulesBtn2'].forEach(s => $(s).addEventListener('click', () => $('#ovRules').classList.add('on')));
-function setTheme(th){ document.documentElement.dataset.theme = th; try{localStorage.setItem('lr_theme',th);}catch(e){} document.querySelector('meta[name=theme-color]').content = th==='dark'?'#151513':'#f2eee5'; document.querySelectorAll('#themeSeg button').forEach(b=>b.classList.toggle('on', b.dataset.th===th)); if (dartOpen() && S && S.round) dartTiles(S.round); }
+function setTheme(th){ document.documentElement.dataset.theme = th; try{store.set('lr_theme',th);}catch(e){} document.querySelector('meta[name=theme-color]').content = th==='dark'?'#151513':'#f2eee5'; document.querySelectorAll('#themeSeg button').forEach(b=>b.classList.toggle('on', b.dataset.th===th)); if (dartOpen() && S && S.round) dartTiles(S.round); }
 setTheme(document.documentElement.dataset.theme || 'dark');
 ['#setBtn','#setBtn2','#setBtn3'].forEach(s => $(s).addEventListener('click', () => { $('#setLeave').hidden = !S; $('#ovSet').classList.add('on'); }));
 $('#setLeave').addEventListener('click', () => { $('#ovSet').classList.remove('on'); leave(); });
@@ -2871,6 +2977,51 @@ $('#ovSet').addEventListener('click', e => { if (e.target.id==='ovSet') $('#ovSe
 $('#themeSeg').addEventListener('click', e => { const b = e.target.closest('[data-th]'); if (b){ setTheme(b.dataset.th); beep(b.dataset.th==='dark'?330:660,.06); } });
 $('#rulesClose').addEventListener('click', () => $('#ovRules').classList.remove('on'));
 $('#ovRules').addEventListener('click', e => { if (e.target.id==='ovRules') $('#ovRules').classList.remove('on'); });
+
+// Statistieken en back-up
+function renderStats(){
+  const s = stats, nf = v => v.toLocaleString(lang === 'nl' ? 'nl-NL' : 'en-GB'), pct = (a, b) => b ? Math.round(a / b * 100) + '%' : '';
+  const any = s.games > 0, dash = v => any ? nf(v) : '-';
+  $('#stNote').textContent = t(store.ok ? 'stNote' : 'stNoStore');
+  $('#stTiles').innerHTML = [
+    [t('stGames'), nf(s.games), s.multi ? t('stMulti', { n:s.multi }) : ''],
+    [t('stWins'), nf(s.wins), pct(s.wins, s.multi)],
+    [t('correct'), nf(s.correct), s.rounds ? pct(s.correct, s.rounds) + ' ' + t('stOf', { n:s.rounds }) : ''],
+    [t('stPoints'), nf(s.points), ''],
+    [t('stAvg'), any ? nf(Math.round(s.points / s.games)) : '-', ''],
+    [t('stRounds'), nf(s.rounds), ''],
+    [t('stBestGame'), dash(s.bestGame), ''],
+    [t('bestRound'), dash(s.bestRound), ''],
+    [t('fastest'), s.fastest ? (s.fastest / 1000).toFixed(1) + 's' : '-', ''],
+  ].map(([k, v, i]) => `<div class="stat"><small>${esc(k)}</small><b>${esc(v)}</b><i>${esc(i)}</i></div>`).join('');
+  if (!any){ $('#stMore').innerHTML = `<p class="sub">${esc(t('stEmpty'))}</p>`; return; }
+  const modes = SETTING_OPTS.mode.filter(m => s.modes[m]);
+  const date = ms => new Date(ms).toLocaleDateString(lang === 'nl' ? 'nl-NL' : 'en-GB', { day:'numeric', month:'short' });
+  $('#stMore').innerHTML =
+    `<label>${esc(t('stModes'))}</label><table><thead><tr><th>${esc(t('mode'))}</th><th class="n">${esc(t('stGames'))}</th><th class="n">${esc(t('stBest'))}</th></tr></thead><tbody>` +
+    modes.map(m => `<tr><td>${esc(t(m))}</td><td class="n">${nf(s.modes[m].games)}</td><td class="n">${nf(s.modes[m].best)}</td></tr>`).join('') + '</tbody></table>' +
+    `<label>${esc(t('stRecent'))}</label><table><tbody>` +
+    s.hist.slice(0, 10).map(h => `<tr><td>${esc(date(h.at))}</td><td>${esc(t(h.mode))}</td><td class="n">${h.players > 1 ? '#' + h.rank + '/' + h.players : esc(t('solo'))}</td><td class="n">${h.correct}/${h.rounds}</td><td class="n">${nf(h.score)}</td></tr>`).join('') + '</tbody></table>';
+}
+$('#statsBtn').addEventListener('click', () => { renderStats(); $('#bkIn').value = ''; $('#ovStats').classList.add('on'); });
+$('#statsClose').addEventListener('click', () => $('#ovStats').classList.remove('on'));
+$('#ovStats').addEventListener('click', e => { if (e.target.id==='ovStats') $('#ovStats').classList.remove('on'); });
+$('#bkCopy').addEventListener('click', async () => {
+  const el = $('#bkIn'); el.value = backupCode();
+  try { await navigator.clipboard.writeText(el.value); toast(t('bkCopied')); } catch(e){ el.focus(); el.select(); }   // geen klembord: tekst staat geselecteerd
+});
+$('#bkLoad').addEventListener('click', () => {
+  const v = $('#bkIn').value.trim();
+  if (!v){ toast(t('bkPaste')); $('#bkIn').focus(); return; }
+  if (!v.startsWith('GF1')){ toast(t('bkBad')); return; }
+  if (!confirm(t('bkConfirm'))) return;
+  if (!restoreBackup(v)){ toast(t('bkBad')); return; }
+  location.reload();   // naam, kleur, taal en thema opnieuw inlezen
+});
+$('#stReset').addEventListener('click', () => {
+  if (!confirm(t('stResetQ'))) return;
+  stats = cleanStats(); saveStats(); renderStats();
+});
 
 function needName(){ if (!me.name){ $('#startErr').textContent = t('nameNeeded'); $('#name').focus(); return true; } $('#startErr').textContent=''; return false; }
 function makeCode(){ const A='ABCDEFGHJKLMNPQRSTUVWXYZ23456789'; let s=''; for(let i=0;i<4;i++) s+=A[Math.floor(Math.random()*A.length)]; return s; }
