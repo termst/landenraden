@@ -118,9 +118,15 @@ Kies in de lobby de modus **Darts**. Je ziet een plek (satelliet of straatfoto) 
 * Op het uitslagscherm zie je het dartbord rond de plek en ieders pijltje met afstand.
 * Ringen en punten staan in `CONFIG.darts`. Afstand is over de bol (`gcKm`), niet plat.
 
-## Avatars
+## Avatars en kleuren
 
-Letter, Hengelaarsvis, Vliegenzwam, Gekke bek, Appel, Ufo, Badeend en Cactus. Een avatar toevoegen: een `<symbol id="av-<id>">` (32 bij 32, wit op de spelerskleur) in de sprite bovenin, de id in `AVATARS` en de tekst `av_<id>` in `I18N`.
+Avatar en kleur kies je in twee uitklapmenu's in de lobby. De avatarlijst heeft 24 opties (letter, 7 oorspronkelijke en 16 nieuwe: kat, vos, uil, beer, vis, spook, robot, schedel, raket, planeet, ster, hart, kroon, diamant, vlam, pizza). De kleurlijst heeft 24 kleuren en een kleurkiezer voor elke `#rrggbb`. Bij een lichte kleur wordt het icoon automatisch donker (`isLight` in `index.html`), zodat het altijd zichtbaar blijft.
+
+Een avatar toevoegen: een `<symbol id="av-<id>">` (32 bij 32, wit op de spelerskleur) in de sprite bovenin, de id in `AVATARS` en de tekst `av_<id>` in `I18N`.
+
+## Kaart zonder API key
+
+Er is geen API key nodig. De wereldkaart bij Darts gebruikt CARTO-tegels. Laden die niet, dan schakelt de kaart na drie fouten over op Esri World Imagery. Wil je Mapbox of Google, pas dan `CONFIG.tiles` en `dartTiles()` aan.
 
 ## Font
 
