@@ -118,6 +118,18 @@ span.pill{cursor:default}
 .colors{display:flex;gap:8px;flex-wrap:wrap}
 .colors button{width:32px;height:32px;border-radius:50%;border:2px solid var(--card);box-shadow:0 0 0 1px var(--line);cursor:pointer;flex:none;transition:transform .15s}
 .colors button.on{box-shadow:0 0 0 2.5px var(--ink)}
+.dd{display:flex;align-items:center;gap:10px;width:100%;min-height:48px;padding:6px 12px 6px 10px;background:var(--field);border:1px solid var(--line);border-radius:10px;cursor:pointer;text-align:left;box-shadow:0 1px 3px rgba(0,0,0,.18) inset}
+.dd[aria-expanded=true]{border-color:var(--acc)}
+.dd .ddt{flex:1;min-width:0}
+.dd .chv{transform:none;transition:transform .2s;color:var(--mute)}
+.dd[aria-expanded=true] .chv{transform:rotate(90deg)}
+.dot.big{width:26px;height:26px}
+.ddp{margin-top:8px;padding:12px;background:var(--card2);border:1px solid var(--line);border-radius:12px;max-height:264px;overflow-y:auto;overscroll-behavior:contain}
+.ddp[hidden]{display:none}
+.pick{display:flex;align-items:center;gap:10px;margin-top:12px;cursor:pointer;font-size:14px}
+.pick input{width:44px;height:34px;padding:0;border:1px solid var(--line);border-radius:8px;background:none;cursor:pointer}
+.light .av{filter:invert(1) hue-rotate(180deg)}
+.avatar.light,.avatars button.light{color:#15151f}
 #codeIn{letter-spacing:.2em;text-align:center}
 #joinBtn{flex:none;min-width:104px}
 /* lobby */
@@ -557,6 +569,22 @@ body[data-screen=game] #emoLayer{left:max(10px,env(safe-area-inset-left));transf
     <g fill="#ff7a94"><circle cx="16" cy="3.2" r="1.7"/><circle cx="13.9" cy="4.6" r="1.7"/><circle cx="18.1" cy="4.6" r="1.7"/><circle cx="14.8" cy="6.6" r="1.6"/><circle cx="17.2" cy="6.6" r="1.6"/></g>
     <circle cx="16" cy="5" r="1.3" fill="#ffd25a"/>
   </symbol>
+  <symbol id="av-cat" viewBox="0 0 32 32"><path d="M6 4 12 9H20L26 4V16C26 23 21.5 27 16 27 10.5 27 6 23 6 16Z" fill="#fff"/><circle cx="12" cy="15" r="1.9" fill="#15151f" opacity=".85"/><circle cx="20" cy="15" r="1.9" fill="#15151f" opacity=".85"/><path d="M14.4 19.4H17.6L16 21.4Z" fill="#15151f" opacity=".85"/></symbol>
+  <symbol id="av-fox" viewBox="0 0 32 32"><path d="M3 4 12 10H20L29 4 27 17 16 29 5 17Z" fill="#fff"/><circle cx="12" cy="15" r="1.8" fill="#15151f" opacity=".85"/><circle cx="20" cy="15" r="1.8" fill="#15151f" opacity=".85"/><circle cx="16" cy="25.2" r="1.7" fill="#15151f" opacity=".85"/></symbol>
+  <symbol id="av-owl" viewBox="0 0 32 32"><path d="M5 6 11 9H21L27 6V20C27 26 22 29 16 29 10 29 5 26 5 20Z" fill="#fff"/><circle cx="11.5" cy="15" r="4" fill="#15151f" opacity=".85"/><circle cx="20.5" cy="15" r="4" fill="#15151f" opacity=".85"/><circle cx="11.5" cy="15" r="1.5" fill="#fff"/><circle cx="20.5" cy="15" r="1.5" fill="#fff"/><path d="M14 19.5H18L16 23Z" fill="#15151f" opacity=".85"/></symbol>
+  <symbol id="av-robot" viewBox="0 0 32 32"><path d="M16 9V4.5" stroke="#fff" stroke-width="2" stroke-linecap="round"/><circle cx="16" cy="3.8" r="2" fill="#fff"/><rect x="6" y="9" width="20" height="17" rx="3.5" fill="#fff"/><rect x="2.5" y="14" width="3" height="6" rx="1.2" fill="#fff"/><rect x="26.5" y="14" width="3" height="6" rx="1.2" fill="#fff"/><rect x="10.5" y="14" width="4" height="4" rx="1" fill="#15151f" opacity=".85"/><rect x="17.5" y="14" width="4" height="4" rx="1" fill="#15151f" opacity=".85"/><rect x="11" y="21" width="10" height="2" rx="1" fill="#15151f" opacity=".85"/></symbol>
+  <symbol id="av-ghost" viewBox="0 0 32 32"><path d="M6 28V14C6 8 10.5 4 16 4 21.5 4 26 8 26 14V28L22 25 19 28 16 25 13 28 10 25Z" fill="#fff"/><ellipse cx="12.5" cy="14" rx="2" ry="2.8" fill="#15151f" opacity=".85"/><ellipse cx="19.5" cy="14" rx="2" ry="2.8" fill="#15151f" opacity=".85"/><ellipse cx="16" cy="20.5" rx="2" ry="1.6" fill="#15151f" opacity=".85"/></symbol>
+  <symbol id="av-rocket" viewBox="0 0 32 32"><path d="M16 2C21 7 22 13 21 20H11C10 13 11 7 16 2Z" fill="#fff"/><path d="M11 15 5 22V26L11 22ZM21 15 27 22V26L21 22Z" fill="#fff"/><path d="M13.5 22H18.5L16 30Z" fill="#fff" opacity=".75"/><circle cx="16" cy="11.5" r="2.5" fill="#15151f" opacity=".85"/></symbol>
+  <symbol id="av-crown" viewBox="0 0 32 32"><path d="M3 24 2 9 10 15 16 5 22 15 30 9 29 24Z" fill="#fff"/><circle cx="9" cy="20" r="1.5" fill="#15151f" opacity=".5"/><circle cx="16" cy="20" r="1.5" fill="#15151f" opacity=".5"/><circle cx="23" cy="20" r="1.5" fill="#15151f" opacity=".5"/></symbol>
+  <symbol id="av-star" viewBox="0 0 32 32"><path d="M16 2.5 20.2 11.4 30 12.6 22.8 19.3 24.7 29 16 24.2 7.3 29 9.2 19.3 2 12.6 11.8 11.4Z" fill="#fff"/></symbol>
+  <symbol id="av-heart" viewBox="0 0 32 32"><path d="M16 28C5 20 3 14 3 10.5 3 6.5 6 4 9.5 4 12.5 4 14.8 5.6 16 8 17.2 5.6 19.5 4 22.5 4 26 4 29 6.5 29 10.5 29 14 27 20 16 28Z" fill="#fff"/></symbol>
+  <symbol id="av-skull" viewBox="0 0 32 32"><path d="M16 3C9 3 5 8 5 14 5 18 7 20.5 10 22V27H22V22C25 20.5 27 18 27 14 27 8 23 3 16 3Z" fill="#fff"/><circle cx="11.5" cy="14" r="3" fill="#15151f" opacity=".85"/><circle cx="20.5" cy="14" r="3" fill="#15151f" opacity=".85"/><path d="M16 18 14.2 21.6H17.8ZM13.5 23V27M16 23V27M18.5 23V27" fill="#15151f" stroke="#15151f" stroke-width="1" opacity=".7"/></symbol>
+  <symbol id="av-fish" viewBox="0 0 32 32"><path d="M3 16C8 8 17 7 22 12L29 7V25L22 20C17 25 8 24 3 16Z" fill="#fff"/><circle cx="10" cy="14.5" r="1.9" fill="#15151f" opacity=".85"/></symbol>
+  <symbol id="av-bear" viewBox="0 0 32 32"><circle cx="8" cy="8" r="4" fill="#fff"/><circle cx="24" cy="8" r="4" fill="#fff"/><circle cx="16" cy="17" r="11" fill="#fff"/><circle cx="12" cy="15" r="1.7" fill="#15151f" opacity=".85"/><circle cx="20" cy="15" r="1.7" fill="#15151f" opacity=".85"/><ellipse cx="16" cy="20.5" rx="3" ry="2" fill="#15151f" opacity=".85"/></symbol>
+  <symbol id="av-pizza" viewBox="0 0 32 32"><path d="M16 29 3.5 8C10 3 22 3 28.5 8Z" fill="#fff"/><circle cx="12" cy="12" r="2.4" fill="#15151f" opacity=".6"/><circle cx="20" cy="12" r="2.4" fill="#15151f" opacity=".6"/><circle cx="16" cy="19" r="2.4" fill="#15151f" opacity=".6"/></symbol>
+  <symbol id="av-planet" viewBox="0 0 32 32"><circle cx="16" cy="16" r="8" fill="#fff"/><ellipse cx="16" cy="16" rx="14" ry="4.5" transform="rotate(-20 16 16)" fill="none" stroke="#fff" stroke-width="2"/><path d="M9 13.5Q16 16 23 13M9.6 19.5Q16 22 22.4 19.5" fill="none" stroke="#15151f" stroke-width="1.4" opacity=".3"/></symbol>
+  <symbol id="av-flame" viewBox="0 0 32 32"><path d="M16 2C17 9 25 12 25 20 25 26 21 30 16 30 11 30 7 26 7 20 7 16 9.5 14 11 11 12 14 13 15 14 15 14 10 14 6 16 2Z" fill="#fff"/><path d="M16 18C18 21 20 22 20 25 20 27.5 18 29 16 29 14 29 12 27.5 12 25 12 22 14.5 21 16 18Z" fill="#15151f" opacity=".28"/></symbol>
+  <symbol id="av-diamond" viewBox="0 0 32 32"><path d="M9 5H23L30 12 16 28 2 12Z" fill="#fff"/><path d="M2 12H30M9 5 12.5 12 16 28 19.5 12 23 5M12.5 12 16 5 19.5 12" fill="none" stroke="#15151f" stroke-width="1" opacity=".35"/></symbol>
   <symbol id="i-gear" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></symbol>
   <symbol id="i-sun" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></symbol>
   <symbol id="i-moon" viewBox="0 0 24 24"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></symbol>
@@ -624,8 +652,12 @@ body[data-screen=game] #emoLayer{left:max(10px,env(safe-area-inset-left));transf
     <div class="card">
       <div class="field"><label data-i="yourName" for="name"></label>
         <div class="nameRow"><div class="avatar" id="avatar"></div><input type="text" id="name" maxlength="16" autocomplete="off" autocorrect="off" enterkeyhint="go"></div></div>
-      <div class="field"><label data-i="yourColor"></label><div class="colors" id="colors"></div></div>
-      <div class="field"><label data-i="yourAvatar"></label><div class="avatars" id="avatars"></div></div>
+      <div class="field ddwrap"><label data-i="yourColor"></label>
+        <button class="dd" id="colorDd" type="button" aria-expanded="false"><span class="dot big" id="colorSw"></span><span class="ddt" id="colorTxt"></span><svg class="ic chv"><use href="#i-chev"/></svg></button>
+        <div class="ddp" id="colorPanel" hidden><div class="colors" id="colors"></div><label class="pick"><input type="color" id="colorPick"><span data-i="customColor"></span></label></div></div>
+      <div class="field ddwrap"><label data-i="yourAvatar"></label>
+        <button class="dd" id="avDd" type="button" aria-expanded="false"><span id="avSw" class="avatar sm"></span><span class="ddt" id="avTxt"></span><svg class="ic chv"><use href="#i-chev"/></svg></button>
+        <div class="ddp" id="avPanel" hidden><div class="avatars" id="avatars"></div></div></div>
     </div>
     <div class="card">
       <button class="btn pri" id="createBtn"><svg class="ic"><use href="#i-plus"/></svg><span data-i="create"></span></button>
@@ -867,9 +899,15 @@ const CONFIG = {
     // { urls: 'turn:global.relay.metered.ca:443?transport=tcp', username: 'JOUW_USERNAME', credential: 'JOUW_CREDENTIAL' },
   ],
 };
-const COLORS = ['#c2432b','#1f5868','#b9801a','#5b6ee1','#8a4fa8','#2d7a4d','#d46a8f','#4a5258'];
+const COLORS = ['#c2432b','#1f5868','#b9801a','#5b6ee1','#8a4fa8','#2d7a4d','#d46a8f','#4a5258',
+  '#e53935','#fb8c00','#fdd835','#c0ca33','#43a047','#00897b','#00acc1','#1e88e5','#3949ab','#8e24aa','#ec407a','#6d4c41','#78909c','#212121','#f5f5f5','#ffe082'];
+// Elke geldige #rrggbb mag (kleurkiezer). Lichte kleuren krijgen een donker icoon, zodat het altijd leesbaar blijft.
+const okColor = (c, fb) => /^#[0-9a-f]{6}$/i.test(c) ? c.toLowerCase() : fb;
+const isLight = c => { const n = parseInt(c.slice(1), 16), f = v => { v /= 255; return v <= .03928 ? v/12.92 : Math.pow((v+.055)/1.055, 2.4); };
+  return .2126*f(n>>16) + .7152*f((n>>8)&255) + .0722*f(n&255) > .34; };
+const lightCls = c => isLight(okColor(c, '#888888')) ? ' light' : '';
 // Avatars: 'letter' is de eerste letter van de naam, de rest zijn symbolen uit de sprite (#av-<id>).
-const AVATARS = ['letter','angler','shroom','face','apple','ufo','duck','cactus'];
+const AVATARS = ['letter','angler','shroom','face','apple','ufo','duck','cactus','cat','fox','owl','bear','fish','ghost','robot','skull','rocket','planet','star','heart','crown','diamond','flame','pizza'];
 const avKey = a => AVATARS.includes(a) ? a : 'letter';
 // Hintgroepen die de host aan/uit kan zetten in de lobby
 const HINT_GROUPS = ['geo','people','money','codes','nb','name'];
@@ -879,7 +917,7 @@ const CUR_FIX = { ZW:['ZWG','USD'], FM:['USD'], SL:['SLE'], BG:['EUR'], CU:['CUP
 /* ================= I18N ================= */
 const I18N = {
  nl: {
-  yourName:'Naam', yourColor:'Kleur', yourAvatar:'Avatar', av_letter:'Letter', av_angler:'Hengelaarsvis', av_shroom:'Vliegenzwam', av_face:'Gekke bek', av_apple:'Appel', av_ufo:'Ufo', av_duck:'Badeend', av_cactus:'Cactus', create:'Maak kamer', join:'Join', solo:'Solo',
+  yourName:'Naam', yourColor:'Kleur', yourAvatar:'Avatar', av_letter:'Letter', av_angler:'Hengelaarsvis', av_shroom:'Vliegenzwam', av_face:'Gekke bek', av_apple:'Appel', av_ufo:'Ufo', av_duck:'Badeend', av_cactus:'Cactus', av_cat:'Kat', av_fox:'Vos', av_owl:'Uil', av_bear:'Beer', av_fish:'Vis', av_ghost:'Spook', av_robot:'Robot', av_skull:'Schedel', av_rocket:'Raket', av_planet:'Planeet', av_star:'Ster', av_heart:'Hart', av_crown:'Kroon', av_diamond:'Diamant', av_flame:'Vlam', av_pizza:'Pizza', customColor:'Eigen kleur kiezen', create:'Maak kamer', join:'Join', solo:'Solo',
   rules:'Uitleg', leave:'Verlaten', copyCode:'Kopieer link', share:'Delen', more:'Meer opties', language:'Taal',
   players:'Spelers', rounds:'Rondes', roundTime:'Tijd per ronde', hintEvery:'Hint elke', mode:'Modus', map:'Satelliet', street:'Straatbeeld',
   difficulty:'Moeilijkheid', easy:'Makkelijk', normal:'Normaal', hard:'Moeilijk', continent:'Continent',
@@ -945,7 +983,7 @@ const I18N = {
   </ul>`,
  },
  en: {
-  yourName:'Name', yourColor:'Color', yourAvatar:'Avatar', av_letter:'Letter', av_angler:'Anglerfish', av_shroom:'Toadstool', av_face:'Silly face', av_apple:'Apple', av_ufo:'UFO', av_duck:'Rubber duck', av_cactus:'Cactus', create:'Create room', join:'Join', solo:'Solo',
+  yourName:'Name', yourColor:'Color', yourAvatar:'Avatar', av_letter:'Letter', av_angler:'Anglerfish', av_shroom:'Toadstool', av_face:'Silly face', av_apple:'Apple', av_ufo:'UFO', av_duck:'Rubber duck', av_cactus:'Cactus', av_cat:'Cat', av_fox:'Fox', av_owl:'Owl', av_bear:'Bear', av_fish:'Fish', av_ghost:'Ghost', av_robot:'Robot', av_skull:'Skull', av_rocket:'Rocket', av_planet:'Planet', av_star:'Star', av_heart:'Heart', av_crown:'Crown', av_diamond:'Diamond', av_flame:'Flame', av_pizza:'Pizza', customColor:'Pick your own color', create:'Create room', join:'Join', solo:'Solo',
   rules:'Rules', leave:'Leave', copyCode:'Copy link', share:'Share', more:'More options', language:'Language',
   players:'Players', rounds:'Rounds', roundTime:'Round time', hintEvery:'Hint every', mode:'Mode', map:'Satellite', street:'Street view',
   difficulty:'Difficulty', easy:'Easy', normal:'Normal', hard:'Hard', continent:'Continent',
@@ -1933,11 +1971,11 @@ function hostInit(){
 }
 function hostAddPlayer(p, peerId){
   let pl = H.players.find(x => x.id === p.id);
-  if (pl) { pl.peerId = peerId; pl.connected = true; pl.leftAt = null; pl.name = String(p.name).slice(0,16); pl.color = COLORS.includes(p.color)?p.color:pl.color; pl.avatar = avKey(p.avatar); return true; }
+  if (pl) { pl.peerId = peerId; pl.connected = true; pl.leftAt = null; pl.name = String(p.name).slice(0,16); pl.color = okColor(p.color, pl.color); pl.avatar = avKey(p.avatar); return true; }
   if (H.blocked.includes(p.id)) return 'kicked';
   if (H.phase !== 'lobby') return 'started';
   if (H.players.filter(x=>x.connected || (Date.now()-x.leftAt) < CONFIG.reserveMs).length >= CONFIG.maxPlayers) return 'full';
-  H.players.push({ id: p.id, peerId, name: String(p.name||'?').slice(0,16), color: COLORS.includes(p.color)?p.color:COLORS[0], avatar: avKey(p.avatar), joinIdx: H.nextJoin++, score:0, connected:true, leftAt:null, correct:0, best:0, fastest:null, op:false });
+  H.players.push({ id: p.id, peerId, name: String(p.name||'?').slice(0,16), color: okColor(p.color, COLORS[0]), avatar: avKey(p.avatar), joinIdx: H.nextJoin++, score:0, connected:true, leftAt:null, correct:0, best:0, fastest:null, op:false });
   return true;
 }
 // De host mag alles. Een OP mag de instellingen aanpassen en de lobby starten.
@@ -2166,7 +2204,7 @@ function avaInner(p){
   const a = avKey(p.avatar);
   return a === 'letter' ? esc(plain(String(p.name||'').trim()[0] || '?').toUpperCase()) : `<svg class="av"><use href="#av-${a}"/></svg>`;
 }
-function avaHtml(p, size){ return `<span class="avatar ${size||'sm'}" style="background:${p.color}">${avaInner(p)}</span>`; }
+function avaHtml(p, size){ return `<span class="avatar ${size||'sm'}${lightCls(p.color)}" style="background:${p.color}">${avaInner(p)}</span>`; }
 
 function renderLobby(){
   show('lobby'); renderedRound = null; renderedResult = null; myAnswer = null;
@@ -2382,7 +2420,16 @@ function dartTiles(r){
   if (!dmap || style === dmapKey) return;
   dmapKey = style;
   if (dmapTiles) dmapTiles.remove();
-  dmapTiles = L.tileLayer(`https://{s}.basemaps.cartocdn.com/${style}/{z}/{x}/{y}{r}.png`, { subdomains:'abcd', maxZoom:19, attribution:'&copy; OpenStreetMap &copy; CARTO' }).addTo(dmap);
+  // Geen API key nodig. Laden de CARTO-tegels niet (geblokkeerd of offline), dan schakelt de kaart na een paar fouten over op Esri.
+  const carto = L.tileLayer(`https://{s}.basemaps.cartocdn.com/${style}/{z}/{x}/{y}{r}.png`, { subdomains:'abcd', maxZoom:19, attribution:'&copy; OpenStreetMap &copy; CARTO' });
+  let fails = 0;
+  carto.on('tileerror', () => {
+    if (++fails !== 3 || dmapTiles !== carto) return;
+    carto.remove();
+    const m = CONFIG.tiles.main;
+    dmapTiles = L.tileLayer(m.url, { attribution:m.attr, maxZoom:10 }).addTo(dmap);
+  });
+  dmapTiles = carto.addTo(dmap);
 }
 // Kaart passend tussen de HUD bovenin en het paneel onderin (liggend staat het paneel opzij).
 function dartFit(animate){
@@ -2744,22 +2791,39 @@ function renderFinal(){
 
 /* ================= UI EVENTS ================= */
 function renderAvatar(bump){
-  const a = $('#avatar'); a.style.background = me.color; a.innerHTML = avaInner(me);
+  const a = $('#avatar'); a.style.background = me.color; a.className = 'avatar' + lightCls(me.color); a.innerHTML = avaInner(me);
   if (bump){ a.classList.add('bump'); setTimeout(()=>a.classList.remove('bump'), 160); }
 }
 function renderAvatars(){
-  $('#avatars').innerHTML = AVATARS.map(a => `<button style="background:${me.color}" class="${a===me.avatar?'on':''}" data-a="${a}" title="${esc(t('av_'+a))}" aria-label="${esc(t('av_'+a))}">${avaInner({ ...me, avatar:a })}</button>`).join('');
+  const lc = lightCls(me.color);
+  $('#avatars').innerHTML = AVATARS.map(a => `<button style="background:${me.color}" class="${a===me.avatar?'on':''}${lc}" data-a="${a}" title="${esc(t('av_'+a))}" aria-label="${esc(t('av_'+a))}">${avaInner({ ...me, avatar:a })}</button>`).join('');
+  $('#avTxt').textContent = t('av_'+me.avatar);
+  $('#avSw').className = 'avatar sm' + lc; $('#avSw').style.background = me.color; $('#avSw').innerHTML = avaInner(me);
 }
 function renderColors(){
   $('#colors').innerHTML = COLORS.map(c=>`<button style="background:${c}" class="${c===me.color?'on':''}" data-c="${c}" aria-label="${c}"></button>`).join('');
+  $('#colorSw').style.background = me.color; $('#colorTxt').textContent = me.color.toUpperCase();
+  $('#colorPick').value = me.color;
   renderAvatars();
   renderAvatar();
 }
-$('#colors').addEventListener('click', e => { const c = e.target.dataset.c; if (!c) return; me.color = c; localStorage.setItem('lr_color', c); renderColors(); renderAvatar(true); beep(600+COLORS.indexOf(c)*40,.05); });
+function setColor(c){ me.color = okColor(c, me.color); localStorage.setItem('lr_color', me.color); renderColors(); renderAvatar(true); }
+$('#colors').addEventListener('click', e => { const c = e.target.dataset.c; if (!c) return; setColor(c); beep(600+COLORS.indexOf(c)*20,.05); });
+$('#colorPick').addEventListener('input', e => setColor(e.target.value));
+// Uitklapmenu's: een tegelijk open, dicht bij tik erbuiten.
+const DDS = [['#colorDd','#colorPanel'], ['#avDd','#avPanel']];
+function toggleDd(btn, panel){
+  const open = panel.hidden;
+  DDS.forEach(([b,p]) => { $(b).setAttribute('aria-expanded','false'); $(p).hidden = true; });
+  if (open){ btn.setAttribute('aria-expanded','true'); panel.hidden = false; }
+  beep(open ? 480 : 380, .04);
+}
+DDS.forEach(([b,p]) => $(b).addEventListener('click', () => toggleDd($(b), $(p))));
+document.addEventListener('pointerdown', e => { if (!e.target.closest('.ddwrap')) DDS.forEach(([b,p]) => { $(b).setAttribute('aria-expanded','false'); $(p).hidden = true; }); });
 $('#avatars').addEventListener('click', e => {
   const b = e.target.closest('[data-a]'); if (!b) return;
   me.avatar = avKey(b.dataset.a); localStorage.setItem('lr_avatar', me.avatar);
-  renderAvatars(); renderAvatar(true); beep(520 + AVATARS.indexOf(me.avatar)*70, .05);
+  renderAvatars(); renderAvatar(true); beep(520 + AVATARS.indexOf(me.avatar)*30, .05);
 });
 $('#name').addEventListener('input', e => { me.name = e.target.value.trim(); localStorage.setItem('lr_name', me.name); renderAvatar(true); renderAvatars(); });
 $('#name').addEventListener('keydown', e => { if (e.key==='Enter') $('#createBtn').click(); });
@@ -2898,7 +2962,7 @@ function renderChat(){
 function addChat(m){ chatLog.push(m); if (chatLog.length > 200) chatLog.shift(); if (!m.mine && !m.emote && !$('#chat').classList.contains('on')){ unread++; beep(880,.05); } renderChat(); }
 function receiveChat(m, peerId){
   if (!m) return;
-  const who = { name: String(m.name||'?').slice(0,16), color: COLORS.includes(m.color)?m.color:'#888', avatar: avKey(m.avatar) };
+  const who = { name: String(m.name||'?').slice(0,16), color: okColor(m.color, '#888888'), avatar: avKey(m.avatar) };
   if (m.emote !== undefined){
     // Alleen bekende emotes, en per speler maximaal één per 0,7 s, zodat niemand het scherm kan volspammen.
     if (typeof m.emote !== 'string' || !Object.prototype.hasOwnProperty.call(EMOTES, m.emote)) return;
