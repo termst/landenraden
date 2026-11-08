@@ -441,6 +441,14 @@ body[data-screen=game] #emoLayer{left:max(10px,env(safe-area-inset-left));transf
 <svg width="0" height="0" style="position:absolute" aria-hidden="true">
   
   <defs><radialGradient id="av-lure"><stop offset=".2" stop-color="#fff4d2"/><stop offset=".45" stop-color="#ffcf5e" stop-opacity=".9"/><stop offset="1" stop-color="#ffcf5e" stop-opacity="0"/></radialGradient></defs>
+  <defs><mask id="av-shroom-dots" maskUnits="userSpaceOnUse" x="0" y="0" width="32" height="32">
+    <rect width="32" height="32" fill="#fff"/>
+    <circle cx="16" cy="8" r="2.2" fill="#000"/>
+    <circle cx="9.4" cy="11.7" r="1.9" fill="#000"/>
+    <circle cx="22.6" cy="11.7" r="1.9" fill="#000"/>
+    <circle cx="5.7" cy="15.5" r="1.35" fill="#000"/>
+    <circle cx="26.3" cy="15.5" r="1.35" fill="#000"/>
+  </mask></defs>
   <!-- Avatars: eenvoudige silhouetten, wit op de kleur van de speler -->
   <symbol id="av-angler" viewBox="0 0 32 32">
     <path d="M16.8 9.4C15.6 5 11.8 3.2 8.6 5" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" opacity=".9"/>
@@ -449,6 +457,13 @@ body[data-screen=game] #emoLayer{left:max(10px,env(safe-area-inset-left));transf
     <path d="M6.2 15.6C6.6 10.6 11 7.8 16.2 8.4 21.2 9 24.9 12.3 26 16.4L30.4 12.1Q28.2 19.6 30.4 27.1L26 22.9C24.7 26.7 20.7 29.1 16 29.1 12.3 29.1 9.3 27.6 7.6 25L10.3 23.9 11.6 21.5 12.9 23 14.3 20.9 15.6 22.1 17.2 21.2 14.5 18.4 13.3 20.9 12 17.4 10.5 19.9 9.3 16.5Z" fill="#fff" opacity=".96"/>
     <circle cx="14.2" cy="13.9" r="2.5" fill="#15151f" opacity=".85"/>
     <circle cx="15" cy="13.1" r=".85" fill="#fff"/>
+  </symbol>
+  <symbol id="av-shroom" viewBox="0 0 32 32">
+    <path d="M12.1 18H19.9C19.9 21.6 20.1 24.9 21.1 27.4 21.6 28.6 19.8 29.2 16 29.2 12.2 29.2 10.4 28.6 10.9 27.4 11.9 24.9 12.1 21.6 12.1 18Z" fill="#fff"/>
+    <g mask="url(#av-shroom-dots)">
+      <path d="M2.6 17.4C2.6 9.6 8.6 3.6 16 3.6 23.4 3.6 29.4 9.6 29.4 17.4 25.5 20.6 6.5 20.6 2.6 17.4Z" fill="#fff"/>
+    </g>
+    <path d="M2.6 17.4C6.5 20.6 25.5 20.6 29.4 17.4 26.4 18.4 5.6 18.4 2.6 17.4Z" fill="#15151f" opacity=".22"/>
   </symbol>
   <symbol id="i-gear" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></symbol>
   <symbol id="i-sun" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></symbol>
@@ -750,7 +765,7 @@ const CONFIG = {
 };
 const COLORS = ['#c2432b','#1f5868','#b9801a','#5b6ee1','#8a4fa8','#2d7a4d','#d46a8f','#4a5258'];
 // Avatars: 'letter' is de eerste letter van de naam, de rest zijn symbolen uit de sprite (#av-<id>).
-const AVATARS = ['letter','angler'];
+const AVATARS = ['letter','angler','shroom'];
 const avKey = a => AVATARS.includes(a) ? a : 'letter';
 // Hintgroepen die de host aan/uit kan zetten in de lobby
 const HINT_GROUPS = ['geo','people','money','codes','nb','name'];
@@ -760,7 +775,7 @@ const CUR_FIX = { ZW:['ZWG','USD'], FM:['USD'], SL:['SLE'], BG:['EUR'], CU:['CUP
 /* ================= I18N ================= */
 const I18N = {
  nl: {
-  yourName:'Naam', yourColor:'Kleur', yourAvatar:'Avatar', av_letter:'Letter', av_angler:'Hengelaarsvis', create:'Maak kamer', join:'Join', solo:'Solo',
+  yourName:'Naam', yourColor:'Kleur', yourAvatar:'Avatar', av_letter:'Letter', av_angler:'Hengelaarsvis', av_shroom:'Vliegenzwam', create:'Maak kamer', join:'Join', solo:'Solo',
   rules:'Uitleg', leave:'Verlaten', copyCode:'Kopieer link', share:'Delen', more:'Meer opties', language:'Taal',
   players:'Spelers', rounds:'Rondes', roundTime:'Tijd per ronde', hintEvery:'Hint elke', mode:'Modus', map:'Satelliet', street:'Straatbeeld',
   difficulty:'Moeilijkheid', easy:'Makkelijk', normal:'Normaal', hard:'Moeilijk', continent:'Continent',
@@ -820,7 +835,7 @@ const I18N = {
   </ul>`,
  },
  en: {
-  yourName:'Name', yourColor:'Color', yourAvatar:'Avatar', av_letter:'Letter', av_angler:'Anglerfish', create:'Create room', join:'Join', solo:'Solo',
+  yourName:'Name', yourColor:'Color', yourAvatar:'Avatar', av_letter:'Letter', av_angler:'Anglerfish', av_shroom:'Toadstool', create:'Create room', join:'Join', solo:'Solo',
   rules:'Rules', leave:'Leave', copyCode:'Copy link', share:'Share', more:'More options', language:'Language',
   players:'Players', rounds:'Rounds', roundTime:'Round time', hintEvery:'Hint every', mode:'Mode', map:'Satellite', street:'Street view',
   difficulty:'Difficulty', easy:'Easy', normal:'Normal', hard:'Hard', continent:'Continent',
