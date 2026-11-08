@@ -891,7 +891,7 @@ const CONFIG = {
   // Kaartlaag. Satelliet zonder labels. Wissel hier voor Mapbox/Google tiles (zie README).
   tiles: {
     main: { url: 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', attr: 'Tiles &copy; Esri', maxZoom: 18 },
-    fallback: { url: 'https://{s}.basemaps.cartocdn.com/dark_nolabels/{z}/{x}/{y}{r}.png', attr: '&copy; OpenStreetMap &copy; CARTO', maxZoom: 19 },
+    fallback: { url: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png', attr: '&copy; OpenStreetMap', maxZoom: 19 },
   },
   // TURN fallback voor strikte netwerken (zie README). Leeg laten werkt meestal ook.
   turn: [
@@ -2267,7 +2267,7 @@ function addTiles(m){
   main.on('tileerror', () => {
     if (usingFallback || ++failed < 4) return;
     usingFallback = true; m.removeLayer(main);
-    L.tileLayer(CONFIG.tiles.fallback.url, { attribution: CONFIG.tiles.fallback.attr, maxZoom: CONFIG.tiles.fallback.maxZoom, subdomains:'abcd' }).addTo(m);
+    L.tileLayer(CONFIG.tiles.fallback.url, { attribution: CONFIG.tiles.fallback.attr, maxZoom: CONFIG.tiles.fallback.maxZoom }).addTo(m);
   });
   main.addTo(m);
 }
@@ -2420,16 +2420,13 @@ function dartTiles(r){
   if (!dmap || style === dmapKey) return;
   dmapKey = style;
   if (dmapTiles) dmapTiles.remove();
-  // Geen API key nodig. Laden de CARTO-tegels niet (geblokkeerd of offline), dan schakelt de kaart na een paar fouten over op Esri.
-  const carto = L.tileLayer(`https://{s}.basemaps.cartocdn.com/${style}/{z}/{x}/{y}{r}.png`, { subdomains:'abcd', maxZoom:19, attribution:'&copy; OpenStreetMap &copy; CARTO' });
-  let fails = 0;
-  carto.on('tileerror', () => {
-    if (++fails !== 3 || dmapTiles !== carto) return;
-    carto.remove();
-    const m = CONFIG.tiles.main;
-    dmapTiles = L.tileLayer(m.url, { attribution:m.attr, maxZoom:10 }).addTo(dmap);
-  });
-  dmapTiles = carto.addTo(dmap);
+  // Esri Canvas, zonder API key. CARTO geeft zonder key een plaatje met "API KEY REQUIRED" terug (geen fout), dus dat gebruiken we niet meer.
+  const tone = dark ? 'Dark' : 'Light';
+  dmapTiles = L.layerGroup([esriCanvas(tone, 'Base'), ...(labels ? [esriCanvas(tone, 'Reference')] : [])]).addTo(dmap);
+}
+function esriCanvas(tone, kind){
+  return L.tileLayer(`https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_${tone}_Gray_${kind}/MapServer/tile/{z}/{y}/{x}`,
+    { maxNativeZoom:16, maxZoom:19, attribution: kind === 'Base' ? 'Tiles &copy; Esri' : '' });
 }
 // Kaart passend tussen de HUD bovenin en het paneel onderin (liggend staat het paneel opzij).
 function dartFit(animate){
@@ -2715,7 +2712,7 @@ function drawResultMap(R){
     const pts = [[R.lat, R.lng], ...lines.flat()], rows = R.rows.filter(row => row.pin);
     rows.forEach(row => pts.push(row.pin));
     rmap.fitBounds(pts, { padding:[34,34], maxZoom:17, animate:false });
-    resLabels = L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_only_labels/{z}/{x}/{y}{r}.png', { subdomains:'abcd', maxZoom:19, attribution:'&copy; OpenStreetMap &copy; CARTO' }).addTo(rmap);
+    resLabels = esriCanvas('Dark', 'Reference').addTo(rmap);
     for (const row of rows){
       const p = playerById(row.id), color = p ? p.color : '#888', near = huntClosestArr(row.pin[0], row.pin[1], g);
       L.polyline([row.pin, near], { color, weight:2, dashArray:'4 6' }).addTo(rmap);
@@ -2739,7 +2736,7 @@ function drawResultMap(R){
     if (g) L.geoJSON(g.feature, { style:{ color:'#fff', weight:1.5, opacity:.75, fill:false }, interactive:false }).addTo(rmap);
     const FILL = ['#e8552a', '#2f9a5a', '#f2eee5', '#151513', '#f2eee5'], OP = [.45, .35, .18, .28, .18];
     rings.forEach((x, i) => L.polygon(i ? [x.pts, rings[i-1].pts] : x.pts, { color:'#fff', weight:1, opacity:.75, fillColor:FILL[i], fillOpacity:OP[i], interactive:false }).addTo(rmap));
-    resLabels = L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_only_labels/{z}/{x}/{y}{r}.png', { subdomains:'abcd', maxZoom:19, attribution:'&copy; OpenStreetMap &copy; CARTO' }).addTo(rmap);
+    resLabels = esriCanvas('Dark', 'Reference').addTo(rmap);
     for (const { row, ll } of darts){
       const p = playerById(row.id), color = p ? p.color : '#888';
       L.polyline([ll, [R.lat, R.lng]], { color, weight:2, dashArray:'4 6', interactive:false }).addTo(rmap);
