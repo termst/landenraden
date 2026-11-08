@@ -109,6 +109,11 @@ span.pill{cursor:default}
 .avatar.xs .av{width:16px;height:16px}
 .avatar.sm{width:26px;height:26px;font-size:13px;box-shadow:0 0 0 2px color-mix(in srgb,var(--ink) 14%,transparent)}
 .avatar.xs{width:22px;height:22px;font-size:11px;box-shadow:0 0 0 2px color-mix(in srgb,var(--ink) 14%,transparent)}
+.avatar,.avatars button{position:relative}
+/* Foto-avatar: de foto zelf, licht getint naar de gekozen kleur. */
+.avPh{position:absolute;inset:0;border-radius:50%;overflow:hidden;isolation:isolate}
+.avPh img{width:100%;height:100%;object-fit:cover;display:block}
+.avPh::after{content:'';position:absolute;inset:0;background:var(--c);mix-blend-mode:color;opacity:.4}
 .avatars{display:flex;gap:8px;flex-wrap:wrap}
 .avatars button{width:40px;height:40px;padding:0;border-radius:50%;border:2px solid var(--card);box-shadow:0 0 0 1px var(--line);cursor:pointer;flex:none;display:grid;place-items:center;color:#fff;font-size:18px;transition:transform .15s}
 .avatars button.on{box-shadow:0 0 0 2.5px var(--ink)}
@@ -577,7 +582,6 @@ body[data-screen=game] #emoLayer{left:max(10px,env(safe-area-inset-left));transf
   <symbol id="av-rocket" viewBox="0 0 32 32"><path d="M16 2C21 7 22 13 21 20H11C10 13 11 7 16 2Z" fill="#fff"/><path d="M11 15 5 22V26L11 22ZM21 15 27 22V26L21 22Z" fill="#fff"/><path d="M13.5 22H18.5L16 30Z" fill="#fff" opacity=".75"/><circle cx="16" cy="11.5" r="2.5" fill="#15151f" opacity=".85"/></symbol>
   <symbol id="av-crown" viewBox="0 0 32 32"><path d="M3 24 2 9 10 15 16 5 22 15 30 9 29 24Z" fill="#fff"/><circle cx="9" cy="20" r="1.5" fill="#15151f" opacity=".5"/><circle cx="16" cy="20" r="1.5" fill="#15151f" opacity=".5"/><circle cx="23" cy="20" r="1.5" fill="#15151f" opacity=".5"/></symbol>
   <symbol id="av-star" viewBox="0 0 32 32"><path d="M16 2.5 20.2 11.4 30 12.6 22.8 19.3 24.7 29 16 24.2 7.3 29 9.2 19.3 2 12.6 11.8 11.4Z" fill="#fff"/></symbol>
-  <symbol id="av-heart" viewBox="0 0 32 32"><path d="M16 28C5 20 3 14 3 10.5 3 6.5 6 4 9.5 4 12.5 4 14.8 5.6 16 8 17.2 5.6 19.5 4 22.5 4 26 4 29 6.5 29 10.5 29 14 27 20 16 28Z" fill="#fff"/></symbol>
   <symbol id="av-skull" viewBox="0 0 32 32"><path d="M16 3C9 3 5 8 5 14 5 18 7 20.5 10 22V27H22V22C25 20.5 27 18 27 14 27 8 23 3 16 3Z" fill="#fff"/><circle cx="11.5" cy="14" r="3" fill="#15151f" opacity=".85"/><circle cx="20.5" cy="14" r="3" fill="#15151f" opacity=".85"/><path d="M16 18 14.2 21.6H17.8ZM13.5 23V27M16 23V27M18.5 23V27" fill="#15151f" stroke="#15151f" stroke-width="1" opacity=".7"/></symbol>
   <symbol id="av-fish" viewBox="0 0 32 32"><path d="M3 16C8 8 17 7 22 12L29 7V25L22 20C17 25 8 24 3 16Z" fill="#fff"/><circle cx="10" cy="14.5" r="1.9" fill="#15151f" opacity=".85"/></symbol>
   <symbol id="av-bear" viewBox="0 0 32 32"><circle cx="8" cy="8" r="4" fill="#fff"/><circle cx="24" cy="8" r="4" fill="#fff"/><circle cx="16" cy="17" r="11" fill="#fff"/><circle cx="12" cy="15" r="1.7" fill="#15151f" opacity=".85"/><circle cx="20" cy="15" r="1.7" fill="#15151f" opacity=".85"/><ellipse cx="16" cy="20.5" rx="3" ry="2" fill="#15151f" opacity=".85"/></symbol>
@@ -891,7 +895,7 @@ const CONFIG = {
   // Kaartlaag. Satelliet zonder labels. Wissel hier voor Mapbox/Google tiles (zie README).
   tiles: {
     main: { url: 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', attr: 'Tiles &copy; Esri', maxZoom: 18 },
-    fallback: { url: 'https://{s}.basemaps.cartocdn.com/dark_nolabels/{z}/{x}/{y}{r}.png', attr: '&copy; OpenStreetMap &copy; CARTO', maxZoom: 19 },
+    fallback: { url: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png', attr: '&copy; OpenStreetMap', maxZoom: 19 },
   },
   // TURN fallback voor strikte netwerken (zie README). Leeg laten werkt meestal ook.
   turn: [
@@ -907,8 +911,9 @@ const isLight = c => { const n = parseInt(c.slice(1), 16), f = v => { v /= 255; 
   return .2126*f(n>>16) + .7152*f((n>>8)&255) + .0722*f(n&255) > .34; };
 const lightCls = c => isLight(okColor(c, '#888888')) ? ' light' : '';
 // Avatars: 'letter' is de eerste letter van de naam, de rest zijn symbolen uit de sprite (#av-<id>).
-const AVATARS = ['letter','angler','shroom','face','apple','ufo','duck','cactus','cat','fox','owl','bear','fish','ghost','robot','skull','rocket','planet','star','heart','crown','diamond','flame','pizza'];
-const avKey = a => AVATARS.includes(a) ? a : 'letter';
+const AVATARS = ['letter','angler','shroom','face','apple','ufo','duck','cactus','cat','fox','owl','bear','fish','ghost','robot','skull','rocket','planet','star','xavi','crown','diamond','flame','pizza'];
+const XAVI_IMG = 'data:image/jpeg;base64,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';
+const avKey = a => (a === 'heart' ? 'xavi' : AVATARS.includes(a) ? a : 'letter');   // heart is vervangen door xavi
 // Hintgroepen die de host aan/uit kan zetten in de lobby
 const HINT_GROUPS = ['geo','people','money','codes','nb','name'];
 // Valuta-correcties (de brondata heeft enkele fouten of verouderde codes)
@@ -917,7 +922,7 @@ const CUR_FIX = { ZW:['ZWG','USD'], FM:['USD'], SL:['SLE'], BG:['EUR'], CU:['CUP
 /* ================= I18N ================= */
 const I18N = {
  nl: {
-  yourName:'Naam', yourColor:'Kleur', yourAvatar:'Avatar', av_letter:'Letter', av_angler:'Hengelaarsvis', av_shroom:'Vliegenzwam', av_face:'Gekke bek', av_apple:'Appel', av_ufo:'Ufo', av_duck:'Badeend', av_cactus:'Cactus', av_cat:'Kat', av_fox:'Vos', av_owl:'Uil', av_bear:'Beer', av_fish:'Vis', av_ghost:'Spook', av_robot:'Robot', av_skull:'Schedel', av_rocket:'Raket', av_planet:'Planeet', av_star:'Ster', av_heart:'Hart', av_crown:'Kroon', av_diamond:'Diamant', av_flame:'Vlam', av_pizza:'Pizza', customColor:'Eigen kleur kiezen', create:'Maak kamer', join:'Join', solo:'Solo',
+  yourName:'Naam', yourColor:'Kleur', yourAvatar:'Avatar', av_letter:'Letter', av_angler:'Hengelaarsvis', av_shroom:'Vliegenzwam', av_face:'Gekke bek', av_apple:'Appel', av_ufo:'Ufo', av_duck:'Badeend', av_cactus:'Cactus', av_cat:'Kat', av_fox:'Vos', av_owl:'Uil', av_bear:'Beer', av_fish:'Vis', av_ghost:'Spook', av_robot:'Robot', av_skull:'Schedel', av_rocket:'Raket', av_planet:'Planeet', av_star:'Ster', av_xavi:'Xavi', av_crown:'Kroon', av_diamond:'Diamant', av_flame:'Vlam', av_pizza:'Pizza', customColor:'Eigen kleur kiezen', create:'Maak kamer', join:'Join', solo:'Solo',
   rules:'Uitleg', leave:'Verlaten', copyCode:'Kopieer link', share:'Delen', more:'Meer opties', language:'Taal',
   players:'Spelers', rounds:'Rondes', roundTime:'Tijd per ronde', hintEvery:'Hint elke', mode:'Modus', map:'Satelliet', street:'Straatbeeld',
   difficulty:'Moeilijkheid', easy:'Makkelijk', normal:'Normaal', hard:'Moeilijk', continent:'Continent',
@@ -983,7 +988,7 @@ const I18N = {
   </ul>`,
  },
  en: {
-  yourName:'Name', yourColor:'Color', yourAvatar:'Avatar', av_letter:'Letter', av_angler:'Anglerfish', av_shroom:'Toadstool', av_face:'Silly face', av_apple:'Apple', av_ufo:'UFO', av_duck:'Rubber duck', av_cactus:'Cactus', av_cat:'Cat', av_fox:'Fox', av_owl:'Owl', av_bear:'Bear', av_fish:'Fish', av_ghost:'Ghost', av_robot:'Robot', av_skull:'Skull', av_rocket:'Rocket', av_planet:'Planet', av_star:'Star', av_heart:'Heart', av_crown:'Crown', av_diamond:'Diamond', av_flame:'Flame', av_pizza:'Pizza', customColor:'Pick your own color', create:'Create room', join:'Join', solo:'Solo',
+  yourName:'Name', yourColor:'Color', yourAvatar:'Avatar', av_letter:'Letter', av_angler:'Anglerfish', av_shroom:'Toadstool', av_face:'Silly face', av_apple:'Apple', av_ufo:'UFO', av_duck:'Rubber duck', av_cactus:'Cactus', av_cat:'Cat', av_fox:'Fox', av_owl:'Owl', av_bear:'Bear', av_fish:'Fish', av_ghost:'Ghost', av_robot:'Robot', av_skull:'Skull', av_rocket:'Rocket', av_planet:'Planet', av_star:'Star', av_xavi:'Xavi', av_crown:'Crown', av_diamond:'Diamond', av_flame:'Flame', av_pizza:'Pizza', customColor:'Pick your own color', create:'Create room', join:'Join', solo:'Solo',
   rules:'Rules', leave:'Leave', copyCode:'Copy link', share:'Share', more:'More options', language:'Language',
   players:'Players', rounds:'Rounds', roundTime:'Round time', hintEvery:'Hint every', mode:'Mode', map:'Satellite', street:'Street view',
   difficulty:'Difficulty', easy:'Easy', normal:'Normal', hard:'Hard', continent:'Continent',
@@ -2202,6 +2207,7 @@ const playerById = id => S.players.find(p=>p.id===id);
 function dotHtml(p){ return `<span class="dot" style="background:${p.color}"></span>`; }
 function avaInner(p){
   const a = avKey(p.avatar);
+  if (a === 'xavi') return `<span class="avPh" style="--c:${p.color}"><img src="${XAVI_IMG}" alt=""></span>`;
   return a === 'letter' ? esc(plain(String(p.name||'').trim()[0] || '?').toUpperCase()) : `<svg class="av"><use href="#av-${a}"/></svg>`;
 }
 function avaHtml(p, size){ return `<span class="avatar ${size||'sm'}${lightCls(p.color)}" style="background:${p.color}">${avaInner(p)}</span>`; }
@@ -2267,7 +2273,7 @@ function addTiles(m){
   main.on('tileerror', () => {
     if (usingFallback || ++failed < 4) return;
     usingFallback = true; m.removeLayer(main);
-    L.tileLayer(CONFIG.tiles.fallback.url, { attribution: CONFIG.tiles.fallback.attr, maxZoom: CONFIG.tiles.fallback.maxZoom, subdomains:'abcd' }).addTo(m);
+    L.tileLayer(CONFIG.tiles.fallback.url, { attribution: CONFIG.tiles.fallback.attr, maxZoom: CONFIG.tiles.fallback.maxZoom }).addTo(m);
   });
   main.addTo(m);
 }
@@ -2420,16 +2426,13 @@ function dartTiles(r){
   if (!dmap || style === dmapKey) return;
   dmapKey = style;
   if (dmapTiles) dmapTiles.remove();
-  // Geen API key nodig. Laden de CARTO-tegels niet (geblokkeerd of offline), dan schakelt de kaart na een paar fouten over op Esri.
-  const carto = L.tileLayer(`https://{s}.basemaps.cartocdn.com/${style}/{z}/{x}/{y}{r}.png`, { subdomains:'abcd', maxZoom:19, attribution:'&copy; OpenStreetMap &copy; CARTO' });
-  let fails = 0;
-  carto.on('tileerror', () => {
-    if (++fails !== 3 || dmapTiles !== carto) return;
-    carto.remove();
-    const m = CONFIG.tiles.main;
-    dmapTiles = L.tileLayer(m.url, { attribution:m.attr, maxZoom:10 }).addTo(dmap);
-  });
-  dmapTiles = carto.addTo(dmap);
+  // Esri Canvas, zonder API key. CARTO geeft zonder key een plaatje met "API KEY REQUIRED" terug (geen fout), dus dat gebruiken we niet meer.
+  const tone = dark ? 'Dark' : 'Light';
+  dmapTiles = L.layerGroup([esriCanvas(tone, 'Base'), ...(labels ? [esriCanvas(tone, 'Reference')] : [])]).addTo(dmap);
+}
+function esriCanvas(tone, kind){
+  return L.tileLayer(`https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_${tone}_Gray_${kind}/MapServer/tile/{z}/{y}/{x}`,
+    { maxNativeZoom:16, maxZoom:19, attribution: kind === 'Base' ? 'Tiles &copy; Esri' : '' });
 }
 // Kaart passend tussen de HUD bovenin en het paneel onderin (liggend staat het paneel opzij).
 function dartFit(animate){
@@ -2715,7 +2718,7 @@ function drawResultMap(R){
     const pts = [[R.lat, R.lng], ...lines.flat()], rows = R.rows.filter(row => row.pin);
     rows.forEach(row => pts.push(row.pin));
     rmap.fitBounds(pts, { padding:[34,34], maxZoom:17, animate:false });
-    resLabels = L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_only_labels/{z}/{x}/{y}{r}.png', { subdomains:'abcd', maxZoom:19, attribution:'&copy; OpenStreetMap &copy; CARTO' }).addTo(rmap);
+    resLabels = esriCanvas('Dark', 'Reference').addTo(rmap);
     for (const row of rows){
       const p = playerById(row.id), color = p ? p.color : '#888', near = huntClosestArr(row.pin[0], row.pin[1], g);
       L.polyline([row.pin, near], { color, weight:2, dashArray:'4 6' }).addTo(rmap);
@@ -2739,7 +2742,7 @@ function drawResultMap(R){
     if (g) L.geoJSON(g.feature, { style:{ color:'#fff', weight:1.5, opacity:.75, fill:false }, interactive:false }).addTo(rmap);
     const FILL = ['#e8552a', '#2f9a5a', '#f2eee5', '#151513', '#f2eee5'], OP = [.45, .35, .18, .28, .18];
     rings.forEach((x, i) => L.polygon(i ? [x.pts, rings[i-1].pts] : x.pts, { color:'#fff', weight:1, opacity:.75, fillColor:FILL[i], fillOpacity:OP[i], interactive:false }).addTo(rmap));
-    resLabels = L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_only_labels/{z}/{x}/{y}{r}.png', { subdomains:'abcd', maxZoom:19, attribution:'&copy; OpenStreetMap &copy; CARTO' }).addTo(rmap);
+    resLabels = esriCanvas('Dark', 'Reference').addTo(rmap);
     for (const { row, ll } of darts){
       const p = playerById(row.id), color = p ? p.color : '#888';
       L.polyline([ll, [R.lat, R.lng]], { color, weight:2, dashArray:'4 6', interactive:false }).addTo(rmap);
