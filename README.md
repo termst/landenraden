@@ -124,6 +124,24 @@ Avatar en kleur kies je in twee uitklapmenu's in de lobby. De avatarlijst heeft 
 
 Een avatar toevoegen: een `<symbol id="av-<id>">` (32 bij 32, wit op de spelerskleur) in de sprite bovenin, de id in `AVATARS` en de tekst `av_<id>` in `I18N`.
 
+## Opslag en statistieken
+
+Alles staat in de browser (localStorage). Geen account, geen server. Cookies zijn hier niet geschikt: maximaal 4 KB per cookie en ze gaan bij elk verzoek mee naar de server.
+
+| Sleutel | Inhoud |
+|---|---|
+| `lr_name`, `lr_color`, `lr_avatar` | Profiel |
+| `lr_pid` | Speler-id om terug te komen in een kamer. Per apparaat, zit niet in de back-up |
+| `lr_lang`, `lr_sound`, `lr_theme` | Voorkeuren |
+| `lr_settings` | Laatste lobby-instellingen als host |
+| `lr_stats` | Totalen, beste score per modus en de laatste 25 potjes (JSON, enkele KB) |
+
+* **Statistieken**: knop linksboven op het startscherm. Potjes, gewonnen (alleen met anderen), goed, punten, gemiddelde, beste potje, beste ronde, snelste goed, per modus en de laatste 10 potjes.
+* Een potje telt zodra je het eindscherm ziet. Elk potje heeft een id, dus herladen of een hostwissel telt niet dubbel. Wie halverwege vertrekt, telt niet mee.
+* **Back-up**: **Kopieer code** geeft een tekst die begint met `GF1`. Plak die op een ander apparaat en kies **Herstel**. Dat vervangt profiel, instellingen en statistieken op dat apparaat.
+* Blokkeert de browser opslag (cookies uit, sommige privévensters), dan werkt het spel gewoon en meldt het statistiekenscherm dat er niets bewaard wordt.
+* Safari wist opslag van een site die je 7 dagen (Safari-gebruik) niet opent. Op iPhone helpt **Zet op beginscherm**. Bewaar daarnaast een back-up code.
+
 ## Kaart zonder API key
 
 Er is geen API key nodig. De wereldkaart bij Darts gebruikt CARTO-tegels. Laden die niet, dan schakelt de kaart na drie fouten over op Esri World Imagery. Wil je Mapbox of Google, pas dan `CONFIG.tiles` en `dartTiles()` aan.
