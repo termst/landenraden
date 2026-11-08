@@ -103,6 +103,24 @@ Kies in de lobby de modus **Straatjacht**. Je krijgt de naam van een straat of g
 
 De namen komen van [OpenStreetMap](https://www.openstreetmap.org/copyright) via [Nominatim](https://nominatim.org/release-docs/latest/api/Reverse/): geen key, geen kosten. Het spel doet per speler maximaal één verzoek per seconde, zoals hun [gebruiksregels](https://operations.osmfoundation.org/policies/nominatim/) vragen, en onthoudt antwoorden. Is Nominatim niet bereikbaar, dan speelt de ronde als gewone Nederland-ronde. Instellingen staan in `CONFIG.hunt`.
 
+## Darts
+
+Kies in de lobby de modus **Darts**. Je ziet een plek (satelliet of straatfoto) en gooit een pijltje op de wereldkaart waar jij denkt dat hij ligt.
+
+* **Kaart** opent de wereldkaart, **Plek** brengt je terug. Tik op de kaart om je pijltje te zetten (verzetten mag), **Gooi** zet hem vast.
+* **Ringen** rond de echte plek: roos tot 150 km (1000 punten), binnenring 400 km (700), middenring 800 km (450), buitenring 1600 km (250), rand 3200 km (100). Daarbuiten 0.
+* Sneller gooien en minder hints geeft meer: punten maal 60% plus 40% van je resterende tijd, en min 8% per extra hint (maximaal 40% eraf).
+* **x2, dubbel of niks**: zet hem aan voor je gooit. Roos of binnenring telt dubbel, daarbuiten krijg je 0.
+* Niet gegooid? Dan telt je pijltje bij het einde van de tijd, zonder tijdbonus.
+* **Makkelijk** toont namen op de wereldkaart, normaal en moeilijk niet. Moeilijk zet de plek op slot, de wereldkaart kun je altijd bewegen.
+* Continent, landkeuze, kleine landen en soorten hints werken zoals bij Satelliet. **Beeld** kiest satelliet of straatbeeld (Panoramax).
+* Op het uitslagscherm zie je het dartbord rond de plek en ieders pijltje met afstand.
+* Ringen en punten staan in `CONFIG.darts`. Afstand is over de bol (`gcKm`), niet plat.
+
+## Avatars
+
+Letter, Hengelaarsvis, Vliegenzwam, Gekke bek, Appel, Ufo, Badeend en Cactus. Een avatar toevoegen: een `<symbol id="av-<id>">` (32 bij 32, wit op de spelerskleur) in de sprite bovenin, de id in `AVATARS` en de tekst `av_<id>` in `I18N`.
+
 ## Font
 
 De fonts staan als base64 in `index.html`, dus ze laden meteen en zijn voor iedereen gelijk.

@@ -20,7 +20,7 @@
 :root{
   --paper:#f2eee5;--card:#fffdf8;--card-hi:#fffdf8;--card2:#e9e3d6;--line:#d5cdbc;--ink:#1c1b18;--mute:#6a655a;
   --acc:#d4461b;--acc-d:#c13d15;--acc-hi:#d4461b;--acc-edge:#8c2b0c;--on-acc:#fff;--delft:#1f5280;--sea:#1f5280;
-  --gold:#9a6a08;--bad:#c0322b;--ok:#2f7a4a;--r:8px;
+  --gold:#9a6a08;--on-gold:#fff;--bad:#c0322b;--ok:#2f7a4a;--r:8px;
   --display:'The Logo Font','The Bold Font',Impact,'Arial Black',sans-serif;--font:'Madani','The Bold Font',system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;
   --field:#fff;--flash:#fbe3d6;--done:#dcecdf;--ink2:#3a372f;--glass:rgba(255,253,248,.95);--sel:#fff;
   --shadow:0 2px 0 rgba(28,27,24,.08);
@@ -31,7 +31,7 @@
   color-scheme:dark;
   --paper:#151513;--card:#1e1d1a;--card-hi:#1e1d1a;--card2:#282722;--line:#3a3831;--ink:#eee9de;--mute:#9e988a;
   --acc:#e8552a;--acc-d:#d84a20;--acc-hi:#f06a3f;--acc-edge:#8f300f;--on-acc:#fff;--delft:#3b74a6;--sea:#7eaed6;
-  --gold:#e0b04a;--bad:#ee6a5a;--ok:#74c08d;
+  --gold:#e0b04a;--on-gold:#15151f;--bad:#ee6a5a;--ok:#74c08d;
   --field:#121210;--flash:#3d2a1e;--done:#1f3326;--ink2:#d6d0c3;--glass:rgba(30,29,26,.95);--sel:#34322c;
   --shadow:0 2px 0 rgba(0,0,0,.35);
   --shadow-up:0 2px 0 rgba(0,0,0,.45);
@@ -141,6 +141,9 @@ span.pill{cursor:default}
 .seg.modes button[data-val=street]{--mc:#2a9560}
 .seg.modes button[data-val=dutch]{--mc:#e07b1a}
 .seg.modes button[data-val=hunt]{--mc:#8a5bd0}
+.seg.modes button[data-val=darts]{--mc:#cf3a5c}
+/* Oneven aantal modi: de laatste over de hele breedte */
+.seg.modes button:last-child:nth-child(odd){grid-column:1/-1}
 .seg.modes .mi{width:38px;height:38px;flex:none;display:grid;place-items:center;border-radius:11px;color:var(--mc);background:color-mix(in srgb,var(--mc) 18%,transparent);transition:background .15s,color .15s}
 .seg.modes .mi svg{width:28px;height:28px;fill:currentColor;stroke:none}
 .seg.modes .ml{min-width:0}
@@ -270,6 +273,23 @@ body.kb #hintList{max-height:18vh;max-height:18dvh}
 @keyframes drop{from{transform:translateY(-14px);opacity:0}to{transform:none;opacity:1}}
 .leaflet-tooltip.scanTip{background:var(--glass);color:var(--ink);border:1px solid var(--line);border-radius:7px;padding:2px 7px;font-family:var(--font);font-size:12px;font-weight:700;box-shadow:0 3px 8px rgba(0,0,0,.45);max-width:170px;overflow:hidden;text-overflow:ellipsis}
 .leaflet-tooltip.scanTip::before{display:none}
+/* Darts: wereldkaart om je pijltje op te gooien, over de plek heen */
+#dmap{position:absolute;inset:0;z-index:450;isolation:isolate;background:var(--paper)}
+#dmap .leaflet-top.leaflet-left{top:calc(max(10px,env(safe-area-inset-top)) + 62px)}
+#dmap .leaflet-top.leaflet-left .leaflet-control{margin:0 0 0 max(10px,env(safe-area-inset-left));border-radius:6px;max-width:60vw}
+body.chat-on #dmap .leaflet-top.leaflet-left{top:calc(max(10px,env(safe-area-inset-top)) + 116px)}
+#dmap.leaflet-container{cursor:crosshair}
+#dmap .leaflet-grab{cursor:crosshair}
+.dartbar{display:flex;gap:8px}
+.dartbar .btn{flex:none;box-shadow:var(--shadow-up),0 2px 0 var(--line)}
+#dartView{min-width:112px;background:var(--glass);-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px)}
+#dartThrow{flex:1}
+#dartThrow.thrown{pointer-events:none}
+#dartDbl{min-width:52px;padding:0 12px;font-size:19px;background:var(--glass);-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);color:var(--ink2)}
+#dartDbl.on{background:var(--gold);border-color:var(--gold);color:var(--on-gold);box-shadow:0 2px 0 color-mix(in srgb,var(--gold) 55%,#000)}
+.dartPin{display:block;overflow:visible;transform-origin:4px 44px;filter:drop-shadow(0 2px 2px rgba(0,0,0,.55));animation:dartIn .32s cubic-bezier(.25,1.5,.5,1)}
+@keyframes dartIn{0%{transform:translate(22px,-26px) scale(1.5) rotate(-14deg);opacity:0}55%{opacity:1}80%{transform:rotate(4deg)}100%{transform:none}}
+.x2{display:inline-block;font-family:var(--display);font-weight:400;font-size:11px;line-height:1;padding:3px 5px 2px;border-radius:5px;background:var(--gold);color:var(--on-gold);vertical-align:1px}
 /* result */
 #rmap{height:36vh;min-height:220px;border-radius:var(--r);overflow:hidden;border:1px solid var(--line);flex:none;isolation:isolate;box-shadow:var(--shadow)}
 .answerbig{display:flex;align-items:center;gap:14px;min-width:0}
@@ -465,6 +485,75 @@ body[data-screen=game] #emoLayer{left:max(10px,env(safe-area-inset-left));transf
     </g>
     <path d="M2.6 17.4C6.5 20.6 25.5 20.6 29.4 17.4 26.4 18.4 5.6 18.4 2.6 17.4Z" fill="#15151f" opacity=".22"/>
   </symbol>
+  <!-- Gekke bek: scheve googly eyes, tong uit de mond -->
+  <symbol id="av-face" viewBox="0 0 32 32">
+    <circle cx="16" cy="18" r="12.2" fill="#fff"/>
+    <circle cx="10.4" cy="11.2" r="5.3" fill="#fff" stroke="#15151f" stroke-opacity=".8" stroke-width="1.5"/>
+    <circle cx="22.4" cy="12.2" r="3.9" fill="#fff" stroke="#15151f" stroke-opacity=".8" stroke-width="1.5"/>
+    <circle cx="12.6" cy="12.6" r="2.4" fill="#15151f" opacity=".9"/>
+    <circle cx="21" cy="11.1" r="1.8" fill="#15151f" opacity=".9"/>
+    <path d="M9 19.6Q16 20.9 23.2 18.6 22.6 25.4 16.4 25.6 10.4 25.8 9 19.6Z" fill="#15151f" opacity=".85"/>
+    <path d="M15.4 22.6Q19.4 21.2 21.8 22.6 22.4 26.6 20.6 28.4 18.6 30.2 16.8 28.4 15.4 26.8 15.4 22.6Z" fill="#ff7a94"/>
+    <path d="M18.5 23.4V26.6" stroke="#c9435f" stroke-width="1" stroke-linecap="round"/>
+  </symbol>
+  <defs>
+    <mask id="av-apple-bite" maskUnits="userSpaceOnUse" x="0" y="0" width="32" height="32">
+      <rect width="32" height="32" fill="#fff"/>
+      <circle cx="28.4" cy="14" r="3.6" fill="#000"/><circle cx="29.2" cy="19.2" r="3.6" fill="#000"/><circle cx="28" cy="24.2" r="3" fill="#000"/>
+    </mask>
+    <!-- Rand van vruchtvlees langs de hap: de hapcirkels iets groter, min de hap zelf -->
+    <mask id="av-apple-flesh" maskUnits="userSpaceOnUse" x="0" y="0" width="32" height="32">
+      <circle cx="28.4" cy="14" r="6.4" fill="#fff"/><circle cx="29.2" cy="19.2" r="6.4" fill="#fff"/><circle cx="28" cy="24.2" r="5.8" fill="#fff"/>
+      <circle cx="28.4" cy="14" r="3.6" fill="#000"/><circle cx="29.2" cy="19.2" r="3.6" fill="#000"/><circle cx="28" cy="24.2" r="3" fill="#000"/>
+    </mask>
+    <path id="av-apple-body" d="M16 10.4C13.4 8.4 5.2 8 4.4 16 3.8 22.4 8 29.4 11.8 29.4 13.6 29.4 14.4 28.6 16 28.6 17.6 28.6 18.4 29.4 20.2 29.4 24 29.4 28.2 22.4 27.6 16 26.8 8 18.6 8.4 16 10.4Z"/>
+  </defs>
+  <!-- Appel met een hap eruit: vruchtvlees en pitjes in de hap, steeltje met blad -->
+  <symbol id="av-apple" viewBox="0 0 32 32">
+    <path d="M16 10C16 7.2 15.4 5 13.8 3" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round"/>
+    <path d="M15.6 6.4C15.4 3.4 18.2 1.6 22 2.2 22 5.4 19.2 7.2 15.6 6.4Z" fill="#fff" opacity=".85"/>
+    <g mask="url(#av-apple-bite)">
+      <use href="#av-apple-body" fill="#fff"/>
+      <use href="#av-apple-body" fill="#ffe08a" mask="url(#av-apple-flesh)"/>
+      <path d="M8.6 14.2C7.6 16.2 7.6 18.8 8.6 21" fill="none" stroke="#15151f" stroke-opacity=".2" stroke-width="1.8" stroke-linecap="round"/>
+    </g>
+    <path d="M23.6 16.4Q24.8 17.2 24.2 18.6 23 17.8 23.6 16.4ZM23.6 20.6Q24.8 21.4 24.2 22.8 23 22 23.6 20.6Z" fill="#6b3f1d"/>
+  </symbol>
+  <!-- Ufo met een buitenaards wezentje in de koepel en een trekstraal -->
+  <symbol id="av-ufo" viewBox="0 0 32 32">
+    <path d="M11.6 19.6H20.4L25.4 30H6.6Z" fill="#fff" opacity=".35"/>
+    <path d="M9.4 15A6.6 6.6 0 0 1 22.6 15Z" fill="#fff" opacity=".55"/>
+    <path d="M12.8 15C12.8 11.6 14.2 9.6 16 9.6S19.2 11.6 19.2 15Z" fill="#fff"/>
+    <ellipse cx="14.8" cy="12.4" rx=".9" ry="1.3" fill="#15151f" opacity=".85"/>
+    <ellipse cx="17.2" cy="12.4" rx=".9" ry="1.3" fill="#15151f" opacity=".85"/>
+    <path d="M14.4 9.8 13.2 7.2M17.6 9.8 18.8 7.2" stroke="#fff" stroke-width="1.2" stroke-linecap="round"/>
+    <ellipse cx="16" cy="17.2" rx="13.6" ry="4.4" fill="#fff"/>
+    <circle cx="8.6" cy="17.6" r="1.2" fill="#15151f" opacity=".55"/>
+    <circle cx="13.2" cy="18.6" r="1.2" fill="#15151f" opacity=".55"/>
+    <circle cx="18.8" cy="18.6" r="1.2" fill="#15151f" opacity=".55"/>
+    <circle cx="23.4" cy="17.6" r="1.2" fill="#15151f" opacity=".55"/>
+  </symbol>
+  <!-- Badeend: snavel in geel-oranje, de rest wit -->
+  <symbol id="av-duck" viewBox="0 0 32 32">
+    <path d="M4.6 19.6C4.6 16.6 7.2 15.8 9.6 17 7.8 15.4 6.8 13.4 6.8 11.2 6.8 7.4 9.8 4.6 13.4 4.6 17.2 4.6 20 7.6 20 11.2 20 12.8 19.4 14.2 18.4 15.4 21 15.4 24.2 13.8 26.6 11.6 27.8 10.6 29 11.4 28.8 13 28.6 15.2 28.8 18 27.4 21.6 25.6 26 21 28.8 15.6 28.8 9.2 28.8 4.6 24.8 4.6 19.6Z" fill="#fff"/>
+    <path d="M7.4 11.4C5 10.8 2.6 11.2 2.2 12.6 1.8 14.2 4.4 15.2 7.6 14.4Z" fill="#ffb238"/>
+    <path d="M2.8 13.2C4 13.6 5.6 13.6 7.2 13.2" fill="none" stroke="#b86e10" stroke-width=".9" stroke-linecap="round"/>
+    <circle cx="11.6" cy="9.8" r="1.7" fill="#15151f" opacity=".85"/>
+    <circle cx="12.1" cy="9.3" r=".55" fill="#fff"/>
+    <path d="M12.6 20.4C15 23.6 20.6 23.8 23.4 20.2" fill="none" stroke="#15151f" stroke-opacity=".22" stroke-width="1.7" stroke-linecap="round"/>
+  </symbol>
+  <!-- Cactus met zonnebril -->
+  <symbol id="av-cactus" viewBox="0 0 32 32">
+    <path d="M12.2 27.6V8.8A3.8 3.8 0 0 1 19.8 8.8V27.6Z" fill="#fff"/>
+    <path d="M12.6 20.6H9.4A3.2 3.2 0 0 1 6.2 17.4V12.6A1.8 1.8 0 0 1 9.8 12.6V17H12.6Z" fill="#fff"/>
+    <path d="M19.4 17.8H22.2V10.8A1.8 1.8 0 0 1 25.8 10.8V16.6A3.4 3.4 0 0 1 22.4 20H19.4Z" fill="#fff"/>
+    <path d="M7.6 26.4H24.4L23 30.6H9Z" fill="#fff" opacity=".6"/>
+    <path d="M10.4 10.2H21.6V11.4C21.6 13 20.6 14 19.2 14S16.8 13 16.6 11.8H15.4C15.2 13 14.2 14 12.8 14S10.4 13 10.4 11.4Z" fill="#15151f" opacity=".88"/>
+    <path d="M14 17.2Q16 18.6 18 17.2" fill="none" stroke="#15151f" stroke-opacity=".75" stroke-width="1.3" stroke-linecap="round"/>
+    <path d="M16 20.4V25.6" stroke="#15151f" stroke-opacity=".18" stroke-width="1.2" stroke-linecap="round"/>
+    <g fill="#ff7a94"><circle cx="16" cy="3.2" r="1.7"/><circle cx="13.9" cy="4.6" r="1.7"/><circle cx="18.1" cy="4.6" r="1.7"/><circle cx="14.8" cy="6.6" r="1.6"/><circle cx="17.2" cy="6.6" r="1.6"/></g>
+    <circle cx="16" cy="5" r="1.3" fill="#ffd25a"/>
+  </symbol>
   <symbol id="i-gear" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></symbol>
   <symbol id="i-sun" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></symbol>
   <symbol id="i-moon" viewBox="0 0 24 24"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></symbol>
@@ -490,11 +579,15 @@ body[data-screen=game] #emoLayer{left:max(10px,env(safe-area-inset-left));transf
   <symbol id="i-lock" viewBox="0 0 24 24"><path d="m5 12.5 4.5 4.5L19 7.5"/></symbol>
   <symbol id="i-pin" viewBox="0 0 24 24"><path d="M12 21.5s7-6.3 7-11.5a7 7 0 1 0-14 0c0 5.2 7 11.5 7 11.5z"/><circle cx="12" cy="10" r="2.5"/></symbol>
   <symbol id="i-arrow" viewBox="0 0 24 24"><path d="M12 20V4M6 10l6-6 6 6"/></symbol>
+  <symbol id="i-dart" viewBox="0 0 24 24"><path d="M17.6 11.2A8 8 0 1 1 12.8 6.4"/><path d="M13.7 12.1a3.4 3.4 0 1 1-1.8-1.8"/><path d="M10.5 13.5 20 4M20 4V1.5M20 4h2.5M17.6 6.4V3.4M17.6 6.4h3"/></symbol>
+  <symbol id="i-globe" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c2.6 2.6 3.8 5.6 3.8 9s-1.2 6.4-3.8 9c-2.6-2.6-3.8-5.6-3.8-9S9.4 5.6 12 3z"/></symbol>
+  <symbol id="i-eye" viewBox="0 0 24 24"><path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></symbol>
   <!-- Modusiconen: vlak, twee tinten. Hoofdvorm in currentColor, tweede tint met opacity. -->
   <symbol id="m-map" viewBox="0 0 24 24"><g transform="rotate(-45 12 12)"><rect x="9" y="7.5" width="6" height="9" rx="1.6"/><rect x="1.2" y="9" width="6" height="6" rx="1" opacity=".45"/><rect x="16.8" y="9" width="6" height="6" rx="1" opacity=".45"/><rect x="7" y="11.3" width="2.2" height="1.4"/><rect x="14.8" y="11.3" width="2.2" height="1.4"/><rect x="11.2" y="16" width="1.6" height="2.6"/><circle cx="12" cy="19.4" r="1.3"/></g><g fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><path d="M17.5 20.9A3.4 3.4 0 0 0 20.9 17.5"/><path d="M17.5 23A5.5 5.5 0 0 0 23 17.5"/></g></symbol>
   <symbol id="m-street" viewBox="0 0 24 24"><clipPath id="m-street-c"><rect x="1.5" y="3" width="21" height="18" rx="4"/></clipPath><rect x="1.5" y="3" width="21" height="18" rx="4" opacity=".45"/><circle cx="17.6" cy="8" r="2.3"/><path clip-path="url(#m-street-c)" fill-rule="evenodd" d="M10.4 10.2h3.2l6.4 13H4zM11.3 12.6h1.4v2.1h-1.4zM11 16.4h2v2.6h-2z"/></symbol>
   <symbol id="m-dutch" viewBox="0 0 24 24"><path fill-rule="evenodd" d="M9.8 11h4.4L16.6 22.5H7.4zM10.9 22.5v-3.2a1.1 1.1 0 0 1 2.2 0v3.2z"/><g transform="translate(12 9.6) rotate(45)"><g><rect x="-1.9" y="-9.6" width="3.8" height="7.6" rx=".9" opacity=".5"/><rect x="-.55" y="-9.6" width="1.1" height="9.6" rx=".5"/></g><g transform="rotate(90)"><rect x="-1.9" y="-9.6" width="3.8" height="7.6" rx=".9" opacity=".5"/><rect x="-.55" y="-9.6" width="1.1" height="9.6" rx=".5"/></g><g transform="rotate(180)"><rect x="-1.9" y="-9.6" width="3.8" height="7.6" rx=".9" opacity=".5"/><rect x="-.55" y="-9.6" width="1.1" height="9.6" rx=".5"/></g><g transform="rotate(270)"><rect x="-1.9" y="-9.6" width="3.8" height="7.6" rx=".9" opacity=".5"/><rect x="-.55" y="-9.6" width="1.1" height="9.6" rx=".5"/></g></g><circle cx="12" cy="9.6" r="2"/></symbol>
   <symbol id="m-hunt" viewBox="0 0 24 24"><circle cx="10.5" cy="10.5" r="6.4" fill-opacity=".45" stroke="currentColor" stroke-width="2.2"/><path d="M16.2 16.2l5 5" stroke="currentColor" stroke-width="3" stroke-linecap="round"/><path fill-rule="evenodd" d="M10.5 15s3.1-2.6 3.1-5.2a3.1 3.1 0 1 0-6.2 0c0 2.6 3.1 5.2 3.1 5.2zM10.5 8.7a1.1 1.1 0 1 1 0 2.2 1.1 1.1 0 0 1 0-2.2z"/></symbol>
+  <symbol id="m-darts" viewBox="0 0 24 24"><circle cx="10.5" cy="13.5" r="9.5" opacity=".45"/><path fill-rule="evenodd" d="M10.5 7a6.5 6.5 0 1 1 0 13 6.5 6.5 0 0 1 0-13zm0 3.4a3.1 3.1 0 1 0 0 6.2 3.1 3.1 0 0 0 0-6.2z"/><circle cx="10.5" cy="13.5" r="1.5"/><path d="M10.5 13.5l8.6-8.6" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"/><path d="M18.4 5.6l.3-4.4 2 2.1zM18.4 5.6l4.4-.3-2.1-2z"/></symbol>
   <symbol id="i-road" viewBox="0 0 24 24"><path d="M8 3 4 21M16 3l4 18M12 4v3M12 11v3M12 18v3"/></symbol>
   <symbol id="i-building" viewBox="0 0 24 24"><path d="M5 21V5a2 2 0 0 1 2-2h7a2 2 0 0 1 2 2v16M16 10h2a2 2 0 0 1 2 2v9M3 21h18M9 7h3M9 11h3M9 15h3"/></symbol>
   <symbol id="i-church" viewBox="0 0 24 24"><path d="M12 2v4M10 4h4M12 6l-5 5v10h10V11zM7 13l-3 3v5h3M17 13l3 3v5h-3M10 21v-4a2 2 0 0 1 4 0v4"/></symbol>
@@ -553,10 +646,10 @@ body[data-screen=game] #emoLayer{left:max(10px,env(safe-area-inset-left));transf
       <div class="players" id="lobbyPlayers"></div>
     </div>
     <div class="card" id="settingsCard">
-      <div class="field"><label data-i="mode"></label><div class="seg modes" data-set="mode" data-opts="map,street,dutch,hunt"></div><p class="sub" id="modeDesc"></p></div>
+      <div class="field"><label data-i="mode"></label><div class="seg modes" data-set="mode" data-opts="map,street,dutch,hunt,darts"></div><p class="sub" id="modeDesc"></p></div>
       <div class="field" data-for="hunt"><label data-i="huntCity" for="huntCity"></label><select id="huntCity"></select></div>
       <div class="field" data-for="dutch hunt" id="nlPlacesField"><label data-i="nlPlaces"></label><div class="seg" data-set="nlPlaces" data-opts="all,big,towns"></div></div>
-      <div class="field" data-for="dutch"><label data-i="nlView"></label><div class="seg" data-set="nlView" data-opts="sat,photo"></div></div>
+      <div class="field" data-for="dutch darts"><label data-i="nlView"></label><div class="seg" data-set="nlView" data-opts="sat,photo"></div></div>
       <div class="field"><label data-i="rounds"></label><div class="seg" data-set="rounds" data-opts="5,10,15"></div></div>
       <div class="field"><label data-i="roundTime"></label><div class="seg" data-set="roundTime" data-opts="30,60,90" data-suf="s"></div></div>
       <div class="field"><label data-i="difficulty"></label><div class="seg" data-set="difficulty" data-opts="easy,normal,hard"></div></div>
@@ -579,6 +672,7 @@ body[data-screen=game] #emoLayer{left:max(10px,env(safe-area-inset-left));transf
 <section class="screen" id="game">
   <div id="map"></div>
   <div id="pano" hidden></div>
+  <div id="dmap" hidden></div>
   <div class="hud">
     <div class="chip"><small data-i="roundLbl"></small><b id="roundChip"></b></div>
     <div class="grow"></div>
@@ -601,6 +695,11 @@ body[data-screen=game] #emoLayer{left:max(10px,env(safe-area-inset-left));transf
     <div class="huntbox" id="huntBox" hidden>
       <div class="htarget"><span class="hicon" id="huntIcon"></span><div class="htxt"><small id="huntKind"></small><b id="huntName"></b></div><div class="scans" id="huntScans"></div></div>
       <div class="hfoot"><div class="probe" id="huntProbe"></div><button class="btn pri" id="huntLock"><svg class="ic"><use href="#i-lock"/></svg><span data-i="huntLock"></span></button></div>
+    </div>
+    <div class="dartbar" id="dartBox" hidden>
+      <button class="btn" id="dartView"></button>
+      <button class="btn" id="dartDbl" aria-pressed="false">x2</button>
+      <button class="btn pri" id="dartThrow"></button>
     </div>
     <div class="answer" id="answerBox">
       <div class="ac" id="ac"></div>
@@ -717,7 +816,7 @@ body[data-screen=game] #emoLayer{left:max(10px,env(safe-area-inset-left));transf
           }
           if((e.id==='chatBtn'||e.id==='emoBtn')&&!(' '+old+' ').includes(' show ')&&e.classList.contains('show')) reveal(e,0,true);
         }else if(m.attributeName==='hidden'){
-          if(!e.hidden&&old!==null&&e.id!=='map'&&e.id!=='pano') reveal(e,0);
+          if(!e.hidden&&old!==null&&e.id!=='map'&&e.id!=='pano'&&e.id!=='dmap') reveal(e,0);
         }else if(m.attributeName==='style'){
           if(e.id==='lockedBox'&&/display:\s*none/.test(old)&&e.style.display!=='none') reveal(e,0,true);
         }
@@ -752,6 +851,8 @@ const CONFIG = {
   // Straatjacht: namen van OpenStreetMap via Nominatim (geen key, max 1 verzoek per seconde). hit/good/half in meters.
   hunt: { radius: { easy: 800, normal: 1200, hard: 1700 }, scans: { easy: 8, normal: 6, hard: 4 }, timeoutMs: 9000, gapMs: 1100, tries: 6, poiChance: .3,
     hitStreet: 18, hitPoi: 25, goodM: 30, halfM: 300, falloff: 200, scanBonus: 20, circleM: 220 },
+  // Darts: ringen in km rond de plek en punten per ring (de laatste is naast het bord). dblRings: zoveel binnenste ringen tellen dubbel bij x2.
+  darts: { km: [150, 400, 800, 1600, 3200], pts: [1000, 700, 450, 250, 100, 0], perHint: .08, hintMin: .6, dblRings: 2 },
   // Kaartlaag. Satelliet zonder labels. Wissel hier voor Mapbox/Google tiles (zie README).
   tiles: {
     main: { url: 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', attr: 'Tiles &copy; Esri', maxZoom: 18 },
@@ -765,7 +866,7 @@ const CONFIG = {
 };
 const COLORS = ['#c2432b','#1f5868','#b9801a','#5b6ee1','#8a4fa8','#2d7a4d','#d46a8f','#4a5258'];
 // Avatars: 'letter' is de eerste letter van de naam, de rest zijn symbolen uit de sprite (#av-<id>).
-const AVATARS = ['letter','angler','shroom'];
+const AVATARS = ['letter','angler','shroom','face','apple','ufo','duck','cactus'];
 const avKey = a => AVATARS.includes(a) ? a : 'letter';
 // Hintgroepen die de host aan/uit kan zetten in de lobby
 const HINT_GROUPS = ['geo','people','money','codes','nb','name'];
@@ -775,7 +876,7 @@ const CUR_FIX = { ZW:['ZWG','USD'], FM:['USD'], SL:['SLE'], BG:['EUR'], CU:['CUP
 /* ================= I18N ================= */
 const I18N = {
  nl: {
-  yourName:'Naam', yourColor:'Kleur', yourAvatar:'Avatar', av_letter:'Letter', av_angler:'Hengelaarsvis', av_shroom:'Vliegenzwam', create:'Maak kamer', join:'Join', solo:'Solo',
+  yourName:'Naam', yourColor:'Kleur', yourAvatar:'Avatar', av_letter:'Letter', av_angler:'Hengelaarsvis', av_shroom:'Vliegenzwam', av_face:'Gekke bek', av_apple:'Appel', av_ufo:'Ufo', av_duck:'Badeend', av_cactus:'Cactus', create:'Maak kamer', join:'Join', solo:'Solo',
   rules:'Uitleg', leave:'Verlaten', copyCode:'Kopieer link', share:'Delen', more:'Meer opties', language:'Taal',
   players:'Spelers', rounds:'Rondes', roundTime:'Tijd per ronde', hintEvery:'Hint elke', mode:'Modus', map:'Satelliet', street:'Straatbeeld',
   difficulty:'Moeilijkheid', easy:'Makkelijk', normal:'Normaal', hard:'Moeilijk', continent:'Continent',
@@ -810,6 +911,10 @@ const I18N = {
   qSide:'In het {d}', qDist:'Ongeveer {m} m van het midden', qCircle:'Binnen de cirkel op de kaart',
   o0:'noorden', o1:'noordoosten', o2:'oosten', o3:'zuidoosten', o4:'zuiden', o5:'zuidwesten', o6:'westen', o7:'noordwesten',
   md_map:'Raad het land vanaf de satelliet.', md_street:'Raad het land vanaf een straatfoto.', md_dutch:'Raad de Nederlandse plaats.', md_hunt:'Zoek een straat of gebouw op de kaart. Elke tik onthult wat daar ligt.',
+  darts:'Darts', md_darts:'Gooi een pijltje op de wereldkaart, zo dicht mogelijk bij de plek. Hoe dichter bij de roos, hoe meer punten.',
+  dartMap:'Kaart', dartSpot:'Plek', dartThrow:'Gooi', dartThrown:'Gegooid', dartNoPin:'Tik op de kaart waar jij denkt dat de plek ligt', dartDbl:'Dubbel of niks',
+  dartDblOn:'Dubbel of niks: roos of binnenring telt dubbel, daarbuiten 0 punten', dartDblOff:'Gewoon gooien',
+  dr0:'Roos', dr1:'Binnenring', dr2:'Middenring', dr3:'Buitenring', dr4:'Rand', dr5:'Naast het bord',
   h_n_prov:'Provincie', h_n_region:'Landsdeel', h_n_pop:'Inwoners', h_n_near:'Ligging', h_n_near2:'Ligging', h_n_len:'Lengte naam', h_n_first:'Naam', h_n_name:'Naam',
   np0:'minder dan 10.000', np1:'10.000 tot 25.000', np2:'25.000 tot 50.000', np3:'50.000 tot 100.000', np4:'100.000 tot 250.000', np5:'meer dan 250.000',
   rg0:'het noorden', rg1:'het oosten', rg2:'het zuiden', rg3:'het westen', rg4:'het midden', rgTxt:'In {r} van Nederland',
@@ -832,10 +937,11 @@ const I18N = {
    <li><b>Straatbeeld</b> gebruikt beelden van Panoramax. Op moeilijk kun je niet rondkijken.</li>
    <li><b>Nederland</b>: een willekeurige plek in Nederland, jij raadt de plaats. Dichtstbijzijnde plaats uit de lijst is het juiste antwoord. Een gok binnen 25 km of in dezelfde provincie geeft 100 punten.</li>
    <li><b>Straatjacht</b>: je krijgt een straat of gebouw en een kaart zonder namen. Elke tik is een scan: je ziet wat daar ligt en hoe warm je zit. Raak je het doel, dan ben je klaar. Anders telt je laatste pin: hoe dichterbij en hoe sneller, hoe meer punten. Op moeilijk krijg je minder scans en alleen warmer of kouder.</li>
+   <li><b>Darts</b>: je ziet de plek, opent de <b>kaart</b> en gooit een pijltje. Roos (binnen ${CONFIG.darts.km[0]} km) geeft ${CONFIG.darts.pts[0]} punten, daarna ${CONFIG.darts.pts.slice(1,-1).join(', ')} tot ${CONFIG.darts.km.at(-1)} km. Sneller gooien en minder hints geeft meer. <b>x2</b> is dubbel of niks: roos of binnenring telt dubbel, daarbuiten krijg je 0. Alleen op makkelijk staan er namen op de kaart. Niet gegooid? Dan telt je pijltje bij het einde van de tijd, zonder tijdbonus.</li>
   </ul>`,
  },
  en: {
-  yourName:'Name', yourColor:'Color', yourAvatar:'Avatar', av_letter:'Letter', av_angler:'Anglerfish', av_shroom:'Toadstool', create:'Create room', join:'Join', solo:'Solo',
+  yourName:'Name', yourColor:'Color', yourAvatar:'Avatar', av_letter:'Letter', av_angler:'Anglerfish', av_shroom:'Toadstool', av_face:'Silly face', av_apple:'Apple', av_ufo:'UFO', av_duck:'Rubber duck', av_cactus:'Cactus', create:'Create room', join:'Join', solo:'Solo',
   rules:'Rules', leave:'Leave', copyCode:'Copy link', share:'Share', more:'More options', language:'Language',
   players:'Players', rounds:'Rounds', roundTime:'Round time', hintEvery:'Hint every', mode:'Mode', map:'Satellite', street:'Street view',
   difficulty:'Difficulty', easy:'Easy', normal:'Normal', hard:'Hard', continent:'Continent',
@@ -870,6 +976,10 @@ const I18N = {
   qSide:'In the {d}', qDist:'About {m} m from the middle', qCircle:'Inside the circle on the map',
   o0:'north', o1:'northeast', o2:'east', o3:'southeast', o4:'south', o5:'southwest', o6:'west', o7:'northwest',
   md_map:'Guess the country from satellite.', md_street:'Guess the country from a street photo.', md_dutch:'Guess the Dutch place.', md_hunt:'Find a street or building on the map. Every tap reveals what is there.',
+  darts:'Darts', md_darts:'Throw a dart at the world map, as close to the spot as you can. Closer to the bullseye means more points.',
+  dartMap:'Map', dartSpot:'Spot', dartThrow:'Throw', dartThrown:'Thrown', dartNoPin:'Tap the map where you think the spot is', dartDbl:'Double or nothing',
+  dartDblOn:'Double or nothing: bullseye or inner ring counts double, anything else scores 0', dartDblOff:'Normal throw',
+  dr0:'Bullseye', dr1:'Inner ring', dr2:'Middle ring', dr3:'Outer ring', dr4:'Edge', dr5:'Off the board',
   h_n_prov:'Province', h_n_region:'Region', h_n_pop:'Inhabitants', h_n_near:'Location', h_n_near2:'Location', h_n_len:'Name length', h_n_first:'Name', h_n_name:'Name',
   np0:'under 10,000', np1:'10,000 to 25,000', np2:'25,000 to 50,000', np3:'50,000 to 100,000', np4:'100,000 to 250,000', np5:'over 250,000',
   rg0:'the north', rg1:'the east', rg2:'the south', rg3:'the west', rg4:'the middle', rgTxt:'In {r} of the Netherlands',
@@ -892,6 +1002,7 @@ const I18N = {
    <li><b>Street view</b> uses photos from Panoramax. On hard you cannot look around.</li>
    <li><b>Netherlands</b>: a random spot in the Netherlands, you guess the place. The nearest place on the list is the right answer. A guess within 25 km or in the same province gives 100 points.</li>
    <li><b>Street hunt</b>: you get a street or building and a map without names. Every tap is a scan: you see what is there and how warm you are. Hit the target and you are done. Otherwise your last pin counts: closer and faster means more points. On hard you get fewer scans and only warmer or colder.</li>
+   <li><b>Darts</b>: you see the spot, open the <b>map</b> and throw a dart. Bullseye (within ${CONFIG.darts.km[0]} km) gives ${CONFIG.darts.pts[0]} points, then ${CONFIG.darts.pts.slice(1,-1).join(', ')} up to ${CONFIG.darts.km.at(-1)} km. Throwing faster with fewer hints scores more. <b>x2</b> is double or nothing: bullseye or inner ring counts double, anything else scores 0. Only easy shows names on the map. Did not throw? Your dart counts when time runs out, without time bonus.</li>
   </ul>`,
  }
 };
@@ -1505,6 +1616,34 @@ function huntScore(ans, r){
 }
 const huntValidPin = p => Array.isArray(p) && p.length === 2 && p.every(Number.isFinite);
 
+/* ================= DARTS ================= */
+// Afstand over de bol (de wereldkaart is te groot voor de platte benadering van kmBetween).
+const gcKm = (lat1, lng1, lat2, lng2) => { const r = Math.PI/180, a = Math.sin((lat2-lat1)*r/2)**2 + Math.cos(lat1*r)*Math.cos(lat2*r)*Math.sin((lng2-lng1)*r/2)**2; return 12742*Math.asin(Math.min(1, Math.sqrt(a))); };
+const dartRing = d => { const i = CONFIG.darts.km.findIndex(km => d <= km); return i < 0 ? CONFIG.darts.km.length : i; };
+const dartValidPin = p => huntValidPin(p) && Math.abs(p[0]) <= 90 && Math.abs(p[1]) <= 180;
+const wrapLng = x => ((x + 180) % 360 + 360) % 360 - 180;
+// Lengtegraad dicht bij een andere houden, zodat een lijn over de datumgrens de korte kant op loopt.
+const nearLng = (x, ref) => { while (x - ref > 180) x -= 360; while (x - ref < -180) x += 360; return x; };
+function dartScore(ans, r){
+  if (!ans || !dartValidPin(ans.pin)) return { pts:0, kind:'none', dist:null, ring:null };
+  const C = CONFIG.darts, S_ = CONFIG.score, dist = gcKm(ans.pin[0], ans.pin[1], r.lat, r.lng), ring = dartRing(dist), hit = ring < C.dblRings;
+  const extra = Math.max(0, (ans.hintsSeen || 1) - 1);
+  let pts = C.pts[ring] * Math.max(C.hintMin, 1 - C.perHint*extra) * (S_.timeBase + S_.timeWeight*(ans.frac || 0));
+  if (ans.dbl) pts = hit ? pts*2 : 0;
+  return { pts: Math.round(pts), dist: Math.round(dist), ring, kind: hit ? 'good' : ring < C.km.length && !ans.dbl ? 'half' : 'miss' };
+}
+// Cirkel van km rond een punt, echt over de bol. Lengtegraad loopt door (geen sprong bij de datumgrens).
+function geoCircle(lat, lng, km, n = 96){
+  const r = Math.PI/180, d = km/6371, la = lat*r, pts = [];
+  for (let i = 0; i <= n; i++){
+    const b = i/n*2*Math.PI, la2 = Math.asin(Math.sin(la)*Math.cos(d) + Math.cos(la)*Math.sin(d)*Math.cos(b));
+    pts.push([la2/r, lng + Math.atan2(Math.sin(b)*Math.sin(d)*Math.cos(la), Math.cos(d) - Math.sin(la)*Math.sin(la2))/r]);
+  }
+  return pts;
+}
+// Startbeeld van de wereldkaart per continent-instelling.
+const DART_VIEW = { ALL:[[-56,-168],[75,190]], EU:[[34,-25],[71,45]], AF:[[-36,-19],[38,53]], AS:[[-11,25],[56,150]], AM:[[-56,-128],[72,-32]], OC:[[-48,110],[10,195]] };
+
 /* ================= HINTS ================= */
 // r = rang (laag = vaag), g = groep (aan/uit in lobby), f = familie (max 1 per ronde in het midden)
 const HINT_DEFS = [
@@ -1655,7 +1794,7 @@ async function disconnect(){
   clearTimeout(joinTimer); clearInterval(hostWatch);
   if (H) { clearInterval(H.loop); clearTimeout(H.autoNext); }
   if (room) { try { await room.leave(); } catch(e){} }
-  room = null; sendMsg = null; sendChat = null; chatLog = []; unread = 0; $('#chat').classList.remove('on'); closeEmoTray(); $('#emoLayer').innerHTML = ''; isHost = false; solo = false; S = null; H = null; myAnswer = null; roomCode = null; lastSig = ''; HS = null; ovFinding = false;
+  room = null; sendMsg = null; sendChat = null; chatLog = []; unread = 0; $('#chat').classList.remove('on'); closeEmoTray(); $('#emoLayer').innerHTML = ''; isHost = false; solo = false; S = null; H = null; myAnswer = null; roomCode = null; lastSig = ''; HS = null; dartReset(null); ovFinding = false;
   history.replaceState(null, '', location.pathname + location.search);
 }
 
@@ -1724,6 +1863,7 @@ function electHost(oldHostPeer){
       if (!S || !S.round || !sendMsg) return;
       if (myAnswer && myAnswer.roundId===S.round.id) sendMsg({ t:'answer', p:{...myAnswer, resend:true} }, S.hostPeer);
       else if (HS && HS.pin && HS.roundId===S.round.id) sendMsg({ t:'pin', p:{ roundId:HS.roundId, pin:HS.pin, scans:S.round.hunt.scans-HS.left } }, S.hostPeer);
+      else if (DS && DS.pin && DS.roundId===S.round.id) sendMsg({ t:'pin', p:{ roundId:DS.roundId, pin:DS.pin, dbl:DS.dbl } }, S.hostPeer);
     }, 1500);
   }
 }
@@ -1756,6 +1896,7 @@ function becomeHost(oldHostPeer){
       startAt: now() - elapsed, answers: {}, order: 0, forced: r.hints.length, wants: {} };
     if (myAnswer && myAnswer.roundId === r.id) H.round.answers[me.id] = { ...myAnswer, ms: Math.round(r.durationMs*(1-myAnswer.frac)), order: H.round.order++ };
     else if (HS && HS.pin && HS.roundId === r.id) H.round.pins[me.id] = { pin:HS.pin, scans:r.hunt.scans-HS.left };
+    else if (DS && DS.pin && DS.roundId === r.id) H.round.pins[me.id] = { pin:DS.pin, dbl:DS.dbl };
   }
   toast(t('youHost'));
   startHostLoop();
@@ -1792,9 +1933,13 @@ function hostHandle(msg, peerId){
       broadcast(); beep(880,.06); break;
     }
     case 'sync': broadcast(); break;
-    case 'pin':
-      if (player && H.phase === 'round' && H.round && H.round.hunt && p.roundId === H.round.id && huntValidPin(p.pin) && !H.round.answers[player.id]) H.round.pins[player.id] = { pin:p.pin, scans:+p.scans||0 };
+    case 'pin': {
+      const r = H.round;
+      if (!player || H.phase !== 'round' || !r || p.roundId !== r.id || r.answers[player.id]) break;
+      if (r.hunt && huntValidPin(p.pin)) r.pins[player.id] = { pin:p.pin, scans:+p.scans||0 };
+      else if (r.darts && dartValidPin(p.pin)) r.pins[player.id] = { pin:p.pin, dbl:!!p.dbl };
       break;
+    }
     case 'settings':
       if (peerId !== selfId || H.phase !== 'lobby') return;
       if (Array.isArray(p.hintGroups)){ p.hintGroups = p.hintGroups.filter(g=>HINT_GROUPS.includes(g)); if (!p.hintGroups.length) return; }
@@ -1819,11 +1964,11 @@ function hostHandle(msg, peerId){
     case 'answer': {
       if (!player || H.phase !== 'round' || !H.round || p.roundId !== H.round.id) return;
       if (H.round.answers[player.id]) return;  // eerste telt
-      if (H.round.hunt ? !huntValidPin(p.pin) : !(isNL(H.settings) ? CITIES[p.code] : COUNTRIES[p.code])) return;
+      if (H.round.hunt ? !huntValidPin(p.pin) : H.round.darts ? !dartValidPin(p.pin) : !(isNL(H.settings) ? CITIES[p.code] : COUNTRIES[p.code])) return;
       const el = now() - H.round.startAt;
       let hintsSeen = H.round.hints.length, frac = Math.max(0, 1 - el / H.round.durationMs);
       if (p.resend) { hintsSeen = Math.max(1, Math.min(hintsSeen, +p.hintsSeen||hintsSeen)); frac = Math.min(1, Math.max(0, +p.frac||0)); }
-      H.round.answers[player.id] = { code: p.code, hintsSeen, frac, ms: Math.round(H.round.durationMs*(1-frac)), order: H.round.order++, pin: p.pin, scans: +p.scans||0, hit: !!p.hit };
+      H.round.answers[player.id] = { code: p.code, hintsSeen, frac, ms: Math.round(H.round.durationMs*(1-frac)), order: H.round.order++, pin: p.pin, scans: +p.scans||0, hit: !!p.hit, dbl: !!p.dbl };
       if (!checkAllAnswered()) broadcast();
       break;
     }
@@ -1841,7 +1986,8 @@ async function nextRound(){
   if (h.finding) return;
   if (h.roundN >= h.settings.rounds) return finish();
   let loc = null;
-  const nl = isNL(h.settings), hunt = h.settings.mode === 'hunt', photoMode = h.settings.mode === 'street' || (h.settings.mode === 'dutch' && h.settings.nlView === 'photo');
+  const nl = isNL(h.settings), hunt = h.settings.mode === 'hunt', darts = h.settings.mode === 'darts';
+  const photoMode = h.settings.mode === 'street' || ((h.settings.mode === 'dutch' || darts) && h.settings.nlView === 'photo');
   if (photoMode || hunt){
     h.finding = true; broadcast(); overlay(t(hunt ? 'loadingArea' : 'findingPhoto'));
     loc = await (hunt ? huntNext(h) : (nl ? nlFindPhoto : findPhoto)(h.settings, h.used)).catch(()=>null);
@@ -1856,7 +2002,7 @@ async function nextRound(){
   const wanted = Math.min(H.settings.hintCount || 6, Math.max(2, Math.ceil(durationMs / hintIntervalMs)));
   const hintKeys = loc.hunt ? huntHintKeys(loc.hunt, wanted) : chooseHints(loc.code, wanted, H.settings.hintGroups), hintTotal = hintKeys.length;
   H.round = { id: Math.random().toString(36).slice(2,9), n: H.roundN, lat: loc.lat, lng: loc.lng, code: loc.code, photo: loc.photo || null,
-    hunt: loc.hunt || null, pins: {},
+    hunt: loc.hunt || null, darts, pins: {},
     zoom: loc.hunt ? 14 : (nl ? CONFIG.nl.zoom : CONFIG.zoom)[H.settings.difficulty], pan: loc.hunt ? 1 : (nl ? CONFIG.nl.pan : CONFIG.pan)[H.settings.difficulty], difficulty: H.settings.difficulty,
     durationMs, hintIntervalMs, hintTotal, hintKeys, hints: [], startAt: now(), answers: {}, order: 0, forced: 0, wants: {} };
   H.phase = 'round'; H.result = null;
@@ -1919,16 +2065,18 @@ function scoreFor(ans, code){
 function endRound(){
   const r = H.round; if (!r || H.phase !== 'round') return;
   const rows = H.players.map(p => {
-    // Straatjacht: wie niet vastzette maar wel een pin had, krijgt die pin (zonder tijdbonus).
-    const a = r.answers[p.id] || (r.hunt && r.pins && r.pins[p.id] ? { ...r.pins[p.id], frac:0, ms:null, order:98, hintsSeen:r.hints.length } : undefined);
-    const s = r.hunt ? huntScore(a, r) : scoreFor(a, r.code);
+    // Straatjacht en darts: wie niet vastzette maar wel een pin had, krijgt die pin (zonder tijdbonus).
+    const pinMode = r.hunt || r.darts;
+    const a = r.answers[p.id] || (pinMode && r.pins && r.pins[p.id] ? { ...r.pins[p.id], frac:0, ms:null, order:98, hintsSeen:r.hints.length } : undefined);
+    const s = r.hunt ? huntScore(a, r) : r.darts ? dartScore(a, r) : scoreFor(a, r.code);
     p.score += s.pts;
     if (s.kind==='good'){ p.correct++; if (a.ms != null && (p.fastest==null || a.ms < p.fastest)) p.fastest = a.ms; }
     if (s.pts > p.best) p.best = s.pts;
-    return { id:p.id, guess: a && !r.hunt ? a.code : null, ms: a ? a.ms : null, hints: a ? a.hintsSeen : null, pts: s.pts, kind: s.kind, total: p.score, order: a ? a.order : 99, pin: a && r.hunt ? a.pin : null, dist: r.hunt ? s.dist : null, scans: a && r.hunt ? a.scans : null };
+    return { id:p.id, guess: a && !pinMode ? a.code : null, ms: a ? a.ms : null, hints: a ? a.hintsSeen : null, pts: s.pts, kind: s.kind, total: p.score, order: a ? a.order : 99, pin: a && pinMode ? a.pin : null, dist: pinMode ? s.dist : null, scans: a && r.hunt ? a.scans : null,
+      ring: r.darts ? s.ring : null, dbl: !!(r.darts && a && a.dbl) };
   }).sort((a,b)=> b.pts-a.pts || a.order-b.order);
   const mid = r.hunt ? huntMid(r.hunt.g) : [r.lat, r.lng];
-  H.result = { roundId: r.id, n: r.n, code: r.code, lat: mid[0], lng: mid[1], photo: r.photo, rows, last: H.roundN >= H.settings.rounds, nextAt: CONFIG.resultAutoMs,
+  H.result = { roundId: r.id, n: r.n, code: r.code, lat: mid[0], lng: mid[1], photo: r.photo, rows, last: H.roundN >= H.settings.rounds, nextAt: CONFIG.resultAutoMs, darts: !!r.darts,
     hunt: r.hunt ? { n:r.hunt.n, k:r.hunt.k, city:r.hunt.city, g:r.hunt.g } : null };
   H.phase = 'result'; H.round = null;
   scheduleAutoNext(); huntPreload(H); broadcast();
@@ -1949,7 +2097,7 @@ function publicState(){
   return {
     hostPeer: selfId, term: H.term||0, finding: !!H.finding, phase: H.phase, settings: H.settings, roundN: H.roundN, used: H.used,
     players: H.players.map(({id,peerId,name,color,avatar,joinIdx,score,connected,correct,best,fastest}) => ({id,peerId,name,color,avatar,joinIdx,score,connected,correct,best,fastest})),
-    round: r ? { id:r.id, n:r.n, lat:r.lat, lng:r.lng, photo:r.photo, hunt:r.hunt||null, zoom:r.zoom, pan:r.pan, difficulty:r.difficulty, durationMs:r.durationMs, hintIntervalMs:r.hintIntervalMs, hintTotal:r.hintTotal,
+    round: r ? { id:r.id, n:r.n, lat:r.lat, lng:r.lng, photo:r.photo, hunt:r.hunt||null, darts:!!r.darts, zoom:r.zoom, pan:r.pan, difficulty:r.difficulty, durationMs:r.durationMs, hintIntervalMs:r.hintIntervalMs, hintTotal:r.hintTotal,
       hints: r.hints, remainingMs: Math.max(0, r.durationMs - (now()-r.startAt)), answered: Object.keys(r.answers), wants: Object.keys(r.wants||{}) } : null,
     result: H.result ? { ...H.result, nextAt: Math.max(0, CONFIG.resultAutoMs - (now()-(H.resultStart||now()))) } : null,
     final: H.final,
@@ -1958,6 +2106,7 @@ function publicState(){
 
 /* ================= CLIENT RENDER ================= */
 let areaRing = null, HS = null, huntLayer = null, resLabels = null, ovFinding = false;
+let DS = null, dmap = null, dmapTiles = null, dmapKey = '';   // darts: eigen staat per ronde en de wereldkaart
 let renderedRound = null, renderedResult = null, map = null, rmap = null, pano = null, lastSig = '';
 function onState(snap){
   const prev = S;
@@ -2000,7 +2149,8 @@ function renderLobby(){
       ${host && p.peerId!==selfId ? `<button class="x" data-kick="${esc(p.id)}">&times;</button>`:''}</div>`;
   }).join('');
   const modeKey = isNL(S.settings) ? S.settings.mode : 'world';
-  document.querySelectorAll('[data-for]').forEach(el => { el.hidden = !el.dataset.for.split(' ').includes(modeKey); });
+  // data-for noemt een groep (world, dutch, hunt) of een losse modus (darts).
+  document.querySelectorAll('[data-for]').forEach(el => { const f = el.dataset.for.split(' '); el.hidden = !f.includes(modeKey) && !f.includes(S.settings.mode); });
   if (modeKey === 'hunt' && S.settings.huntCity) $('#nlPlacesField').hidden = true;
   $('#modeDesc').textContent = t('md_' + S.settings.mode);
   const hc_ = $('#huntCity');
@@ -2168,6 +2318,97 @@ function renderHunt(){
   const c = r.hints.find(x => x.k === 'q_circle');
   if (c && !HS.circle && huntLayer) HS.circle = L.circle([c.v.lat, c.v.lng], { radius:c.v.r, color:'#ffd66b', weight:2, fillColor:'#ffd66b', fillOpacity:.1, dashArray:'4 6', interactive:false }).addTo(huntLayer);
 }
+/* Darts: wereldkaart, pijltje en gooien */
+const dartLocked = r => !!r && ((myAnswer && myAnswer.roundId === r.id) || r.answered.includes(me.id));
+const dartOpen = () => !!(DS && DS.open && dmap);
+function dartIcon(color){
+  // Punt linksonder (daar zit het anker), veren in de kleur van de speler rechtsboven.
+  return L.divIcon({ className:'', iconSize:[48,48], iconAnchor:[4,44], tooltipAnchor:[20,-36], html:
+    `<svg class="dartPin" width="48" height="48" viewBox="0 0 40 40"><ellipse cx="4" cy="37.6" rx="4.2" ry="1.5" fill="#000" opacity=".35"/>
+    <path d="M3 37L10.8 29.2" stroke="#d8d8d8" stroke-width="2.2" stroke-linecap="round"/>
+    <path d="M10.8 29.2L18.6 21.4" stroke="#26251f" stroke-width="5.4" stroke-linecap="round"/><path d="M12.2 27.8L17.6 22.4" stroke="#6a675c" stroke-width="1.4" stroke-linecap="round"/>
+    <path d="M18.6 21.4L28.5 11.5" stroke="#fff" stroke-width="2"/>
+    <path d="M25.6 14.4L34.1 13 37.6 9.4 30.6 2.4 27 5.9Z" fill="${color}" stroke="#fff" stroke-width="1.3" stroke-linejoin="round"/>
+    <path d="M25.6 14.4L34.1 5.9" stroke="#fff" stroke-width="1.6" stroke-linecap="round"/></svg>` });
+}
+function ensureDmap(){
+  if (dmap) return dmap;
+  dmap = L.map('dmap', { zoomControl:false, attributionControl:false, worldCopyJump:true, zoomSnap:.25, minZoom:.5, maxZoom:10 });
+  L.control.attribution({ position:'topleft' }).addTo(dmap);
+  dmap.attributionControl.setPrefix(false);
+  dmap.on('click', e => dartPlace(e.latlng));
+  return dmap;
+}
+// Alleen op makkelijk staan er namen op de kaart: anders moet je zelf weten waar het land ligt.
+function dartTiles(r){
+  const dark = document.documentElement.dataset.theme === 'dark', labels = r.difficulty === 'easy';
+  const style = dark ? (labels ? 'dark_all' : 'dark_nolabels') : (labels ? 'rastertiles/voyager' : 'rastertiles/voyager_nolabels');
+  if (!dmap || style === dmapKey) return;
+  dmapKey = style;
+  if (dmapTiles) dmapTiles.remove();
+  dmapTiles = L.tileLayer(`https://{s}.basemaps.cartocdn.com/${style}/{z}/{x}/{y}{r}.png`, { subdomains:'abcd', maxZoom:19, attribution:'&copy; OpenStreetMap &copy; CARTO' }).addTo(dmap);
+}
+// Kaart passend tussen de HUD bovenin en het paneel onderin (liggend staat het paneel opzij).
+function dartFit(animate){
+  if (!dmap || !S) return;
+  const p = document.querySelector('#game .panel').getBoundingClientRect(), side = innerHeight <= 500 && innerWidth > innerHeight;
+  dmap.fitBounds(DART_VIEW[S.settings.continent] || DART_VIEW.ALL, { animate,
+    paddingTopLeft: side ? [60, 10] : [10, 66], paddingBottomRight: side ? [p.width + 10, 10] : [10, Math.max(10, innerHeight - p.top + 8)] });
+}
+function dartReset(r){
+  if (DS && DS.marker) DS.marker.remove();
+  DS = r && r.darts ? { roundId:r.id, pin:null, marker:null, dbl:false, open:false, fitted:false } : null;
+  $('#dmap').hidden = true;
+}
+function dartView(open){
+  const r = S && S.round; if (!r || !r.darts || !DS) return;
+  DS.open = open; $('#dmap').hidden = !open;
+  if (open){
+    ensureDmap(); dartTiles(r); dmap.invalidateSize();
+    if (!DS.fitted){ DS.fitted = true; dartFit(false); }
+  }
+  beep(open ? 480 : 380, .05);
+  renderDarts();
+}
+function dartPlace(ll){
+  const r = S && S.round;
+  if (!r || !r.darts || !DS || DS.roundId !== r.id || dartLocked(r) || S.phase !== 'round') return;
+  DS.pin = [+ll.lat.toFixed(3), +wrapLng(ll.lng).toFixed(3)];
+  if (DS.marker) DS.marker.remove();   // opnieuw toevoegen speelt de inslag opnieuw af
+  DS.marker = L.marker(ll, { icon:dartIcon(me.color), interactive:false, keyboard:false, zIndexOffset:900 }).addTo(dmap);
+  beep(170 + Math.random()*40, .07, 'triangle', .1);
+  act({ t:'pin', p:{ roundId:r.id, pin:DS.pin, dbl:DS.dbl } });
+  renderDarts();
+}
+function dartThrow(){
+  const r = S && S.round;
+  if (!r || !r.darts || !DS || dartLocked(r)) return;
+  if (!DS.pin){ toast(t('dartNoPin')); if (!DS.open) dartView(true); return; }
+  const rem = r.remainingMs - (now()-recvAt) - latency;
+  myAnswer = { roundId:r.id, code:'pin', pin:DS.pin, dbl:DS.dbl, hintsSeen:r.hints.length, frac:Math.max(0, rem/r.durationMs) };
+  beep(150, .1, 'square', .05); setTimeout(() => beep(990, .07), 110);
+  act({ t:'answer', p: myAnswer });
+  if (S.phase === 'round' && S.round) renderGame();
+}
+function dartDouble(){
+  const r = S && S.round;
+  if (!r || !r.darts || !DS || dartLocked(r)) return;
+  DS.dbl = !DS.dbl;
+  toast(t(DS.dbl ? 'dartDblOn' : 'dartDblOff')); beep(DS.dbl ? 880 : 440, .06);
+  if (DS.pin) act({ t:'pin', p:{ roundId:r.id, pin:DS.pin, dbl:DS.dbl } });
+  renderDarts();
+}
+function renderDarts(){
+  const r = S && S.round; if (!r || !r.darts || !DS) return;
+  const locked = dartLocked(r), mine = myAnswer && myAnswer.roundId === r.id;
+  $('#dartView').innerHTML = `<svg class="ic"><use href="#i-${DS.open ? 'eye' : 'globe'}"/></svg><span>${t(DS.open ? 'dartSpot' : 'dartMap')}</span>`;
+  const dbl = $('#dartDbl'); dbl.hidden = locked; dbl.classList.toggle('on', DS.dbl); dbl.setAttribute('aria-pressed', String(DS.dbl)); dbl.title = t('dartDbl'); dbl.setAttribute('aria-label', t('dartDbl'));
+  const th = $('#dartThrow'); th.classList.toggle('thrown', locked);
+  th.innerHTML = locked ? `<svg class="ic"><use href="#i-lock"/></svg><span>${t('dartThrown')}</span>${mine && myAnswer.dbl ? ' <b class="x2">x2</b>' : ''}`
+    : `<svg class="ic"><use href="#i-dart"/></svg><span>${t('dartThrow')}</span>`;
+  $('#mapctl').classList.toggle('off', r.pan === 0 && !DS.open);
+}
+
 let pannellumReady = null;
 function loadPannellum(){
   return pannellumReady ||= new Promise((res, rej) => {
@@ -2218,7 +2459,7 @@ function renderGame(){
   if (renderedRound !== r.id){
     renderedRound = r.id;
     if (!myAnswer || myAnswer.roundId !== r.id) myAnswer = null;
-    huntClear(); HS = null;
+    huntClear(); HS = null; dartReset(r);
     if (r.hunt){ dropPano(); huntReset(r); showHuntMap(r); }
     else if (r.photo) showPano(r);
     else { dropPano(); showMap(r); }
@@ -2252,11 +2493,14 @@ function renderGame(){
   $('#who').innerHTML = S.players.length > 1 ? S.players.map(p=>`<span class="${r.answered.includes(p.id)?'done':''} ${p.connected?'':'off'}">${dotHtml(p)}${esc(p.name)}${r.answered.includes(p.id)?' &#10003;':''}</span>`).join('') : '';
   // Na opnieuw verbinden weet de host al dat je hebt geantwoord, ook als deze pagina dat is vergeten.
   const mineLocked = myAnswer && myAnswer.roundId === r.id, locked = mineLocked || r.answered.includes(me.id);
-  $('#answerBox').style.display = locked || r.hunt ? 'none' : '';
+  $('#answerBox').style.display = locked || r.hunt || r.darts ? 'none' : '';
   $('#huntBox').hidden = !r.hunt || locked;
   if (r.hunt && !HS) huntReset(r);
   if (r.hunt) renderHunt();
-  $('#lockedBox').style.display = locked ? '' : 'none';
+  $('#dartBox').hidden = !r.darts;
+  if (r.darts && !DS) dartReset(r);
+  if (r.darts) renderDarts();
+  $('#lockedBox').style.display = locked && !r.darts ? '' : 'none';
   if (locked) $('#lockedBox').innerHTML = r.hunt
     ? `<svg class="ic"><use href="#i-pin"/></svg><b>${esc(plain(mineLocked && myAnswer.name || t('huntPinned')))}</b><span>${t('lockedAs')}</span>`
     : mineLocked ? `${flagImg(myAnswer.code, 40)}<b>${esc(plain(cname(myAnswer.code)))}</b><span>${t('lockedAs')}</span>` : `<b>${t('lockedAs')}</b>`;
@@ -2360,7 +2604,8 @@ function renderResult(){
   const firstPaint = renderedResult !== R.roundId;
   $('#resBody').innerHTML = R.rows.map((row, i) => {
     const p = playerById(row.id) || { name:'?', color:'#888' };
-    const g = row.dist != null ? `<span class="${row.kind}">${row.dist} m</span>`
+    const g = row.dist != null && R.darts ? `<span class="${row.kind}">${t('dr' + row.ring)}, ${row.dist.toLocaleString(lang === 'nl' ? 'nl-NL' : 'en-GB')} km</span>${row.dbl ? ' <b class="x2">x2</b>' : ''}`
+      : row.dist != null ? `<span class="${row.kind}">${row.dist} m</span>`
       : row.guess ? `<span class="${row.kind}">${flagImg(row.guess,20)}${esc(cname(row.guess))}</span>` : `<span class="sub">${t('noAnswer')}</span>`;
     return `<tr style="${firstPaint ? 'animation-delay:'+(i*90)+'ms' : 'animation:none'}"><td><span class="row" style="gap:6px">${dotHtml(p)}<span>${esc(p.name)}</span></span></td><td>${g}</td><td class="n">${row.ms!=null?(row.ms/1000).toFixed(1)+'s':''}</td><td class="n plus ${row.kind}">+${row.pts}</td><td class="n">${row.total}</td></tr>`;
   }).join('');
@@ -2395,6 +2640,29 @@ function drawResultMap(R){
     }
     for (const line of lines){ L.polyline(line, { color:'#0e0e0c', weight:8, opacity:.55 }).addTo(rmap); L.polyline(line, { color:'#ffb48f', weight:4 }).addTo(rmap); }
     L.circleMarker([R.lat, R.lng], { radius:8, color:'#fff', weight:3, fillColor:'#e8552a', fillOpacity:1 }).addTo(rmap);
+    return;
+  }
+  if (R.darts){
+    // Dartbord rond de plek (ringen als banden, zodat de vulling niet optelt), het land, en ieders pijltje.
+    const C = CONFIG.darts, rows = R.rows.filter(row => row.pin);
+    const rings = C.km.map(km => ({ km, pts: geoCircle(R.lat, R.lng, km) })).filter(x => Math.abs(R.lat) + x.km/111.2 < 89);
+    const darts = rows.map(row => ({ row, ll: [row.pin[0], nearLng(row.pin[1], R.lng)] }));
+    // In beeld: de ring van het verste pijltje helemaal (minstens de binnenring), plus pijltjes die naast het bord liggen.
+    const far = Math.min(C.km.length - 1, Math.max(1, ...darts.map(d => d.row.ring)));
+    const fit = L.latLngBounds(geoCircle(R.lat, R.lng, C.km[far], 24));
+    darts.forEach(d => fit.extend(d.ll));
+    rmap.fitBounds(fit, { padding:[24,24], maxZoom:7, animate:false });
+    const g = GEO[R.code];
+    if (g) L.geoJSON(g.feature, { style:{ color:'#fff', weight:1.5, opacity:.75, fill:false }, interactive:false }).addTo(rmap);
+    const FILL = ['#e8552a', '#2f9a5a', '#f2eee5', '#151513', '#f2eee5'], OP = [.45, .35, .18, .28, .18];
+    rings.forEach((x, i) => L.polygon(i ? [x.pts, rings[i-1].pts] : x.pts, { color:'#fff', weight:1, opacity:.75, fillColor:FILL[i], fillOpacity:OP[i], interactive:false }).addTo(rmap));
+    resLabels = L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_only_labels/{z}/{x}/{y}{r}.png', { subdomains:'abcd', maxZoom:19, attribution:'&copy; OpenStreetMap &copy; CARTO' }).addTo(rmap);
+    for (const { row, ll } of darts){
+      const p = playerById(row.id), color = p ? p.color : '#888';
+      L.polyline([ll, [R.lat, R.lng]], { color, weight:2, dashArray:'4 6', interactive:false }).addTo(rmap);
+      L.marker(ll, { icon:dartIcon(color), keyboard:false, zIndexOffset:500 }).bindTooltip(esc(p ? p.name : '?') + ': ' + row.dist.toLocaleString(lang === 'nl' ? 'nl-NL' : 'en-GB') + ' km', { permanent:darts.length < 4, direction:'top', className:'scanTip' }).addTo(rmap);
+    }
+    L.circleMarker([R.lat, R.lng], { radius:6, color:'#15151f', weight:2.5, fillColor:'#fff', fillOpacity:1 }).addTo(rmap);
     return;
   }
   if (CITIES[R.code]){
@@ -2467,17 +2735,18 @@ $('#hintChips').addEventListener('click', e => {
 });
 $('#hintNow').addEventListener('click', e => { e.stopPropagation(); act({ t:'wanthint' }); beep(700,.05); });
 $('#hintHead').addEventListener('click', () => $('#hintsBox').classList.toggle('shut'));
-$('#zIn').addEventListener('click', () => pano ? pano.setHfov(pano.getHfov() - 15) : map && map.zoomIn());
-$('#zOut').addEventListener('click', () => pano ? pano.setHfov(pano.getHfov() + 15) : map && map.zoomOut());
+$('#zIn').addEventListener('click', () => dartOpen() ? dmap.zoomIn() : pano ? pano.setHfov(pano.getHfov() - 15) : map && map.zoomIn());
+$('#zOut').addEventListener('click', () => dartOpen() ? dmap.zoomOut() : pano ? pano.setHfov(pano.getHfov() + 15) : map && map.zoomOut());
 $('#zHome').addEventListener('click', () => {
   if (!S || !S.round) return;
-  if (pano){ pano.setPitch(0); pano.setYaw(0); pano.setHfov(photoView(S.round.photo).hfov); }
+  if (dartOpen()) dartFit(true);
+  else if (pano){ pano.setPitch(0); pano.setYaw(0); pano.setHfov(photoView(S.round.photo).hfov); }
   else if (map && S.round.hunt) huntFit(map, S.round, true);
   else if (map) map.setView([S.round.lat, S.round.lng], S.round.zoom, { animate:true });
 });
 // Begin gewoon te typen tijdens een ronde
 document.addEventListener('keydown', e => {
-  if (!S || S.phase !== 'round' || S.round?.hunt || e.ctrlKey || e.metaKey || e.altKey || e.key.length !== 1) return;
+  if (!S || S.phase !== 'round' || S.round?.hunt || S.round?.darts || e.ctrlKey || e.metaKey || e.altKey || e.key.length !== 1) return;
   const g = $('#guess'); if (document.activeElement !== g && myAnswer == null && /\S/.test(e.key) && document.activeElement.tagName !== 'INPUT') g.focus();
 });
 $('#codeIn').addEventListener('input', e => { e.target.value = e.target.value.toUpperCase().replace(/[^A-Z0-9]/g,''); });
@@ -2485,11 +2754,14 @@ $('#codeIn').addEventListener('keydown', e => { if (e.key==='Enter') $('#joinBtn
 $('#langSeg').addEventListener('click', e => { const b = e.target.closest('[data-lang]'); if (b){ lang = b.dataset.lang; localStorage.setItem('lr_lang', lang); applyI18n(); } });
 $('#soundBtn').addEventListener('click', () => { sound = !sound; localStorage.setItem('lr_sound', sound?'1':'0'); applyI18n(); beep(); });
 ['#rulesBtn','#rulesBtn2'].forEach(s => $(s).addEventListener('click', () => $('#ovRules').classList.add('on')));
-function setTheme(th){ document.documentElement.dataset.theme = th; try{localStorage.setItem('lr_theme',th);}catch(e){} document.querySelector('meta[name=theme-color]').content = th==='dark'?'#151513':'#f2eee5'; document.querySelectorAll('#themeSeg button').forEach(b=>b.classList.toggle('on', b.dataset.th===th)); }
+function setTheme(th){ document.documentElement.dataset.theme = th; try{localStorage.setItem('lr_theme',th);}catch(e){} document.querySelector('meta[name=theme-color]').content = th==='dark'?'#151513':'#f2eee5'; document.querySelectorAll('#themeSeg button').forEach(b=>b.classList.toggle('on', b.dataset.th===th)); if (dartOpen() && S && S.round) dartTiles(S.round); }
 setTheme(document.documentElement.dataset.theme || 'dark');
 ['#setBtn','#setBtn2','#setBtn3'].forEach(s => $(s).addEventListener('click', () => { $('#setLeave').hidden = !S; $('#ovSet').classList.add('on'); }));
 $('#setLeave').addEventListener('click', () => { $('#ovSet').classList.remove('on'); leave(); });
 $('#huntLock').addEventListener('click', () => huntLock());
+$('#dartView').addEventListener('click', () => dartView(!(DS && DS.open)));
+$('#dartThrow').addEventListener('click', dartThrow);
+$('#dartDbl').addEventListener('click', dartDouble);
 $('#huntCity').addEventListener('change', e => { if (isMeHost()) act({ t:'settings', p:{ huntCity: e.target.value } }); });
 $('#setClose').addEventListener('click', () => $('#ovSet').classList.remove('on'));
 $('#ovSet').addEventListener('click', e => { if (e.target.id==='ovSet') $('#ovSet').classList.remove('on'); });
@@ -2554,7 +2826,7 @@ $('#rematchBtn').addEventListener('click', () => act({ t:'rematch' }));
 
 // Telefoon terug uit vergrendeling: state opnieuw opvragen
 document.addEventListener('visibilitychange', () => { if (document.visibilityState==='visible' && room && !isHost && S) act({ t:'sync' }); });
-window.addEventListener('resize', () => { map && map.invalidateSize(); rmap && rmap.invalidateSize(); });
+window.addEventListener('resize', () => { map && map.invalidateSize(); rmap && rmap.invalidateSize(); dmap && dmap.invalidateSize(); });
 // Telefoontoetsenbord: op iOS blijft het scherm even hoog, dus het paneel moet zelf boven het toetsenbord gaan staan.
 let fullH = innerHeight;
 function fitKeyboard(){
