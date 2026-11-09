@@ -70,6 +70,9 @@ h1 em{font-style:normal;color:var(--acc)}
 h2{font-size:20px;margin:0}
 .sub{color:var(--mute);margin:0;line-height:1.4;font-size:14px}
 .card{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:16px;display:flex;flex-direction:column;gap:14px;box-shadow:var(--shadow)}
+/* Instellingen: iets compacter dan andere kaarten */
+#settingsCard,.more{gap:12px}
+#settingsCard,#hintCard{padding:14px}
 .eyebrow,label{font-size:13px;color:var(--mute)}
 input[type=text],select{width:100%;min-width:0;background:var(--field);border:1px solid var(--line);border-radius:10px;padding:13px 14px;outline:none;transition:border-color .15s,box-shadow .15s;box-shadow:0 1px 3px rgba(0,0,0,.18) inset}
 input[type=text]:focus,select:focus{border-color:var(--acc);box-shadow:0 0 0 3px color-mix(in srgb,var(--acc) 25%,transparent)}
@@ -88,7 +91,7 @@ select:disabled{opacity:.7;cursor:default}
   .pill:hover,.iconbtn:hover{border-color:var(--ink)}
   .mini:hover{background:var(--acc);border-color:var(--acc);color:#fff}
   .seg button:hover{color:var(--ink)}
-  .chipbtn:hover{border-color:var(--acc-hi);color:var(--ink)}
+  .chipbtn:not(.on):hover{border-color:var(--acc-hi);color:var(--ink)}
   .colors button:hover{transform:scale(1.1)}
   .mapctl button:hover{background:var(--card2)}
   .x:hover{color:var(--bad)}
@@ -149,13 +152,15 @@ span.pill{cursor:default}
 .opbtn{font:inherit;font-size:12px;font-weight:700;padding:3px 8px;border-radius:99px;border:0;background:none;color:var(--mute);box-shadow:0 0 0 1px var(--line) inset;cursor:pointer}
 .opbtn.on{background:var(--delft);color:#fff;box-shadow:none}
 .x{background:none;border:0;color:var(--mute);cursor:pointer;font-size:22px;padding:2px 8px;line-height:1}
-.seg{display:flex;background:var(--card2);border-radius:11px;padding:3px;gap:2px;box-shadow:0 1px 3px rgba(0,0,0,.16) inset}
-.seg button{flex:1;min-width:0;min-height:38px;border:0;background:none;padding:8px 4px;border-radius:9px;font-size:14px;color:var(--mute);cursor:pointer;transition:background .15s,color .15s}
+.seg{display:flex;background:var(--card2);border-radius:10px;padding:3px;gap:2px;box-shadow:0 1px 3px rgba(0,0,0,.16) inset}
+.seg button{flex:1;min-width:0;min-height:32px;border:0;background:none;padding:5px 4px;border-radius:8px;font-size:14px;line-height:1.15;color:var(--mute);cursor:pointer;transition:background .15s,color .15s}
+/* Eenheid achter een getal (30s): cijfers komen uit een zwaardere letter, dus de s iets kleiner */
+.seg .u{font-size:.88em;opacity:.8}
 .seg button.on{background:var(--sel);color:var(--ink);box-shadow:0 1px 3px rgba(0,0,0,.28),0 1px 0 rgba(255,255,255,.06) inset}
 .seg.ro button{pointer-events:none}
-.seg.sm button{font-size:12.5px;padding:8px 1px}
+.seg.sm button{font-size:12.5px;padding:5px 1px}
 .seg.modes{display:grid;grid-template-columns:1fr 1fr;gap:8px;background:none;padding:0;box-shadow:none;border-radius:0}
-.seg.modes button{--mc:var(--acc);display:flex;align-items:center;justify-content:flex-start;gap:9px;min-height:58px;padding:8px;text-align:left;font-weight:700;font-size:15px;line-height:1.1;color:var(--ink2);background:var(--card2);border:1.5px solid transparent;border-radius:14px;box-shadow:var(--shadow);transition:background .15s,border-color .15s,color .15s,transform .1s}
+.seg.modes button{--mc:var(--acc);display:flex;align-items:center;justify-content:flex-start;gap:9px;min-height:52px;padding:7px 8px;text-align:left;font-weight:700;font-size:15px;line-height:1.1;color:var(--ink2);background:var(--card2);border:1.5px solid transparent;border-radius:14px;box-shadow:var(--shadow);transition:background .15s,border-color .15s,color .15s,transform .1s}
 .seg.modes button:active{transform:scale(.97)}
 .seg.modes button[data-val=map]{--mc:#2f7fc4}
 .seg.modes button[data-val=street]{--mc:#2a9560}
@@ -164,32 +169,39 @@ span.pill{cursor:default}
 .seg.modes button[data-val=darts]{--mc:#cf3a5c}
 /* Oneven aantal modi: de laatste over de hele breedte */
 .seg.modes button:last-child:nth-child(odd){grid-column:1/-1}
-.seg.modes .mi{width:38px;height:38px;flex:none;display:grid;place-items:center;border-radius:11px;color:var(--mc);background:color-mix(in srgb,var(--mc) 18%,transparent);transition:background .15s,color .15s}
-.seg.modes .mi svg{width:28px;height:28px;fill:currentColor;stroke:none}
+.seg.modes .mi{width:36px;height:36px;flex:none;display:grid;place-items:center;border-radius:11px;color:var(--mc);background:color-mix(in srgb,var(--mc) 18%,transparent);transition:background .15s,color .15s}
+.seg.modes .mi svg{width:26px;height:26px;fill:currentColor;stroke:none}
 .seg.modes .ml{min-width:0}
 .seg.modes button.on{color:var(--ink);background:var(--sel);border-color:var(--acc)}
 .seg.modes button.on .mi{color:#fff;background:var(--mc)}
 @media (hover:hover){.seg.modes button:not(.on):hover{border-color:var(--line)}}
 @media (max-width:380px){.seg.modes button{gap:7px;padding:7px;font-size:13px}.seg.modes .mi{width:32px;height:32px;border-radius:9px}.seg.modes .mi svg{width:23px;height:23px}}
 @media (max-width:335px){.seg.modes button{flex-direction:column;align-items:flex-start;gap:6px}}
-.seg.cont button{display:grid;place-items:center;padding:7px 1px;min-height:54px}
-.seg.cont button .ic{width:36px;height:36px;color:var(--mute);transition:color .15s}
+.seg.cont button{display:grid;place-items:center;padding:5px 1px;min-height:44px}
+.seg.cont button .ic{width:32px;height:32px;color:var(--mute);transition:color .15s}
 .seg.cont button.on .ic{color:var(--acc)}
-.field{display:flex;flex-direction:column;gap:7px}
+.field{display:flex;flex-direction:column;gap:6px}
 .err{color:var(--bad);font-size:14px;margin:0}
 .err:empty{display:none}
 .toggle{display:flex;justify-content:space-between;align-items:center;gap:12px}
 .toggle .seg{width:120px}
-.toggle .seg button{display:grid;place-items:center;padding:7px 4px}
-.sw{width:48px;height:28px;border-radius:99px;background:var(--line);position:relative;cursor:pointer;border:0;flex:none;transition:background .2s}
-.sw::after{content:'';position:absolute;top:3px;left:3px;width:22px;height:22px;border-radius:50%;background:#fff;box-shadow:0 1px 3px rgba(0,0,0,.3);transition:left .2s}
-.sw.on{background:var(--acc)}.sw.on::after{left:23px}
+.toggle .seg button{display:grid;place-items:center;padding:5px 4px}
+.sw{width:44px;height:26px;border-radius:99px;background:var(--line);position:relative;cursor:pointer;border:0;flex:none;transition:background .2s}
+.sw::after{content:'';position:absolute;top:3px;left:3px;width:20px;height:20px;border-radius:50%;background:#fff;box-shadow:0 1px 3px rgba(0,0,0,.3);transition:left .2s}
+.sw.on{background:var(--acc)}.sw.on::after{left:21px}
 .chips{display:flex;flex-wrap:wrap;gap:7px}
 .chipbtn{border:1px solid var(--line);background:transparent;border-radius:99px;padding:7px 13px;font-size:14px;cursor:pointer;color:var(--mute);transition:all .15s}
 .chipbtn.on{background:var(--delft);border-color:var(--delft);color:#fff}
 .chips.ro .chipbtn{pointer-events:none}
+/* Soorten hints als icoontegels, meerdere tegelijk aan. Naam via title en een melding bij tikken. */
+.chips.ico{display:grid;grid-template-columns:repeat(6,1fr);gap:6px}
+.chips.ico .chipbtn{display:grid;place-items:center;min-width:0;height:40px;padding:0;border-radius:10px}
+.chips.ico .chipbtn .ic{width:22px;height:22px}
+.chips.ico.ro .chipbtn{pointer-events:auto;cursor:default}
+.chips.ico.ro .chipbtn:not(.on){opacity:.6}
 details.card>summary{font-family:var(--display);text-transform:uppercase;font-size:20px;cursor:pointer;list-style:none;display:flex;justify-content:space-between;align-items:center}
 details.card>summary::-webkit-details-marker{display:none}
+.more{display:flex;flex-direction:column;margin-top:12px}
 details.card>summary::after{content:'+';color:var(--mute);font-family:var(--font)}
 details.card[open]>summary::after{content:'\2212'}
 /* game */
@@ -621,6 +633,12 @@ body[data-screen=game] #emoLayer{left:max(10px,env(safe-area-inset-left));transf
   <symbol id="i-arrow" viewBox="0 0 24 24"><path d="M12 20V4M6 10l6-6 6 6"/></symbol>
   <symbol id="i-dart" viewBox="0 0 24 24"><path d="M17.6 11.2A8 8 0 1 1 12.8 6.4"/><path d="M13.7 12.1a3.4 3.4 0 1 1-1.8-1.8"/><path d="M10.5 13.5 20 4M20 4V1.5M20 4h2.5M17.6 6.4V3.4M17.6 6.4h3"/></symbol>
   <symbol id="i-globe" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c2.6 2.6 3.8 5.6 3.8 9s-1.2 6.4-3.8 9c-2.6-2.6-3.8-5.6-3.8-9S9.4 5.6 12 3z"/></symbol>
+  <!-- Soorten hints: landschap, geldbiljet, hekje (landcode en domein), twee huizen (buren), vlag -->
+  <symbol id="g-geo" viewBox="0 0 24 24"><path d="M2.5 16 8.5 6l4 6.5L15 9l6.5 7"/><path d="M2.5 20c1.6 0 1.6-1.2 3.2-1.2s1.6 1.2 3.2 1.2 1.6-1.2 3.1-1.2 1.6 1.2 3.2 1.2 1.6-1.2 3.2-1.2 1.6 1.2 3.1 1.2"/></symbol>
+  <symbol id="g-money" viewBox="0 0 24 24"><rect x="2.5" y="6" width="19" height="12" rx="2"/><circle cx="12" cy="12" r="2.6"/><path d="M6 10v4M18 10v4"/></symbol>
+  <symbol id="g-codes" viewBox="0 0 24 24"><path d="M10 3.5 8 20.5M16 3.5l-2 17M4.5 9h16M3.5 15h16"/></symbol>
+  <symbol id="g-nb" viewBox="0 0 24 24"><path d="M2 20.5h20M3.5 20.5V11L8 6.5l4.5 4.5v9.5M12.5 20.5v-7.5L17 9l4.5 4v7.5"/></symbol>
+  <symbol id="g-name" viewBox="0 0 24 24"><path d="M5.5 21V3.5M5.5 4.5h13l-3 4 3 4h-13"/></symbol>
   <symbol id="i-eye" viewBox="0 0 24 24"><path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></symbol>
   <!-- Modusiconen: vlak, twee tinten. Hoofdvorm in currentColor, tweede tint met opacity. -->
   <symbol id="m-map" viewBox="0 0 24 24"><g transform="rotate(-45 12 12)"><rect x="9" y="7.5" width="6" height="9" rx="1.6"/><rect x="1.2" y="9" width="6" height="6" rx="1" opacity=".45"/><rect x="16.8" y="9" width="6" height="6" rx="1" opacity=".45"/><rect x="7" y="11.3" width="2.2" height="1.4"/><rect x="14.8" y="11.3" width="2.2" height="1.4"/><rect x="11.2" y="16" width="1.6" height="2.6"/><circle cx="12" cy="19.4" r="1.3"/></g><g fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><path d="M17.5 20.9A3.4 3.4 0 0 0 20.9 17.5"/><path d="M17.5 23A5.5 5.5 0 0 0 23 17.5"/></g></symbol>
@@ -701,11 +719,13 @@ body[data-screen=game] #emoLayer{left:max(10px,env(safe-area-inset-left));transf
     </div>
     <details class="card" id="hintCard">
       <summary data-i="more"></summary>
+      <div class="more">
       <div class="field" data-for="world"><label data-i="weighting"></label><div class="seg" data-set="weighting" data-opts="uniform,area"></div></div>
       <div class="toggle" data-for="world"><label data-i="smallCountries"></label><button class="sw" data-sw="small" aria-label="toggle"></button></div>
       <div class="field"><label data-i="hintCount"></label><div class="seg" data-set="hintCount" data-opts="4,6,8"></div></div>
       <div class="field"><label data-i="hintEvery"></label><div class="seg" data-set="hintEvery" data-opts="5,10,15,20" data-suf="s"></div></div>
-      <div class="field" data-for="world"><label data-i="hintTypes"></label><div class="chips" id="hintChips"></div></div>
+      <div class="field" data-for="world"><label data-i="hintTypes"></label><div class="chips ico" id="hintChips" role="group"></div></div>
+      </div>
     </details>
     <button class="btn pri" id="startBtn"><svg class="ic"><use href="#i-play"/></svg><span id="startTxt"></span></button>
     <p class="sub" id="waitHost" style="text-align:center" data-i="waitHost"></p>
@@ -935,6 +955,7 @@ const XAVI_IMG = 'data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAcFBQY
 const avKey = a => (a === 'heart' ? 'xavi' : AVATARS.includes(a) ? a : 'letter');   // heart is vervangen door xavi
 // Hintgroepen die de host aan/uit kan zetten in de lobby
 const HINT_GROUPS = ['geo','people','money','codes','nb','name'];
+const HINT_ICON = { geo:'g-geo', people:'i-users', money:'g-money', codes:'g-codes', nb:'g-nb', name:'g-name' };
 // Valuta-correcties (de brondata heeft enkele fouten of verouderde codes)
 const CUR_FIX = { ZW:['ZWG','USD'], FM:['USD'], SL:['SLE'], BG:['EUR'], CU:['CUP'], PS:['ILS','JOD'], EH:['MAD'], SV:['USD'], CD:['CDF','USD'], LR:['LRD','USD'], VE:['VES','USD'], TL:['USD'], ZM:['ZMW'], KH:['KHR','USD'], PA:['PAB','USD'], EC:['USD'], MH:['USD'], PW:['USD'], KI:['AUD'], TV:['AUD'], NR:['AUD'], LI:['CHF'], MC:['EUR'], SM:['EUR'], VA:['EUR'], AD:['EUR'], XK:['EUR'], ME:['EUR'], HR:['EUR'], SK:['EUR'] };
 
@@ -969,7 +990,7 @@ const I18N = {
   left:'links', right:'rechts', landlocked:'geen kust', coast:'aan zee', island:'geen landgrenzen', nbCount:'{n} buurlanden',
   pop0:'minder dan 1 miljoen', pop1:'1 tot 10 miljoen', pop2:'10 tot 50 miljoen', pop3:'50 tot 150 miljoen', pop4:'meer dan 150 miljoen',
   capLetter:'begint met {l}', nameLetter:'begint met {l}, {n} letters',
-  chat:'Chat', chatPh:'Bericht...', chatEmpty:'Nog geen berichten', emotes:'Emotes', em_hit:'Raak!', em_lost:'Waar?!', em_hurry:'Schiet op', em_splash:'Plons!', em_king:'Kaartkoning', appSettings:'Instellingen', theme:'Thema', hintMin:'Houd minstens één soort aan', roundLbl:'Ronde', scoreLbl:'Score', timeLbl:'Tijd', hintsTitle:'Hints', hintNow:'Hint nu', hintNowVote:'Hint nu ({a}/{b})', hintVoted:'Wachten ({a}/{b})',
+  chat:'Chat', chatPh:'Bericht...', chatEmpty:'Nog geen berichten', emotes:'Emotes', em_hit:'Raak!', em_lost:'Waar?!', em_hurry:'Schiet op', em_splash:'Plons!', em_king:'Kaartkoning', appSettings:'Instellingen', theme:'Thema', hintMin:'Houd minstens één soort aan', hintOn:'{g}: aan', hintOff:'{g}: uit', roundLbl:'Ronde', scoreLbl:'Score', timeLbl:'Tijd', hintsTitle:'Hints', hintNow:'Hint nu', hintNowVote:'Hint nu ({a}/{b})', hintVoted:'Wachten ({a}/{b})',
   hintCount:'Aantal hints', hintTypes:'Soorten hints',
   dutch:'Nederland', nlPlaces:'Plaatsen', nlView:'Beeld', all:'Alle', big:'Steden', towns:'Dorpen', sat:'Satelliet', photo:'Straatbeeld',
   guessPhNl:'Plaats...', unknownNl:'Kies een plaats uit de lijst',
@@ -1039,7 +1060,7 @@ const I18N = {
   left:'left', right:'right', landlocked:'landlocked', coast:'coastal', island:'no land borders', nbCount:'{n} neighbours',
   pop0:'under 1 million', pop1:'1 to 10 million', pop2:'10 to 50 million', pop3:'50 to 150 million', pop4:'over 150 million',
   capLetter:'starts with {l}', nameLetter:'starts with {l}, {n} letters',
-  chat:'Chat', chatPh:'Message...', chatEmpty:'No messages yet', emotes:'Emotes', em_hit:'Bullseye!', em_lost:'Where?!', em_hurry:'Hurry up', em_splash:'Splash!', em_king:'Map king', appSettings:'Settings', theme:'Theme', hintMin:'Keep at least one type on', roundLbl:'Round', scoreLbl:'Score', timeLbl:'Time', hintsTitle:'Hints', hintNow:'Hint now', hintNowVote:'Hint now ({a}/{b})', hintVoted:'Waiting ({a}/{b})',
+  chat:'Chat', chatPh:'Message...', chatEmpty:'No messages yet', emotes:'Emotes', em_hit:'Bullseye!', em_lost:'Where?!', em_hurry:'Hurry up', em_splash:'Splash!', em_king:'Map king', appSettings:'Settings', theme:'Theme', hintMin:'Keep at least one type on', hintOn:'{g}: on', hintOff:'{g}: off', roundLbl:'Round', scoreLbl:'Score', timeLbl:'Time', hintsTitle:'Hints', hintNow:'Hint now', hintNowVote:'Hint now ({a}/{b})', hintVoted:'Waiting ({a}/{b})',
   hintCount:'Number of hints', hintTypes:'Hint types',
   dutch:'Netherlands', nlPlaces:'Places', nlView:'View', all:'All', big:'Cities', towns:'Villages', sat:'Satellite', photo:'Street view',
   guessPhNl:'Place...', unknownNl:'Pick a place from the list',
@@ -2345,16 +2366,17 @@ function renderLobby(){
     const key = seg.dataset.set, suf = seg.dataset.suf || '';
     seg.classList.toggle('ro', !edit);
     seg.innerHTML = seg.dataset.opts.split(',').map(o => {
-      const val = isNaN(o) ? o : +o, label = isNaN(o) ? t(o) : o + suf;
+      const val = isNaN(o) ? o : +o, label = isNaN(o) ? t(o) : o + suf, html = isNaN(o) ? label : o + (suf ? `<span class="u">${suf}</span>` : '');
       const cls = S.settings[key]===val ? 'on' : '';
       if (key==='continent') return `<button class="${cls}" data-val="${o}" aria-label="${esc(label)}" title="${esc(label)}"><svg class="ic"><use href="#i-${o}"/></svg></button>`;
       if (key==='mode') return `<button class="${cls}" data-val="${o}"><span class="mi"><svg aria-hidden="true"><use href="#m-${o}"/></svg></span><span class="ml">${label}</span></button>`;
-      return `<button class="${cls}" data-val="${o}">${label}</button>`;
+      return `<button class="${cls}" data-val="${o}">${html}</button>`;
     }).join('');
   });
   const hc = $('#hintChips'); hc.classList.toggle('ro', !edit);
   const on = S.settings.hintGroups || HINT_GROUPS;
-  hc.innerHTML = HINT_GROUPS.map(g => `<button class="chipbtn ${on.includes(g)?'on':''}" data-g="${g}">${t('g_'+g)}</button>`).join('');
+  hc.innerHTML = HINT_GROUPS.map(g => { const nm = esc(t('g_'+g)), o = on.includes(g);
+    return `<button class="chipbtn ${o?'on':''}" data-g="${g}" aria-pressed="${o}" aria-label="${nm}" title="${nm}"><svg class="ic" aria-hidden="true"><use href="#${HINT_ICON[g]}"/></svg></button>`; }).join('');
   document.querySelectorAll('.sw[data-sw]').forEach(sw => { sw.classList.toggle('on', !!S.settings[sw.dataset.sw]); sw.style.pointerEvents = edit?'':'none'; });
   const n = S.players.filter(p=>p.connected).length;
   $('#startBtn').style.display = edit ? '' : 'none';
@@ -2937,9 +2959,11 @@ $('#avatars').addEventListener('click', e => {
 $('#name').addEventListener('input', e => { me.name = e.target.value.trim(); store.set('lr_name', me.name); renderAvatar(true); renderAvatars(); });
 $('#name').addEventListener('keydown', e => { if (e.key==='Enter') $('#createBtn').click(); });
 $('#hintChips').addEventListener('click', e => {
-  const b = e.target.closest('[data-g]'); if (!b || !canEdit()) return;
-  const cur = new Set(S.settings.hintGroups || HINT_GROUPS); const g = b.dataset.g;
-  if (cur.has(g)){ if (cur.size === 1){ toast(t('hintMin')); return; } cur.delete(g); } else cur.add(g);
+  const b = e.target.closest('[data-g]'); if (!b) return;
+  const g = b.dataset.g, nm = t('g_'+g);
+  if (!canEdit()){ toast(nm); return; }
+  const cur = new Set(S.settings.hintGroups || HINT_GROUPS);
+  if (cur.has(g)){ if (cur.size === 1){ toast(t('hintMin')); return; } cur.delete(g); toast(t('hintOff', { g: nm })); } else { cur.add(g); toast(t('hintOn', { g: nm })); }
   act({ t:'settings', p:{ hintGroups: [...cur] } });
 });
 $('#hintNow').addEventListener('click', e => { e.stopPropagation(); act({ t:'wanthint' }); beep(700,.05); });
