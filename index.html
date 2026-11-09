@@ -1040,7 +1040,8 @@ const CONFIG = {
   // Punten per ronde = max x nauwkeurigheid x hintfactor x tijdfactor (zie scoreFor, huntScore, dartScore).
   // hintCut: alle hints gezien kost zoveel. giveaway: factor na een hint die het antwoord verklapt (naam).
   // nearShare/nearKm/nlNearKm: fout maar dichtbij, max deel en afvalafstand. latencyMs: zoveel vertraging compenseert de host.
-  score: { max: 1000, timeBase: 0.7, timeWeight: 0.3, hintCut: 0.5, giveaway: 0.1, nearShare: 0.25, nearKm: 400, nlNearKm: 10, latencyMs: 1500 },
+  // resendMs: zo lang na een hostwissel mag een speler zijn eerdere antwoord met eigen tijd en hints opnieuw sturen.
+  score: { max: 1000, timeBase: 0.7, timeWeight: 0.3, hintCut: 0.5, giveaway: 0.1, nearShare: 0.25, nearKm: 400, nlNearKm: 10, latencyMs: 1500, resendMs: 10000 },
   zoom: { easy: 6, normal: 7, hard: 8 },
   pan:  { easy: 3, normal: 1.2, hard: 0 },
   // Nederland-modus: zoom en beweegruimte op plaatsniveau, en hoe ver rond een plaats we zoeken.
@@ -1980,6 +1981,23 @@ function huntScore(ans, r){
   const acc = near * (1 - c.scanShare + c.scanShare*spare);
   return { pts: roundPts(acc, hintFactor(r, ans.hintsSeen, false), timeFactor(ans.frac)), dist, kind: dist <= c.goodM ? 'good' : dist <= rad*c.halfFrac ? 'half' : 'miss' };
 }
+// Scans gebeuren bij de speler (Nominatim), de host ziet alleen de pins. Elke nieuwe plek kost minstens één scan.
+// Een mislukte scan (geen antwoord van Nominatim) telt hier wel mee: zeldzaam en hooguit één scan te veel.
+function huntCount(r, id, pin, claim){
+  const all = r.pinSeen = r.pinSeen || {}, seen = all[id] = all[id] || [], key = pin.join(',');
+  if (!seen.includes(key)) seen.push(key);
+  return Math.min(r.hunt.scans, Math.max(Math.round(+claim) || 0, seen.length));
+}
+// Raak op naam (een ander stuk van dezelfde straat): de host vraagt Nominatim zelf. Faalt Nominatim, dan geldt de claim.
+// Is de ronde intussen voorbij, dan telt alleen de afstand.
+function huntVerify(r, a){
+  a.verify = true;
+  const same = x => x && norm(x) === norm(r.hunt.n);
+  nomReverse(R5(a.pin[0]), R5(a.pin[1]), 18)
+    .then(j => { if (!j || j.error) return true; const { name, road } = huntLabel(j); return !!(same(name) || same(road)); })
+    .catch(() => true)
+    .then(ok => { if (!H || H.round !== r || !a.verify) return; a.verify = false; a.hit = ok; if (!checkAllAnswered()) broadcast(); });
+}
 const huntValidPin = p => Array.isArray(p) && p.length === 2 && p.every(Number.isFinite);
 
 /* ================= DARTS ================= */
@@ -2373,7 +2391,7 @@ function electHost(oldHostPeer){
 function hostConflict(snap, peerId){
   if (!snap || snap.hostPeer !== peerId) return;
   const o = snap.term || 0, mine = H.term || 0;
-  if (o < mine || (o === mine && peerId > selfId)) return;
+  if (o < mine || (o === mine && peerId > selfId)) { H.termAt = now(); return; }   // de oude host stuurt zo zijn antwoord opnieuw
   clearInterval(H.loop); clearTimeout(H.autoNext);
   isHost = false; H = null; lastHostMsg = now();
   onState(snap);
@@ -2386,7 +2404,7 @@ function becomeHost(oldHostPeer){
   H = {
     players: snap.players.map(p => ({ ...p, connected: p.peerId===oldHostPeer ? false : p.connected, leftAt: p.peerId===oldHostPeer ? Date.now() : null })),
     settings: snap.settings, phase: snap.phase, roundN: snap.roundN, used: snap.used || [], plan: Array.isArray(snap.plan) ? snap.plan.slice() : null,
-    nextJoin: Math.max(...snap.players.map(p=>p.joinIdx)) + 1, result: snap.result, final: snap.final, round: null, blocked: [], term: (snap.term||0) + 1,
+    nextJoin: Math.max(...snap.players.map(p=>p.joinIdx)) + 1, result: snap.result, final: snap.final, round: null, blocked: [], term: (snap.term||0) + 1, termAt: now(),
   };
   if (snap.phase === 'round' && snap.round){
     const r = snap.round;
@@ -2440,7 +2458,7 @@ function hostHandle(msg, peerId){
     case 'pin': {
       const r = H.round;
       if (!player || H.phase !== 'round' || !r || p.roundId !== r.id || r.answers[player.id]) break;
-      if (r.hunt && huntValidPin(p.pin)) r.pins[player.id] = { pin:p.pin, scans:+p.scans||0 };
+      if (r.hunt && huntValidPin(p.pin)) r.pins[player.id] = { pin:p.pin, scans:huntCount(r, player.id, p.pin, p.scans) };
       else if (r.darts && dartValidPin(p.pin)) r.pins[player.id] = { pin:p.pin, dbl:!!p.dbl };
       break;
     }
@@ -2481,7 +2499,9 @@ function hostHandle(msg, peerId){
       const el = now() - H.round.startAt;
       let hintsSeen = H.round.hints.length, frac = Math.max(0, 1 - el / H.round.durationMs);
       const cs = Math.round(+p.hintsSeen) || hintsSeen, cf = Number.isFinite(+p.frac) ? +p.frac : frac;
-      if (p.resend) { hintsSeen = Math.max(1, Math.min(hintsSeen, cs)); frac = Math.min(1, Math.max(0, cf)); }
+      // Opnieuw sturen na een hostwissel: alleen kort erna en voor een ronde die al liep. Anders telt het als gewoon antwoord.
+      const resend = p.resend && H.termAt && now() - H.termAt < CONFIG.score.resendMs && H.round.startAt < H.termAt;
+      if (resend) { hintsSeen = Math.max(1, Math.min(hintsSeen, cs)); frac = Math.min(1, Math.max(0, cf)); }
       else if (peerId !== selfId){
         // Vertraging compenseren: de klok en hints van de speler tellen, maar maximaal latencyMs gunstiger dan wat de host ziet.
         const lag = CONFIG.score.latencyMs, at = H.round.hintAt || [];
@@ -2489,7 +2509,13 @@ function hostHandle(msg, peerId){
         hintsSeen = Math.max(sure, Math.min(hintsSeen, cs));
         frac = Math.min(1, Math.max(frac, Math.min(cf, frac + lag / H.round.durationMs)));
       }
-      H.round.answers[player.id] = { code: p.code, hintsSeen, frac, ms: Math.round(H.round.durationMs*(1-frac)), order: H.round.order++, pin: p.pin, scans: +p.scans||0, hit: !!p.hit, dbl: !!p.dbl };
+      const a = H.round.answers[player.id] = { code: p.code, hintsSeen, frac, ms: Math.round(H.round.durationMs*(1-frac)), order: H.round.order++, pin: p.pin, scans: 0, hit: false, dbl: !!p.dbl };
+      if (H.round.hunt){
+        // Scans en "geraakt" komen van de speler: de host telt zelf mee en controleert een raak op naam.
+        a.scans = huntCount(H.round, player.id, p.pin, p.scans);
+        a.hit = !!p.hit && huntIsHit(H.round.hunt.g, huntClosest(p.pin[0], p.pin[1], H.round.hunt.g).d);
+        if (p.hit && !a.hit) huntVerify(H.round, a);
+      }
       if (!checkAllAnswered()) broadcast();
       break;
     }
@@ -2591,7 +2617,7 @@ function connectedPlayers(){
 function checkAllAnswered(){
   if (H.phase !== 'round' || !H.round) return false;
   const cp = connectedPlayers();
-  if (cp.length && cp.every(p => H.round.answers[p.id])) { endRound(); return true; }
+  if (cp.length && cp.every(p => H.round.answers[p.id] && !H.round.answers[p.id].verify)) { endRound(); return true; }
   return false;
 }
 function startHostLoop(){
