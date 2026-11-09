@@ -247,7 +247,7 @@ Kies in de lobby **Toernooi** (de gouden knop onder Tekenen). Eén potje met mee
 
 ## Avatars en kleuren
 
-Avatar en kleur kies je in twee uitklapmenu's in de lobby. De avatarlijst heeft 24 opties (letter, 7 oorspronkelijke en 16 nieuwe: kat, vos, uil, beer, vis, spook, robot, schedel, raket, planeet, ster, hart, kroon, diamant, vlam, pizza). De kleurlijst heeft 24 kleuren en een kleurkiezer voor elke `#rrggbb`. Bij een lichte kleur wordt het icoon automatisch donker (`isLight` in `index.html`), zodat het altijd zichtbaar blijft.
+Avatar en kleur kies je in twee uitklapmenu's in de lobby. De avatarlijst heeft 26 opties (letter, 7 oorspronkelijke, de sterrenslak, het dwaallicht en 16 nieuwe: kat, vos, uil, beer, vis, spook, robot, schedel, raket, planeet, ster, xavi, kroon, diamant, vlam, pizza). De kleurlijst heeft 24 kleuren en een kleurkiezer voor elke `#rrggbb`. Bij een lichte kleur wordt het icoon automatisch donker (`isLight` in `index.html`), zodat het altijd zichtbaar blijft.
 
 Een avatar toevoegen: een `<symbol id="av-<id>">` (32 bij 32, wit op de spelerskleur) in de sprite bovenin, de id in `AVATARS` en de tekst `av_<id>` in `I18N`.
 
