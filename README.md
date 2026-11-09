@@ -92,6 +92,7 @@ punten = 1000 x nauwkeurigheid x hintfactor x tijdfactor
 | Straatjacht | e^(-(d-20 m)/(0,17 x straal)) x (0,85 + 0,15 x deel ongebruikte scans) |
 | Darts | e^(-(d-25 km)/1500 km), geschaald per continent. x2: dubbel binnen de binnenring, anders 0 |
 | Silhouet | Als Satelliet. De plek is het punt in het hoofddeel dat het dichtst bij het midden ligt |
+| Toernooi | Per ronde als de modus van die ronde. Finale aan: de laatste ronde x2 |
 
 Fout telt met dezelfde hint- en tijdfactor, dus op hetzelfde moment wint goed altijd van fout. Het juiste continent of de juiste provincie geeft geen vaste punten meer: die staan al in de eerste hint.
 
@@ -180,6 +181,27 @@ Kies in de lobby de modus **Silhouet**. Je ziet alleen de omtrek van een land op
 * Continent, landkeuze, kleine landen en soorten hints werken zoals bij Satelliet. Kleine landen staan standaard uit, want een stadstaat is een vlek.
 * Op het uitslagscherm zie je het land op de kaart en naast de vlag de vorm zoals jij hem zag.
 * Instellingen staan in `CONFIG.shape`.
+
+## Toernooi
+
+Kies in de lobby **Toernooi** (de gouden knop onder Darts en Silhouet). Eén potje met meerdere modi, met eigen regels.
+
+| Instelling | Opties | Wat het doet |
+|---|---|---|
+| Modi | Satelliet, Straatbeeld, Nederland, Straatjacht, Darts, Silhouet (minstens één) | Welke modi meedoen |
+| Volgorde | Door elkaar, Om de beurt, Per blok | Door elkaar: evenveel per modus, nooit twee keer dezelfde na elkaar als het kan. Om de beurt: vaste rij die herhaalt. Per blok: eerst alle rondes van de ene modus, dan de volgende |
+| Rondes | 3 tot 30 (teller, vasthouden gaat sneller) | Eronder staat hoeveel rondes elke modus krijgt |
+| Moeilijkheid | Makkelijk, Normaal, Moeilijk, Oplopend | Oplopend: eerste derde makkelijk, dan normaal, laatste derde moeilijk |
+| Continenten | Europa, Amerika, Azië, Oceanië, Afrika | Voor Satelliet, Straatbeeld, Darts en Silhouet. Per ronde één continent, naar het aantal landen (of oppervlakte), zodat de ringen bij Darts kloppen |
+| Provincies | De 12 provincies | Voor Nederland en Straatjacht. Raken de plaatsen op, dan eerst andere plaatsen in die provincies, pas daarna een herhaling |
+| Plaatsen, Straatjacht speelt in, Beeld | Als in de losse modi | Alleen zichtbaar als een modus die ze gebruikt meedoet |
+| Finale telt dubbel | Aan of uit | Laatste ronde x2 punten |
+
+* Tik bij continenten of provincies vanuit "alles aan" op één tegel: dan staat alleen die aan. Tik meer om toe te voegen, **Alle** zet alles terug.
+* De host maakt het schema bij de start. Elke ronde begint met een kaartje (ronde, modus, uitleg) en de rondechip toont de modus.
+* Op het uitslagscherm zie je het schema (gespeeld, nu, nog te gaan) en de volgende modus op de knop. Het eindscherm toont punten per modus, de beste per modus in goud.
+* Geen foto of straatdata: die ronde wordt Satelliet of Nederland en telt ook zo.
+* Statistieken tellen een toernooi als eigen modus. Instellingen staan in `CONFIG.tour`.
 
 ## Avatars en kleuren
 
