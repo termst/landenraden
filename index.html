@@ -924,18 +924,23 @@ const CONFIG = {
   reserveMs: 30000,
   joinTimeoutMs: 15000,
   resultAutoMs: 8000,
-  score: { correct: 1000, perHint: 100, continent: 100, min: 300, timeBase: 0.6, timeWeight: 0.4 },
+  // Punten per ronde = max x nauwkeurigheid x hintfactor x tijdfactor (zie scoreFor, huntScore, dartScore).
+  // hintCut: alle hints gezien kost zoveel. giveaway: factor na een hint die het antwoord verklapt (naam).
+  // nearShare/nearKm/nlNearKm: fout maar dichtbij, max deel en afvalafstand. latencyMs: zoveel vertraging compenseert de host.
+  score: { max: 1000, timeBase: 0.7, timeWeight: 0.3, hintCut: 0.5, giveaway: 0.1, nearShare: 0.25, nearKm: 400, nlNearKm: 10, latencyMs: 1500 },
   zoom: { easy: 6, normal: 7, hard: 8 },
   pan:  { easy: 3, normal: 1.2, hard: 0 },
   // Nederland-modus: zoom en beweegruimte op plaatsniveau, en hoe ver rond een plaats we zoeken.
-  nl: { zoom: { easy: 13, normal: 14, hard: 15 }, pan: { easy: 0.15, normal: 0.06, hard: 0 }, photoRadius: 0.03, nearKm: 25, tries: 8 },
+  nl: { zoom: { easy: 13, normal: 14, hard: 15 }, pan: { easy: 0.15, normal: 0.06, hard: 0 }, photoRadius: 0.03, tries: 8 },
   // Straatbeeld: Panoramax (open data, geen key nodig). radius in graden rond een willekeurig punt.
   street: { api: 'https://api.panoramax.xyz/api/search', tries: 10, radius: 2, limit: 50, flatFov: 65, loadMs: 6000 },
-  // Straatjacht: namen van OpenStreetMap via Nominatim (geen key, max 1 verzoek per seconde). hit/good/half in meters.
+  // Straatjacht: namen van OpenStreetMap via Nominatim (geen key, max 1 verzoek per seconde). hit/good in meters.
+  // falloffFrac en halfFrac zijn een deel van de straal, zodat elke moeilijkheid even streng is. scanShare: zoveel hangt af van ongebruikte scans.
   hunt: { radius: { easy: 800, normal: 1200, hard: 1700 }, scans: { easy: 8, normal: 6, hard: 4 }, timeoutMs: 9000, gapMs: 1100, tries: 6, poiChance: .3,
-    hitStreet: 18, hitPoi: 25, goodM: 30, halfM: 300, falloff: 200, scanBonus: 20, circleM: 220 },
-  // Darts: ringen in km rond de plek en punten per ring (de laatste is naast het bord). dblRings: zoveel binnenste ringen tellen dubbel bij x2.
-  darts: { km: [150, 400, 800, 1600, 3200], pts: [1000, 700, 450, 250, 100, 0], perHint: .08, hintMin: .6, dblRings: 2 },
+    hitStreet: 18, hitPoi: 25, goodM: 30, halfFrac: .25, falloffFrac: .17, scanShare: .15, circleM: 220 },
+  // Darts: ringen in km rond de plek (wereld). Punten lopen vloeiend af: vol tot plateauKm, daarna e^(-afstand/falloffKm).
+  // scale: ringen en afval per continent, zodat afstand overal evenveel uitmaakt. dblRings: zoveel binnenste ringen tellen dubbel bij x2.
+  darts: { km: [150, 400, 800, 1600, 3200], plateauKm: 25, falloffKm: 1500, dblRings: 2, scale: { ALL: 1, AM: .85, AS: .75, AF: .6, OC: .55, EU: .33 } },
   // Kaartlaag. Satelliet zonder labels. Wissel hier voor Mapbox/Google tiles (zie README).
   tiles: {
     main: { url: 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', attr: 'Tiles &copy; Esri', maxZoom: 18 },
@@ -969,6 +974,8 @@ const HINT_ICON = { geo:'g-geo', people:'i-users', money:'g-money', codes:'g-cod
 const CUR_FIX = { ZW:['ZWG','USD'], FM:['USD'], SL:['SLE'], BG:['EUR'], CU:['CUP'], PS:['ILS','JOD'], EH:['MAD'], SV:['USD'], CD:['CDF','USD'], LR:['LRD','USD'], VE:['VES','USD'], TL:['USD'], ZM:['ZMW'], KH:['KHR','USD'], PA:['PAB','USD'], EC:['USD'], MH:['USD'], PW:['USD'], KI:['AUD'], TV:['AUD'], NR:['AUD'], LI:['CHF'], MC:['EUR'], SM:['EUR'], VA:['EUR'], AD:['EUR'], XK:['EUR'], ME:['EUR'], HR:['EUR'], SK:['EUR'] };
 
 /* ================= I18N ================= */
+// Voor de spelregels: deel als procent, en de afstand waarop e^(-d/km) halveert.
+const pc = x => Math.round(x*100) + '%', halfKm = km => Math.round(km*Math.LN2);
 const I18N = {
  nl: {
   yourName:'Naam', yourColor:'Kleur', yourAvatar:'Avatar', av_letter:'Letter', av_angler:'Hengelaarsvis', av_shroom:'Vliegenzwam', av_face:'Gekke bek', av_apple:'Appel', av_ufo:'Ufo', av_duck:'Badeend', av_cactus:'Cactus', av_cat:'Kat', av_fox:'Vos', av_owl:'Uil', av_bear:'Beer', av_fish:'Vis', av_ghost:'Spook', av_robot:'Robot', av_skull:'Schedel', av_rocket:'Raket', av_planet:'Planeet', av_star:'Ster', av_xavi:'Xavi', av_crown:'Kroon', av_diamond:'Diamant', av_flame:'Vlam', av_pizza:'Pizza', customColor:'Eigen kleur kiezen', create:'Maak kamer', join:'Join', solo:'Solo',
@@ -984,7 +991,7 @@ const I18N = {
   noAnswer:'geen', finalTitle:'Eindstand', correct:'Goed', rematch:'Opnieuw',
   bestRound:'Beste ronde', fastest:'Snelste goed', mostCorrect:'Meeste goed',
   myStats:'Statistieken', stNote:'Bewaard in deze browser, zonder account. Wis je je browsergegevens, dan is het weg. Bewaar dus een back-up code.', stNoStore:'Deze browser blokkeert opslag. Je statistieken verdwijnen als je de pagina sluit.',
-  stGames:'Potjes', stMulti:'{n} met anderen', stWins:'Gewonnen', stOf:'van {n}', stPoints:'Punten', stAvg:'Gemiddeld', stBestGame:'Beste potje', stRounds:'Rondes', stModes:'Per modus', stRecent:'Laatste potjes', stBest:'Beste',
+  stGames:'Potjes', stMulti:'{n} met anderen', stWins:'Gewonnen', stOf:'van {n}', stPoints:'Punten', stAvg:'Gemiddeld per ronde', stPerRound:'gemiddeld per ronde', stBestGame:'Beste potje', stRounds:'Rondes', stModes:'Per modus', stRecent:'Laatste potjes', stBest:'Beste per ronde',
   stEmpty:'Nog geen potjes. Speel er een uit tot het eindscherm.', backup:'Back-up', backupHelp:'Kopieer de code en plak hem op een ander apparaat of na het wissen van je browser. Naam, kleur, avatar, instellingen en statistieken gaan mee.',
   bkCopy:'Kopieer code', bkLoad:'Herstel', bkCopied:'Code gekopieerd', bkPaste:'Plak eerst een code', bkBad:'Ongeldige code', bkConfirm:'Dit vervangt je profiel en statistieken op dit apparaat. Doorgaan?', stReset:'Statistieken wissen', stResetQ:'Alle statistieken wissen? Dit kan niet terug.', newRecord:'Nieuw record!',
   searching:'Kamer {c} zoeken', searchingSub:'Kan 5 tot 10 seconden duren.',
@@ -1031,13 +1038,16 @@ const I18N = {
    <li>Iedereen ziet dezelfde plek, op satelliet of straatbeeld.</li>
    <li>Hints komen vanzelf vrij, van vaag naar concreet. <b>Hint nu</b> werkt als iedereen het wil.</li>
    <li>Je eerste antwoord telt.</li>
-   <li><b>Goed</b> geeft 1000 punten, min 100 per extra hint, maal 60% plus 40% van je resterende tijd. Minimaal 300.</li>
-   <li><b>Goed continent</b> geeft 100 punten.</li>
+   <li><b>Punten</b> per ronde, in elke modus: ${CONFIG.score.max} maal hoe goed je zit, maal je hints, maal je tijd.</li>
+   <li><b>Hints</b>: de eerste is gratis. Alle hints gezien kost ${pc(CONFIG.score.hintCut)}, sterkere hints kosten meer. Dat geldt ook bij 4 of 8 hints. Na de hint met de naam zelf krijg je nog ${pc(CONFIG.score.giveaway)}.</li>
+   <li><b>Tijd</b>: ${pc(CONFIG.score.timeBase)} plus ${pc(CONFIG.score.timeWeight)} van je resterende tijd.</li>
+   <li><b>Fout land</b>: hoe dichter je land bij de plek ligt, hoe meer, tot ${pc(CONFIG.score.nearShare)}. Elke ${halfKm(CONFIG.score.nearKm)} km verder halveert het. Op hetzelfde moment wint goed altijd van fout.</li>
    <li><b>Makkelijk</b> is ver uitgezoomd en bewegen mag. <b>Moeilijk</b> is ver ingezoomd en niet bewegen.</li>
    <li><b>Straatbeeld</b> gebruikt beelden van Panoramax. Op moeilijk kun je niet rondkijken.</li>
-   <li><b>Nederland</b>: een willekeurige plek in Nederland, jij raadt de plaats. Dichtstbijzijnde plaats uit de lijst is het juiste antwoord. Een gok binnen 25 km of in dezelfde provincie geeft 100 punten.</li>
-   <li><b>Straatjacht</b>: je krijgt een straat of gebouw en een kaart zonder namen. Elke tik is een scan: je ziet wat daar ligt en hoe warm je zit. Raak je het doel, dan ben je klaar. Anders telt je laatste pin: hoe dichterbij en hoe sneller, hoe meer punten. Op moeilijk krijg je minder scans en alleen warmer of kouder.</li>
-   <li><b>Darts</b>: je ziet de plek, opent de <b>kaart</b> en gooit een pijltje. Roos (binnen ${CONFIG.darts.km[0]} km) geeft ${CONFIG.darts.pts[0]} punten, daarna ${CONFIG.darts.pts.slice(1,-1).join(', ')} tot ${CONFIG.darts.km.at(-1)} km. Sneller gooien en minder hints geeft meer. <b>x2</b> is dubbel of niks: roos of binnenring telt dubbel, daarbuiten krijg je 0. Alleen op makkelijk staan er namen op de kaart. Niet gegooid? Dan telt je pijltje bij het einde van de tijd, zonder tijdbonus.</li>
+   <li><b>Nederland</b>: een willekeurige plek in Nederland, jij raadt de plaats. Dichtstbijzijnde plaats uit de lijst is het juiste antwoord. Fout telt naar afstand tot de plek, tot ${pc(CONFIG.score.nearShare)}, halveert per ${halfKm(CONFIG.score.nlNearKm)} km.</li>
+   <li><b>Straatjacht</b>: je krijgt een straat of gebouw en een kaart zonder namen. Elke tik is een scan: je ziet wat daar ligt en hoe warm je zit. Raak je het doel, dan ben je klaar. Anders telt je laatste pin: hoe dichterbij, hoe meer, in verhouding tot de grootte van het gebied. Ongebruikte scans tellen voor ${pc(CONFIG.hunt.scanShare)}. Op moeilijk krijg je minder scans en alleen warmer of kouder.</li>
+   <li><b>Darts</b>: je ziet de plek, opent de <b>kaart</b> en gooit een pijltje. Punten lopen vloeiend af met de afstand: op de wereld halveert het per ${halfKm(CONFIG.darts.falloffKm)} km. De ringen schalen met het continent (roos: wereld ${CONFIG.darts.km[0]} km, Europa ${Math.round(CONFIG.darts.km[0]*CONFIG.darts.scale.EU)} km). <b>x2</b> is dubbel of niks: roos of binnenring telt dubbel, daarbuiten krijg je 0. Alleen op makkelijk staan er namen op de kaart. Niet gegooid? Dan telt je pijltje bij het einde van de tijd, zonder tijdbonus.</li>
+   <li><b>Gelijke stand</b>: meeste goed wint, daarna het snelste goede antwoord.</li>
   </ul>`,
  },
  en: {
@@ -1054,7 +1064,7 @@ const I18N = {
   noAnswer:'none', finalTitle:'Standings', correct:'Correct', rematch:'Play again',
   bestRound:'Best round', fastest:'Fastest correct', mostCorrect:'Most correct',
   myStats:'Stats', stNote:'Saved in this browser, no account. Clearing your browser data deletes it, so keep a backup code.', stNoStore:'This browser blocks storage. Your stats disappear when you close the page.',
-  stGames:'Games', stMulti:'{n} with others', stWins:'Won', stOf:'of {n}', stPoints:'Points', stAvg:'Average', stBestGame:'Best game', stRounds:'Rounds', stModes:'Per mode', stRecent:'Recent games', stBest:'Best',
+  stGames:'Games', stMulti:'{n} with others', stWins:'Won', stOf:'of {n}', stPoints:'Points', stAvg:'Average per round', stPerRound:'average per round', stBestGame:'Best game', stRounds:'Rounds', stModes:'Per mode', stRecent:'Recent games', stBest:'Best per round',
   stEmpty:'No games yet. Play one through to the final screen.', backup:'Backup', backupHelp:'Copy the code and paste it on another device or after clearing your browser. Name, color, avatar, settings and stats are included.',
   bkCopy:'Copy code', bkLoad:'Restore', bkCopied:'Code copied', bkPaste:'Paste a code first', bkBad:'Invalid code', bkConfirm:'This replaces your profile and stats on this device. Continue?', stReset:'Clear stats', stResetQ:'Clear all stats? This cannot be undone.', newRecord:'New record!',
   searching:'Looking for room {c}', searchingSub:'Can take 5 to 10 seconds.',
@@ -1101,13 +1111,16 @@ const I18N = {
    <li>Everyone sees the same spot, on satellite or street view.</li>
    <li>Hints unlock over time, vague to specific. <b>Hint now</b> works when everyone wants it.</li>
    <li>Your first answer counts.</li>
-   <li><b>Correct</b> gives 1000 points, minus 100 per extra hint, times 60% plus 40% of your remaining time. Minimum 300.</li>
-   <li><b>Right continent</b> gives 100 points.</li>
+   <li><b>Points</b> per round, in every mode: ${CONFIG.score.max} times how close you are, times your hints, times your time.</li>
+   <li><b>Hints</b>: the first is free. Seeing all hints costs ${pc(CONFIG.score.hintCut)}, stronger hints cost more. Same with 4 or 8 hints. After the hint that shows the name itself you get ${pc(CONFIG.score.giveaway)}.</li>
+   <li><b>Time</b>: ${pc(CONFIG.score.timeBase)} plus ${pc(CONFIG.score.timeWeight)} of your remaining time.</li>
+   <li><b>Wrong country</b>: the closer your country is to the spot, the more, up to ${pc(CONFIG.score.nearShare)}. It halves every ${halfKm(CONFIG.score.nearKm)} km further. At the same moment, right always beats wrong.</li>
    <li><b>Easy</b> is zoomed out and moving is allowed. <b>Hard</b> is zoomed in with no moving.</li>
    <li><b>Street view</b> uses photos from Panoramax. On hard you cannot look around.</li>
-   <li><b>Netherlands</b>: a random spot in the Netherlands, you guess the place. The nearest place on the list is the right answer. A guess within 25 km or in the same province gives 100 points.</li>
-   <li><b>Street hunt</b>: you get a street or building and a map without names. Every tap is a scan: you see what is there and how warm you are. Hit the target and you are done. Otherwise your last pin counts: closer and faster means more points. On hard you get fewer scans and only warmer or colder.</li>
-   <li><b>Darts</b>: you see the spot, open the <b>map</b> and throw a dart. Bullseye (within ${CONFIG.darts.km[0]} km) gives ${CONFIG.darts.pts[0]} points, then ${CONFIG.darts.pts.slice(1,-1).join(', ')} up to ${CONFIG.darts.km.at(-1)} km. Throwing faster with fewer hints scores more. <b>x2</b> is double or nothing: bullseye or inner ring counts double, anything else scores 0. Only easy shows names on the map. Did not throw? Your dart counts when time runs out, without time bonus.</li>
+   <li><b>Netherlands</b>: a random spot in the Netherlands, you guess the place. The nearest place on the list is the right answer. A wrong guess counts by distance to the spot, up to ${pc(CONFIG.score.nearShare)}, halving every ${halfKm(CONFIG.score.nlNearKm)} km.</li>
+   <li><b>Street hunt</b>: you get a street or building and a map without names. Every tap is a scan: you see what is there and how warm you are. Hit the target and you are done. Otherwise your last pin counts: the closer, the more, relative to the size of the area. Unused scans count for ${pc(CONFIG.hunt.scanShare)}. On hard you get fewer scans and only warmer or colder.</li>
+   <li><b>Darts</b>: you see the spot, open the <b>map</b> and throw a dart. Points drop smoothly with distance: on the world map they halve every ${halfKm(CONFIG.darts.falloffKm)} km. The rings scale with the continent (bullseye: world ${CONFIG.darts.km[0]} km, Europe ${Math.round(CONFIG.darts.km[0]*CONFIG.darts.scale.EU)} km). <b>x2</b> is double or nothing: bullseye or inner ring counts double, anything else scores 0. Only easy shows names on the map. Did not throw? Your dart counts when time runs out, without time bonus.</li>
+   <li><b>Ties</b>: most correct wins, then the fastest correct answer.</li>
   </ul>`,
  }
 };
@@ -1729,28 +1742,36 @@ function huntHintValue(k, r){
 function huntScore(ans, r){
   if (!ans || !ans.pin) return { pts:0, kind:'none', dist:null };
   // Geraakt op naam (een ander stuk van dezelfde straat) telt als afstand 0.
-  const c = CONFIG.hunt, S_ = CONFIG.score, dist = ans.hit ? 0 : Math.round(huntClosest(ans.pin[0], ans.pin[1], r.hunt.g).d);
-  const base = 1000*Math.exp(-Math.max(0, dist-20)/c.falloff), left = Math.max(0, r.hunt.scans - (ans.scans||0));
-  const pts = Math.round(base*(S_.timeBase + S_.timeWeight*(ans.frac||0)) + (dist <= c.halfM ? left*c.scanBonus : 0));
-  return { pts, dist, kind: dist <= c.goodM ? 'good' : dist <= c.halfM ? 'half' : 'miss' };
+  // Afval schaalt met de straal: op moeilijk (groter gebied) telt dezelfde relatieve precisie even zwaar.
+  // Ongebruikte scans tellen naar verhouding (de eerste scan is nodig om iets te raken) en alleen zo zwaar als je dichtbij zit.
+  const c = CONFIG.hunt, rad = r.hunt.rad || c.radius.normal, dist = ans.hit ? 0 : Math.round(huntClosest(ans.pin[0], ans.pin[1], r.hunt.g).d);
+  const near = Math.exp(-Math.max(0, dist-20)/(rad*c.falloffFrac));
+  const left = Math.max(0, r.hunt.scans - (ans.scans||0)), spare = Math.min(1, left / Math.max(1, r.hunt.scans - 1));
+  const acc = near * (1 - c.scanShare + c.scanShare*spare);
+  return { pts: roundPts(acc, hintFactor(r, ans.hintsSeen, false), timeFactor(ans.frac)), dist, kind: dist <= c.goodM ? 'good' : dist <= rad*c.halfFrac ? 'half' : 'miss' };
 }
 const huntValidPin = p => Array.isArray(p) && p.length === 2 && p.every(Number.isFinite);
 
 /* ================= DARTS ================= */
 // Afstand over de bol (de wereldkaart is te groot voor de platte benadering van kmBetween).
 const gcKm = (lat1, lng1, lat2, lng2) => { const r = Math.PI/180, a = Math.sin((lat2-lat1)*r/2)**2 + Math.cos(lat1*r)*Math.cos(lat2*r)*Math.sin((lng2-lng1)*r/2)**2; return 12742*Math.asin(Math.min(1, Math.sqrt(a))); };
-const dartRing = d => { const i = CONFIG.darts.km.findIndex(km => d <= km); return i < 0 ? CONFIG.darts.km.length : i; };
+// Ringen en afval schalen met het gekozen continent: in Europa is de roos 50 km, op de wereld 150 km.
+const dartScale = s => CONFIG.darts.scale[s && s.continent] || 1;
+const dartKm = s => CONFIG.darts.km.map(km => Math.round(km * dartScale(s)));
+const dartRing = (d, km) => { const i = km.findIndex(k => d <= k); return i < 0 ? km.length : i; };
 const dartValidPin = p => huntValidPin(p) && Math.abs(p[0]) <= 90 && Math.abs(p[1]) <= 180;
 const wrapLng = x => ((x + 180) % 360 + 360) % 360 - 180;
 // Lengtegraad dicht bij een andere houden, zodat een lijn over de datumgrens de korte kant op loopt.
 const nearLng = (x, ref) => { while (x - ref > 180) x -= 360; while (x - ref < -180) x += 360; return x; };
 function dartScore(ans, r){
   if (!ans || !dartValidPin(ans.pin)) return { pts:0, kind:'none', dist:null, ring:null };
-  const C = CONFIG.darts, S_ = CONFIG.score, dist = gcKm(ans.pin[0], ans.pin[1], r.lat, r.lng), ring = dartRing(dist), hit = ring < C.dblRings;
-  const extra = Math.max(0, (ans.hintsSeen || 1) - 1);
-  let pts = C.pts[ring] * Math.max(C.hintMin, 1 - C.perHint*extra) * (S_.timeBase + S_.timeWeight*(ans.frac || 0));
+  // Vloeiend, zonder sprongen op de ringgrenzen. De ringen bepalen alleen x2 en de kleur.
+  const C = CONFIG.darts, sc = dartScale(H && H.settings), km = dartKm(H && H.settings);
+  const dist = gcKm(ans.pin[0], ans.pin[1], r.lat, r.lng), ring = dartRing(dist, km), hit = ring < C.dblRings;
+  const acc = Math.exp(-Math.max(0, dist - C.plateauKm*sc) / (C.falloffKm*sc));
+  let pts = roundPts(acc, hintFactor(r, ans.hintsSeen, false), timeFactor(ans.frac));
   if (ans.dbl) pts = hit ? pts*2 : 0;
-  return { pts: Math.round(pts), dist: Math.round(dist), ring, kind: hit ? 'good' : ring < C.km.length && !ans.dbl ? 'half' : 'miss' };
+  return { pts, dist: Math.round(dist), ring, kind: hit ? 'good' : ring < km.length && !ans.dbl ? 'half' : 'miss' };
 }
 // Cirkel van km rond een punt, echt over de bol. Lengtegraad loopt door (geen sprong bij de datumgrens).
 function geoCircle(lat, lng, km, n = 96){
@@ -1900,12 +1921,21 @@ const cnt = (v, max=1e12) => Number.isFinite(+v) && +v > 0 ? Math.min(Math.round
 function cleanStats(s){
   s = s && typeof s === 'object' ? s : {};
   const out = { v:1, games:cnt(s.games), multi:cnt(s.multi), wins:cnt(s.wins), rounds:cnt(s.rounds), correct:cnt(s.correct), points:cnt(s.points),
-    bestGame:cnt(s.bestGame), bestRound:cnt(s.bestRound), fastest:cnt(s.fastest) || null, modes:{}, hist:[] };
-  for (const m of SETTING_OPTS.mode){ const x = s.modes && s.modes[m]; if (x && cnt(x.games)) out.modes[m] = { games:cnt(x.games), best:cnt(x.best) }; }
+    bestGame:cnt(s.bestGame), bestAvg:cnt(s.bestAvg, 2000), bestRound:cnt(s.bestRound), fastest:cnt(s.fastest) || null, modes:{}, hist:[] };
+  for (const m of SETTING_OPTS.mode){ const x = s.modes && s.modes[m]; if (x && cnt(x.games)) out.modes[m] = { games:cnt(x.games), best:cnt(x.best), bestAvg:cnt(x.bestAvg, 2000) }; }
   if (Array.isArray(s.hist)) out.hist = s.hist.filter(h => h && typeof h.gid === 'string' && SETTING_OPTS.mode.includes(h.mode)).slice(0, HIST_MAX)
     .map(h => ({ gid:h.gid.slice(0,40), at:cnt(h.at,1e14), mode:h.mode, rounds:cnt(h.rounds,99), players:cnt(h.players,9) || 1, rank:cnt(h.rank,9) || 1, score:cnt(h.score), correct:cnt(h.correct,99) }));
+  // Oudere opslag zonder gemiddelde per ronde: aanvullen uit de laatste potjes.
+  for (const h of out.hist){
+    if (!h.rounds) continue;
+    const avg = gameAvg(h.score, h.rounds), md = out.modes[h.mode];
+    out.bestAvg = Math.max(out.bestAvg, avg);
+    if (md) md.bestAvg = Math.max(md.bestAvg, avg);
+  }
   return out;
 }
+// Een potje van 15 rondes heeft meer punten dan een van 5. Vergelijken gaat daarom per ronde.
+const gameAvg = (score, rounds) => rounds ? Math.round(score / rounds) : 0;
 let stats = (() => { try { return cleanStats(JSON.parse(store.get(STATS_KEY))); } catch(e){ return cleanStats(); } })();
 const saveStats = () => store.set(STATS_KEY, JSON.stringify(stats));
 // Wordt bij elk eindscherm aangeroepen. De game-id voorkomt dubbel tellen (opnieuw tekenen, hostwissel, pagina herladen).
@@ -1915,13 +1945,13 @@ function recordGame(){
   const gid = String(F.gid || (roomCode || 'solo') + F.ranking.map(r => r.score).join('.')).slice(0,40);   // oudere host zonder gid
   if (stats.hist.some(h => h.gid === gid)) return;
   const players = F.ranking.length, rank = 1 + F.ranking.filter(r => r.score > mine.score).length, mode = S.settings.mode;
-  const record = stats.games > 0 && mine.score > stats.bestGame;
+  const avg = gameAvg(mine.score, S.roundN), record = stats.games > 0 && avg > stats.bestAvg;
   stats.games++; stats.rounds += S.roundN; stats.correct += mine.correct; stats.points += mine.score;
   if (players > 1){ stats.multi++; if (rank === 1) stats.wins++; }
-  stats.bestGame = Math.max(stats.bestGame, mine.score); stats.bestRound = Math.max(stats.bestRound, mine.best || 0);
+  stats.bestGame = Math.max(stats.bestGame, mine.score); stats.bestAvg = Math.max(stats.bestAvg, avg); stats.bestRound = Math.max(stats.bestRound, mine.best || 0);
   if (mine.fastest != null && (!stats.fastest || mine.fastest < stats.fastest)) stats.fastest = mine.fastest;
-  const md = stats.modes[mode] = stats.modes[mode] || { games:0, best:0 };
-  md.games++; md.best = Math.max(md.best, mine.score);
+  const md = stats.modes[mode] = stats.modes[mode] || { games:0, best:0, bestAvg:0 };
+  md.games++; md.best = Math.max(md.best, mine.score); md.bestAvg = Math.max(md.bestAvg || 0, avg);
   stats.hist.unshift({ gid, at:Date.now(), mode, rounds:S.roundN, players, rank, score:mine.score, correct:mine.correct });
   stats.hist.length = Math.min(stats.hist.length, HIST_MAX);
   saveStats();
@@ -2173,7 +2203,15 @@ function hostHandle(msg, peerId){
       if (H.round.hunt ? !huntValidPin(p.pin) : H.round.darts ? !dartValidPin(p.pin) : !(isNL(H.settings) ? CITIES[p.code] : COUNTRIES[p.code])) return;
       const el = now() - H.round.startAt;
       let hintsSeen = H.round.hints.length, frac = Math.max(0, 1 - el / H.round.durationMs);
-      if (p.resend) { hintsSeen = Math.max(1, Math.min(hintsSeen, +p.hintsSeen||hintsSeen)); frac = Math.min(1, Math.max(0, +p.frac||0)); }
+      const cs = Math.round(+p.hintsSeen) || hintsSeen, cf = Number.isFinite(+p.frac) ? +p.frac : frac;
+      if (p.resend) { hintsSeen = Math.max(1, Math.min(hintsSeen, cs)); frac = Math.min(1, Math.max(0, cf)); }
+      else if (peerId !== selfId){
+        // Vertraging compenseren: de klok en hints van de speler tellen, maar maximaal latencyMs gunstiger dan wat de host ziet.
+        const lag = CONFIG.score.latencyMs, at = H.round.hintAt || [];
+        const sure = Math.max(1, H.round.hints.filter((_, i) => at[i] == null || now() - at[i] > lag).length);
+        hintsSeen = Math.max(sure, Math.min(hintsSeen, cs));
+        frac = Math.min(1, Math.max(frac, Math.min(cf, frac + lag / H.round.durationMs)));
+      }
       H.round.answers[player.id] = { code: p.code, hintsSeen, frac, ms: Math.round(H.round.durationMs*(1-frac)), order: H.round.order++, pin: p.pin, scans: +p.scans||0, hit: !!p.hit, dbl: !!p.dbl };
       if (!checkAllAnswered()) broadcast();
       break;
@@ -2220,6 +2258,7 @@ function releaseHints(){
   while (r.hints.length < r.hintKeys.length && (el >= r.hints.length * r.hintIntervalMs || r.hints.length < r.forced)){
     const k = r.hintKeys[r.hints.length];
     r.hints.push({ k, v: hintValue(k, r.code, r) });
+    (r.hintAt = r.hintAt || [])[r.hints.length - 1] = now();
     changed = true;
   }
   if (changed) r.wants = {};
@@ -2250,23 +2289,50 @@ function startHostLoop(){
     if (now() - H.round.startAt >= H.round.durationMs) endRound();
   }, 200);
 }
-function scoreFor(ans, code){
-  const S_ = CONFIG.score;
+/* ================= SCORE ================= */
+// Elke modus: punten = max x nauwkeurigheid (0..1) x hintfactor x tijdfactor. Fout telt met dezelfde factoren,
+// dus op hetzelfde moment wint goed altijd van fout.
+// Hintgewicht = 1 + rang (sterkere hints kosten meer). Straatjacht heeft eigen rangen.
+const HINT_RANK = Object.fromEntries([...HINT_DEFS, ...nlDefs].map(h => [h.k, h.r]).concat(Object.entries({ q_side:1, q_dist:1, q_hood:2, q_pc:2, q_near:2, q_circle:4 })));
+const GIVEAWAY = new Set(['name', 'n_name']);   // hints die het antwoord zelf geven
+const hintW = k => 1 + (HINT_RANK[k] ?? 3);
+// De eerste hint is gratis (iedereen ziet hem bij de start). Alle hints gezien kost hintCut, ongeacht hoeveel hints er in de lobby staan.
+// answerMode: land of plaats raden, waar de naam-hint het antwoord is.
+function hintFactor(r, seen, answerMode){
+  const S_ = CONFIG.score, keys = (r && r.hintKeys) || [], n = Math.max(1, Math.min(keys.length, seen || 1));
+  if (answerMode && keys.slice(0, n).some(k => GIVEAWAY.has(k))) return S_.giveaway;
+  const extra = keys.slice(1).filter(k => !answerMode || !GIVEAWAY.has(k));
+  const all = extra.reduce((a, k) => a + hintW(k), 0);
+  if (!all) return 1;
+  const used = keys.slice(1, n).reduce((a, k) => a + hintW(k), 0);
+  return 1 - S_.hintCut * Math.min(1, used / all);
+}
+const timeFactor = frac => CONFIG.score.timeBase + CONFIG.score.timeWeight * Math.min(1, Math.max(0, frac || 0));
+const roundPts = (acc, hf, tf) => Math.round(CONFIG.score.max * Math.max(0, Math.min(1, acc)) * hf * tf);
+// Kortste afstand (km) van een punt tot de grens van een land, via de hoekpunten. Het kader van een polygoon geeft een ondergrens.
+function kmToCountry(lat, lng, code){
+  const g = GEO[code]; if (!g) return Infinity;
+  let best = Infinity;
+  for (const p of g.polys){
+    const [a,b,c,d] = p.bbox, cl = gcKm(lat, lng, Math.min(d, Math.max(b, lat)), Math.min(c, Math.max(a, lng)));
+    if (cl - 200 >= best) continue;   // ruime marge: het kader in graden is op de bol geen exacte ondergrens
+    if (inPoly(lng, lat, p)) return 0;
+    for (const [x, y] of p.rings[0]){ const k = gcKm(lat, lng, y, x); if (k < best) best = k; }
+  }
+  return best;
+}
+function scoreFor(ans, r){
+  const S_ = CONFIG.score, code = r.code;
   if (!ans) return { pts:0, kind:'none' };
-  const nlTarget = CITIES[code];
-  if (nlTarget && ans.code !== code){
-    // Fout, maar dichtbij (25 km) of in dezelfde provincie: halve score
-    const g = CITIES[ans.code];
-    if (g && (kmBetween(g.lat, g.lng, nlTarget.lat, nlTarget.lng) <= CONFIG.nl.nearKm || g.prov === nlTarget.prov)) return { pts: S_.continent, kind:'half' };
-    return { pts:0, kind:'miss' };
-  }
-  if (ans.code === code){
-    const extra = Math.max(0, ans.hintsSeen - 1);
-    const raw = (S_.correct - S_.perHint*extra) * (S_.timeBase + S_.timeWeight*ans.frac);
-    return { pts: Math.round(Math.max(S_.min, raw)), kind:'good' };
-  }
-  if (COUNTRIES[ans.code] && COUNTRIES[ans.code].cont === COUNTRIES[code].cont) return { pts: S_.continent, kind:'half' };
-  return { pts:0, kind:'miss' };
+  const hf = hintFactor(r, ans.hintsSeen, true), tf = timeFactor(ans.frac);
+  if (ans.code === code) return { pts: roundPts(1, hf, tf), kind:'good' };
+  // Fout: hoe dichter je gok bij de plek ligt, hoe meer (max nearShare). De continent- of provinciehint is al gegeven, die telt niet.
+  const nl = !!CITIES[code], g = nl ? CITIES[ans.code] : COUNTRIES[ans.code];
+  if (!g) return { pts:0, kind:'miss' };
+  const d = nl ? kmBetween(g.lat, g.lng, r.lat, r.lng) : kmToCountry(r.lat, r.lng, ans.code);
+  const acc = S_.nearShare * Math.exp(-d / (nl ? S_.nlNearKm : S_.nearKm));
+  const pts = roundPts(acc, hf, tf);
+  return { pts, kind: pts > 0 && d <= (nl ? 1.5*S_.nlNearKm : 1.6*S_.nearKm) ? 'half' : 'miss' };
 }
 function endRound(){
   const r = H.round; if (!r || H.phase !== 'round') return;
@@ -2274,7 +2340,7 @@ function endRound(){
     // Straatjacht en darts: wie niet vastzette maar wel een pin had, krijgt die pin (zonder tijdbonus).
     const pinMode = r.hunt || r.darts;
     const a = r.answers[p.id] || (pinMode && r.pins && r.pins[p.id] ? { ...r.pins[p.id], frac:0, ms:null, order:98, hintsSeen:r.hints.length } : undefined);
-    const s = r.hunt ? huntScore(a, r) : r.darts ? dartScore(a, r) : scoreFor(a, r.code);
+    const s = r.hunt ? huntScore(a, r) : r.darts ? dartScore(a, r) : scoreFor(a, r);
     p.score += s.pts;
     if (s.kind==='good'){ p.correct++; if (a.ms != null && (p.fastest==null || a.ms < p.fastest)) p.fastest = a.ms; }
     if (s.pts > p.best) p.best = s.pts;
@@ -2283,6 +2349,7 @@ function endRound(){
   }).sort((a,b)=> b.pts-a.pts || a.order-b.order);
   const mid = r.hunt ? huntMid(r.hunt.g) : [r.lat, r.lng];
   H.result = { roundId: r.id, n: r.n, code: r.code, lat: mid[0], lng: mid[1], photo: r.photo, rows, last: H.roundN >= H.settings.rounds, nextAt: CONFIG.resultAutoMs, darts: !!r.darts,
+    dkm: r.darts ? dartKm(H.settings) : null,
     hunt: r.hunt ? { n:r.hunt.n, k:r.hunt.k, city:r.hunt.city, g:r.hunt.g } : null };
   H.phase = 'result'; H.round = null;
   scheduleAutoNext(); huntPreload(H); broadcast();
@@ -2295,7 +2362,9 @@ function scheduleAutoNext(){
 function finish(){
   clearTimeout(H.autoNext);
   H.phase = 'final';
-  H.final = { gid: Math.random().toString(36).slice(2,10), ranking: H.players.slice().sort((a,b)=>b.score-a.score).map(p=>({ id:p.id, score:p.score, correct:p.correct, best:p.best, fastest:p.fastest })) };
+  // Gelijke stand: meeste goed, dan snelste goede antwoord.
+  const fast = p => p.fastest == null ? Infinity : p.fastest;
+  H.final = { gid: Math.random().toString(36).slice(2,10), ranking: H.players.slice().sort((a,b)=>b.score-a.score || b.correct-a.correct || fast(a)-fast(b)).map(p=>({ id:p.id, score:p.score, correct:p.correct, best:p.best, fastest:p.fastest })) };
   broadcast();
 }
 function publicState(){
@@ -2866,12 +2935,12 @@ function drawResultMap(R){
   }
   if (R.darts){
     // Dartbord rond de plek (ringen als banden, zodat de vulling niet optelt), het land, en ieders pijltje.
-    const C = CONFIG.darts, rows = R.rows.filter(row => row.pin);
-    const rings = C.km.map(km => ({ km, pts: geoCircle(R.lat, R.lng, km) })).filter(x => Math.abs(R.lat) + x.km/111.2 < 89);
+    const KM = R.dkm || CONFIG.darts.km, rows = R.rows.filter(row => row.pin);   // ringen geschaald naar het continent
+    const rings = KM.map(km => ({ km, pts: geoCircle(R.lat, R.lng, km) })).filter(x => Math.abs(R.lat) + x.km/111.2 < 89);
     const darts = rows.map(row => ({ row, ll: [row.pin[0], nearLng(row.pin[1], R.lng)] }));
     // In beeld: de ring van het verste pijltje helemaal (minstens de binnenring), plus pijltjes die naast het bord liggen.
-    const far = Math.min(C.km.length - 1, Math.max(1, ...darts.map(d => d.row.ring)));
-    const fit = L.latLngBounds(geoCircle(R.lat, R.lng, C.km[far], 24));
+    const far = Math.min(KM.length - 1, Math.max(1, ...darts.map(d => d.row.ring)));
+    const fit = L.latLngBounds(geoCircle(R.lat, R.lng, KM[far], 24));
     darts.forEach(d => fit.extend(d.ll));
     rmap.fitBounds(fit, { padding:[24,24], maxZoom:7, animate:false });
     const g = GEO[R.code];
@@ -3052,9 +3121,9 @@ function renderStats(){
     [t('stWins'), nf(s.wins), pct(s.wins, s.multi)],
     [t('correct'), nf(s.correct), s.rounds ? pct(s.correct, s.rounds) + ' ' + t('stOf', { n:s.rounds }) : ''],
     [t('stPoints'), nf(s.points), ''],
-    [t('stAvg'), any ? nf(Math.round(s.points / s.games)) : '-', ''],
+    [t('stAvg'), any && s.rounds ? nf(gameAvg(s.points, s.rounds)) : '-', ''],
     [t('stRounds'), nf(s.rounds), ''],
-    [t('stBestGame'), dash(s.bestGame), ''],
+    [t('stBestGame'), dash(s.bestAvg), any ? t('stPerRound') : ''],
     [t('bestRound'), dash(s.bestRound), ''],
     [t('fastest'), s.fastest ? (s.fastest / 1000).toFixed(1) + 's' : '-', ''],
   ].map(([k, v, i]) => `<div class="stat"><small>${esc(k)}</small><b>${esc(v)}</b><i>${esc(i)}</i></div>`).join('');
@@ -3063,7 +3132,7 @@ function renderStats(){
   const date = ms => new Date(ms).toLocaleDateString(lang === 'nl' ? 'nl-NL' : 'en-GB', { day:'numeric', month:'short' });
   $('#stMore').innerHTML =
     `<label>${esc(t('stModes'))}</label><table><thead><tr><th>${esc(t('mode'))}</th><th class="n">${esc(t('stGames'))}</th><th class="n">${esc(t('stBest'))}</th></tr></thead><tbody>` +
-    modes.map(m => `<tr><td>${esc(t(m))}</td><td class="n">${nf(s.modes[m].games)}</td><td class="n">${nf(s.modes[m].best)}</td></tr>`).join('') + '</tbody></table>' +
+    modes.map(m => `<tr><td>${esc(t(m))}</td><td class="n">${nf(s.modes[m].games)}</td><td class="n">${nf(s.modes[m].bestAvg || 0)}</td></tr>`).join('') + '</tbody></table>' +
     `<label>${esc(t('stRecent'))}</label><table><tbody>` +
     s.hist.slice(0, 10).map(h => `<tr><td>${esc(date(h.at))}</td><td>${esc(t(h.mode))}</td><td class="n">${h.players > 1 ? '#' + h.rank + '/' + h.players : esc(t('solo'))}</td><td class="n">${h.correct}/${h.rounds}</td><td class="n">${nf(h.score)}</td></tr>`).join('') + '</tbody></table>';
 }
