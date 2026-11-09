@@ -165,14 +165,12 @@ span.pill{cursor:default}
 .seg.ro button{pointer-events:none}
 .seg.sm button{font-size:12.5px;padding:5px 1px}
 .seg.modes{display:grid;grid-template-columns:1fr 1fr;gap:8px;background:none;padding:0;box-shadow:none;border-radius:0}
-.seg.modes button{--mc:var(--acc);display:flex;align-items:center;justify-content:flex-start;gap:9px;min-height:52px;padding:7px 8px;text-align:left;font-weight:700;font-size:15px;line-height:1.1;color:var(--ink2);background:var(--card2);border:1.5px solid transparent;border-radius:14px;box-shadow:var(--shadow);transition:background .15s,border-color .15s,color .15s,transform .1s}
+.seg.modes button{display:flex;align-items:center;justify-content:flex-start;gap:9px;min-height:52px;padding:7px 8px;text-align:left;font-weight:700;font-size:15px;line-height:1.1;color:var(--ink2);background:var(--card2);border:1.5px solid transparent;border-radius:14px;box-shadow:var(--shadow);transition:background .15s,border-color .15s,color .15s,transform .1s}
 .seg.modes button:active{transform:scale(.97)}
-.seg.modes button[data-val=map]{--mc:#3f78a8}
-.seg.modes button[data-val=street]{--mc:#3e8a63}
-.seg.modes button[data-val=dutch]{--mc:#c26c2e}
-.seg.modes button[data-val=hunt]{--mc:#7563b0}
-.seg.modes button[data-val=darts]{--mc:#b44f63}
-.seg.modes button[data-val=shape]{--mc:#a8823a}
+/* Kleur per modus: knoppen, tegels, schema en HUD lezen allemaal --mc */
+[data-m]{--mc:var(--acc)}
+[data-m=map]{--mc:#3f78a8}[data-m=street]{--mc:#3e8a63}[data-m=dutch]{--mc:#c26c2e}[data-m=hunt]{--mc:#7563b0}[data-m=darts]{--mc:#b44f63}[data-m=shape]{--mc:#a8823a}[data-m=tour]{--mc:var(--gold)}
+#modeDesc{font-size:13px;line-height:1.35}
 /* Oneven aantal modi: de laatste over de hele breedte */
 .seg.modes button:last-child:nth-child(odd){grid-column:1/-1}
 .seg.modes .mi{width:36px;height:36px;flex:none;display:grid;place-items:center;border-radius:11px;color:color-mix(in srgb,var(--mc) 78%,var(--ink));background:color-mix(in srgb,var(--mc) 16%,transparent);transition:background .15s,color .15s}
@@ -183,6 +181,48 @@ span.pill{cursor:default}
 @media (hover:hover){.seg.modes button:not(.on):hover{border-color:var(--line)}}
 @media (max-width:380px){.seg.modes button{gap:7px;padding:7px;font-size:13px}.seg.modes .mi{width:32px;height:32px;border-radius:9px}.seg.modes .mi svg{width:23px;height:23px}}
 @media (max-width:335px){.seg.modes button{flex-direction:column;align-items:flex-start;gap:6px}}
+/* Toernooi: over de hele breedte, goud, met een geblokte finishvlag en een 3D pin op het podium */
+.seg.modes button.tourBtn{grid-column:1/-1;flex-direction:row;align-items:center;min-height:62px;padding:5px 14px 5px 6px;gap:10px;position:relative;overflow:hidden;isolation:isolate;color:var(--ink);
+  background:linear-gradient(100deg,color-mix(in srgb,var(--gold) 20%,var(--card2)),var(--card2) 58%);border-color:color-mix(in srgb,var(--gold) 45%,transparent);
+  box-shadow:0 3px 0 color-mix(in srgb,var(--gold) 35%,var(--line)),inset 0 1px 0 rgba(255,255,255,.12)}
+.tourBtn::before{content:'';position:absolute;top:-8px;bottom:-8px;right:-10px;width:46%;z-index:-1;transform:skewX(-14deg);opacity:.14;
+  background:repeating-conic-gradient(var(--ink) 0 25%,transparent 0 50%) 0 0/13px 13px;
+  -webkit-mask-image:linear-gradient(90deg,transparent,#000 78%);mask-image:linear-gradient(90deg,transparent,#000 78%)}
+.tourBtn::after{content:'';position:absolute;inset:0;z-index:-1;pointer-events:none;background:linear-gradient(105deg,transparent 35%,rgba(255,255,255,.24) 50%,transparent 65%);transform:translateX(-120%)}
+.tourBtn.go::after{animation:tourShine 1s .1s ease-out}
+@keyframes tourShine{to{transform:translateX(120%)}}
+.seg.modes .tourBtn .mi{width:50px;height:50px;border-radius:12px;background:radial-gradient(circle at 50% 64%,color-mix(in srgb,var(--gold) 26%,transparent),transparent 68%)}
+.seg.modes .tourBtn .mi svg{width:48px;height:48px;overflow:visible;filter:drop-shadow(0 2px 2px rgba(0,0,0,.3))}
+.seg.modes .tourBtn.on .mi{background:radial-gradient(circle at 50% 64%,color-mix(in srgb,var(--gold) 50%,transparent),transparent 70%)}
+.tourBtn.go .tp-pin{animation:pinHop .6s .05s cubic-bezier(.3,1.7,.5,1)}
+@keyframes pinHop{40%{transform:translateY(-5px)}}
+.tourBtn .ml{display:flex;flex-direction:column;gap:3px}
+.tourBtn .ml b{font-family:var(--display);font-weight:400;text-transform:uppercase;letter-spacing:.03em;font-size:21px;line-height:1}
+.tourBtn .ml small{font-size:12px;font-weight:700;color:var(--mute)}
+.seg.modes button.tourBtn.on{background:linear-gradient(100deg,color-mix(in srgb,var(--gold) 32%,var(--sel)),color-mix(in srgb,var(--gold) 7%,var(--sel)) 62%);border-color:var(--gold);
+  box-shadow:0 3px 0 color-mix(in srgb,var(--gold) 70%,#000),0 0 0 3px color-mix(in srgb,var(--gold) 20%,transparent)}
+.seg.modes button.tourBtn.on .ml small{color:var(--ink2)}
+@media (hover:hover){.seg.modes button.tourBtn:not(.on):hover{border-color:var(--gold)}}
+/* Toernooi-instellingen */
+.lrow{display:flex;justify-content:space-between;align-items:center;gap:8px;min-height:22px}
+.lrow .mini{min-height:22px;padding:2px 9px;font-size:11px;border-radius:7px}
+.chips.ico.c5{grid-template-columns:repeat(5,1fr)}
+.chips.ico .chipbtn.mc{color:color-mix(in srgb,var(--mc) 72%,var(--mute))}
+.chips.ico .chipbtn.mc svg{width:24px;height:24px;fill:currentColor}
+.chips.ico .chipbtn.mc.on{background:var(--mc);border-color:var(--mc);color:#fff}
+.chips.ico .chipbtn:not(.mc) .ic{width:26px;height:26px}
+.provs{display:grid;grid-template-columns:repeat(3,1fr);gap:5px}
+.provs .chipbtn{min-width:0;padding:7px 4px;border-radius:9px;font-size:13px;text-align:center;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.provs.ro .chipbtn{cursor:default}
+.provs.ro .chipbtn:not(.on){opacity:.6}
+.toggle .tl{display:flex;flex-direction:column;gap:2px;min-width:0}
+.toggle .tl small{font-size:12px;color:var(--mute)}
+.stepper{display:flex;align-items:center;gap:2px;background:var(--card2);border-radius:10px;padding:3px;box-shadow:0 1px 3px rgba(0,0,0,.16) inset;flex:none}
+.stepper button{width:40px;height:34px;display:grid;place-items:center;border:0;border-radius:8px;background:var(--sel);color:var(--ink);cursor:pointer;padding:0;box-shadow:0 1px 3px rgba(0,0,0,.28);touch-action:manipulation;user-select:none;-webkit-user-select:none;transition:transform .08s,opacity .15s}
+.stepper button:active{transform:scale(.92)}
+.stepper button:disabled{opacity:.3;pointer-events:none}
+.stepper b{min-width:46px;text-align:center;font-family:var(--display);font-weight:400;font-size:21px;line-height:1}
+.stepper.ro button{visibility:hidden}
 .seg.cont button{display:grid;place-items:center;padding:5px 1px;min-height:44px}
 .seg.cont button .ic{width:32px;height:32px;color:var(--mute);transition:color .15s}
 .seg.cont button.on .ic{color:var(--acc)}
@@ -346,6 +386,36 @@ body.chat-on .shapetag{top:calc(max(10px,env(safe-area-inset-top)) + 116px)}
 .dartPin{display:block;overflow:visible;transform-origin:4px 44px;filter:drop-shadow(0 2px 2px rgba(0,0,0,.55));animation:dartIn .32s cubic-bezier(.25,1.5,.5,1)}
 @keyframes dartIn{0%{transform:translate(22px,-26px) scale(1.5) rotate(-14deg);opacity:0}55%{opacity:1}80%{transform:rotate(4deg)}100%{transform:none}}
 .x2{display:inline-block;font-family:var(--display);font-weight:400;font-size:11px;line-height:1;padding:3px 5px 2px;border-radius:5px;background:var(--gold);color:var(--on-gold);vertical-align:1px}
+/* Toernooi in het spel: modus in de rondechip en een kaartje bij de start van elke ronde */
+#roundChip .rci{width:16px;height:16px;fill:var(--mc);vertical-align:-2px;margin-right:5px}
+#roundChip .x2{margin-left:5px;vertical-align:2px}
+#tourCard{position:absolute;left:50%;top:30%;z-index:650;display:none;align-items:center;gap:12px;width:max-content;max-width:min(370px,calc(100vw - 32px));padding:10px 16px 10px 10px;
+  background:var(--glass);-webkit-backdrop-filter:blur(12px);backdrop-filter:blur(12px);border:1px solid var(--line);border-left:5px solid var(--mc);border-radius:16px;box-shadow:var(--shadow-up),0 14px 34px rgba(0,0,0,.32);pointer-events:none;transform:translateX(-50%)}
+#tourCard.go{display:flex;animation:tcIn 3.2s cubic-bezier(.2,1.3,.4,1) both}
+@keyframes tcIn{0%{opacity:0;transform:translateX(-50%) translateY(14px) scale(.86)}10%{opacity:1;transform:translateX(-50%) scale(1)}86%{opacity:1;transform:translateX(-50%)}100%{opacity:0;transform:translateX(-50%) translateY(-8px)}}
+#tourCard .tci{width:48px;height:48px;flex:none;border-radius:13px;display:grid;place-items:center;background:var(--mc);color:#fff;box-shadow:0 3px 0 color-mix(in srgb,var(--mc) 60%,#000)}
+#tourCard .tci svg{width:32px;height:32px;fill:currentColor}
+#tourCard .tct{display:flex;flex-direction:column;gap:3px;min-width:0}
+#tourCard small{font-size:12px;font-weight:700;color:var(--mute);text-transform:uppercase;letter-spacing:.04em}
+#tourCard b{font-family:var(--display);font-weight:400;text-transform:uppercase;font-size:24px;line-height:1}
+#tourCard .x2{font-size:13px;vertical-align:4px}
+#tourCard i{font-style:normal;font-size:13px;line-height:1.3;color:var(--ink2)}
+/* Toernooischema op het uitslagscherm: gespeeld, nu, nog te gaan */
+.plan{display:flex;flex-wrap:wrap;gap:4px;align-items:center}
+.plan i{width:22px;height:22px;border-radius:7px;display:grid;place-items:center;color:color-mix(in srgb,var(--mc) 70%,var(--mute));box-shadow:inset 0 0 0 1.5px color-mix(in srgb,var(--mc) 45%,transparent);opacity:.55}
+.plan i svg{width:15px;height:15px;fill:currentColor}
+.plan i.done{opacity:1;background:color-mix(in srgb,var(--mc) 24%,transparent);box-shadow:none}
+.plan i.cur{opacity:1;background:var(--mc);color:#fff;box-shadow:0 0 0 2px var(--paper),0 0 0 3.5px var(--mc)}
+.plan .x2{margin-left:2px}
+.permode th svg{width:18px;height:18px;fill:var(--mc);vertical-align:middle}
+.permode th:first-child{font-size:12px}
+.permode td{padding:8px 4px}
+.permode td:first-child{max-width:96px}
+.permode td:first-child .row{display:flex;gap:6px;min-width:0}
+.permode td:first-child .row span:last-child{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.permode td.n{font-size:14px}
+.permode td.top{color:var(--gold)}
+.permode td.top::before{content:'';display:inline-block;width:7px;height:7px;border-radius:50%;background:var(--gold);margin-right:4px;vertical-align:1px}
 /* result */
 #rmap{height:36vh;min-height:220px;border-radius:var(--r);overflow:hidden;border:1px solid var(--line);flex:none;isolation:isolate;box-shadow:var(--shadow)}
 .answerbig{display:flex;align-items:center;gap:14px;min-width:0}
@@ -531,6 +601,15 @@ body[data-screen=game] #emoLayer{left:max(10px,env(safe-area-inset-left));transf
     <circle cx="5.7" cy="15.5" r="1.35" fill="#000"/>
     <circle cx="26.3" cy="15.5" r="1.35" fill="#000"/>
   </mask></defs>
+  <!-- Toernooi-icoon: rode 3D pin op een goud, zilver en brons podium -->
+  <defs>
+    <radialGradient id="tp-red" cx=".36" cy=".28" r=".85"><stop offset="0" stop-color="#ff9d77"/><stop offset=".36" stop-color="#ee5b2c"/><stop offset=".78" stop-color="#c13b12"/><stop offset="1" stop-color="#86240a"/></radialGradient>
+    <linearGradient id="tp-side" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#7c2108"/><stop offset="1" stop-color="#4a1203"/></linearGradient>
+    <radialGradient id="tp-hole" cx=".66" cy=".7" r=".85"><stop offset="0" stop-color="#fff"/><stop offset=".65" stop-color="#f6ebe5"/><stop offset="1" stop-color="#cdb3a6"/></radialGradient>
+    <linearGradient id="tp-g1" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffd76a"/><stop offset="1" stop-color="#b07a0c"/></linearGradient>
+    <linearGradient id="tp-g2" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#f2f4f7"/><stop offset="1" stop-color="#8e96a3"/></linearGradient>
+    <linearGradient id="tp-g3" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#f3a86c"/><stop offset="1" stop-color="#94501f"/></linearGradient>
+  </defs>
   <!-- Avatars: eenvoudige silhouetten, wit op de kleur van de speler -->
   <symbol id="av-angler" viewBox="0 0 32 32">
     <path d="M16.8 9.4C15.6 5 11.8 3.2 8.6 5" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" opacity=".9"/>
@@ -734,23 +813,31 @@ body[data-screen=game] #emoLayer{left:max(10px,env(safe-area-inset-left));transf
       <div class="players" id="lobbyPlayers"></div>
     </div>
     <div class="card" id="settingsCard">
-      <div class="field"><label data-i="mode"></label><div class="seg modes" data-set="mode" data-opts="map,street,dutch,hunt,darts,shape"></div><p class="sub" id="modeDesc"></p></div>
-      <div class="field" data-for="hunt"><label data-i="huntCity" for="huntCity"></label><select id="huntCity"></select></div>
-      <div class="field" data-for="dutch hunt" id="nlPlacesField"><label data-i="nlPlaces"></label><div class="seg" data-set="nlPlaces" data-opts="all,big,towns"></div></div>
-      <div class="field" data-for="dutch darts"><label data-i="nlView"></label><div class="seg" data-set="nlView" data-opts="sat,photo"></div></div>
-      <div class="field"><label data-i="rounds"></label><div class="seg" data-set="rounds" data-opts="5,10,15"></div></div>
+      <div class="field"><label data-i="mode"></label><div class="seg modes" data-set="mode" data-opts="map,street,dutch,hunt,darts,shape,tour"></div><p class="sub" id="modeDesc"></p></div>
+      <div class="field" data-for="tour"><div class="lrow"><label data-i="tourModes"></label><button class="mini" data-all="tourModes" data-i="allOn"></button></div><div class="chips ico" id="tourModes" data-tset="tourModes" role="group"></div></div>
+      <div class="field" data-for="tour"><label data-i="tourOrder"></label><div class="seg" data-set="tourOrder" data-opts="mix,cycle,block"></div></div>
+      <div class="toggle" data-for="tour"><div class="tl"><label data-i="rounds"></label><small id="tourSplit"></small></div>
+        <div class="stepper" id="tourStep"><button type="button" data-step="-1" aria-label="-1"><svg class="ic"><use href="#i-minus"/></svg></button><b id="tourRoundsVal" aria-live="polite"></b><button type="button" data-step="1" aria-label="+1"><svg class="ic"><use href="#i-plus"/></svg></button></div></div>
+      <div class="field" data-for="tour"><label data-i="difficulty"></label><div class="seg" data-set="tourDiff" data-opts="easy,normal,hard,rise"></div></div>
+      <div class="field" data-for="tour" data-tm="map street darts shape"><div class="lrow"><label data-i="tourConts"></label><button class="mini" data-all="tourConts" data-i="allOn"></button></div><div class="chips ico c5" id="tourConts" data-tset="tourConts" role="group"></div></div>
+      <div class="field" data-for="tour" data-tm="dutch hunt" id="tourProvsField"><div class="lrow"><label data-i="tourProvs"></label><button class="mini" data-all="tourProvs" data-i="allOn"></button></div><div class="provs" id="tourProvs" data-tset="tourProvs" role="group"></div></div>
+      <div class="field" data-for="hunt tour" data-tm="hunt"><label id="huntCityLbl" data-i="huntCity" for="huntCity"></label><select id="huntCity"></select></div>
+      <div class="field" data-for="dutch hunt tour" data-tm="dutch hunt" id="nlPlacesField"><label data-i="nlPlaces"></label><div class="seg" data-set="nlPlaces" data-opts="all,big,towns"></div></div>
+      <div class="field" data-for="dutch darts tour" data-tm="dutch darts"><label data-i="nlView"></label><div class="seg" data-set="nlView" data-opts="sat,photo"></div></div>
+      <div class="field" data-for="world dutch hunt"><label data-i="rounds"></label><div class="seg" data-set="rounds" data-opts="5,10,15"></div></div>
       <div class="field"><label data-i="roundTime"></label><div class="seg" data-set="roundTime" data-opts="30,60,90" data-suf="s"></div></div>
-      <div class="field"><label data-i="difficulty"></label><div class="seg" data-set="difficulty" data-opts="easy,normal,hard"></div></div>
+      <div class="field" data-for="world dutch hunt"><label data-i="difficulty"></label><div class="seg" data-set="difficulty" data-opts="easy,normal,hard"></div></div>
       <div class="field" data-for="world"><label data-i="continent"></label><div class="seg sm cont" data-set="continent" data-opts="ALL,EU,AM,AS,OC,AF"></div></div>
+      <div class="toggle" data-for="tour"><div class="tl"><label data-i="tourFinal"></label><small data-i="tourFinalSub"></small></div><button class="sw" data-sw="tourFinal" aria-label="toggle"></button></div>
     </div>
     <details class="card" id="hintCard">
       <summary data-i="more"></summary>
       <div class="more">
-      <div class="field" data-for="world"><label data-i="weighting"></label><div class="seg" data-set="weighting" data-opts="uniform,area"></div></div>
-      <div class="toggle" data-for="world"><label data-i="smallCountries"></label><button class="sw" data-sw="small" aria-label="toggle"></button></div>
+      <div class="field" data-for="world tour" data-tm="map street darts shape"><label data-i="weighting"></label><div class="seg" data-set="weighting" data-opts="uniform,area"></div></div>
+      <div class="toggle" data-for="world tour" data-tm="map street darts shape"><label data-i="smallCountries"></label><button class="sw" data-sw="small" aria-label="toggle"></button></div>
       <div class="field"><label data-i="hintCount"></label><div class="seg" data-set="hintCount" data-opts="4,6,8"></div></div>
       <div class="field"><label data-i="hintEvery"></label><div class="seg" data-set="hintEvery" data-opts="5,10,15,20" data-suf="s"></div></div>
-      <div class="field" data-for="world"><label data-i="hintTypes"></label><div class="chips ico" id="hintChips" role="group"></div></div>
+      <div class="field" data-for="world tour" data-tm="map street darts shape"><label data-i="hintTypes"></label><div class="chips ico" id="hintChips" role="group"></div></div>
       </div>
     </details>
     <button class="btn pri" id="startBtn"><svg class="ic"><use href="#i-play"/></svg><span id="startTxt"></span></button>
@@ -765,6 +852,7 @@ body[data-screen=game] #emoLayer{left:max(10px,env(safe-area-inset-left));transf
   <div id="dmap" hidden></div>
   <div id="shape" hidden><div id="shapeBox"><svg id="shapeSvg" aria-hidden="true"></svg></div></div>
   <div class="chip shapetag" id="shapeTag" hidden></div>
+  <div id="tourCard" aria-live="polite"></div>
   <div class="hud">
     <div class="chip"><small data-i="roundLbl"></small><b id="roundChip"></b></div>
     <div class="grow"></div>
@@ -806,6 +894,7 @@ body[data-screen=game] #emoLayer{left:max(10px,env(safe-area-inset-left));transf
 <section class="screen" id="result">
   <div class="wrap">
     <div class="topbar"><h2 id="resTitle"></h2><span class="pill" id="resTimer"></span></div>
+    <div class="plan" id="resPlan" hidden></div>
     <div id="rmap"></div>
     <p class="sub" id="resCredit" hidden></p>
     <div class="card"><div class="answerbig"><span id="resFlag"></span><div><div class="nm-big" id="resName"></div><div class="sub" id="resSub"></div></div></div></div>
@@ -824,6 +913,7 @@ body[data-screen=game] #emoLayer{left:max(10px,env(safe-area-inset-left));transf
     <div class="card" style="padding:10px 12px">
       <table><thead><tr><th></th><th data-i="player"></th><th class="n" data-i="correct"></th><th class="n" data-i="total"></th></tr></thead><tbody id="finBody"></tbody></table>
     </div>
+    <div class="card" id="finModes" style="padding:10px 12px" hidden></div>
     <div class="stats" id="finStats"></div>
     <button class="btn pri" id="rematchBtn"><svg class="ic"><use href="#i-redo"/></svg><span data-i="rematch"></span></button>
     <button class="btn sec" id="leaveBtn2"><svg class="ic"><use href="#i-exit"/></svg><span data-i="leave"></span></button>
@@ -968,6 +1058,8 @@ const CONFIG = {
   // (in graden, tussen reachMin en reachMax) doen mee, als ze minstens keep x de oppervlakte van het hoofddeel hebben.
   // rot: graden. Normaal draait tussen de twee waarden, links of rechts. Moeilijk draait willekeurig en spiegelt de helft van de keren.
   shape: { reach: 1.5, reachMin: 5, reachMax: 25, keep: { easy: .002, normal: .01 }, rot: [15, 60], flipChance: .5, pad: .08 },
+  // Toernooi: aantal rondes (min, max, standaard) en hoe lang het rondekaartje in beeld blijft.
+  tour: { min: 3, max: 30, rounds: 12, cardMs: 3200 },
   // Kaartlaag. Satelliet zonder labels. Wissel hier voor Mapbox/Google tiles (zie README).
   tiles: {
     main: { url: 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', attr: 'Tiles &copy; Esri', maxZoom: 18 },
@@ -996,6 +1088,23 @@ const XAVI_SRC = (() => { try { const b = atob(XAVI_IMG.slice(XAVI_IMG.indexOf('
 const avKey = a => (a === 'heart' ? 'xavi' : AVATARS.includes(a) ? a : 'letter');   // heart is vervangen door xavi
 // Hintgroepen die de host aan/uit kan zetten in de lobby
 const HINT_GROUPS = ['geo','people','money','codes','nb','name'];
+// Toernooi: welke modi meedoen en de continenten die je kunt aan- en uitzetten.
+const TOUR_MODES = ['map','street','dutch','hunt','darts','shape'], CONTS = ['EU','AM','AS','OC','AF'];
+// Rode pin op het podium (goud in het midden, zilver links, brons rechts). Kleurverlopen staan in de sprite (tp-*).
+const TOUR_ICON = `<svg viewBox="0 0 48 48" aria-hidden="true">
+  <path d="M41 4.5l1 2.6 2.6 1-2.6 1-1 2.6-1-2.6-2.6-1 2.6-1z" fill="#ffd76a"/><path d="M7 9l.7 1.8 1.8.7-1.8.7L7 14l-.7-1.8-1.8-.7 1.8-.7z" fill="#ffd76a" opacity=".85"/>
+  <rect x="3" y="45" width="42" height="2" rx="1" fill="#000" opacity=".22"/>
+  <rect x="4" y="37" width="12" height="8.5" fill="url(#tp-g2)"/><path d="M4 37.1h12l-1.3-1.7H5.3z" fill="#fff"/>
+  <rect x="32" y="39.6" width="12" height="5.9" fill="url(#tp-g3)"/><path d="M32 39.7h12l-1.3-1.6H33.3z" fill="#ffd3b0"/>
+  <rect x="16" y="33.6" width="16" height="11.9" fill="url(#tp-g1)"/><path d="M16 33.7h16l-1.5-1.8H17.5z" fill="#ffecb0"/>
+  <path d="M23.2 38.2l1.6-.9v6" fill="none" stroke="#7a5405" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" opacity=".55"/>
+  <ellipse cx="24.6" cy="32.9" rx="4.6" ry="1.1" fill="#000" opacity=".3"/>
+  <g class="tp-pin">
+    <path d="M25.4 34.1Q19.9 27.6 16.9 22.2A10.5 10.5 0 1 1 34 22.2Q31 27.6 25.4 34.1Z" fill="url(#tp-side)"/>
+    <path d="M24 33Q18.5 26.5 15.5 21.1A10.5 10.5 0 1 1 32.5 21.1Q29.5 26.5 24 33Z" fill="url(#tp-red)"/>
+    <circle cx="24" cy="15" r="4.4" fill="#6e1c05" opacity=".6"/><circle cx="24.5" cy="15.5" r="3.9" fill="url(#tp-hole)"/>
+    <ellipse cx="19.4" cy="9.8" rx="3.6" ry="1.9" transform="rotate(-38 19.4 9.8)" fill="#fff" opacity=".55"/><circle cx="16.9" cy="13.4" r=".9" fill="#fff" opacity=".45"/>
+  </g></svg>`;
 const HINT_ICON = { geo:'g-geo', people:'i-users', money:'g-money', codes:'g-codes', nb:'g-nb', name:'g-name' };
 // Valuta-correcties (de brondata heeft enkele fouten of verouderde codes)
 const CUR_FIX = { ZW:['ZWG','USD'], FM:['USD'], SL:['SLE'], BG:['EUR'], CU:['CUP'], PS:['ILS','JOD'], EH:['MAD'], SV:['USD'], CD:['CDF','USD'], LR:['LRD','USD'], VE:['VES','USD'], TL:['USD'], ZM:['ZMW'], KH:['KHR','USD'], PA:['PAB','USD'], EC:['USD'], MH:['USD'], PW:['USD'], KI:['AUD'], TV:['AUD'], NR:['AUD'], LI:['CHF'], MC:['EUR'], SM:['EUR'], VA:['EUR'], AD:['EUR'], XK:['EUR'], ME:['EUR'], HR:['EUR'], SK:['EUR'] };
@@ -1044,9 +1153,14 @@ const I18N = {
   h_q_side:'Richting', h_q_dist:'Afstand', h_q_hood:'Buurt', h_q_pc:'Postcode', h_q_near:'Vlak bij', h_q_circle:'Zoekgebied', huntScanning:'Scannen...', huntScanFail:'Scan mislukt, probeer opnieuw',
   qSide:'In het {d}', qDist:'Ongeveer {m} m van het midden', qCircle:'Binnen de cirkel op de kaart',
   o0:'noorden', o1:'noordoosten', o2:'oosten', o3:'zuidoosten', o4:'zuiden', o5:'zuidwesten', o6:'westen', o7:'noordwesten',
-  md_map:'Raad het land vanaf de satelliet.', md_street:'Raad het land vanaf een straatfoto.', md_dutch:'Raad de Nederlandse plaats.', md_hunt:'Zoek een straat of gebouw op de kaart. Elke tik onthult wat daar ligt.',
-  darts:'Darts', md_darts:'Gooi een pijltje op de wereldkaart, zo dicht mogelijk bij de plek. Hoe dichter bij de roos, hoe meer punten.',
-  shape:'Silhouet', md_shape:'Raad het land aan alleen zijn omtrek. Geen kaart, geen buren.', shNorth:'Noord boven', shRot:'Gedraaid', shRotFlip:'Gedraaid, soms gespiegeld', shSeen:'Zo zag je hem',
+  md_map:'Raad het land op een satellietbeeld.', md_street:'Raad het land op een straatfoto.', md_dutch:'Raad welke Nederlandse plaats dit is.', md_hunt:'Vind een straat of gebouw. Elke tik toont wat er ligt en hoe warm je zit.',
+  darts:'Darts', md_darts:'Gooi een pijltje op de wereldkaart, zo dicht mogelijk bij de plek.',
+  shape:'Silhouet', md_shape:'Raad het land aan alleen zijn omtrek.',
+  tour:'Toernooi', tourSub:'Alle modi, jouw regels', md_tour:'Modi door elkaar in één potje. Jij kiest welke, hoeveel rondes en waar.',
+  tourModes:'Modi', tourOrder:'Volgorde', mix:'Door elkaar', cycle:'Om de beurt', block:'Per blok', rise:'Oplopend', tourConts:'Continenten', tourProvs:'Provincies',
+  tourFinal:'Finale telt dubbel', tourFinalSub:'Laatste ronde x2 punten', tourFin:'Finale', allOn:'Alle', onlyOne:'Alleen {g}. Tik meer om toe te voegen', keepOne:'Houd er minstens één aan',
+  tourSplit:'{n} per modus', tourSplit2:'{a} tot {b} per modus', tourSome:'{n} van de {k} modi komen aan bod', nextMode:'Volgende: {m}', huntCityTour:'Straatjacht speelt in',
+  ps_NH:'N-Holland', ps_ZH:'Z-Holland', ps_NB:'Brabant', shNorth:'Noord boven', shRot:'Gedraaid', shRotFlip:'Gedraaid, soms gespiegeld', shSeen:'Zo zag je hem',
   dartMap:'Kaart', dartSpot:'Plek', dartThrow:'Gooi', dartThrown:'Gegooid', dartNoPin:'Tik op de kaart waar jij denkt dat de plek ligt', dartDbl:'Dubbel of niks',
   dartDblOn:'Dubbel of niks: roos of binnenring telt dubbel, daarbuiten 0 punten', dartDblOff:'Gewoon gooien',
   dr0:'Roos', dr1:'Binnenring', dr2:'Middenring', dr3:'Buitenring', dr4:'Rand', dr5:'Naast het bord',
@@ -1075,6 +1189,7 @@ const I18N = {
    <li><b>Nederland</b>: een willekeurige plek in Nederland, jij raadt de plaats. Dichtstbijzijnde plaats uit de lijst is het juiste antwoord. Fout telt naar afstand tot de plek, tot ${pc(CONFIG.score.nearShare)}, halveert per ${halfKm(CONFIG.score.nlNearKm)} km.</li>
    <li><b>Straatjacht</b>: je krijgt een straat of gebouw en een kaart zonder namen. Elke tik is een scan: je ziet wat daar ligt en hoe warm je zit. Raak je het doel, dan ben je klaar. Anders telt je laatste pin: hoe dichterbij, hoe meer, in verhouding tot de grootte van het gebied. Ongebruikte scans tellen voor ${pc(CONFIG.hunt.scanShare)}. Op moeilijk krijg je minder scans en alleen warmer of kouder.</li>
    <li><b>Darts</b>: je ziet de plek, opent de <b>kaart</b> en gooit een pijltje. Punten lopen vloeiend af met de afstand: op de wereld halveert het per ${halfKm(CONFIG.darts.falloffKm)} km. De ringen schalen met het continent (roos: wereld ${CONFIG.darts.km[0]} km, Europa ${Math.round(CONFIG.darts.km[0]*CONFIG.darts.scale.EU)} km). <b>x2</b> is dubbel of niks: roos of binnenring telt dubbel, daarbuiten krijg je 0. Alleen op makkelijk staan er namen op de kaart. Niet gegooid? Dan telt je pijltje bij het einde van de tijd, zonder tijdbonus.</li>
+   <li><b>Toernooi</b>: jij kiest welke modi meedoen, ${CONFIG.tour.min} tot ${CONFIG.tour.max} rondes, de volgorde, continenten en provincies. <b>Oplopend</b> gaat van makkelijk naar moeilijk. Met <b>finale</b> telt de laatste ronde dubbel. Elke ronde telt zoals in zijn eigen modus. Op het eindscherm zie je de punten per modus.</li>
    <li><b>Silhouet</b>: je ziet alleen de omtrek van een land. <b>Makkelijk</b>: noord boven, met lengte en breedtelijnen en een schaal. <b>Normaal</b>: ${CONFIG.shape.rot[0]} tot ${CONFIG.shape.rot[1]} graden gedraaid, kleine eilanden weg. <b>Moeilijk</b>: willekeurig gedraaid, soms gespiegeld, alleen het grootste deel. Punten zoals bij Satelliet.</li>
    <li><b>Gelijke stand</b>: meeste goed wint, daarna het snelste goede antwoord.</li>
   </ul>`,
@@ -1119,9 +1234,14 @@ const I18N = {
   h_q_side:'Direction', h_q_dist:'Distance', h_q_hood:'Quarter', h_q_pc:'Postcode', h_q_near:'Close to', h_q_circle:'Search area', huntScanning:'Scanning...', huntScanFail:'Scan failed, try again',
   qSide:'In the {d}', qDist:'About {m} m from the middle', qCircle:'Inside the circle on the map',
   o0:'north', o1:'northeast', o2:'east', o3:'southeast', o4:'south', o5:'southwest', o6:'west', o7:'northwest',
-  md_map:'Guess the country from satellite.', md_street:'Guess the country from a street photo.', md_dutch:'Guess the Dutch place.', md_hunt:'Find a street or building on the map. Every tap reveals what is there.',
-  darts:'Darts', md_darts:'Throw a dart at the world map, as close to the spot as you can. Closer to the bullseye means more points.',
-  shape:'Silhouette', md_shape:'Guess the country from its outline alone. No map, no neighbours.', shNorth:'North up', shRot:'Rotated', shRotFlip:'Rotated, sometimes mirrored', shSeen:'How you saw it',
+  md_map:'Guess the country from a satellite view.', md_street:'Guess the country from a street photo.', md_dutch:'Guess which Dutch town this is.', md_hunt:'Find a street or building. Each tap shows what is there and how warm you are.',
+  darts:'Darts', md_darts:'Throw a dart on the world map, as close to the spot as you can.',
+  shape:'Silhouette', md_shape:'Guess the country from its outline alone.',
+  tour:'Tournament', tourSub:'All modes, your rules', md_tour:'Modes mixed in one game. You pick which, how many rounds and where.',
+  tourModes:'Modes', tourOrder:'Order', mix:'Shuffled', cycle:'Rotating', block:'In blocks', rise:'Rising', tourConts:'Continents', tourProvs:'Provinces',
+  tourFinal:'Final counts double', tourFinalSub:'Last round scores x2', tourFin:'Final', allOn:'All', onlyOne:'Only {g}. Tap more to add', keepOne:'Keep at least one on',
+  tourSplit:'{n} per mode', tourSplit2:'{a} to {b} per mode', tourSome:'{n} of {k} modes get a turn', nextMode:'Next: {m}', huntCityTour:'Street hunt plays in',
+  ps_NH:'N Holland', ps_ZH:'S Holland', ps_NB:'Brabant', shNorth:'North up', shRot:'Rotated', shRotFlip:'Rotated, sometimes mirrored', shSeen:'How you saw it',
   dartMap:'Map', dartSpot:'Spot', dartThrow:'Throw', dartThrown:'Thrown', dartNoPin:'Tap the map where you think the spot is', dartDbl:'Double or nothing',
   dartDblOn:'Double or nothing: bullseye or inner ring counts double, anything else scores 0', dartDblOff:'Normal throw',
   dr0:'Bullseye', dr1:'Inner ring', dr2:'Middle ring', dr3:'Outer ring', dr4:'Edge', dr5:'Off the board',
@@ -1150,6 +1270,7 @@ const I18N = {
    <li><b>Netherlands</b>: a random spot in the Netherlands, you guess the place. The nearest place on the list is the right answer. A wrong guess counts by distance to the spot, up to ${pc(CONFIG.score.nearShare)}, halving every ${halfKm(CONFIG.score.nlNearKm)} km.</li>
    <li><b>Street hunt</b>: you get a street or building and a map without names. Every tap is a scan: you see what is there and how warm you are. Hit the target and you are done. Otherwise your last pin counts: the closer, the more, relative to the size of the area. Unused scans count for ${pc(CONFIG.hunt.scanShare)}. On hard you get fewer scans and only warmer or colder.</li>
    <li><b>Darts</b>: you see the spot, open the <b>map</b> and throw a dart. Points drop smoothly with distance: on the world map they halve every ${halfKm(CONFIG.darts.falloffKm)} km. The rings scale with the continent (bullseye: world ${CONFIG.darts.km[0]} km, Europe ${Math.round(CONFIG.darts.km[0]*CONFIG.darts.scale.EU)} km). <b>x2</b> is double or nothing: bullseye or inner ring counts double, anything else scores 0. Only easy shows names on the map. Did not throw? Your dart counts when time runs out, without time bonus.</li>
+   <li><b>Tournament</b>: you pick which modes take part, ${CONFIG.tour.min} to ${CONFIG.tour.max} rounds, the order, continents and provinces. <b>Rising</b> goes from easy to hard. With the <b>final</b> on, the last round counts double. Each round scores as in its own mode. The final screen shows points per mode.</li>
    <li><b>Silhouette</b>: you only see the outline of a country. <b>Easy</b>: north up, with grid lines and a scale. <b>Normal</b>: rotated ${CONFIG.shape.rot[0]} to ${CONFIG.shape.rot[1]} degrees, small islands left out. <b>Hard</b>: random rotation, sometimes mirrored, only the largest part. Points work as in Satellite.</li>
    <li><b>Ties</b>: most correct wins, then the fastest correct answer.</li>
   </ul>`,
@@ -1181,7 +1302,7 @@ const t = (k, v={}) => (I18N[lang][k] ?? I18N.nl[k] ?? k).replace(/\{(\w+)\}/g, 
 function applyI18n(){
   document.documentElement.lang = lang;
   document.querySelectorAll('[data-i]').forEach(el => el.textContent = t(el.dataset.i));
-  $('#guess').placeholder = t(isNL(S && S.settings) ? 'guessPhNl' : 'guessPh'); $('#chatIn').placeholder = t('chatPh'); renderChat(); renderEmoBar(); $('#emoBtn').setAttribute('aria-label', t('emotes'));
+  $('#guess').placeholder = t(nlNow() ? 'guessPhNl' : 'guessPh'); $('#chatIn').placeholder = t('chatPh'); renderChat(); renderEmoBar(); $('#emoBtn').setAttribute('aria-label', t('emotes'));
   $('#rulesBody').innerHTML = I18N[lang].rulesHtml;
   $('#soundBtn').classList.toggle('on', sound);
   document.querySelectorAll('#langSeg button').forEach(b => b.classList.toggle('on', b.dataset.lang === lang));
@@ -1621,10 +1742,16 @@ function bearing8(lat1, lng1, lat2, lng2){
   const dy = (lat2-lat1)*110.57, dx = (lng2-lng1)*111.32*Math.cos((lat1+lat2)*Math.PI/360);
   return Math.round(((Math.atan2(dx, dy)*180/Math.PI + 360) % 360) / 45) % 8;
 }
+// provs (alleen in een toernooi): plaatsen in deze provincies. Zijn die op (Zeeland heeft één stad), dan eerst andere plaatsen
+// in dezelfde provincies, pas daarna een plaats opnieuw.
 function nlPool(s, used){
-  const fits = c => s.nlPlaces === 'big' ? c.pop >= 50 : s.nlPlaces === 'towns' ? c.pop < 50 : true;
-  const pool = CITY_LIST.filter(c => fits(c) && !used.includes(c.id));
-  return pool.length ? pool : CITY_LIST.filter(fits);
+  const size = c => s.nlPlaces === 'big' ? c.pop >= 50 : s.nlPlaces === 'towns' ? c.pop < 50 : true, prov = c => !s.provs || s.provs.includes(c.prov), fresh = c => !used.includes(c.id);
+  let base = CITY_LIST.filter(c => size(c) && prov(c));
+  if (!base.length) base = CITY_LIST.filter(prov);
+  if (!base.length) base = CITY_LIST;
+  let pool = base.filter(fresh);
+  if (!pool.length && s.provs) pool = CITY_LIST.filter(c => prov(c) && fresh(c));
+  return pool.length ? pool : base;
 }
 // Willekeurige plek rond de plaats, zo dat de plaats ook echt de dichtstbijzijnde is.
 function nlSpot(city){
@@ -1786,8 +1913,8 @@ async function huntFindStreet(lat, lng, rad, used){
   return null;
 }
 // Host: doel kiezen voor de volgende ronde. Mislukt het netwerk, dan speelt de ronde als gewone Nederland-ronde.
-async function huntPrepare(h){
-  const s = h.settings, rad = CONFIG.hunt.radius[s.difficulty], fixed = CITIES[s.huntCity], skip = [...h.used];
+async function huntPrepare(h, s){
+  const rad = CONFIG.hunt.radius[s.difficulty], fixed = CITIES[s.huntCity], skip = [...h.used];
   h.huntUsed = h.huntUsed || [];
   for (let i=0; i<3; i++){
     const pool = nlPool(s, skip), city = fixed || pickWeighted(pool, c => Math.sqrt(c.pop) + 1), spot = fixed ? { lat:city.lat, lng:city.lng } : nlSpot(city);
@@ -1807,14 +1934,16 @@ async function huntPrepare(h){
   }
   return null;
 }
-async function huntNext(h){
+async function huntNext(h, s){
   const pre = h.huntPre; h.huntPre = null;
-  return (pre && await pre.catch(()=>null)) || huntPrepare(h);
+  return (pre && await pre.catch(()=>null)) || huntPrepare(h, s);
 }
 // Alvast de volgende ronde opzoeken, tijdens het uitslagscherm, zodat er niet gewacht hoeft te worden.
 function huntPreload(h){
-  if (h.settings.mode !== 'hunt' || h.roundN >= h.settings.rounds) return;
-  h.huntPre = huntPrepare(h);
+  if (h.roundN >= roundsOf(h.settings)) return;
+  const s = roundCfg(h);
+  if (s.mode !== 'hunt') return;
+  h.huntPre = huntPrepare(h, s);
   h.huntPre.catch(()=>{});
 }
 function huntHintKeys(h, wanted){
@@ -1859,7 +1988,7 @@ const nearLng = (x, ref) => { while (x - ref > 180) x -= 360; while (x - ref < -
 function dartScore(ans, r){
   if (!ans || !dartValidPin(ans.pin)) return { pts:0, kind:'none', dist:null, ring:null };
   // Vloeiend, zonder sprongen op de ringgrenzen. De ringen bepalen alleen x2 en de kleur.
-  const C = CONFIG.darts, sc = dartScale(H && H.settings), km = dartKm(H && H.settings);
+  const C = CONFIG.darts, sc = dartScale(r), km = dartKm(r);   // r.continent: per ronde, ook in een toernooi
   const dist = gcKm(ans.pin[0], ans.pin[1], r.lat, r.lng), ring = dartRing(dist, km), hit = ring < C.dblRings;
   const acc = Math.exp(-Math.max(0, dist - C.plateauKm*sc) / (C.falloffKm*sc));
   let pts = roundPts(acc, hintFactor(r, ans.hintsSeen, false), timeFactor(ans.frac));
@@ -1993,9 +2122,13 @@ if (navigator.locks) navigator.locks.request('lr_pid_' + me.id, { ifAvailable:tr
   return new Promise(()=>{});
 });
 
-const DEFAULT_SETTINGS = { mode:'map', rounds:5, roundTime:60, hintEvery:10, hintCount:6, hintGroups:[...HINT_GROUPS], difficulty:'normal', continent:'ALL', weighting:'uniform', small:false, nlPlaces:'all', nlView:'sat', huntCity:'' };
+const DEFAULT_SETTINGS = { mode:'map', rounds:5, roundTime:60, hintEvery:10, hintCount:6, hintGroups:[...HINT_GROUPS], difficulty:'normal', continent:'ALL', weighting:'uniform', small:false, nlPlaces:'all', nlView:'sat', huntCity:'',
+  tourModes:[...TOUR_MODES], tourConts:[...CONTS], tourProvs:[...PROV], tourRounds:CONFIG.tour.rounds, tourOrder:'mix', tourDiff:'normal', tourFinal:true };
+// Lijsten die je in een toernooi aan- en uitzet. solo: tik vanuit "alles aan" kiest alleen die ene.
+const TOUR_SETS = { tourModes:{ all:TOUR_MODES, name:m => t(m) }, tourConts:{ all:CONTS, name:c => t(c), solo:true }, tourProvs:{ all:PROV, name:p => t('p'+p), solo:true } };
+const roundsOf = s => s.mode === 'tour' ? s.tourRounds || CONFIG.tour.rounds : s.rounds;
 // Toegestane waarden per instelling. Een OP stuurt instellingen over het netwerk, dus alles wat hier niet in staat wordt genegeerd.
-const SETTING_OPTS = { mode:['map','street','dutch','hunt','darts','shape'], nlPlaces:['all','big','towns'], nlView:['sat','photo'], rounds:[5,10,15], roundTime:[30,60,90],
+const SETTING_OPTS = { mode:['map','street','dutch','hunt','darts','shape','tour'], tourOrder:['mix','cycle','block'], tourDiff:['easy','normal','hard','rise'], nlPlaces:['all','big','towns'], nlView:['sat','photo'], rounds:[5,10,15], roundTime:[30,60,90],
   difficulty:['easy','normal','hard'], continent:['ALL','EU','AM','AS','OC','AF'], weighting:['uniform','area'], hintCount:[4,6,8], hintEvery:[5,10,15,20] };
 function cleanSettings(p){
   const out = {};
@@ -2004,6 +2137,9 @@ function cleanSettings(p){
   if (typeof p.small === 'boolean') out.small = p.small;
   if (typeof p.huntCity === 'string' && (p.huntCity === '' || Object.prototype.hasOwnProperty.call(CITIES, p.huntCity))) out.huntCity = p.huntCity;
   if (Array.isArray(p.hintGroups)){ const g = HINT_GROUPS.filter(x => p.hintGroups.includes(x)); if (g.length) out.hintGroups = g; }
+  for (const [k, d] of Object.entries(TOUR_SETS)) if (Array.isArray(p[k])){ const v = d.all.filter(x => p[k].includes(x)); if (v.length) out[k] = v; }
+  if (Number.isInteger(p.tourRounds) && p.tourRounds >= CONFIG.tour.min && p.tourRounds <= CONFIG.tour.max) out.tourRounds = p.tourRounds;
+  if (typeof p.tourFinal === 'boolean') out.tourFinal = p.tourFinal;
   return out;
 }
 
@@ -2201,13 +2337,13 @@ function becomeHost(oldHostPeer){
   const snap = S;
   H = {
     players: snap.players.map(p => ({ ...p, connected: p.peerId===oldHostPeer ? false : p.connected, leftAt: p.peerId===oldHostPeer ? Date.now() : null })),
-    settings: snap.settings, phase: snap.phase, roundN: snap.roundN, used: snap.used || [],
+    settings: snap.settings, phase: snap.phase, roundN: snap.roundN, used: snap.used || [], plan: Array.isArray(snap.plan) ? snap.plan.slice() : null,
     nextJoin: Math.max(...snap.players.map(p=>p.joinIdx)) + 1, result: snap.result, final: snap.final, round: null, blocked: [], term: (snap.term||0) + 1,
   };
   if (snap.phase === 'round' && snap.round){
     const r = snap.round;
     // De laatste uit "used" is het antwoord van deze ronde. Terugrekenen vanuit de coördinaten kan misgaan op een kustlijn.
-    const code = (snap.used || []).at(-1) || (isNL(snap.settings) ? nlNearest(r.lat, r.lng).id : countryAt(r.lat, r.lng));
+    const code = (snap.used || []).at(-1) || (isNL({ mode: r.mode || snap.settings.mode }) ? nlNearest(r.lat, r.lng).id : countryAt(r.lat, r.lng));
     const elapsed = r.durationMs - Math.max(0, r.remainingMs - (now()-recvAt));
     const moreHints = r.hunt ? huntHintKeys(r.hunt, r.hintTotal) : chooseHints(code, r.hintTotal, snap.settings.hintGroups);
     H.round = { ...r, code, pins: {}, hintKeys: [...r.hints.map(h=>h.k), ...moreHints.filter(k=>!r.hints.some(h=>h.k===k))].slice(0, r.hintTotal),
@@ -2293,7 +2429,7 @@ function hostHandle(msg, peerId){
     case 'answer': {
       if (!player || H.phase !== 'round' || !H.round || p.roundId !== H.round.id) return;
       if (H.round.answers[player.id]) return;  // eerste telt
-      if (H.round.hunt ? !huntValidPin(p.pin) : H.round.darts ? !dartValidPin(p.pin) : !(isNL(H.settings) ? CITIES[p.code] : COUNTRIES[p.code])) return;
+      if (H.round.hunt ? !huntValidPin(p.pin) : H.round.darts ? !dartValidPin(p.pin) : !(isNL({ mode: H.round.mode }) ? CITIES[p.code] : COUNTRIES[p.code])) return;
       const el = now() - H.round.startAt;
       let hintsSeen = H.round.hints.length, frac = Math.max(0, 1 - el / H.round.durationMs);
       const cs = Math.round(+p.hintsSeen) || hintsSeen, cf = Number.isFinite(+p.frac) ? +p.frac : frac;
@@ -2311,36 +2447,79 @@ function hostHandle(msg, peerId){
     }
     case 'rematch':
       if (peerId !== selfId) return;
-      H.phase = 'lobby'; H.roundN = 0; H.used = []; H.result = null; H.final = null; H.round = null; H.huntUsed = []; H.huntPre = null;
+      H.phase = 'lobby'; H.roundN = 0; H.used = []; H.result = null; H.final = null; H.round = null; H.huntUsed = []; H.huntPre = null; H.plan = null; H.cfg = null;
       H.players = H.players.filter(x=>x.connected);
-      H.players.forEach(x=>Object.assign(x,{score:0,correct:0,best:0,fastest:null}));
+      H.players.forEach(x=>Object.assign(x,{score:0,correct:0,best:0,fastest:null,bm:null}));
       broadcast(); break;
   }
+}
+/* Toernooi: elke ronde een eigen modus, continent en moeilijkheid. De host maakt het schema bij de start. */
+// Evenveel rondes per modus (de rest gaat naar willekeurige modi). Door elkaar: nooit twee keer dezelfde na elkaar als het kan.
+function tourPlan(s){
+  const modes = shuffle(s.tourModes && s.tourModes.length ? s.tourModes : TOUR_MODES), n = s.tourRounds || CONFIG.tour.rounds, k = modes.length;
+  const left = modes.map((m, i) => Math.floor(n/k) + (i < n%k ? 1 : 0));
+  if (s.tourOrder === 'block') return modes.flatMap((m, i) => Array(left[i]).fill(m));
+  if (s.tourOrder === 'cycle') return Array.from({ length:n }, (_, i) => modes[i % k]);
+  // Na elke keuze moet de rest nog zonder herhaling passen: de net gekozen modus hoogstens de helft (naar beneden), de rest de helft (naar boven).
+  const idx = modes.map((m, i) => i), out = [];
+  const fits = (cnt, r, p) => cnt.every((c, j) => c <= (j === p ? Math.floor(r/2) : Math.ceil(r/2)));
+  for (let r = n; r > 0; r--){
+    const prev = out.length ? out[out.length-1] : -1;
+    let opts = idx.filter(i => left[i] > 0 && i !== prev && fits(left.map((c, j) => j === i ? c-1 : c), r-1, i));
+    if (!opts.length) opts = idx.filter(i => left[i] > 0);   // niet te vermijden, bijvoorbeeld met één modus
+    const i = pickWeighted(opts, i => left[i]);
+    left[i]--; out.push(i);
+  }
+  return out.map(i => modes[i]);
+}
+// Continent van deze ronde: een van de gekozen, naar het aantal landen (of oppervlakte), zodat elk land even vaak kan komen.
+function tourCont(s){
+  const cs = s.tourConts && s.tourConts.length ? s.tourConts : CONTS;
+  if (cs.length >= CONTS.length) return 'ALL';
+  const w = c => Object.keys(GEO).reduce((a, k) => { const x = COUNTRIES[k]; return a + (x && x.cont === c && (s.small || !x.small) ? (s.weighting === 'area' ? GEO[k].area : 1) : 0); }, 0);
+  return pickWeighted(cs, w);
+}
+// Instellingen voor de volgende ronde. Buiten een toernooi gewoon de lobby-instellingen.
+function roundCfg(h){
+  const s = h.settings;
+  if (s.mode !== 'tour') return s;
+  if (h.cfg && h.cfg.i === h.roundN) return h.cfg.s;   // straatjacht laadt vooruit: zelfde ronde, zelfde keuzes
+  if (!h.plan) h.plan = tourPlan(s);
+  const i = h.roundN, n = h.plan.length, provs = s.tourProvs && s.tourProvs.length < PROV.length ? s.tourProvs : null;
+  const difficulty = s.tourDiff === 'rise' ? ['easy','normal','hard'][Math.min(2, Math.floor(i*3/n))] : SETTING_OPTS.difficulty.includes(s.tourDiff) ? s.tourDiff : 'normal';
+  const rs = { ...s, mode: h.plan[Math.min(i, n-1)], continent: tourCont(s), difficulty, provs };
+  h.cfg = { i, s: rs };
+  return rs;
 }
 async function nextRound(){
   const h = H;
   clearTimeout(h.autoNext);
   if (h.finding) return;
-  if (h.roundN >= h.settings.rounds) return finish();
+  if (h.roundN >= roundsOf(h.settings)) return finish();
+  const s = roundCfg(h);
   let loc = null;
-  const nl = isNL(h.settings), hunt = h.settings.mode === 'hunt', darts = h.settings.mode === 'darts', shape = h.settings.mode === 'shape';
-  const photoMode = h.settings.mode === 'street' || ((h.settings.mode === 'dutch' || darts) && h.settings.nlView === 'photo');
+  const nl = isNL(s), hunt = s.mode === 'hunt', darts = s.mode === 'darts', shape = s.mode === 'shape';
+  const photoMode = s.mode === 'street' || ((s.mode === 'dutch' || darts) && s.nlView === 'photo');
   if (photoMode || hunt){
     h.finding = true; broadcast(); overlay(t(hunt ? 'loadingArea' : 'findingPhoto'));
-    loc = await (hunt ? huntNext(h) : (nl ? nlFindPhoto : findPhoto)(h.settings, h.used)).catch(()=>null);
+    loc = await (hunt ? huntNext(h, s) : (nl ? nlFindPhoto : findPhoto)(s, h.used)).catch(()=>null);
     overlay(null); h.finding = false;
     if (H !== h) return;  // host is tijdens het zoeken vertrokken
     if (!loc) toast(t(hunt ? 'noArea' : 'noPhoto'));
   }
-  loc = loc || (nl ? nlLocation(H.settings, H.used) : shape ? shapeLocation(H.settings, H.used) : randomLocation(H.settings, H.used));
+  loc = loc || (nl ? nlLocation(s, H.used) : shape ? shapeLocation(s, H.used) : randomLocation(s, H.used));
   if (!loc) return finish();
+  // Geen straatdata of foto: de ronde telt als wat er echt gespeeld wordt.
+  const mode = hunt && !loc.hunt ? 'dutch' : s.mode === 'street' && !loc.photo ? 'map' : s.mode;
   H.used.push(loc.code); H.roundN++;
+  if (H.plan) H.plan[H.roundN-1] = mode;
+  const total = roundsOf(H.settings), final = H.settings.mode === 'tour' && !!H.settings.tourFinal && total > 1 && H.roundN === total;
   const durationMs = H.settings.roundTime*1000, hintIntervalMs = H.settings.hintEvery*1000;
   const wanted = Math.min(H.settings.hintCount || 6, Math.max(2, Math.ceil(durationMs / hintIntervalMs)));
   const hintKeys = loc.hunt ? huntHintKeys(loc.hunt, wanted) : chooseHints(loc.code, wanted, H.settings.hintGroups), hintTotal = hintKeys.length;
-  H.round = { id: Math.random().toString(36).slice(2,9), n: H.roundN, lat: loc.lat, lng: loc.lng, code: loc.code, photo: loc.photo || null,
-    hunt: loc.hunt || null, darts, pins: {}, shape: shape ? shapeSpec(H.settings.difficulty) : null,
-    zoom: loc.hunt ? 14 : (nl ? CONFIG.nl.zoom : CONFIG.zoom)[H.settings.difficulty], pan: loc.hunt ? 1 : shape ? 0 : (nl ? CONFIG.nl.pan : CONFIG.pan)[H.settings.difficulty], difficulty: H.settings.difficulty,
+  H.round = { id: Math.random().toString(36).slice(2,9), n: H.roundN, mode, continent: s.continent, final, lat: loc.lat, lng: loc.lng, code: loc.code, photo: loc.photo || null,
+    hunt: loc.hunt || null, darts, pins: {}, shape: shape ? shapeSpec(s.difficulty) : null,
+    zoom: loc.hunt ? 14 : (nl ? CONFIG.nl.zoom : CONFIG.zoom)[s.difficulty], pan: loc.hunt ? 1 : shape ? 0 : (nl ? CONFIG.nl.pan : CONFIG.pan)[s.difficulty], difficulty: s.difficulty,
     durationMs, hintIntervalMs, hintTotal, hintKeys, hints: [], startAt: now(), answers: {}, order: 0, forced: 0, wants: {} };
   H.phase = 'round'; H.result = null;
   releaseHints(); broadcast();
@@ -2433,16 +2612,18 @@ function endRound(){
     // Straatjacht en darts: wie niet vastzette maar wel een pin had, krijgt die pin (zonder tijdbonus).
     const pinMode = r.hunt || r.darts;
     const a = r.answers[p.id] || (pinMode && r.pins && r.pins[p.id] ? { ...r.pins[p.id], frac:0, ms:null, order:98, hintsSeen:r.hints.length } : undefined);
-    const s = r.hunt ? huntScore(a, r) : r.darts ? dartScore(a, r) : scoreFor(a, r);
+    let s = r.hunt ? huntScore(a, r) : r.darts ? dartScore(a, r) : scoreFor(a, r);
+    if (r.final) s = { ...s, pts: s.pts*2 };   // toernooifinale telt dubbel
     p.score += s.pts;
+    if (H.settings.mode === 'tour'){ p.bm = p.bm || {}; p.bm[r.mode] = (p.bm[r.mode] || 0) + s.pts; }
     if (s.kind==='good'){ p.correct++; if (a.ms != null && (p.fastest==null || a.ms < p.fastest)) p.fastest = a.ms; }
     if (s.pts > p.best) p.best = s.pts;
     return { id:p.id, guess: a && !pinMode ? a.code : null, ms: a ? a.ms : null, hints: a ? a.hintsSeen : null, pts: s.pts, kind: s.kind, total: p.score, order: a ? a.order : 99, pin: a && pinMode ? a.pin : null, dist: pinMode ? s.dist : null, scans: a && r.hunt ? a.scans : null,
       ring: r.darts ? s.ring : null, dbl: !!(r.darts && a && a.dbl) };
   }).sort((a,b)=> b.pts-a.pts || a.order-b.order);
   const mid = r.hunt ? huntMid(r.hunt.g) : [r.lat, r.lng];
-  H.result = { roundId: r.id, n: r.n, code: r.code, lat: mid[0], lng: mid[1], photo: r.photo, rows, last: H.roundN >= H.settings.rounds, nextAt: CONFIG.resultAutoMs, darts: !!r.darts,
-    dkm: r.darts ? dartKm(H.settings) : null, shape: r.shape || null,
+  H.result = { roundId: r.id, n: r.n, mode: r.mode, final: !!r.final, code: r.code, lat: mid[0], lng: mid[1], photo: r.photo, rows, last: H.roundN >= roundsOf(H.settings), nextAt: CONFIG.resultAutoMs, darts: !!r.darts,
+    dkm: r.darts ? dartKm(r) : null, shape: r.shape || null,
     hunt: r.hunt ? { n:r.hunt.n, k:r.hunt.k, city:r.hunt.city, g:r.hunt.g } : null };
   H.phase = 'result'; H.round = null;
   scheduleAutoNext(); huntPreload(H); broadcast();
@@ -2457,15 +2638,15 @@ function finish(){
   H.phase = 'final';
   // Gelijke stand: meeste goed, dan snelste goede antwoord.
   const fast = p => p.fastest == null ? Infinity : p.fastest;
-  H.final = { gid: Math.random().toString(36).slice(2,10), ranking: H.players.slice().sort((a,b)=>b.score-a.score || b.correct-a.correct || fast(a)-fast(b)).map(p=>({ id:p.id, score:p.score, correct:p.correct, best:p.best, fastest:p.fastest })) };
+  H.final = { gid: Math.random().toString(36).slice(2,10), ranking: H.players.slice().sort((a,b)=>b.score-a.score || b.correct-a.correct || fast(a)-fast(b)).map(p=>({ id:p.id, score:p.score, correct:p.correct, best:p.best, fastest:p.fastest, bm:p.bm || null })) };
   broadcast();
 }
 function publicState(){
   const r = H.round;
   return {
-    hostPeer: selfId, term: H.term||0, finding: !!H.finding, phase: H.phase, settings: H.settings, roundN: H.roundN, used: H.used,
-    players: H.players.map(({id,peerId,name,color,avatar,joinIdx,score,connected,correct,best,fastest,op}) => ({id,peerId,name,color,avatar,joinIdx,score,connected,correct,best,fastest,op:!!op})),
-    round: r ? { id:r.id, n:r.n, lat:r.lat, lng:r.lng, photo:r.photo, hunt:r.hunt||null, darts:!!r.darts, shape:r.shape||null, zoom:r.zoom, pan:r.pan, difficulty:r.difficulty, durationMs:r.durationMs, hintIntervalMs:r.hintIntervalMs, hintTotal:r.hintTotal,
+    hostPeer: selfId, term: H.term||0, finding: !!H.finding, phase: H.phase, settings: H.settings, roundN: H.roundN, used: H.used, plan: H.plan || null,
+    players: H.players.map(({id,peerId,name,color,avatar,joinIdx,score,connected,correct,best,fastest,op,bm}) => ({id,peerId,name,color,avatar,joinIdx,score,connected,correct,best,fastest,op:!!op,...(bm ? {bm} : {})})),
+    round: r ? { id:r.id, n:r.n, mode:r.mode, continent:r.continent, final:!!r.final, lat:r.lat, lng:r.lng, photo:r.photo, hunt:r.hunt||null, darts:!!r.darts, shape:r.shape||null, zoom:r.zoom, pan:r.pan, difficulty:r.difficulty, durationMs:r.durationMs, hintIntervalMs:r.hintIntervalMs, hintTotal:r.hintTotal,
       hints: r.hints, remainingMs: Math.max(0, r.durationMs - (now()-r.startAt)), answered: Object.keys(r.answers), wants: Object.keys(r.wants||{}) } : null,
     result: H.result ? { ...H.result, nextAt: Math.max(0, CONFIG.resultAutoMs - (now()-(H.resultStart||now()))) } : null,
     final: H.final,
@@ -2497,6 +2678,12 @@ function rerender(){
   else if (S.phase === 'final') renderFinal();
 }
 const isMeHost = () => S && S.hostPeer === selfId;
+// Modus van de ronde die nu speelt (in een toernooi wisselt die per ronde), anders die uit de lobby.
+function curMode(){ return S ? (S.round && S.round.mode) || (S.result && S.result.mode) || S.settings.mode : null; }
+function nlNow(){ return isNL({ mode: curMode() }); }
+const provShort = p => I18N[lang]['ps_'+p] || I18N.nl['ps_'+p] || t('p'+p);
+const PROV_GRID = ['NH','FR','GR','ZH','FL','DR','UT','GE','OV','ZE','NB','LI'];   // ruwweg zoals op de kaart, noord boven
+let lobbyMode = null, stepVal = null, stepT = null, tourT = null;
 const opOf = s => !!(s && s.players.find(p => p.id === me.id) || {}).op;
 // Instellingen aanpassen en de lobby starten: de host en elke OP.
 const canEdit = () => !!S && (isMeHost() || opOf(S));
@@ -2525,11 +2712,19 @@ function renderLobby(){
       ${role}${off?`<span class="badge off">${t('offline')}</span>`:''}
       ${manage ? `<button class="x" data-kick="${esc(p.id)}">&times;</button>`:''}</div>`;
   }).join('');
-  const modeKey = isNL(S.settings) ? S.settings.mode : 'world';
-  // data-for noemt een groep (world, dutch, hunt) of een losse modus (darts).
-  document.querySelectorAll('[data-for]').forEach(el => { const f = el.dataset.for.split(' '); el.hidden = !f.includes(modeKey) && !f.includes(S.settings.mode); });
-  if (modeKey === 'hunt' && S.settings.huntCity) $('#nlPlacesField').hidden = true;
+  const tour = S.settings.mode === 'tour', modeKey = tour ? 'tour' : isNL(S.settings) ? S.settings.mode : 'world', tm = S.settings.tourModes || TOUR_MODES;
+  // data-for noemt een groep (world, dutch, hunt, tour) of een losse modus (darts). data-tm: in een toernooi alleen als een van die modi meedoet.
+  document.querySelectorAll('[data-for]').forEach(el => {
+    const f = el.dataset.for.split(' ');
+    let vis = f.includes(modeKey) || f.includes(S.settings.mode);
+    if (vis && tour && el.dataset.tm) vis = el.dataset.tm.split(' ').some(m => tm.includes(m));
+    el.hidden = !vis;
+  });
+  // Straatjacht in een vaste plaats: plaatsen en provincies doen dan niets (in een toernooi alleen als Nederland niet meedoet).
+  if (S.settings.huntCity && (modeKey === 'hunt' || (tour && !tm.includes('dutch')))){ $('#nlPlacesField').hidden = true; $('#tourProvsField').hidden = true; }
   $('#modeDesc').textContent = t('md_' + S.settings.mode);
+  $('#huntCityLbl').textContent = t(tour ? 'huntCityTour' : 'huntCity');
+  const justOn = tour && lobbyMode !== 'tour'; lobbyMode = S.settings.mode;
   const hc_ = $('#huntCity');
   if (hc_.dataset.lang !== lang){ hc_.dataset.lang = lang; hc_.innerHTML = `<option value="">${esc(t('huntAny'))}</option>` + CITY_LIST.slice().sort((a,b)=>a.name.localeCompare(b.name,'nl')).map(c=>`<option value="${c.id}">${esc(c.name)}</option>`).join(''); }
   hc_.value = S.settings.huntCity || ''; hc_.disabled = !edit;
@@ -2540,7 +2735,8 @@ function renderLobby(){
       const val = isNaN(o) ? o : +o, label = isNaN(o) ? t(o) : o + suf, html = isNaN(o) ? label : o + (suf ? `<span class="u">${suf}</span>` : '');
       const cls = S.settings[key]===val ? 'on' : '';
       if (key==='continent') return `<button class="${cls}" data-val="${o}" aria-label="${esc(label)}" title="${esc(label)}"><svg class="ic"><use href="#i-${o}"/></svg></button>`;
-      if (key==='mode') return `<button class="${cls}" data-val="${o}"><span class="mi"><svg aria-hidden="true"><use href="#m-${o}"/></svg></span><span class="ml">${label}</span></button>`;
+      if (key==='mode' && o==='tour') return `<button class="tourBtn ${cls}${cls && justOn ? ' go' : ''}" data-val="${o}" data-m="${o}"><span class="mi">${TOUR_ICON}</span><span class="ml"><b>${label}</b><small>${esc(t('tourSub'))}</small></span></button>`;
+      if (key==='mode') return `<button class="${cls}" data-val="${o}" data-m="${o}"><span class="mi"><svg aria-hidden="true"><use href="#m-${o}"/></svg></span><span class="ml">${label}</span></button>`;
       return `<button class="${cls}" data-val="${o}">${html}</button>`;
     }).join('');
   });
@@ -2549,10 +2745,49 @@ function renderLobby(){
   hc.innerHTML = HINT_GROUPS.map(g => { const nm = esc(t('g_'+g)), o = on.includes(g);
     return `<button class="chipbtn ${o?'on':''}" data-g="${g}" aria-pressed="${o}" aria-label="${nm}" title="${nm}"><svg class="ic" aria-hidden="true"><use href="#${HINT_ICON[g]}"/></svg></button>`; }).join('');
   document.querySelectorAll('.sw[data-sw]').forEach(sw => { sw.classList.toggle('on', !!S.settings[sw.dataset.sw]); sw.style.pointerEvents = edit?'':'none'; });
+  if (tour) renderTourSettings(edit, tm);
   const n = S.players.filter(p=>p.connected).length;
   $('#startBtn').style.display = edit ? '' : 'none';
   $('#startTxt').textContent = n < 2 ? t('startSolo') : t('startGame');
   $('#waitHost').style.display = edit ? 'none' : '';
+}
+
+// Toernooi: modi, continenten en provincies als tegels, rondes met een teller.
+function renderTourSettings(edit, tm){
+  const on = (k, v) => (S.settings[k] || TOUR_SETS[k].all).includes(v), lbl = s => esc(s);
+  const btn = (k, v, nm, inner, cls = '') => `<button class="chipbtn ${cls} ${on(k, v) ? 'on' : ''}" data-tv="${v}" aria-pressed="${on(k, v)}" aria-label="${lbl(nm)}" title="${lbl(nm)}"${cls === 'mc' ? ` data-m="${v}"` : ''}>${inner}</button>`;
+  $('#tourModes').innerHTML = TOUR_MODES.map(m => btn('tourModes', m, t(m), `<svg aria-hidden="true"><use href="#m-${m}"/></svg>`, 'mc')).join('');
+  $('#tourConts').innerHTML = CONTS.map(c => btn('tourConts', c, t(c), `<svg class="ic" aria-hidden="true"><use href="#i-${c}"/></svg>`)).join('');
+  $('#tourProvs').innerHTML = PROV_GRID.map(p => btn('tourProvs', p, t('p'+p), esc(provShort(p)))).join('');
+  ['#tourModes', '#tourConts', '#tourProvs'].forEach(s => $(s).classList.toggle('ro', !edit));
+  document.querySelectorAll('[data-all]').forEach(b => { const k = b.dataset.all; b.hidden = !edit || (S.settings[k] || TOUR_SETS[k].all).length >= TOUR_SETS[k].all.length; });
+  const n = stepVal ?? roundsOf(S.settings);
+  $('#tourRoundsVal').textContent = n;
+  $('#tourStep').classList.toggle('ro', !edit);
+  $('#tourStep [data-step="-1"]').disabled = n <= CONFIG.tour.min; $('#tourStep [data-step="1"]').disabled = n >= CONFIG.tour.max;
+  tourSplit(n, tm.length);
+}
+function tourSplit(n, k){
+  const lo = Math.floor(n/k), hi = Math.ceil(n/k);
+  $('#tourSplit').textContent = n < k ? t('tourSome', { n, k }) : lo === hi ? t('tourSplit', { n: lo }) : t('tourSplit2', { a: lo, b: hi });
+}
+// Rondeteller: tikken is 1 erbij of eraf, vasthouden gaat steeds sneller. De waarde staat lokaal, zodat een OP niet op de host hoeft te wachten.
+function tourStep(d){
+  if (!S || !canEdit()) return false;
+  const cur = stepVal ?? roundsOf(S.settings), v = Math.max(CONFIG.tour.min, Math.min(CONFIG.tour.max, cur + d));
+  if (v === cur) return false;
+  stepVal = v; $('#tourRoundsVal').textContent = v; tourSplit(v, (S.settings.tourModes || TOUR_MODES).length);
+  $('#tourStep [data-step="-1"]').disabled = v <= CONFIG.tour.min; $('#tourStep [data-step="1"]').disabled = v >= CONFIG.tour.max;
+  act({ t:'settings', p:{ tourRounds: v } }); beep(420 + v*14, .03);
+  return true;
+}
+function tourIntro(r){
+  const el = $('#tourCard'), m = r.mode || 'map';
+  el.dataset.m = m;
+  el.innerHTML = `<span class="tci"><svg aria-hidden="true"><use href="#m-${m}"/></svg></span><span class="tct"><small>${esc(t('roundLbl'))} ${r.n}/${roundsOf(S.settings)}${r.final ? ' · ' + esc(t('tourFin')) : ''}</small>`
+    + `<b>${esc(t(m))}${r.final ? ' <span class="x2">x2</span>' : ''}</b><i>${esc(t('md_' + m))}</i></span>`;
+  el.classList.remove('go'); void el.offsetWidth; el.classList.add('go');
+  clearTimeout(tourT); tourT = setTimeout(() => el.classList.remove('go'), CONFIG.tour.cardMs);
 }
 
 function ensureMap(){
@@ -2754,7 +2989,7 @@ function esriCanvas(tone, kind){
 function dartFit(animate){
   if (!dmap || !S) return;
   const p = document.querySelector('#game .panel').getBoundingClientRect(), side = innerHeight <= 500 && innerWidth > innerHeight;
-  dmap.fitBounds(DART_VIEW[S.settings.continent] || DART_VIEW.ALL, { animate,
+  dmap.fitBounds(DART_VIEW[(S.round && S.round.continent) || S.settings.continent] || DART_VIEW.ALL, { animate,
     paddingTopLeft: side ? [60, 10] : [10, 66], paddingBottomRight: side ? [p.width + 10, 10] : [10, Math.max(10, innerHeight - p.top + 8)] });
 }
 function dartReset(r){
@@ -2868,14 +3103,18 @@ function renderGame(){
     else if (r.photo) showPano(r);
     else { dropPano(); showMap(r); }
     $('#photoCredit').hidden = !r.photo;
-    $('#guess').placeholder = t(isNL(S.settings) ? 'guessPhNl' : 'guessPh');
+    $('#guess').placeholder = t(nlNow() ? 'guessPhNl' : 'guessPh');
     $('#guess').value = ''; closeAc(); $('#hintList').innerHTML = ''; delete $('#hintList').dataset.sig;
     // In Straatjacht is de kaart het spel: op een telefoon de hints standaard inklappen tot de nieuwste.
     $('#hintsBox').classList.toggle('shut', !!r.hunt && innerHeight < 900);
     if (matchMedia('(pointer:fine)').matches) setTimeout(()=>$('#guess').focus(), 100);
+    if (S.settings.mode === 'tour') tourIntro(r); else $('#tourCard').classList.remove('go');
     beep(520,.12,'triangle');
   }
-  $('#roundChip').textContent = r.n + '/' + S.settings.rounds;
+  const total = roundsOf(S.settings);
+  $('#roundChip').innerHTML = S.settings.mode === 'tour' && r.mode
+    ? `<svg class="rci" data-m="${r.mode}" aria-label="${esc(t(r.mode))}"><use href="#m-${r.mode}"/></svg>${r.n}/${total}${r.final ? '<span class="x2">x2</span>' : ''}`
+    : r.n + '/' + total;
   const mine = playerById(me.id);
   $('#scoreChip').textContent = mine ? mine.score : 0;
   $('#mapctl').classList.toggle('off', r.pan === 0);
@@ -2953,7 +3192,7 @@ let acItems = [], acSel = 0;
 function search(q){
   const n = norm(q); if (!n) return [];
   const res = [];
-  for (const s of (isNL(S && S.settings) ? CITY_SEARCH : SEARCH)){
+  for (const s of (nlNow() ? CITY_SEARCH : SEARCH)){
     let best = 99;
     for (const k of s.keys){ const i = k.indexOf(n); if (i===0) best = Math.min(best, 0); else if (i>0) best = Math.min(best, 1); }
     if (best < 99) res.push({ code:s.code, score: best + cname(s.code).length/100 });
@@ -2980,7 +3219,7 @@ $('#ac').addEventListener('pointerdown', e => { const d = e.target.closest('[dat
 $('#guessBtn').addEventListener('click', () => submitGuess(acItems[acSel]));
 function submitGuess(code){
   if (!S || S.phase!=='round' || !S.round || S.round.hunt || myAnswer) return;
-  const nl = isNL(S.settings);
+  const nl = nlNow();
   if (!code){ const exact = (nl ? CITY_SEARCH : SEARCH).find(s => s.keys.includes(norm($('#guess').value))); code = exact && exact.code; }
   if (!code){ toast(t(nl ? 'unknownNl' : 'unknown')); return; }
   const r = S.round, rem = r.remainingMs - (now()-recvAt) - latency;
@@ -2995,7 +3234,12 @@ function renderResult(){
   show('result');
   const R = S.result;
   const city = CITIES[R.code], c = COUNTRIES[R.code];
-  $('#resTitle').textContent = t('resTitle', { n: R.n });
+  const tour = S.settings.mode === 'tour' && Array.isArray(S.plan);
+  $('#resTitle').innerHTML = esc(t('resTitle', { n: R.n })) + (R.final ? ' <span class="x2">x2</span>' : '');
+  // Toernooischema: gespeeld, deze ronde, nog te gaan. De finale krijgt x2 erachter.
+  $('#resPlan').hidden = !tour;
+  if (tour) $('#resPlan').innerHTML = S.plan.map((m, i) => `<i data-m="${m}" class="${i < R.n-1 ? 'done' : i === R.n-1 ? 'cur' : ''}" title="${esc(t('roundLbl') + ' ' + (i+1) + ': ' + t(m))}"><svg aria-hidden="true"><use href="#m-${m}"/></svg></i>`).join('')
+    + (S.settings.tourFinal && S.plan.length > 1 ? '<span class="x2">x2</span>' : '');
   $('#resFlag').innerHTML = flagImg(R.code, 80) + (R.shape ? `<span class="silmini" title="${esc(t('shSeen'))}">${shapeSvg(R.code, R.shape, true)}</span>` : '');
   $('#resName').textContent = plain(R.hunt ? R.hunt.n : cname(R.code));
   if (R.hunt) $('#resFlag').innerHTML = `<span class="hicon"><svg class="ic"><use href="#i-${HUNT_ICON[R.hunt.k]}"/></svg></span>`;
@@ -3015,7 +3259,7 @@ function renderResult(){
   }).join('');
   const host = isMeHost();
   $('#nextBtn').style.display = host ? '' : 'none';
-  $('#nextTxt').textContent = R.last ? t('toFinal') : t('nextRound');
+  $('#nextTxt').textContent = R.last ? t('toFinal') : tour && S.plan[R.n] ? t('nextMode', { m: t(S.plan[R.n]) }) : t('nextRound');
   if (renderedResult !== R.roundId){
     renderedResult = R.roundId;
     const mineRow = R.rows.find(r=>r.id===me.id);
@@ -3099,6 +3343,14 @@ function renderFinal(){
   const top = F.ranking.slice(0,3), order = [top[1], top[0], top[2]], heights = [110, 150, 80];
   $('#podium').innerHTML = order.map((r,i) => r ? `<div class="pod"><span class="pn">${esc(plain(P(r.id).name))}</span><span class="ps">${r.score}</span><div class="blk" style="height:${heights[i]}px;background:${P(r.id).color}">${[2,1,3][i]}</div></div>` : '<div class="pod"></div>').join('');
   $('#finBody').innerHTML = F.ranking.map((r,i)=>`<tr><td>${i+1}</td><td><span class="row" style="gap:7px">${avaHtml(P(r.id),'xs')}<span>${esc(P(r.id).name)}</span></span></td><td class="n">${r.correct}/${S.roundN}</td><td class="n">${r.score}</td></tr>`).join('');
+  // Toernooi: punten per modus, de hoogste per modus in goud.
+  const fm = $('#finModes'), modes = S.settings.mode === 'tour' ? TOUR_MODES.filter(m => F.ranking.some(r => r.bm && r.bm[m] != null)) : [];
+  fm.hidden = !modes.length;
+  if (modes.length){
+    const pts = (r, m) => (r.bm && r.bm[m]) || 0, top = Object.fromEntries(modes.map(m => [m, Math.max(...F.ranking.map(r => pts(r, m)))])), multi = F.ranking.length > 1;
+    fm.innerHTML = `<table class="permode"><thead><tr><th>${esc(t('stModes'))}</th>${modes.map(m => `<th class="n" data-m="${m}" title="${esc(t(m))}"><svg aria-label="${esc(t(m))}"><use href="#m-${m}"/></svg></th>`).join('')}</tr></thead><tbody>`
+      + F.ranking.map(r => `<tr><td><span class="row">${avaHtml(P(r.id),'xs')}<span>${esc(P(r.id).name)}</span></span></td>${modes.map(m => `<td class="n${multi && pts(r, m) > 0 && pts(r, m) === top[m] ? ' top' : ''}">${pts(r, m)}</td>`).join('')}</tr>`).join('') + '</tbody></table>';
+  }
   const best = F.ranking.reduce((a,b)=>b.best>a.best?b:a, F.ranking[0]);
   const fast = F.ranking.filter(r=>r.fastest!=null).sort((a,b)=>a.fastest-b.fastest)[0];
   const most = F.ranking.reduce((a,b)=>b.correct>a.correct?b:a, F.ranking[0]);
@@ -3188,6 +3440,31 @@ $('#hintChips').addEventListener('click', e => {
   if (cur.has(g)){ if (cur.size === 1){ toast(t('hintMin')); return; } cur.delete(g); toast(t('hintOff', { g: nm })); } else { cur.add(g); toast(t('hintOn', { g: nm })); }
   act({ t:'settings', p:{ hintGroups: [...cur] } });
 });
+// Toernooitegels: aan of uit, minstens één. Continenten en provincies: vanuit "alles aan" kiest een tik alleen die ene.
+document.querySelectorAll('[data-tset]').forEach(el => el.addEventListener('click', e => {
+  const b = e.target.closest('[data-tv]'); if (!b || !S) return;
+  const key = el.dataset.tset, d = TOUR_SETS[key], v = b.dataset.tv, nm = d.name(v);
+  if (!canEdit()){ toast(nm); return; }
+  const cur = new Set(S.settings[key] || d.all);
+  if (d.solo && cur.size === d.all.length){ cur.clear(); cur.add(v); toast(t('onlyOne', { g: nm })); }
+  else if (cur.has(v)){ if (cur.size === 1){ toast(t('keepOne')); return; } cur.delete(v); toast(t('hintOff', { g: nm })); }
+  else { cur.add(v); toast(t('hintOn', { g: nm })); }
+  act({ t:'settings', p:{ [key]: d.all.filter(x => cur.has(x)) } }); beep(cur.has(v) ? 660 : 440, .04);
+}));
+document.querySelectorAll('[data-all]').forEach(b => b.addEventListener('click', () => { if (canEdit()){ act({ t:'settings', p:{ [b.dataset.all]: [...TOUR_SETS[b.dataset.all].all] } }); beep(700, .05); } }));
+{
+  const st = $('#tourStep'), stop = () => { if (!stepT) return; clearTimeout(stepT); stepT = null; setTimeout(() => { if (!stepT) stepVal = null; }, 900); };
+  st.addEventListener('pointerdown', e => {
+    const b = e.target.closest('[data-step]'); if (!b || e.button > 0) return;
+    e.preventDefault();
+    const d = +b.dataset.step; if (!tourStep(d)) return;
+    let wait = 420; clearTimeout(stepT);
+    const again = () => { if (tourStep(d)){ wait = Math.max(55, wait*.8); stepT = setTimeout(again, wait); } else stop(); };
+    stepT = setTimeout(again, wait);
+  });
+  ['pointerup','pointercancel','pointerleave'].forEach(ev => st.addEventListener(ev, stop));
+  st.addEventListener('click', e => { const b = e.target.closest('[data-step]'); if (b && e.detail === 0) tourStep(+b.dataset.step); });   // toetsenbord
+}
 $('#hintNow').addEventListener('click', e => { e.stopPropagation(); act({ t:'wanthint' }); beep(700,.05); });
 $('#hintHead').addEventListener('click', () => $('#hintsBox').classList.toggle('shut'));
 $('#zIn').addEventListener('click', () => dartOpen() ? dmap.zoomIn() : pano ? pano.setHfov(pano.getHfov() - 15) : map && map.zoomIn());
