@@ -92,6 +92,7 @@ punten = 1000 x nauwkeurigheid x hintfactor x tijdfactor
 | Straatjacht | e^(-(d-20 m)/(0,17 x straal)) x (0,85 + 0,15 x deel ongebruikte scans) |
 | Darts | e^(-(d-25 km)/1500 km), geschaald per continent. x2: dubbel binnen de binnenring, anders 0 |
 | Silhouet | Als Satelliet. De plek is het punt in het hoofddeel dat het dichtst bij het midden ligt |
+| Tekenen | Raders als Silhouet. Tekenaar: het gemiddelde van de punten van de raders |
 | Toernooi | Per ronde als de modus van die ronde. Finale aan: de laatste ronde x2 |
 
 Fout telt met dezelfde hint- en tijdfactor, dus op hetzelfde moment wint goed altijd van fout. Het juiste continent of de juiste provincie geeft geen vaste punten meer: die staan al in de eerste hint.
@@ -182,17 +183,40 @@ Kies in de lobby de modus **Silhouet**. Je ziet alleen de omtrek van een land op
 * Op het uitslagscherm zie je het land op de kaart en naast de vlag de vorm zoals jij hem zag.
 * Instellingen staan in `CONFIG.shape`.
 
+## Tekenen
+
+Kies in de lobby de modus **Tekenen**. Eén speler tekent een land uit het hoofd, de rest ziet de tekening live ontstaan en raadt het land.
+
+* **Om de beurt.** Elke ronde tekent de speler die het minst heeft getekend (bij gelijke stand wie het langst geleden tekende). Bij 5 rondes en 3 spelers tekenen twee spelers twee keer.
+* **De tekenaar** ziet onderin de naam van het land en tekent op een vierkant vel met de vinger of muis. Gereedschap: inkt, water (blauw) en rood, dun of dik, terug (ook Ctrl+Z) en wissen. Wissen kun je terugdraaien.
+* **De raders** krijgen hints zoals bij Satelliet en raden met de gewone invoer. Sneller en met minder hints is meer punten.
+* **Regel:** teken de vorm, geen letters, cijfers of vlaggen. Het spel controleert dat niet.
+
+| Moeilijkheid | Tekenaar ziet | Kleuren |
+|---|---|---|
+| Makkelijk | Naam, vlag en de omtrek als voorbeeld (tik om te vergroten) | Inkt, water, rood |
+| Normaal | Naam en vlag | Inkt, water, rood |
+| Moeilijk | Alleen de naam | Alleen inkt |
+
+**Punten.** Raders als Silhouet (goed 1, fout naar afstand, hint- en tijdfactor). De tekenaar krijgt het gemiddelde van de raders: raadt iedereen het snel, dan bijna 1000, raadt de helft het, dan ongeveer de helft, raadt niemand het, dan 0 (of een paar punten voor gokken in de buurt). Wie verbonden is maar niets invult telt mee met 0, wie wegging zonder antwoord telt niet mee. Raadt minstens de helft het (`CONFIG.draw.half`), dan telt de ronde voor de tekenaar als goed.
+
+**Netwerk.** De tekenaar stuurt zijn lijnen elke 50 ms in kleine stukjes rechtstreeks naar iedereen, op een vel van 1000 x 1000. Elk stukje heeft een volgnummer. Mist een speler er een, of komt iemand terug na herladen, dan vraagt hij de hele tekening op bij de tekenaar of de host. De host stuurt de hele tekening mee naar het uitslagscherm, daar staat hij naast het echte land. Grens per ronde: 8000 punten.
+
+* Met één speler wordt elke ronde Silhouet. In een toernooi dat je alleen speelt valt Tekenen uit het schema.
+* Continent, landkeuze, kleine landen en soorten hints werken zoals bij Satelliet. Een land van 2 km² tekenen is weinig zinvol: laat kleine landen uit.
+* Instellingen staan in `CONFIG.draw`.
+
 ## Toernooi
 
-Kies in de lobby **Toernooi** (de gouden knop onder Darts en Silhouet). Eén potje met meerdere modi, met eigen regels.
+Kies in de lobby **Toernooi** (de gouden knop onder Tekenen). Eén potje met meerdere modi, met eigen regels.
 
 | Instelling | Opties | Wat het doet |
 |---|---|---|
-| Modi | Satelliet, Straatbeeld, Nederland, Straatjacht, Darts, Silhouet (minstens één) | Welke modi meedoen |
+| Modi | Satelliet, Straatbeeld, Nederland, Straatjacht, Darts, Silhouet, Tekenen (minstens één) | Welke modi meedoen. Tekenen valt weg als je alleen speelt |
 | Volgorde | Door elkaar, Om de beurt, Per blok | Door elkaar: evenveel per modus, nooit twee keer dezelfde na elkaar als het kan. Om de beurt: vaste rij die herhaalt. Per blok: eerst alle rondes van de ene modus, dan de volgende |
 | Rondes | 3 tot 30 (teller, vasthouden gaat sneller) | Eronder staat hoeveel rondes elke modus krijgt |
 | Moeilijkheid | Makkelijk, Normaal, Moeilijk, Oplopend | Oplopend: eerste derde makkelijk, dan normaal, laatste derde moeilijk |
-| Continenten | Europa, Amerika, Azië, Oceanië, Afrika | Voor Satelliet, Straatbeeld, Darts en Silhouet. Per ronde één continent, naar het aantal landen (of oppervlakte), zodat de ringen bij Darts kloppen |
+| Continenten | Europa, Amerika, Azië, Oceanië, Afrika | Voor Satelliet, Straatbeeld, Darts, Silhouet en Tekenen. Per ronde één continent, naar het aantal landen (of oppervlakte), zodat de ringen bij Darts kloppen |
 | Provincies | De 12 provincies | Voor Nederland en Straatjacht. Raken de plaatsen op, dan eerst andere plaatsen in die provincies, pas daarna een herhaling |
 | Plaatsen, Straatjacht speelt in, Beeld | Als in de losse modi | Alleen zichtbaar als een modus die ze gebruikt meedoet |
 | Finale telt dubbel | Aan of uit | Laatste ronde x2 punten |
