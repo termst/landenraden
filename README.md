@@ -66,7 +66,7 @@ Alles staat in het `CONFIG` object bovenaan het script in `index.html`:
 * `tiles`: kaartlaag. Standaard Esri satelliet (geen labels, geen key nodig). Wil je Mapbox: zet je URL met key in `tiles.main.url` en beperk de key in Mapbox op je GitHub Pages domein.
 * `street`: zoekinstellingen voor straatbeeld
 * `maxPlayers`, `resultAutoMs`
-* `CUR_FIX` (valuta-correcties op landcode) en `HINT_DEFS` (alle hinttypes, rang en groep)
+* `CUR_FIX` (valuta-correcties op landcode) en `HINT_DEFS` (alle hinttypes, rang en groep) en `ANCHORS` (ijklanden voor de hint "vanaf")
 
 ## Puntentelling
 
@@ -107,9 +107,27 @@ Voorbeeld, standaard lobby (60 s, 6 hints, elke 10 s), goed land:
 | 35 s | 4 | 537 | 656 |
 | 45 s | 5 | 420 | 511 |
 | 55 s | 6, hoofdstad | 317 | 363 |
-| 55 s | 6, naam | 317 | 73 |
+| 55 s | 8, naam | 317 | 73 |
 
 Fout land na 5 s, plek in Brussel: Nederland 216, Frankrijk 208, Duitsland 186, Polen 42, Spanje 24, Japan 0 (oud: 100 voor elk Europees land).
+
+## Hints (landen)
+
+Van vaag naar concreet. De eerste is gratis, de laatste is altijd een sterke (hoofdstad, vlag of alle buurlanden). Per familie hoogstens één hint per ronde (bijvoorbeeld valuta, symbool of gedeelde munt).
+
+| Groep | Hints (rang) |
+|---|---|
+| Geografie | continent (0), halfrond (1), klimaat (1), rijrichting (2), ligging aan zee (2), grootte (2), regio (2), afstand en richting vanaf een bekend land (3), oppervlakte tegenover Nederland (3) |
+| Mensen | inwoners (2), talen (3) |
+| Geld | gedeelde munt (3), symbool (3), naam van de valuta (4) |
+| Codes | eerste cijfer landnummer (2), landnummer (5), domein (5) |
+| Buren | aantal buurlanden (2), één buurland (4), alle buurlanden (6, laatste) |
+| Naam en vlag | lengte hoofdstad (4), lengte naam (5), hoofdstad beginletter (6), vlag (6), naam (7, alleen bij 8 hints) |
+
+* Staat het continent vast (lobby of toernooironde), dan vervalt de continent-hint en begint de ronde met de regio.
+* Een vage hint die binnen het werelddeel door meer dan 80% van de landen gedeeld wordt, valt weg (`INFO_KEYS`, `hintShare`). Halfrond of klimaat in Europa kost dus geen punten meer voor niets.
+* Halfrond en klimaat gaan over het midden van het land, niet over de plek van de ronde. Grote landen geven dus elke ronde hetzelfde antwoord.
+* "Vanaf" kiest het dichtstbijzijnde land uit `ANCHORS` dat geen buurland is en minstens 300 km weg ligt. Niet voor landen groter dan 2 miljoen km².
 
 ## Straatbeeld
 
