@@ -61,12 +61,52 @@ In een kamer staat naast de chatknop een knop met een lachende pin. Eén tik ope
 
 Alles staat in het `CONFIG` object bovenaan het script in `index.html`:
 
-* `score`: punten voor goed, aftrek per hint, minimum
+* `score`: maximum per ronde, tijdfactor, hintaftrek, naam-hint, fout maar dichtbij, vertragingscompensatie (zie Puntentelling)
 * `zoom` en `pan`: zoomniveau en bewegingsruimte per moeilijkheid
 * `tiles`: kaartlaag. Standaard Esri satelliet (geen labels, geen key nodig). Wil je Mapbox: zet je URL met key in `tiles.main.url` en beperk de key in Mapbox op je GitHub Pages domein.
 * `street`: zoekinstellingen voor straatbeeld
 * `maxPlayers`, `resultAutoMs`
 * `CUR_FIX` (valuta-correcties op landcode) en `HINT_DEFS` (alle hinttypes, rang en groep)
+
+## Puntentelling
+
+Elke modus gebruikt dezelfde formule. De host rekent, aan het eind van de ronde.
+
+```
+punten = 1000 x nauwkeurigheid x hintfactor x tijdfactor
+```
+
+| Deel | Regel | Waarom |
+|---|---|---|
+| Nauwkeurigheid | 0 tot 1, per modus (zie onder), vloeiend | Kennis telt, geen sprongen op een grens |
+| Hintfactor | Eerste hint gratis. Alle hints gezien: x0,5. Hint kost 1 + rang (sterker is duurder) | Zelfde aftrek bij 4, 6 of 8 hints |
+| Naam-hint | Na de hint met de land- of plaatsnaam: x0,1 (telt wel als goed) | Het antwoord aflezen is geen aardrijkskunde |
+| Tijdfactor | 70% plus 30% van je resterende tijd | Hints komen al met de tijd, dus tijd telt lichter dan eerst |
+| Vertraging | De host neemt jouw tijd en aantal hints over, maximaal 1,5 s gunstiger dan wat hij zelf ziet | Wie niet host verliest geen punten aan het netwerk |
+| Gelijke stand | Meeste goed, dan snelste goede antwoord | Geen willekeurige volgorde |
+
+| Modus | Nauwkeurigheid |
+|---|---|
+| Satelliet, Straatbeeld | Goed 1. Fout: 0,25 x e^(-d/400 km), d = afstand van de plek tot de grens van jouw land |
+| Nederland | Goed 1. Fout: 0,25 x e^(-d/10 km), d = afstand van de plek tot jouw plaats |
+| Straatjacht | e^(-(d-20 m)/(0,17 x straal)) x (0,85 + 0,15 x deel ongebruikte scans) |
+| Darts | e^(-(d-25 km)/1500 km), geschaald per continent. x2: dubbel binnen de binnenring, anders 0 |
+
+Fout telt met dezelfde hint- en tijdfactor, dus op hetzelfde moment wint goed altijd van fout. Het juiste continent of de juiste provincie geeft geen vaste punten meer: die staan al in de eerste hint.
+
+Voorbeeld, standaard lobby (60 s, 6 hints, elke 10 s), goed land:
+
+| Antwoord na | Hints | Oud | Nieuw |
+|---|---|---|---|
+| 5 s | 1 | 967 | 975 |
+| 15 s | 2 | 810 | 883 |
+| 25 s | 3 | 667 | 776 |
+| 35 s | 4 | 537 | 656 |
+| 45 s | 5 | 420 | 511 |
+| 55 s | 6, hoofdstad | 317 | 363 |
+| 55 s | 6, naam | 317 | 73 |
+
+Fout land na 5 s, plek in Brussel: Nederland 216, Frankrijk 208, Duitsland 186, Polen 42, Spanje 24, Japan 0 (oud: 100 voor elk Europees land).
 
 ## Straatbeeld
 
@@ -87,7 +127,7 @@ Kies in de lobby de modus **Nederland**. Je krijgt een willekeurige plek in Nede
 * De plek ligt binnen een paar km van de plaats, en de plaats is altijd de dichtstbijzijnde uit de lijst. Dat is het juiste antwoord.
 * **Plaatsen**: alle, alleen steden (50.000+) of alleen dorpen. **Beeld**: satelliet of straatbeeld (Panoramax).
 * Hints: provincie, landsdeel, inwoners, afstand en richting vanaf een grotere plaats, lengte van de naam, beginletter.
-* Goed geeft de volle score. Fout binnen 25 km of in dezelfde provincie geeft 100 punten (`CONFIG.nl.nearKm`).
+* Goed geeft de volle score. Fout telt naar afstand van jouw plaats tot de plek: maximaal 25%, elke 7 km verder halveert het (`CONFIG.score.nlNearKm`). Dezelfde provincie levert niets extra op, die staat al in de eerste hint.
 * Op het uitslagscherm zie je de juiste plek en de gok van elke speler.
 
 ## Straatjacht
@@ -98,7 +138,7 @@ Kies in de lobby de modus **Straatjacht**. Je krijgt de naam van een straat of g
 * **Warm of koud.** Na elke scan zie je hoe dicht je zit. Makkelijk: temperatuur, afstand en richting. Normaal: temperatuur en warmer/kouder. Moeilijk: alleen warmer of kouder.
 * **Scans:** 8, 6 of 4 per ronde. Daarna kun je je pin nog wel verzetten, maar je krijgt geen informatie meer.
 * **Raak?** Tik je op het doel (of ergens anders op dezelfde straat), dan ben je meteen klaar. Anders zet je je pin vast, of telt bij het einde van de tijd je laatste pin, zonder tijdbonus.
-* **Score:** hoe dichterbij hoe meer (`falloff` in `CONFIG.hunt`), maal 60% plus 40% van je resterende tijd, plus 20 punten per ongebruikte scan als je binnen 300 m zit.
+* **Score:** hoe dichterbij hoe meer, in verhouding tot de straal van het gebied (`falloffFrac`), zodat makkelijk en moeilijk even streng zijn. Ongebruikte scans tellen voor 15% (`scanShare`), naar verhouding en alleen zo zwaar als je dichtbij zit. Hints en tijd tellen zoals in elke modus.
 * **Hints:** richting, afstand, buurt, postcode, een straat in de buurt en als laatste een cirkel op de kaart.
 * **Waar speel je:** kies je eigen plaats (leuk met mensen die er wonen) of een willekeurige. Moeilijker betekent ook een groter gebied (800, 1200 of 1700 m straal).
 
@@ -109,14 +149,16 @@ De namen komen van [OpenStreetMap](https://www.openstreetmap.org/copyright) via 
 Kies in de lobby de modus **Darts**. Je ziet een plek (satelliet of straatfoto) en gooit een pijltje op de wereldkaart waar jij denkt dat hij ligt.
 
 * **Kaart** opent de wereldkaart, **Plek** brengt je terug. Tik op de kaart om je pijltje te zetten (verzetten mag), **Gooi** zet hem vast.
-* **Ringen** rond de echte plek: roos tot 150 km (1000 punten), binnenring 400 km (700), middenring 800 km (450), buitenring 1600 km (250), rand 3200 km (100). Daarbuiten 0.
-* Sneller gooien en minder hints geeft meer: punten maal 60% plus 40% van je resterende tijd, en min 8% per extra hint (maximaal 40% eraf).
+* **Punten** lopen vloeiend af met de afstand, zonder sprongen op de ringgrenzen: vol tot 25 km, daarna halveert het per 1040 km (`plateauKm`, `falloffKm`).
+* **Ringen** rond de echte plek (wereld): roos 150 km, binnenring 400, middenring 800, buitenring 1600, rand 3200. Ze bepalen x2 en de kleur.
+* **Per continent** schalen ringen en afval mee (`scale`): Europa 0,33 (roos 50 km), Afrika 0,6, Oceanië 0,55, Azië 0,75, Amerika 0,85. Anders zit in Europa iedereen in de roos en beslist alleen de snelheid.
+* Hints en tijd tellen zoals in elke modus.
 * **x2, dubbel of niks**: zet hem aan voor je gooit. Roos of binnenring telt dubbel, daarbuiten krijg je 0.
 * Niet gegooid? Dan telt je pijltje bij het einde van de tijd, zonder tijdbonus.
 * **Makkelijk** toont namen op de wereldkaart, normaal en moeilijk niet. Moeilijk zet de plek op slot, de wereldkaart kun je altijd bewegen.
 * Continent, landkeuze, kleine landen en soorten hints werken zoals bij Satelliet. **Beeld** kiest satelliet of straatbeeld (Panoramax).
 * Op het uitslagscherm zie je het dartbord rond de plek en ieders pijltje met afstand.
-* Ringen en punten staan in `CONFIG.darts`. Afstand is over de bol (`gcKm`), niet plat.
+* Ringen en afval staan in `CONFIG.darts`. Afstand is over de bol (`gcKm`), niet plat.
 
 ## Avatars en kleuren
 
@@ -136,7 +178,8 @@ Alles staat in de browser (localStorage). Geen account, geen server. Cookies zij
 | `lr_settings` | Laatste lobby-instellingen als host |
 | `lr_stats` | Totalen, beste score per modus en de laatste 25 potjes (JSON, enkele KB) |
 
-* **Statistieken**: knop linksboven op het startscherm. Potjes, gewonnen (alleen met anderen), goed, punten, gemiddelde, beste potje, beste ronde, snelste goed, per modus en de laatste 10 potjes.
+* **Statistieken**: knop linksboven op het startscherm. Potjes, gewonnen (alleen met anderen), goed, punten, gemiddelde per ronde, beste potje (gemiddeld per ronde), beste ronde, snelste goed, per modus en de laatste 10 potjes.
+* Gemiddelde en records tellen per ronde: een potje van 15 rondes heeft altijd meer punten dan een van 5, dus het totaal zegt niets.
 * Een potje telt zodra je het eindscherm ziet. Elk potje heeft een id, dus herladen of een hostwissel telt niet dubbel. Wie halverwege vertrekt, telt niet mee.
 * **Back-up**: **Kopieer code** geeft een tekst die begint met `GF1`. Plak die op een ander apparaat en kies **Herstel**. Dat vervangt profiel, instellingen en statistieken op dat apparaat.
 * Blokkeert de browser opslag (cookies uit, sommige privévensters), dan werkt het spel gewoon en meldt het statistiekenscherm dat er niets bewaard wordt.
