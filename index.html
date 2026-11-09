@@ -1172,10 +1172,12 @@ const I18N = {
   pGR:'Groningen', pFR:'Friesland', pDR:'Drenthe', pOV:'Overijssel', pFL:'Flevoland', pGE:'Gelderland', pUT:'Utrecht', pNH:'Noord-Holland', pZH:'Zuid-Holland', pZE:'Zeeland', pNB:'Noord-Brabant', pLI:'Limburg',
   g_geo:'Geografie', g_people:'Mensen', g_money:'Geld', g_codes:'Codes', g_nb:'Buren', g_name:'Naam en vlag',
   h_hemi:'Halfrond', h_climate:'Klimaat', h_size:'Grootte', h_cursym:'Symbool', h_curshare:'Munt gedeeld', h_nb1:'Grenst aan', h_namelen:'Lengte naam', h_flag:'Vlag',
+  h_nbcount:'Buurlanden', h_telzone:'Landnummer', h_caplen:'Lengte hoofdstad', h_anchor:'Ligging', h_area_nl:'Oppervlakte',
+  nbCount1:'1 buurland', telZone:'begint met +{z}', areaNl:'{n}x zo groot als Nederland', areaNlSmall:'Nederland is {n}x zo groot',
   hN:'noordelijk', hS:'zuidelijk', hE:'oostelijk', hW:'westelijk',
   cl0:'tropisch', cl1:'subtropisch', cl2:'gematigd', cl3:'koud', cl4:'poolgebied',
   s0:'kleiner dan 10.000 km²', s1:'10.000 tot 100.000 km²', s2:'100.000 tot 500.000 km²', s3:'500.000 tot 2 miljoen km²', s4:'groter dan 2 miljoen km²',
-  curOnly:'alleen hier', curShared:'ook in {n} andere gebieden', nameLen:'{n} letters', borders:'{c}',
+  curOnly:'alleen hier', curShared:'ook in {n} andere gebieden', curShared1:'ook in 1 ander gebied', nameLen:'{n} letters', borders:'{c}',
   rulesHtml:`<ul>
    <li>Iedereen ziet dezelfde plek, op satelliet of straatbeeld.</li>
    <li>Hints komen vanzelf vrij, van vaag naar concreet. <b>Hint nu</b> werkt als iedereen het wil.</li>
@@ -1253,10 +1255,12 @@ const I18N = {
   pGR:'Groningen', pFR:'Friesland', pDR:'Drenthe', pOV:'Overijssel', pFL:'Flevoland', pGE:'Gelderland', pUT:'Utrecht', pNH:'North Holland', pZH:'South Holland', pZE:'Zeeland', pNB:'North Brabant', pLI:'Limburg',
   g_geo:'Geography', g_people:'People', g_money:'Money', g_codes:'Codes', g_nb:'Neighbours', g_name:'Name and flag',
   h_hemi:'Hemisphere', h_climate:'Climate', h_size:'Size', h_cursym:'Symbol', h_curshare:'Shared currency', h_nb1:'Borders', h_namelen:'Name length', h_flag:'Flag',
+  h_nbcount:'Neighbours', h_telzone:'Calling code', h_caplen:'Capital length', h_anchor:'Location', h_area_nl:'Area',
+  nbCount1:'1 neighbour', telZone:'starts with +{z}', areaNl:'{n}x the size of the Netherlands', areaNlSmall:'the Netherlands is {n}x bigger',
   hN:'northern', hS:'southern', hE:'eastern', hW:'western',
   cl0:'tropical', cl1:'subtropical', cl2:'temperate', cl3:'cold', cl4:'polar',
   s0:'under 10,000 km²', s1:'10,000 to 100,000 km²', s2:'100,000 to 500,000 km²', s3:'500,000 to 2 million km²', s4:'over 2 million km²',
-  curOnly:'only here', curShared:'also in {n} other territories', nameLen:'{n} letters', borders:'{c}',
+  curOnly:'only here', curShared:'also in {n} other territories', curShared1:'also in 1 other area', nameLen:'{n} letters', borders:'{c}',
   rulesHtml:`<ul>
    <li>Everyone sees the same spot, on satellite or street view.</li>
    <li>Hints unlock over time, vague to specific. <b>Hint now</b> works when everyone wants it.</li>
@@ -1334,6 +1338,8 @@ function buildCurrencies(){
     if (CODES[code][0]) CURCOUNT[CODES[code][0]] = (CURCOUNT[CODES[code][0]]||0) + 1;
   }
 }
+// Afronden op twee cijfers: 0,43 / 4,3 / 43 / 430
+const sig2 = x => +x.toPrecision(2);
 const curSym = cc => { try { return new Intl.NumberFormat(lang,{style:'currency',currency:cc,currencyDisplay:'narrowSymbol'}).formatToParts(1).find(p=>p.type==='currency').value; } catch(e){ return cc; } };
 const curName = cc => { try { return new Intl.DisplayNames([lang],{type:'currency'}).of(cc); } catch(e){ return cc; } };
 
@@ -1366,7 +1372,9 @@ async function loadData(){
       const area = Math.abs(a/2) * Math.cos(((minY+maxY)/2)*Math.PI/180);
       return { rings, bbox:[minX,minY,maxX,maxY], area };
     });
-    GEO[f.properties.c] = { feature: f, polys, area: polys.reduce((s,p)=>s+p.area,0) };
+    // Middelpunt van het grootste deel (gemiddelde van de punten van de buitenrand): voor halfrond, klimaat en "vanaf"-hint.
+    const main = polys.reduce((a,b)=>b.area>a.area?b:a).rings[0], mid = main.reduce((s,[x,y])=>[s[0]+y, s[1]+x], [0,0]).map(v=>v/main.length);
+    GEO[f.properties.c] = { feature: f, polys, area: polys.reduce((s,p)=>s+p.area,0), mid };
   }
   for (const [code, c] of Object.entries(COUNTRIES)){
     if (!GEO[code]) continue;
@@ -2013,30 +2021,60 @@ const HINT_DEFS = [
   { k:'cont',     r:0, g:'geo',    f:'cont',   ok:c=>true },
   { k:'hemi',     r:1, g:'geo',    f:'hemi',   ok:c=>true },
   { k:'climate',  r:1, g:'geo',    f:'climate',ok:c=>true },
-  { k:'drive',    r:1, g:'geo',    f:'drive',  ok:c=>true },
+  { k:'telzone',  r:2, g:'codes',  f:'tel',    ok:c=>!!c.tel && c.tel.length>1 },
+  { k:'drive',    r:2, g:'geo',    f:'drive',  ok:c=>true },
   { k:'coast',    r:2, g:'geo',    f:'coast',  ok:c=>true },
   { k:'size',     r:2, g:'geo',    f:'size',   ok:c=>c.area>0 },
   { k:'sub',      r:2, g:'geo',    f:'sub',    ok:c=>!!c.sub },
+  { k:'nbcount',  r:2, g:'nb',     f:'nbc',    ok:c=>c.nb.length>0 },
   { k:'pop',      r:2, g:'people', f:'pop',    ok:c=>true },
+  { k:'anchor',   r:3, g:'geo',    f:'anchor', ok:(c,code)=>c.area < 2e6 && !!anchorOf(code) },
+  { k:'area_nl',  r:3, g:'geo',    f:'size',   ok:(c,code)=>c.area>0 && code!=='NL' && !!COUNTRIES.NL },
   { k:'lang',     r:3, g:'people', f:'lang',   ok:c=>c.lang.length>0 },
   { k:'curshare', r:3, g:'money',  f:'cur',    ok:(c,code)=>!!(CODES[code]&&CODES[code][0]) },
   { k:'cursym',   r:3, g:'money',  f:'cur',    ok:(c,code)=>!!(CODES[code]&&CODES[code][0]) },
-  { k:'tel',      r:4, g:'codes',  f:'tel',    ok:c=>!!c.tel && c.tel.length>2 },
   { k:'cur',      r:4, g:'money',  f:'cur',    ok:(c,code)=>!!(CODES[code]&&CODES[code][0]) },
-  { k:'tld',      r:4, g:'codes',  f:'tld',    ok:c=>!!c.tld },
   { k:'nb1',      r:4, g:'nb',     f:'nb',     ok:c=>c.nb.length>0 },
-  { k:'nb',       r:5, g:'nb',     f:'nb',     ok:c=>c.nb.length>0 },
+  { k:'caplen',   r:4, g:'name',   f:'caplen', ok:c=>!!c.cap },
+  { k:'tel',      r:5, g:'codes',  f:'tel',    ok:c=>!!c.tel && c.tel.length>2 },
+  { k:'tld',      r:5, g:'codes',  f:'tld',    ok:c=>!!c.tld },
   { k:'namelen',  r:5, g:'name',   f:'name',   ok:c=>true },
+  { k:'nb',       r:6, g:'nb',     f:'nb',     ok:c=>c.nb.length>1, late:true },
   { k:'cap',      r:6, g:'name',   f:'cap',    ok:c=>!!c.cap, late:true },
   { k:'flag',     r:6, g:'name',   f:'flag',   ok:c=>true, late:true },
   { k:'name',     r:7, g:'name',   f:'name',   ok:c=>true, late:true },
 ];
-function chooseHints(code, count, groups){
+// Bekende landen als ijkpunt voor de hint "vanaf": het dichtstbijzijnde (geen buurland, minstens 300 km).
+const ANCHORS = ['US','CA','MX','BR','AR','PE','CO','CL','GB','FR','DE','ES','IT','PL','SE','RU','TR','GR','EG','MA','NG','KE','ZA','CD','ET','SA','IR','IN','CN','JP','TH','ID','AU','NZ','KZ','PK'];
+function anchorOf(code){
+  const g = GEO[code], c = COUNTRIES[code]; if (!g || !g.mid || !c) return null;
+  let best = null;
+  for (const a of ANCHORS){
+    if (a === code || c.nb.includes(a) || !GEO[a] || !COUNTRIES[a]) continue;
+    const [la, lb] = GEO[a].mid, d = gcKm(la, lb, g.mid[0], g.mid[1]);
+    if (d >= 300 && (!best || d < best.d)) best = { c:a, d };
+  }
+  return best && { c: best.c, km: Math.round(best.d/100)*100, d: bearing8(GEO[best.c].mid[0], GEO[best.c].mid[1], g.mid[0], g.mid[1]) };
+}
+// Vage hints die binnen het werelddeel bijna iedereen deelt (halfrond, klimaat in Europa) zeggen niets en kosten wel punten.
+const INFO_KEYS = new Set(['hemi','climate','drive','coast','size','pop','nbcount','telzone','curshare','sub']);
+function hintShare(h, code, c){
+  const key = x => JSON.stringify(hintValue(h.k, x)), mine = key(code);
+  const pool = Object.keys(GEO).filter(x => COUNTRIES[x] && COUNTRIES[x].cont === c.cont && h.ok(COUNTRIES[x], x));
+  return pool.length ? pool.filter(x => key(x) === mine).length / pool.length : 1;
+}
+// cont: het werelddeel van de lobby of de toernooironde. Staat dat vast, dan is de continent-hint niets waard.
+function chooseHints(code, count, groups, cont){
   const nl = !!CITIES[code], c = nl ? CITIES[code] : COUNTRIES[code], defs = nl ? nlDefs : HINT_DEFS;
   const on = (groups && groups.length) ? groups : HINT_GROUPS;
-  let avail = defs.filter(h => h.ok(c, code) && (nl || on.includes(h.g)));
-  if (!avail.length) avail = defs.filter(h => h.ok(c, code));
-  const first = avail.find(h=>h.k==='cont') || avail.slice().sort((a,b)=>a.r-b.r)[0];
+  const fixed = !nl && cont && cont !== 'ALL';
+  const useful = h => nl || !INFO_KEYS.has(h.k) || hintShare(h, code, c) <= 0.8;
+  const base = defs.filter(h => h.ok(c, code) && !(fixed && h.k === 'cont') && (count >= 8 || h.k !== 'name'));
+  let avail = base.filter(h => (nl || on.includes(h.g)) && useful(h));
+  if (!avail.length) avail = base.filter(useful);
+  if (!avail.length) avail = base;
+  // De eerste hint is gratis: altijd een vage. Zonder continent eerst de regio.
+  const first = avail.find(h=>h.k==='cont') || (fixed && avail.find(h=>h.k==='sub')) || avail.slice().sort((a,b)=>a.r-b.r)[0];
   const lates = avail.filter(h=>h.late && h!==first);
   const last = lates.length ? rnd(lates) : avail.filter(h=>h!==first).sort((a,b)=>b.r-a.r)[0];
   const used = new Set([first && first.f, last && last.f]);
@@ -2055,10 +2093,15 @@ function hintValue(k, code, loc){
   if (CITIES[code]) return nlHintValue(k, code, loc);
   const c = COUNTRIES[code];
   const nm = l => { const n = c[l] || c.en; return { l: n[0], n: n.replace(/[^\p{L}]/gu,'').length }; };
-  const lat = loc ? loc.lat : 0, lng = loc ? loc.lng : 0;
+  // Halfrond en klimaat gaan over het land (middelpunt), niet over de plek van deze ronde.
+  const mid = GEO[code] && GEO[code].mid, lat = mid ? mid[0] : loc ? loc.lat : 0, lng = mid ? mid[1] : loc ? loc.lng : 0;
   switch(k){
     case 'cont': return c.cont; case 'sub': return c.sub; case 'drive': return c.drive;
-    case 'coast': return { land: c.land, nb: c.nb.length }; case 'pop': return c.pop;
+    case 'coast': return { land: c.land, isl: !c.nb.length }; case 'pop': return c.pop;
+    case 'nbcount': return c.nb.length; case 'telzone': return c.tel[1];
+    case 'caplen': return c.cap.replace(/[^\p{L}]/gu,'').length;
+    case 'anchor': return anchorOf(code);
+    case 'area_nl': { const x = c.area / COUNTRIES.NL.area; return x >= 1 ? { x: sig2(x) } : { y: sig2(1/x) }; }
     case 'lang': return c.lang; case 'tel': return c.tel; case 'tld': return c.tld;
     case 'cur': case 'cursym': return CODES[code];
     case 'curshare': return { n: Math.max(0, (CURCOUNT[CODES[code][0]]||1) - 1) };
@@ -2087,12 +2130,17 @@ function renderHintValue(k, v){
     case 'cont': return t(v);
     case 'sub': return lang==='nl' ? (SUB_NL[v]||v) : v;
     case 'drive': return t(v==='L'?'left':'right');
-    case 'coast': return (v.land ? t('landlocked') : t('coast')) + ', ' + (v.nb ? t('nbCount',{n:v.nb}) : t('island'));
+    case 'coast': return (v.land ? t('landlocked') : t('coast')) + (v.isl ? ', ' + t('island') : '');
+    case 'nbcount': return t(v === 1 ? 'nbCount1' : 'nbCount', { n: v });
+    case 'telzone': return t('telZone', { z: v });
+    case 'caplen': return t('nameLen', { n: v });
+    case 'anchor': return t('nNear', { km: v.km.toLocaleString(lang), d: t('d'+v.d), c: cname(v.c) });
+    case 'area_nl': return v.x ? t('areaNl', { n: v.x.toLocaleString(lang) }) : t('areaNlSmall', { n: v.y.toLocaleString(lang) });
     case 'pop': return t('pop'+v);
     case 'lang': return v.map(l => lang==='nl' ? (LANG_NL[l]||l) : l).join(', ');
-    case 'cursym': return v.map(cc => { const s = curSym(cc); return s===cc ? cc : s; }).join(', ');
-    case 'cur': return v.map(cc => curSym(cc)).join(', ');
-    case 'curshare': return v.n ? t('curShared',{n:v.n}) : t('curOnly');
+    case 'cursym': return [...new Set(v.map(cc => { const s = curSym(cc); return s===cc ? cc : s; }))].join(', ');
+    case 'cur': return v.map(curName).join(', ');
+    case 'curshare': return v.n ? t(v.n === 1 ? 'curShared1' : 'curShared',{n:v.n}) : t('curOnly');
     case 'tel': case 'tld': return v;
     case 'nb': return v.map(cname).join(', ');
     case 'nb1': return t('borders',{c:cname(v)});
@@ -2345,7 +2393,7 @@ function becomeHost(oldHostPeer){
     // De laatste uit "used" is het antwoord van deze ronde. Terugrekenen vanuit de coördinaten kan misgaan op een kustlijn.
     const code = (snap.used || []).at(-1) || (isNL({ mode: r.mode || snap.settings.mode }) ? nlNearest(r.lat, r.lng).id : countryAt(r.lat, r.lng));
     const elapsed = r.durationMs - Math.max(0, r.remainingMs - (now()-recvAt));
-    const moreHints = r.hunt ? huntHintKeys(r.hunt, r.hintTotal) : chooseHints(code, r.hintTotal, snap.settings.hintGroups);
+    const moreHints = r.hunt ? huntHintKeys(r.hunt, r.hintTotal) : chooseHints(code, r.hintTotal, snap.settings.hintGroups, r.continent);
     H.round = { ...r, code, pins: {}, hintKeys: [...r.hints.map(h=>h.k), ...moreHints.filter(k=>!r.hints.some(h=>h.k===k))].slice(0, r.hintTotal),
       startAt: now() - elapsed, answers: {}, order: 0, forced: r.hints.length, wants: {} };
     if (myAnswer && myAnswer.roundId === r.id) H.round.answers[me.id] = { ...myAnswer, ms: Math.round(r.durationMs*(1-myAnswer.frac)), order: H.round.order++ };
@@ -2516,7 +2564,7 @@ async function nextRound(){
   const total = roundsOf(H.settings), final = H.settings.mode === 'tour' && !!H.settings.tourFinal && total > 1 && H.roundN === total;
   const durationMs = H.settings.roundTime*1000, hintIntervalMs = H.settings.hintEvery*1000;
   const wanted = Math.min(H.settings.hintCount || 6, Math.max(2, Math.ceil(durationMs / hintIntervalMs)));
-  const hintKeys = loc.hunt ? huntHintKeys(loc.hunt, wanted) : chooseHints(loc.code, wanted, H.settings.hintGroups), hintTotal = hintKeys.length;
+  const hintKeys = loc.hunt ? huntHintKeys(loc.hunt, wanted) : chooseHints(loc.code, wanted, H.settings.hintGroups, s.continent), hintTotal = hintKeys.length;
   H.round = { id: Math.random().toString(36).slice(2,9), n: H.roundN, mode, continent: s.continent, final, lat: loc.lat, lng: loc.lng, code: loc.code, photo: loc.photo || null,
     hunt: loc.hunt || null, darts, pins: {}, shape: shape ? shapeSpec(s.difficulty) : null,
     zoom: loc.hunt ? 14 : (nl ? CONFIG.nl.zoom : CONFIG.zoom)[s.difficulty], pan: loc.hunt ? 1 : shape ? 0 : (nl ? CONFIG.nl.pan : CONFIG.pan)[s.difficulty], difficulty: s.difficulty,
