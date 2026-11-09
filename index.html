@@ -20,34 +20,25 @@
 :root{
   --paper:#f2eee5;--card:#fffdf8;--card-hi:#fffdf8;--card2:#e9e3d6;--line:#d5cdbc;--ink:#1c1b18;--mute:#6a655a;
   --acc:#d4461b;--acc-d:#c13d15;--acc-hi:#d4461b;--acc-edge:#8c2b0c;--on-acc:#fff;--delft:#1f4e96;--sea:#1f5280;
-  --gold:#9a6a08;--on-gold:#fff;--bad:#c0322b;--ok:#2f7a4a;--r:8px;
+  --gold:#9a6a08;--on-gold:#fff;--bad:#c0322b;--ok:#2f7a4a;--r:6px;
   --display:'The Logo Font','The Bold Font',Impact,'Arial Black',sans-serif;--font:'Madani','The Bold Font',system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;
-  --field:#fff;--flash:#fbe3d6;--done:#dcecdf;--ink2:#3a372f;--glass:rgba(255,253,248,.95);--sel:#fff;
+  --field:#fff;--flash:#fbe3d6;--done:#dcecdf;--ink2:#3a372f;--glass:rgba(255,253,248,.97);--sel:#fff;
   --shadow:0 2px 0 rgba(28,27,24,.08);
   --shadow-up:0 2px 0 rgba(28,27,24,.14);
-  --glow1:transparent;--glow2:transparent;--tile:0;
 }
 [data-theme=dark]{
   color-scheme:dark;
   --paper:#151513;--card:#1e1d1a;--card-hi:#1e1d1a;--card2:#282722;--line:#3a3831;--ink:#eee9de;--mute:#9e988a;
   --acc:#e8552a;--acc-d:#d84a20;--acc-hi:#f06a3f;--acc-edge:#8f300f;--on-acc:#fff;--delft:#2a5aa8;--sea:#7eaed6;
   --gold:#e0b04a;--on-gold:#15151f;--bad:#ee6a5a;--ok:#74c08d;
-  --field:#121210;--flash:#3d2a1e;--done:#1f3326;--ink2:#d6d0c3;--glass:rgba(30,29,26,.95);--sel:#34322c;
+  --field:#121210;--flash:#3d2a1e;--done:#1f3326;--ink2:#d6d0c3;--glass:rgba(30,29,26,.97);--sel:#34322c;
   --shadow:0 2px 0 rgba(0,0,0,.35);
   --shadow-up:0 2px 0 rgba(0,0,0,.45);
-  --glow1:transparent;--glow2:transparent;--tile:0;
 }
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent;font-synthesis:none}
 [hidden]{display:none!important}
 html,body{margin:0;height:100%;background:var(--paper);color:var(--ink);font-family:var(--font);font-size:16px;line-height:1.3;overscroll-behavior:none}
 body{overflow:hidden}
-/* Achtergrond: gloed in delftsblauw en paars, met een heel vaag tegelpatroon. */
-body::before{content:'';position:fixed;inset:0;z-index:-1;pointer-events:none;
-  background:
-    radial-gradient(760px 460px at 50% -8%,var(--glow1),transparent 72%),
-    radial-gradient(620px 420px at 100% 100%,var(--glow2),transparent 72%)}
-body::after{content:'';position:fixed;inset:0;z-index:-1;pointer-events:none;opacity:var(--tile);
-  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='104' height='104' fill='none' stroke='%237e93e6' stroke-opacity='.075'%3E%3Cpath d='M0 .5h104M.5 0v104'/%3E%3Cpath d='M52 40l12 12-12 12-12-12z'/%3E%3Cpath d='M0 14c8 0 14-6 14-14M104 14c-8 0-14-6-14-14M0 90c8 0 14 6 14 14M104 90c-8 0-14 6-14 14'/%3E%3C/svg%3E")}
 button,input,select{font:inherit;color:inherit}
 :focus-visible{outline:2px solid var(--sea);outline-offset:2px}
 /* Grote tekst: The Logo Font, cijfers en leestekens vallen terug op The Bold Font. De rest is Madani. */
@@ -74,12 +65,12 @@ h2{font-size:20px;margin:0}
 #settingsCard,.more{gap:12px}
 #settingsCard,#hintCard{padding:14px}
 .eyebrow,label{font-size:13px;color:var(--mute)}
-input[type=text],select{width:100%;min-width:0;background:var(--field);border:1px solid var(--line);border-radius:10px;padding:13px 14px;outline:none;transition:border-color .15s,box-shadow .15s;box-shadow:0 1px 3px rgba(0,0,0,.18) inset}
-input[type=text]:focus,select:focus{border-color:var(--acc);box-shadow:0 0 0 3px color-mix(in srgb,var(--acc) 25%,transparent)}
-select{appearance:none;-webkit-appearance:none;cursor:pointer;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%238f93c4' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 12px center;background-size:18px;padding-right:38px}
+input[type=text],select{width:100%;min-width:0;background:var(--field);border:1px solid var(--line);border-radius:5px;padding:13px 14px;outline:none;transition:border-color .15s,box-shadow .15s;box-shadow:none}
+input[type=text]:focus,select:focus{border-color:var(--acc);box-shadow:0 0 0 1px var(--acc)}
+select{appearance:none;-webkit-appearance:none;cursor:pointer;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%238a8478' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 12px center;background-size:18px;padding-right:38px}
 select:disabled{opacity:.7;cursor:default}
 .ic{width:18px;height:18px;flex:none;stroke:currentColor;fill:none;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round}
-.btn{display:inline-flex;align-items:center;justify-content:center;gap:9px;min-height:48px;border:1px solid var(--line);border-radius:8px;padding:12px 16px;font-size:18px;cursor:pointer;background:var(--card2);box-shadow:0 2px 0 var(--line);transition:transform .08s,box-shadow .08s,filter .15s,border-color .15s}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:9px;min-height:48px;border:1px solid var(--line);border-radius:5px;padding:12px 16px;font-size:18px;cursor:pointer;background:var(--card2);box-shadow:0 2px 0 var(--line);transition:transform .08s,box-shadow .08s,filter .15s,border-color .15s}
 .btn:active{transform:translateY(2px);box-shadow:0 0 0 var(--line)}
 .btn.pri{background:var(--acc);border-color:var(--acc-edge);color:var(--on-acc);box-shadow:0 3px 0 var(--acc-edge)}
 .btn.pri:active{transform:translateY(3px);box-shadow:0 0 0 var(--acc-edge)}
@@ -101,11 +92,11 @@ select:disabled{opacity:.7;cursor:default}
 .topbar{display:flex;justify-content:space-between;align-items:center;gap:8px}
 .topbar .row{flex:none;gap:8px}
 .topbar .row>*{flex:none}
-.pill{display:inline-flex;align-items:center;gap:6px;white-space:nowrap;min-height:38px;background:var(--card);border:1px solid var(--line);border-radius:8px;padding:6px 12px;font-size:13px;cursor:pointer;user-select:none;transition:border-color .15s;box-shadow:var(--shadow)}
+.pill{display:inline-flex;align-items:center;gap:6px;white-space:nowrap;min-height:38px;background:var(--card);border:1px solid var(--line);border-radius:5px;padding:6px 12px;font-size:13px;cursor:pointer;user-select:none;transition:border-color .15s;box-shadow:var(--shadow)}
 span.pill{cursor:default}
 .pill .ic{width:15px;height:15px}
-.iconbtn{width:38px;height:38px;display:inline-grid;place-items:center;padding:0;background:var(--card);border:1px solid var(--line);border-radius:8px;cursor:pointer;transition:border-color .15s;box-shadow:var(--shadow)}
-.avatar{width:46px;height:46px;border-radius:50%;flex:none;display:grid;place-items:center;font-size:22px;color:#fff;transition:background .2s,transform .2s;box-shadow:0 0 0 3px color-mix(in srgb,var(--ink) 12%,transparent)}
+.iconbtn{width:38px;height:38px;display:inline-grid;place-items:center;padding:0;background:var(--card);border:1px solid var(--line);border-radius:5px;cursor:pointer;transition:border-color .15s;box-shadow:var(--shadow)}
+.avatar{width:46px;height:46px;border-radius:50%;flex:none;display:grid;place-items:center;font-size:22px;color:#fff;transition:background .2s,transform .2s;box-shadow:0 0 0 2px color-mix(in srgb,var(--ink) 14%,transparent)}
 .avatar.bump{transform:scale(1.12)}
 .avatar .av{width:32px;height:32px;flex:none}
 .avatar.sm .av{width:19px;height:19px}
@@ -133,16 +124,17 @@ span.pill{cursor:default}
 .colors{display:flex;gap:8px;flex-wrap:wrap}
 .colors button{width:32px;height:32px;border-radius:50%;border:2px solid var(--card);box-shadow:0 0 0 1px var(--line);cursor:pointer;flex:none;transition:transform .15s}
 .colors button.on{box-shadow:0 0 0 2.5px var(--ink)}
-.dd{display:flex;align-items:center;gap:10px;width:100%;min-height:48px;padding:6px 12px 6px 10px;background:var(--field);border:1px solid var(--line);border-radius:10px;cursor:pointer;text-align:left;box-shadow:0 1px 3px rgba(0,0,0,.18) inset}
+.dd{display:flex;align-items:center;gap:10px;width:100%;min-height:48px;padding:6px 12px 6px 10px;background:var(--field);border:1px solid var(--line);border-radius:5px;cursor:pointer;text-align:left;box-shadow:none}
 .dd[aria-expanded=true]{border-color:var(--acc)}
 .dd .ddt{flex:1;min-width:0}
 .dd .chv{transform:none;transition:transform .2s;color:var(--mute)}
-.dd[aria-expanded=true] .chv{transform:rotate(90deg)}
+.dd[aria-expanded=true] .chv{transform:rotate(180deg)}
+#colorTxt{font-family:var(--display);letter-spacing:.05em}
 .dot.big{width:26px;height:26px}
-.ddp{margin-top:8px;padding:12px;background:var(--card2);border:1px solid var(--line);border-radius:12px;max-height:264px;overflow-y:auto;overscroll-behavior:contain}
+.ddp{margin-top:8px;padding:12px;background:var(--card2);border:1px solid var(--line);border-radius:6px;max-height:264px;overflow-y:auto;overscroll-behavior:contain}
 .ddp[hidden]{display:none}
 .pick{display:flex;align-items:center;gap:10px;margin-top:12px;cursor:pointer;font-size:14px}
-.pick input{width:44px;height:34px;padding:0;border:1px solid var(--line);border-radius:8px;background:none;cursor:pointer}
+.pick input{width:44px;height:34px;padding:0;border:1px solid var(--line);border-radius:5px;background:none;cursor:pointer}
 .light .av{filter:invert(1) hue-rotate(180deg)}
 .avatar.light,.avatars.light button{color:#15151f}
 #codeIn{letter-spacing:.2em;text-align:center}
@@ -150,24 +142,24 @@ span.pill{cursor:default}
 /* lobby */
 .code{font-size:54px;letter-spacing:.12em;padding-left:.12em;text-align:center;line-height:1.1}
 .players{display:flex;flex-direction:column;gap:6px}
-.pl{display:flex;align-items:center;gap:10px;background:var(--card2);border-radius:10px;padding:9px 12px}
+.pl{display:flex;align-items:center;gap:10px;background:var(--card2);border-radius:5px;padding:9px 12px}
 .dot{width:12px;height:12px;border-radius:50%;flex:none;box-shadow:0 0 0 2px color-mix(in srgb,var(--ink) 16%,transparent)}
 .pl .nm{flex:1;min-width:0;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.badge{font-size:12px;padding:3px 8px;border-radius:99px;background:var(--delft);color:#fff}
+.badge{font-size:12px;padding:3px 7px;border-radius:3px;background:var(--delft);color:#fff}
 .badge.off{background:var(--line);color:var(--mute)}
 .badge.op{background:none;color:var(--ink);box-shadow:0 0 0 1px var(--delft) inset}
-.opbtn{font:inherit;font-size:12px;font-weight:700;padding:3px 8px;border-radius:99px;border:0;background:none;color:var(--mute);box-shadow:0 0 0 1px var(--line) inset;cursor:pointer}
+.opbtn{font:inherit;font-size:12px;font-weight:700;padding:3px 7px;border-radius:3px;border:0;background:none;color:var(--mute);box-shadow:0 0 0 1px var(--line) inset;cursor:pointer}
 .opbtn.on{background:var(--delft);color:#fff;box-shadow:none}
 .x{background:none;border:0;color:var(--mute);cursor:pointer;font-size:22px;padding:2px 8px;line-height:1}
-.seg{display:flex;background:var(--card2);border-radius:10px;padding:3px;gap:2px;box-shadow:0 1px 3px rgba(0,0,0,.16) inset}
-.seg button{flex:1;min-width:0;min-height:32px;border:0;background:none;padding:5px 4px;border-radius:8px;font-size:14px;line-height:1.15;color:var(--mute);cursor:pointer;transition:background .15s,color .15s}
+.seg{display:flex;background:var(--card2);border-radius:5px;padding:3px;gap:2px;box-shadow:inset 0 0 0 1px var(--line)}
+.seg button{flex:1;min-width:0;min-height:32px;border:0;background:none;padding:5px 4px;border-radius:3px;font-size:14px;line-height:1.15;color:var(--mute);cursor:pointer;transition:background .15s,color .15s}
 /* Eenheid achter een getal (30s): cijfers komen uit een zwaardere letter, dus de s iets kleiner */
 .seg .u{font-size:.88em;opacity:.8}
-.seg button.on{background:var(--sel);color:var(--ink);box-shadow:0 1px 3px rgba(0,0,0,.28),0 1px 0 rgba(255,255,255,.06) inset}
+.seg button.on{background:var(--sel);color:var(--ink);box-shadow:0 0 0 1px var(--line)}
 .seg.ro button{pointer-events:none}
 .seg.sm button{font-size:12.5px;padding:5px 1px}
 .seg.modes{display:grid;grid-template-columns:1fr 1fr;gap:8px;background:none;padding:0;box-shadow:none;border-radius:0}
-.seg.modes button{display:flex;align-items:center;justify-content:flex-start;gap:9px;min-height:52px;padding:7px 8px;text-align:left;font-weight:700;font-size:15px;line-height:1.1;color:var(--ink2);background:var(--card2);border:1.5px solid transparent;border-radius:14px;box-shadow:var(--shadow);transition:background .15s,border-color .15s,color .15s,transform .1s}
+.seg.modes button{display:flex;align-items:center;justify-content:flex-start;gap:9px;min-height:52px;padding:7px 8px;text-align:left;font-weight:700;font-size:15px;line-height:1.1;color:var(--ink2);background:var(--card2);border:1.5px solid transparent;border-radius:6px;box-shadow:var(--shadow);transition:background .15s,border-color .15s,color .15s,transform .1s}
 .seg.modes button:active{transform:scale(.97)}
 /* Kleur per modus: knoppen, tegels, schema en HUD lezen allemaal --mc */
 [data-m]{--mc:var(--acc)}
@@ -175,39 +167,22 @@ span.pill{cursor:default}
 #modeDesc{font-size:13px;line-height:1.35}
 /* Oneven aantal modi: de laatste over de hele breedte */
 .seg.modes button:last-child:nth-child(odd),.seg.modes button:nth-last-child(2):nth-child(odd){grid-column:1/-1}
-.seg.modes .mi{width:36px;height:36px;flex:none;display:grid;place-items:center;border-radius:11px;color:color-mix(in srgb,var(--mc) 78%,var(--ink));background:color-mix(in srgb,var(--mc) 16%,transparent);transition:background .15s,color .15s}
+.seg.modes .mi{width:36px;height:36px;flex:none;display:grid;place-items:center;border-radius:4px;color:color-mix(in srgb,var(--mc) 78%,var(--ink));background:color-mix(in srgb,var(--mc) 16%,transparent);transition:background .15s,color .15s}
 .seg.modes .mi svg{width:26px;height:26px;fill:currentColor;stroke:none}
 .seg.modes .ml{min-width:0}
 .seg.modes button.on{color:var(--ink);background:color-mix(in srgb,var(--mc) 9%,var(--sel));border-color:color-mix(in srgb,var(--mc) 80%,var(--ink))}
 .seg.modes button.on .mi{color:#fff;background:var(--mc)}
 @media (hover:hover){.seg.modes button:not(.on):hover{border-color:var(--line)}}
-@media (max-width:380px){.seg.modes button{gap:7px;padding:7px;font-size:13px}.seg.modes .mi{width:32px;height:32px;border-radius:9px}.seg.modes .mi svg{width:23px;height:23px}}
+@media (max-width:380px){.seg.modes button{gap:7px;padding:7px;font-size:13px}.seg.modes .mi{width:32px;height:32px;border-radius:4px}.seg.modes .mi svg{width:23px;height:23px}}
 @media (max-width:335px){.seg.modes button{flex-direction:column;align-items:flex-start;gap:6px}}
-/* Toernooi: over de hele breedte, goud, met een geblokte finishvlag en een 3D pin op het podium */
-.seg.modes button.tourBtn{grid-column:1/-1;flex-direction:row;align-items:center;min-height:62px;padding:5px 14px 5px 6px;gap:10px;position:relative;overflow:hidden;isolation:isolate;color:var(--ink);
-  background:linear-gradient(100deg,color-mix(in srgb,var(--gold) 20%,var(--card2)),var(--card2) 58%);border-color:color-mix(in srgb,var(--gold) 45%,transparent);
-  box-shadow:0 3px 0 color-mix(in srgb,var(--gold) 35%,var(--line)),inset 0 1px 0 rgba(255,255,255,.12)}
-.tourBtn::before{content:'';position:absolute;top:-8px;bottom:-8px;right:-10px;width:46%;z-index:-1;transform:skewX(-14deg);opacity:.14;
-  background:repeating-conic-gradient(var(--ink) 0 25%,transparent 0 50%) 0 0/13px 13px;
-  -webkit-mask-image:linear-gradient(90deg,transparent,#000 78%);mask-image:linear-gradient(90deg,transparent,#000 78%)}
-.tourBtn::after{content:'';position:absolute;inset:0;z-index:-1;pointer-events:none;background:linear-gradient(105deg,transparent 35%,rgba(255,255,255,.24) 50%,transparent 65%);transform:translateX(-120%)}
-.tourBtn.go::after{animation:tourShine 1s .1s ease-out}
-@keyframes tourShine{to{transform:translateX(120%)}}
-.seg.modes .tourBtn .mi{width:50px;height:50px;border-radius:12px;background:radial-gradient(circle at 50% 64%,color-mix(in srgb,var(--gold) 26%,transparent),transparent 68%)}
-.seg.modes .tourBtn .mi svg{width:48px;height:48px;overflow:visible;filter:drop-shadow(0 2px 2px rgba(0,0,0,.3))}
-.seg.modes .tourBtn.on .mi{background:radial-gradient(circle at 50% 64%,color-mix(in srgb,var(--gold) 50%,transparent),transparent 70%)}
-.tourBtn.go .tp-pin{animation:pinHop .6s .05s cubic-bezier(.3,1.7,.5,1)}
-@keyframes pinHop{40%{transform:translateY(-5px)}}
+/* Toernooi: zelfde tegel als de andere modi, over de hele breedte, met een ondertitel */
+.seg.modes button.tourBtn{grid-column:1/-1}
 .tourBtn .ml{display:flex;flex-direction:column;gap:3px}
-.tourBtn .ml b{font-family:var(--display);font-weight:400;text-transform:uppercase;letter-spacing:.03em;font-size:21px;line-height:1}
+.tourBtn .ml b{font-family:var(--display);font-weight:400;text-transform:uppercase;letter-spacing:.03em;font-size:18px;line-height:1}
 .tourBtn .ml small{font-size:12px;font-weight:700;color:var(--mute)}
-.seg.modes button.tourBtn.on{background:linear-gradient(100deg,color-mix(in srgb,var(--gold) 32%,var(--sel)),color-mix(in srgb,var(--gold) 7%,var(--sel)) 62%);border-color:var(--gold);
-  box-shadow:0 3px 0 color-mix(in srgb,var(--gold) 70%,#000),0 0 0 3px color-mix(in srgb,var(--gold) 20%,transparent)}
-.seg.modes button.tourBtn.on .ml small{color:var(--ink2)}
-@media (hover:hover){.seg.modes button.tourBtn:not(.on):hover{border-color:var(--gold)}}
 /* Toernooi-instellingen */
 .lrow{display:flex;justify-content:space-between;align-items:center;gap:8px;min-height:22px}
-.lrow .mini{min-height:22px;padding:2px 9px;font-size:11px;border-radius:7px}
+.lrow .mini{min-height:22px;padding:2px 9px;font-size:11px;border-radius:4px}
 .chips.ico.c5{grid-template-columns:repeat(5,1fr)}
 #tourModes{grid-template-columns:repeat(7,1fr)}
 .chips.ico .chipbtn.mc{color:color-mix(in srgb,var(--mc) 72%,var(--mute))}
@@ -215,13 +190,13 @@ span.pill{cursor:default}
 .chips.ico .chipbtn.mc.on{background:var(--mc);border-color:var(--mc);color:#fff}
 .chips.ico .chipbtn:not(.mc) .ic{width:26px;height:26px}
 .provs{display:grid;grid-template-columns:repeat(3,1fr);gap:5px}
-.provs .chipbtn{min-width:0;padding:7px 4px;border-radius:9px;font-size:13px;text-align:center;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.provs .chipbtn{min-width:0;padding:7px 4px;border-radius:4px;font-size:13px;text-align:center;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .provs.ro .chipbtn{cursor:default}
 .provs.ro .chipbtn:not(.on){opacity:.6}
 .toggle .tl{display:flex;flex-direction:column;gap:2px;min-width:0}
 .toggle .tl small{font-size:12px;color:var(--mute)}
-.stepper{display:flex;align-items:center;gap:2px;background:var(--card2);border-radius:10px;padding:3px;box-shadow:0 1px 3px rgba(0,0,0,.16) inset;flex:none}
-.stepper button{width:40px;height:34px;display:grid;place-items:center;border:0;border-radius:8px;background:var(--sel);color:var(--ink);cursor:pointer;padding:0;box-shadow:0 1px 3px rgba(0,0,0,.28);touch-action:manipulation;user-select:none;-webkit-user-select:none;transition:transform .08s,opacity .15s}
+.stepper{display:flex;align-items:center;gap:2px;background:var(--card2);border-radius:5px;padding:3px;box-shadow:inset 0 0 0 1px var(--line);flex:none}
+.stepper button{width:40px;height:34px;display:grid;place-items:center;border:0;border-radius:3px;background:var(--sel);color:var(--ink);cursor:pointer;padding:0;box-shadow:0 0 0 1px var(--line);touch-action:manipulation;user-select:none;-webkit-user-select:none;transition:transform .08s,opacity .15s}
 .stepper button:active{transform:scale(.92)}
 .stepper button:disabled{opacity:.3;pointer-events:none}
 .stepper b{min-width:46px;text-align:center;font-family:var(--display);font-weight:400;font-size:21px;line-height:1}
@@ -239,17 +214,18 @@ span.pill{cursor:default}
 .sw::after{content:'';position:absolute;top:3px;left:3px;width:20px;height:20px;border-radius:50%;background:#fff;box-shadow:0 1px 3px rgba(0,0,0,.3);transition:left .2s}
 .sw.on{background:var(--acc)}.sw.on::after{left:21px}
 .chips{display:flex;flex-wrap:wrap;gap:7px}
-.chipbtn{border:1px solid var(--line);background:transparent;border-radius:99px;padding:7px 13px;font-size:14px;cursor:pointer;color:var(--mute);transition:all .15s}
+.chipbtn{border:1px solid var(--line);background:transparent;border-radius:3px;padding:7px 13px;font-size:14px;cursor:pointer;color:var(--mute);transition:all .15s}
 .chipbtn.on{background:var(--delft);border-color:var(--delft);color:#fff}
 .chips.ro .chipbtn{pointer-events:none}
 /* Soorten hints als icoontegels, meerdere tegelijk aan. Naam via title en een melding bij tikken. */
 .chips.ico{display:grid;grid-template-columns:repeat(6,1fr);gap:6px}
-.chips.ico .chipbtn{display:grid;place-items:center;min-width:0;height:40px;padding:0;border-radius:10px}
+.chips.ico .chipbtn{display:grid;place-items:center;min-width:0;height:40px;padding:0;border-radius:5px}
 .chips.ico .chipbtn .ic{width:22px;height:22px}
 .chips.ico.ro .chipbtn{pointer-events:auto;cursor:default}
 .chips.ico.ro .chipbtn:not(.on){opacity:.6}
 details.card>summary{font-family:var(--display);text-transform:uppercase;font-size:20px;cursor:pointer;list-style:none;display:flex;justify-content:space-between;align-items:center}
 details.card>summary::-webkit-details-marker{display:none}
+details.card{display:block}
 .more{display:flex;flex-direction:column;margin-top:12px}
 details.card>summary::after{content:'+';color:var(--mute);font-family:var(--font)}
 details.card[open]>summary::after{content:'\2212'}
@@ -259,8 +235,8 @@ details.card[open]>summary::after{content:'\2212'}
 #map{isolation:isolate}
 .hud{position:absolute;left:0;right:0;top:0;padding:max(10px,env(safe-area-inset-top)) max(10px,env(safe-area-inset-right)) 0 max(10px,env(safe-area-inset-left));display:flex;gap:6px;z-index:500;pointer-events:none;align-items:stretch}
 .hud>*{pointer-events:auto}
-.hud .iconbtn{width:44px;height:auto;border-radius:12px;background:var(--glass);-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px)}
-.chip{background:var(--glass);-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);border:1px solid var(--line);border-radius:12px;padding:6px 11px;font-size:14px;display:flex;flex-direction:column;justify-content:center;line-height:1.15;box-shadow:var(--shadow-up)}
+.hud .iconbtn{width:44px;height:auto;border-radius:6px;background:var(--glass)}
+.chip{background:var(--glass);border:1px solid var(--line);border-radius:6px;padding:6px 11px;font-size:14px;display:flex;flex-direction:column;justify-content:center;line-height:1.15;box-shadow:var(--shadow-up)}
 .chip small{font-size:11px;color:var(--mute)}
 .chip b{font-weight:400;font-size:19px}
 .chip.timer{min-width:78px;align-items:center;position:relative;overflow:hidden}
@@ -272,21 +248,21 @@ details.card[open]>summary::after{content:'\2212'}
 .tbar{position:absolute;left:0;bottom:0;height:3px;background:var(--acc);width:100%;transform-origin:left;transition:transform .2s linear,background .3s}
 .chip.timer.low .tbar{background:var(--bad)}
 .grow{flex:1;pointer-events:none!important}
-.netdot{width:9px;height:9px;border-radius:50%;background:var(--ok);margin:auto;}
+.netdot{width:9px;height:9px;border-radius:50%;background:var(--ok);margin:auto}
 .netdot.mid{background:var(--gold)}.netdot.bad{background:var(--bad)}
 .mapctl{position:absolute;right:max(10px,env(safe-area-inset-right));top:calc(max(10px,env(safe-area-inset-top)) + 62px);z-index:500;display:flex;flex-direction:column;gap:6px}
-.mapctl button{width:44px;height:44px;display:grid;place-items:center;border-radius:12px;border:1px solid var(--line);background:var(--glass);-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);box-shadow:var(--shadow-up);cursor:pointer;padding:0;transition:background .15s,transform .1s}
+.mapctl button{width:44px;height:44px;display:grid;place-items:center;border-radius:6px;border:1px solid var(--line);background:var(--glass);box-shadow:var(--shadow-up);cursor:pointer;padding:0;transition:background .15s,transform .1s}
 .mapctl button:active{transform:scale(.92)}
 .mapctl.off{display:none}
 .panel{position:absolute;left:0;right:0;bottom:var(--kb,0px);z-index:500;padding:10px max(10px,env(safe-area-inset-right)) max(10px,env(safe-area-inset-bottom)) max(10px,env(safe-area-inset-left));display:flex;flex-direction:column;gap:8px;max-width:580px;margin:0 auto;pointer-events:none}
 .panel>*{pointer-events:auto}
 .credit{align-self:flex-end;font-size:11px;color:#fff;text-shadow:0 1px 2px #000;pointer-events:none}
-.hints{background:var(--glass);-webkit-backdrop-filter:blur(12px);backdrop-filter:blur(12px);border:1px solid var(--line);border-radius:var(--r);box-shadow:var(--shadow-up);display:flex;flex-direction:column;overflow:hidden}
+.hints{background:var(--glass);border:1px solid var(--line);border-radius:var(--r);box-shadow:var(--shadow-up);display:flex;flex-direction:column;overflow:hidden}
 .hhead{display:flex;align-items:center;gap:8px;padding:7px 8px 7px 12px;min-height:44px;cursor:pointer;user-select:none}
 .hhead>.ic{color:var(--gold);width:16px;height:16px}
 .hhead .eyebrow{flex:1;min-width:0}
 .hhead .eyebrow b{color:var(--ink);margin-left:6px}
-.mini{border:1px solid var(--line);background:var(--card2);border-radius:9px;padding:6px 10px;min-height:32px;font-size:12px;cursor:pointer;transition:background .15s,color .15s,opacity .15s,border-color .15s;white-space:nowrap}
+.mini{border:1px solid var(--line);background:var(--card2);border-radius:4px;padding:6px 10px;min-height:32px;font-size:12px;cursor:pointer;transition:background .15s,color .15s,opacity .15s,border-color .15s;white-space:nowrap}
 .mini.voted{background:var(--delft);border-color:var(--delft);color:#fff;pointer-events:none}
 .chev{display:grid;place-items:center;width:26px;color:var(--mute);transition:transform .2s}
 .chev .ic{width:16px;height:16px}
@@ -306,31 +282,31 @@ details.card[open]>summary::after{content:'\2212'}
 .hint .v img{height:34px;border-radius:3px;box-shadow:0 0 0 1px var(--line);vertical-align:middle}
 .next{font-size:13px;color:var(--mute);display:flex;align-items:center;gap:10px;padding:6px 12px;border-top:1px solid var(--line);background:color-mix(in srgb,var(--card2) 60%,transparent)}
 .next b{color:var(--ink);min-width:28px;text-align:right}
-.bar{height:4px;background:var(--line);border-radius:4px;flex:1;overflow:hidden}
+.bar{height:4px;background:var(--line);border-radius:3px;flex:1;overflow:hidden}
 .bar i{display:block;height:100%;background:var(--acc);width:0}
 .answer{position:relative;display:flex;gap:8px}
 .answer input{box-shadow:var(--shadow-up);border-color:var(--acc);flex:1}
 .answer .btn{flex:none}
-.ac{position:absolute;left:0;right:0;bottom:calc(100% + 6px);max-height:42vh;max-height:42dvh;overflow-y:auto;background:var(--card);border:1px solid var(--acc);border-radius:12px;display:none;box-shadow:var(--shadow-up)}
+.ac{position:absolute;left:0;right:0;bottom:calc(100% + 6px);max-height:42vh;max-height:42dvh;overflow-y:auto;background:var(--card);border:1px solid var(--acc);border-radius:6px;display:none;box-shadow:var(--shadow-up)}
 .ac.on{display:block}
 .ac div{padding:12px 14px;cursor:pointer;display:flex;gap:12px;align-items:center}
 .ac div img{width:24px;height:18px;object-fit:cover;border-radius:2px;box-shadow:0 0 0 1px var(--line)}
 .ac div.sel,.ac div:hover{background:var(--card2)}
 .ac mark{background:none;font-weight:700;color:var(--acc)}
-.locked{background:var(--acc);color:#fff;border-radius:12px;padding:13px 14px;font-size:18px;display:flex;gap:10px;align-items:center;box-shadow:var(--shadow-up);animation:pop .2s ease}
+.locked{background:var(--acc);color:#fff;border-radius:6px;padding:13px 14px;font-size:18px;display:flex;gap:10px;align-items:center;box-shadow:var(--shadow-up);animation:pop .2s ease}
 .locked b{font-weight:400;min-width:0;overflow-wrap:anywhere}
 .locked img{height:18px;border-radius:2px}
 .locked span{margin-left:auto;font-size:13px;opacity:.75;flex:none;font-family:var(--font);text-transform:none;letter-spacing:0}
 .who{display:flex;gap:6px;flex-wrap:wrap}
-.who span{font-size:12px;font-weight:600;padding:4px 10px;border-radius:99px;background:var(--glass);border:1px solid var(--line);display:flex;align-items:center;gap:6px;box-shadow:var(--shadow-up);transition:all .2s}
+.who span{font-size:12px;font-weight:600;padding:4px 9px;border-radius:3px;background:var(--glass);border:1px solid var(--line);display:flex;align-items:center;gap:6px;box-shadow:var(--shadow-up);transition:all .2s}
 .who span.done{border-color:var(--ok);background:var(--done)}
 .who span.off{opacity:.45}
 body.kb .who{display:none}
 body.kb #hintList{max-height:18vh;max-height:18dvh}
 /* Straatjacht */
-.huntbox{background:var(--glass);-webkit-backdrop-filter:blur(12px);backdrop-filter:blur(12px);border:1px solid var(--line);border-radius:var(--r);box-shadow:var(--shadow-up);padding:10px 12px;display:flex;flex-direction:column;gap:9px;animation:slide .25s ease}
+.huntbox{background:var(--glass);border:1px solid var(--line);border-radius:var(--r);box-shadow:var(--shadow-up);padding:10px 12px;display:flex;flex-direction:column;gap:9px;animation:slide .25s ease}
 .htarget{display:flex;align-items:center;gap:10px;min-width:0}
-.hicon{width:42px;height:42px;flex:none;display:grid;place-items:center;border-radius:12px;color:#fff;background:var(--delft)}
+.hicon{width:42px;height:42px;flex:none;display:grid;place-items:center;border-radius:6px;color:#fff;background:var(--delft)}
 .hicon .ic{width:22px;height:22px}
 .htxt{flex:1;min-width:0;display:flex;flex-direction:column;gap:1px}
 .htxt small{font-size:12px;font-weight:700;color:var(--mute)}
@@ -344,25 +320,25 @@ body.kb #hintList{max-height:18vh;max-height:18dvh}
 .probe small{font-size:13px;color:var(--mute);display:flex;align-items:center;gap:5px}
 .probe small .ic{width:14px;height:14px;transition:transform .25s}
 .probe .tip{color:var(--mute);font-size:13.5px}
-.heat{height:5px;border-radius:5px;background:linear-gradient(90deg,#3b74a6,#e0b04a,#e8552a);position:relative;margin-top:1px}
+.heat{height:5px;border-radius:3px;background:linear-gradient(90deg,#3b74a6,#e0b04a,#e8552a);position:relative;margin-top:1px}
 .heat i{position:absolute;top:50%;width:11px;height:11px;margin:-5.5px 0 0 -5.5px;border-radius:50%;background:#fff;box-shadow:0 0 0 2px rgba(0,0,0,.55);transition:left .3s}
 #huntLock{flex:none;min-height:46px;padding:10px 14px;font-size:16px}
 #map.hunting{cursor:crosshair}
 #map.hunting .leaflet-grab{cursor:crosshair}
-.scanDot{width:16px;height:16px;border-radius:50%;background:var(--c,#fff);border:2px solid #fff;box-shadow:0 0 0 2px rgba(0,0,0,.55),0 0 10px var(--c,#fff);animation:pop .2s ease}
+.scanDot{width:16px;height:16px;border-radius:50%;background:var(--c,#fff);border:2px solid #fff;box-shadow:0 0 0 2px rgba(0,0,0,.55);animation:pop .2s ease}
 .huntPin{filter:drop-shadow(0 3px 4px rgba(0,0,0,.6));animation:drop .25s cubic-bezier(.3,1.5,.6,1)}
 @keyframes drop{from{transform:translateY(-14px);opacity:0}to{transform:none;opacity:1}}
-.leaflet-tooltip.scanTip{background:var(--glass);color:var(--ink);border:1px solid var(--line);border-radius:7px;padding:2px 7px;font-family:var(--font);font-size:12px;font-weight:700;box-shadow:0 3px 8px rgba(0,0,0,.45);max-width:170px;overflow:hidden;text-overflow:ellipsis}
+.leaflet-tooltip.scanTip{background:var(--glass);color:var(--ink);border:1px solid var(--line);border-radius:4px;padding:2px 7px;font-family:var(--font);font-size:12px;font-weight:700;box-shadow:0 3px 8px rgba(0,0,0,.45);max-width:170px;overflow:hidden;text-overflow:ellipsis}
 .leaflet-tooltip.scanTip::before{display:none}
 /* Darts: wereldkaart om je pijltje op te gooien, over de plek heen */
 #dmap{position:absolute;inset:0;z-index:450;isolation:isolate;background:var(--paper)}
 #dmap .leaflet-top.leaflet-left{top:calc(max(10px,env(safe-area-inset-top)) + 62px)}
-#dmap .leaflet-top.leaflet-left .leaflet-control{margin:0 0 0 max(10px,env(safe-area-inset-left));border-radius:6px;max-width:60vw}
+#dmap .leaflet-top.leaflet-left .leaflet-control{margin:0 0 0 max(10px,env(safe-area-inset-left));border-radius:4px;max-width:60vw}
 body.chat-on #dmap .leaflet-top.leaflet-left{top:calc(max(10px,env(safe-area-inset-top)) + 116px)}
 #dmap.leaflet-container{cursor:crosshair}
 #dmap .leaflet-grab{cursor:crosshair}
 /* Silhouet: landvorm op papier met stippenraster. --shB en --shR houden de vorm vrij van het paneel (zet showShape). */
-#shape{position:absolute;inset:0;overflow:hidden;background:radial-gradient(color-mix(in srgb,var(--ink) 13%,transparent) 1px,transparent 1.5px) 0 0/22px 22px,radial-gradient(120% 90% at 50% 38%,var(--card) 0,var(--paper) 72%)}
+#shape{position:absolute;inset:0;overflow:hidden;background:radial-gradient(color-mix(in srgb,var(--ink) 13%,transparent) 1px,transparent 1.5px) 0 0/22px 22px,var(--paper)}
 #shapeBox{position:absolute;left:max(16px,env(safe-area-inset-left));right:var(--shR,16px);top:calc(max(10px,env(safe-area-inset-top)) + 112px);bottom:var(--shB,300px);transition:bottom .3s,right .3s}
 #shapeSvg{display:block;width:100%;height:100%;overflow:visible}
 #shapeSvg .sil{fill:var(--ink);fill-opacity:0;stroke:var(--acc);stroke-width:2.2;stroke-linejoin:round;stroke-linecap:round;vector-effect:non-scaling-stroke;stroke-dasharray:1;stroke-dashoffset:1;animation:silDraw 1.2s cubic-bezier(.4,0,.2,1) forwards,silFill .6s 1s ease forwards}
@@ -375,12 +351,12 @@ body.chat-on #dmap .leaflet-top.leaflet-left{top:calc(max(10px,env(safe-area-ins
 .shapetag{position:absolute;left:max(10px,env(safe-area-inset-left));top:calc(max(10px,env(safe-area-inset-top)) + 62px);z-index:500;flex-direction:row;align-items:center;gap:7px;font-size:13px;color:var(--mute)}
 .shapetag svg{width:18px;height:18px;flex:none;color:var(--acc);fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
 body.chat-on .shapetag{top:calc(max(10px,env(safe-area-inset-top)) + 116px)}
-.silmini{display:grid;place-items:center;width:52px;height:52px;margin-left:10px;border-radius:10px;background:var(--card2)}
+.silmini{display:grid;place-items:center;width:52px;height:52px;margin-left:10px;border-radius:5px;background:var(--card2)}
 .silmini svg{width:42px;height:42px}
 .silmini .sil{fill:var(--ink);stroke:none}
 @media (prefers-reduced-motion:reduce){#shapeSvg .sil{fill-opacity:1;stroke:var(--ink);stroke-dashoffset:0}}
 /* Tekenen: vel papier van 1000 x 1000 (viewBox), lijndikte schaalt mee. Kleuren volgen het thema. */
-#draw{position:absolute;inset:0;overflow:hidden;background:radial-gradient(color-mix(in srgb,var(--ink) 13%,transparent) 1px,transparent 1.5px) 0 0/22px 22px,radial-gradient(120% 90% at 50% 38%,var(--card) 0,var(--paper) 72%)}
+#draw{position:absolute;inset:0;overflow:hidden;background:radial-gradient(color-mix(in srgb,var(--ink) 13%,transparent) 1px,transparent 1.5px) 0 0/22px 22px,var(--paper)}
 #drawArea{position:absolute;left:max(16px,env(safe-area-inset-left));right:var(--shR,16px);top:calc(max(10px,env(safe-area-inset-top)) + 112px);bottom:var(--shB,300px);transition:bottom .3s,right .3s}
 #drawSvg{display:block;width:100%;height:100%;user-select:none;-webkit-user-select:none;-webkit-touch-callout:none}
 #draw.me #drawSvg{touch-action:none;cursor:crosshair}
@@ -390,11 +366,11 @@ body.chat-on .shapetag{top:calc(max(10px,env(safe-area-inset-top)) + 116px)}
 .drawing .w0{stroke-width:7}.drawing .w1{stroke-width:18}
 #drawWait{fill:var(--mute);font-family:var(--font);font-size:34px;text-anchor:middle}
 .shapetag .avatar{width:20px;height:20px;font-size:11px}
-.drawpanel{background:var(--glass);-webkit-backdrop-filter:blur(12px);backdrop-filter:blur(12px);border:1px solid var(--line);border-radius:var(--r);box-shadow:var(--shadow-up);padding:10px 12px;display:flex;flex-direction:column;gap:10px;animation:slide .25s ease}
+.drawpanel{background:var(--glass);border:1px solid var(--line);border-radius:var(--r);box-shadow:var(--shadow-up);padding:10px 12px;display:flex;flex-direction:column;gap:10px;animation:slide .25s ease}
 .dtarget{display:flex;align-items:center;gap:12px;min-width:0}
-.dtarget img{height:40px;border-radius:4px;box-shadow:0 0 0 1px var(--line);display:block}
+.dtarget img{height:40px;border-radius:3px;box-shadow:0 0 0 1px var(--line);display:block}
 #drawName{font-size:clamp(20px,6vw,26px);line-height:1.05;overflow-wrap:anywhere;font-family:var(--display);font-weight:400;text-transform:uppercase}
-.dref{flex:none;width:58px;height:58px;padding:5px;border-radius:10px;border:1px solid var(--line);background:var(--card2);cursor:zoom-in;display:grid;place-items:center;transition:width .2s,height .2s}
+.dref{flex:none;width:58px;height:58px;padding:5px;border-radius:5px;border:1px solid var(--line);background:var(--card2);cursor:zoom-in;display:grid;place-items:center;transition:width .2s,height .2s}
 .dref svg{width:100%;height:100%}
 .dref .sil{fill:var(--ink);stroke:none}
 .dref.big{width:150px;height:150px;cursor:zoom-out}
@@ -412,7 +388,7 @@ body.chat-on .shapetag{top:calc(max(10px,env(safe-area-inset-top)) + 116px)}
 .who span .ic{width:13px;height:13px;stroke-width:2.2}
 .drawcmp{display:grid;grid-template-columns:1fr 1fr;gap:10px;padding:10px}
 .drawcmp figure{margin:0;display:flex;flex-direction:column;gap:6px;min-width:0}
-.drawcmp .dpane{aspect-ratio:1;border-radius:10px;background:var(--card2);display:grid;place-items:center;overflow:hidden}
+.drawcmp .dpane{aspect-ratio:1;border-radius:5px;background:var(--card2);display:grid;place-items:center;overflow:hidden}
 .drawcmp .dpane svg{width:100%;height:100%;display:block}
 .drawcmp .dpane.real{padding:12%}
 .drawcmp .drawing .w0{stroke-width:11}.drawcmp .drawing .w1{stroke-width:24}
@@ -420,22 +396,22 @@ body.chat-on .shapetag{top:calc(max(10px,env(safe-area-inset-top)) + 116px)}
 .drawcmp figcaption{font-size:13px;color:var(--mute);display:flex;align-items:center;gap:6px;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .dartbar{display:flex;gap:8px}
 .dartbar .btn{flex:none;box-shadow:var(--shadow-up),0 2px 0 var(--line)}
-#dartView{min-width:112px;background:var(--glass);-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px)}
+#dartView{min-width:112px;background:var(--glass)}
 #dartThrow{flex:1}
 #dartThrow.thrown{pointer-events:none}
-#dartDbl{min-width:52px;padding:0 12px;font-size:19px;background:var(--glass);-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);color:var(--ink2)}
+#dartDbl{min-width:52px;padding:0 12px;font-size:19px;background:var(--glass);color:var(--ink2)}
 #dartDbl.on{background:var(--gold);border-color:var(--gold);color:var(--on-gold);box-shadow:0 2px 0 color-mix(in srgb,var(--gold) 55%,#000)}
 .dartPin{display:block;overflow:visible;transform-origin:4px 44px;filter:drop-shadow(0 2px 2px rgba(0,0,0,.55));animation:dartIn .32s cubic-bezier(.25,1.5,.5,1)}
 @keyframes dartIn{0%{transform:translate(22px,-26px) scale(1.5) rotate(-14deg);opacity:0}55%{opacity:1}80%{transform:rotate(4deg)}100%{transform:none}}
-.x2{display:inline-block;font-family:var(--display);font-weight:400;font-size:11px;line-height:1;padding:3px 5px 2px;border-radius:5px;background:var(--gold);color:var(--on-gold);vertical-align:1px}
+.x2{display:inline-block;font-family:var(--display);font-weight:400;font-size:11px;line-height:1;padding:3px 5px 2px;border-radius:3px;background:var(--gold);color:var(--on-gold);vertical-align:1px}
 /* Toernooi in het spel: modus in de rondechip en een kaartje bij de start van elke ronde */
 #roundChip .rci{width:16px;height:16px;fill:var(--mc);vertical-align:-2px;margin-right:5px}
 #roundChip .x2{margin-left:5px;vertical-align:2px}
 #tourCard{position:absolute;left:50%;top:30%;z-index:650;display:none;align-items:center;gap:12px;width:max-content;max-width:min(370px,calc(100vw - 32px));padding:10px 16px 10px 10px;
-  background:var(--glass);-webkit-backdrop-filter:blur(12px);backdrop-filter:blur(12px);border:1px solid var(--line);border-left:5px solid var(--mc);border-radius:16px;box-shadow:var(--shadow-up),0 14px 34px rgba(0,0,0,.32);pointer-events:none;transform:translateX(-50%)}
+  background:var(--glass);border:1px solid var(--line);border-radius:6px;box-shadow:var(--shadow-up);pointer-events:none;transform:translateX(-50%)}
 #tourCard.go{display:flex;animation:tcIn 3.2s cubic-bezier(.2,1.3,.4,1) both}
 @keyframes tcIn{0%{opacity:0;transform:translateX(-50%) translateY(14px) scale(.86)}10%{opacity:1;transform:translateX(-50%) scale(1)}86%{opacity:1;transform:translateX(-50%)}100%{opacity:0;transform:translateX(-50%) translateY(-8px)}}
-#tourCard .tci{width:48px;height:48px;flex:none;border-radius:13px;display:grid;place-items:center;background:var(--mc);color:#fff;box-shadow:0 3px 0 color-mix(in srgb,var(--mc) 60%,#000)}
+#tourCard .tci{width:48px;height:48px;flex:none;border-radius:5px;display:grid;place-items:center;background:var(--mc);color:#fff}
 #tourCard .tci svg{width:32px;height:32px;fill:currentColor}
 #tourCard .tct{display:flex;flex-direction:column;gap:3px;min-width:0}
 #tourCard small{font-size:12px;font-weight:700;color:var(--mute);text-transform:uppercase;letter-spacing:.04em}
@@ -444,7 +420,7 @@ body.chat-on .shapetag{top:calc(max(10px,env(safe-area-inset-top)) + 116px)}
 #tourCard i{font-style:normal;font-size:13px;line-height:1.3;color:var(--ink2)}
 /* Toernooischema op het uitslagscherm: gespeeld, nu, nog te gaan */
 .plan{display:flex;flex-wrap:wrap;gap:4px;align-items:center}
-.plan i{width:22px;height:22px;border-radius:7px;display:grid;place-items:center;color:color-mix(in srgb,var(--mc) 70%,var(--mute));box-shadow:inset 0 0 0 1.5px color-mix(in srgb,var(--mc) 45%,transparent);opacity:.55}
+.plan i{width:22px;height:22px;border-radius:4px;display:grid;place-items:center;color:color-mix(in srgb,var(--mc) 70%,var(--mute));box-shadow:inset 0 0 0 1.5px color-mix(in srgb,var(--mc) 45%,transparent);opacity:.55}
 .plan i svg{width:15px;height:15px;fill:currentColor}
 .plan i.done{opacity:1;background:color-mix(in srgb,var(--mc) 24%,transparent);box-shadow:none}
 .plan i.cur{opacity:1;background:var(--mc);color:#fff;box-shadow:0 0 0 2px var(--paper),0 0 0 3.5px var(--mc)}
@@ -461,7 +437,7 @@ body.chat-on .shapetag{top:calc(max(10px,env(safe-area-inset-top)) + 116px)}
 /* result */
 #rmap{height:36vh;min-height:220px;border-radius:var(--r);overflow:hidden;border:1px solid var(--line);flex:none;isolation:isolate;box-shadow:var(--shadow)}
 .answerbig{display:flex;align-items:center;gap:14px;min-width:0}
-.answerbig img{height:44px;border-radius:4px;box-shadow:0 0 0 1px var(--line)}
+.answerbig img{height:44px;border-radius:3px;box-shadow:0 0 0 1px var(--line)}
 .answerbig>div{min-width:0}
 #resFlag{display:flex;align-items:center;flex:none}
 .nm-big{font-size:clamp(21px,7.2vw,32px);line-height:1.05;overflow-wrap:break-word}
@@ -478,17 +454,17 @@ td .ic.pen{width:14px;height:14px;vertical-align:-2px;margin-right:4px}
 /* final */
 .podium{display:flex;align-items:flex-end;gap:10px;min-height:210px}
 .pod{flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;min-width:0}
-.pod .blk{width:100%;border-radius:12px 12px 0 0;display:flex;align-items:flex-start;justify-content:center;padding-top:8px;font-size:30px;color:#fff;transform-origin:bottom;animation:grow .5s ease backwards}
+.pod .blk{width:100%;border-radius:5px 5px 0 0;display:flex;align-items:flex-start;justify-content:center;padding-top:8px;font-size:30px;color:#fff;transform-origin:bottom;animation:grow .5s ease backwards}
 @keyframes grow{from{transform:scaleY(0)}}
 .pod .pn{font-size:15px;text-align:center;overflow:hidden;text-overflow:ellipsis;max-width:100%;white-space:nowrap}
 .pod .ps{font-size:14px;color:var(--mute)}
 .stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
-.stat{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:11px;display:flex;flex-direction:column;gap:3px;min-width:0;box-shadow:var(--shadow)}
+.stat{background:var(--card);border:1px solid var(--line);border-radius:6px;padding:11px;display:flex;flex-direction:column;gap:3px;min-width:0;box-shadow:var(--shadow)}
 .stat small{color:var(--mute);font-size:12px}
 .stat b{font-weight:400;font-size:16px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .stat i{font-style:normal;font-size:13px;color:var(--mute)}
 /* overlay */
-.ov{position:fixed;inset:0;z-index:2000;background:rgba(12,12,10,.62);-webkit-backdrop-filter:blur(3px);backdrop-filter:blur(3px);display:none;align-items:center;justify-content:center;padding:24px}
+.ov{position:fixed;inset:0;z-index:2000;background:rgba(12,12,10,.62);display:none;align-items:center;justify-content:center;padding:24px}
 .ov.on{display:flex;animation:fade .15s}
 .ov .card{max-width:420px;width:100%;text-align:center;align-items:center;box-shadow:var(--shadow-up)}
 #ovText{font-family:var(--display);font-weight:400;text-transform:uppercase;font-size:20px}
@@ -499,18 +475,18 @@ td .ic.pen{width:14px;height:14px;vertical-align:-2px;margin-right:4px}
 #stMore{display:flex;flex-direction:column;gap:6px}
 #stMore td{padding:7px 4px}
 .bk{display:flex;flex-direction:column;gap:8px;border-top:1px solid var(--line);padding-top:12px}
-#bkIn{width:100%;min-height:62px;resize:vertical;background:var(--field);border:1px solid var(--line);border-radius:10px;padding:10px 12px;font:12px/1.35 ui-monospace,Menlo,Consolas,monospace;color:inherit;word-break:break-all;outline:none}
+#bkIn{width:100%;min-height:62px;resize:vertical;background:var(--field);border:1px solid var(--line);border-radius:5px;padding:10px 12px;font:12px/1.35 ui-monospace,Menlo,Consolas,monospace;color:inherit;word-break:break-all;outline:none}
 #bkIn:focus{border-color:var(--acc)}
 .modal ul{margin:0;padding-left:18px;display:flex;flex-direction:column;gap:7px}
-.toast{position:fixed;left:50%;top:max(14px,env(safe-area-inset-top));transform:translateX(-50%) translateY(calc(-100% - 40px));z-index:3000;background:var(--ink);color:var(--paper);border-radius:12px;padding:10px 16px;transition:transform .3s;width:max-content;max-width:calc(100vw - 24px);text-align:center;box-shadow:var(--shadow-up)}
+.toast{position:fixed;left:50%;top:max(14px,env(safe-area-inset-top));transform:translateX(-50%) translateY(calc(-100% - 40px));z-index:3000;background:var(--ink);color:var(--paper);border-radius:6px;padding:10px 16px;transition:transform .3s;width:max-content;max-width:calc(100vw - 24px);text-align:center;box-shadow:var(--shadow-up)}
 .toast.on{transform:translateX(-50%) translateY(0)}
 .leaflet-container{font-family:var(--font);background:#151513}
 .areaRing{width:100%;height:100%;border:3px solid #ffb48f;border-radius:50%;box-sizing:border-box;pointer-events:none;background:rgba(232,85,42,.1);box-shadow:0 0 0 2px rgba(14,14,12,.7),inset 0 0 0 2px rgba(14,14,12,.7)}
-.leaflet-control-attribution{font-size:9px!important;background:var(--glass)!important;color:var(--mute)!important;border-radius:6px 0 0 0}
+.leaflet-control-attribution{font-size:9px!important;background:var(--glass)!important;color:var(--mute)!important;border-radius:4px 0 0 0}
 .leaflet-control-attribution a{color:var(--mute)!important}
 /* In het spel staat de bronvermelding boven: onderin ligt het paneel eroverheen. */
 #map .leaflet-top.leaflet-left{top:calc(max(10px,env(safe-area-inset-top)) + 62px)}
-#map .leaflet-top.leaflet-left .leaflet-control{margin:0 0 0 max(10px,env(safe-area-inset-left));border-radius:6px;max-width:60vw}
+#map .leaflet-top.leaflet-left .leaflet-control{margin:0 0 0 max(10px,env(safe-area-inset-left));border-radius:4px;max-width:60vw}
 body.chat-on #map .leaflet-top.leaflet-left{top:calc(max(10px,env(safe-area-inset-top)) + 116px)}
 #chatBtn,#emoBtn{position:fixed;left:max(12px,env(safe-area-inset-left));bottom:max(12px,env(safe-area-inset-bottom));z-index:1500;width:48px;height:48px;border-radius:50%;border:1px solid var(--line);background:var(--card);box-shadow:var(--shadow-up);display:none;place-items:center;cursor:pointer;padding:0}
 #chatBtn.show,#emoBtn.show{display:grid}
@@ -527,9 +503,9 @@ body[data-screen=game] #chat{top:calc(max(10px,env(safe-area-inset-top)) + 62px)
 #chatLog{flex:1;overflow-y:auto;padding:12px;display:flex;flex-direction:column;gap:8px}
 .msg{max-width:82%;align-self:flex-start;display:flex;flex-direction:column;gap:2px}
 .msg small{font-size:11px;font-weight:700;display:flex;align-items:center;gap:5px;color:var(--mute)}
-.msg p{margin:0;background:var(--card2);padding:7px 11px;border-radius:12px 12px 12px 3px;line-height:1.35;word-break:break-word;white-space:pre-wrap}
+.msg p{margin:0;background:var(--card2);padding:7px 11px;border-radius:8px 8px 8px 2px;line-height:1.35;word-break:break-word;white-space:pre-wrap}
 .msg.me{align-self:flex-end;align-items:flex-end}
-.msg.me p{background:var(--acc);color:#fff;border-radius:12px 12px 3px 12px}
+.msg.me p{background:var(--acc);color:#fff;border-radius:8px 8px 2px 8px}
 .cempty{margin:auto;color:var(--mute);font-size:14px}
 #chatForm{display:flex;gap:8px;padding:8px 10px 10px}
 #chatForm .btn{padding:0 14px;flex:none}
@@ -544,10 +520,10 @@ body[data-screen=game] #chat{top:calc(max(10px,env(safe-area-inset-top)) + 62px)
 .em-fb{transform-box:fill-box;transform-origin:center}
 .em-fb.bot{transform-origin:50% 100%}
 #emoBtn .ic{width:22px;height:22px}
-#emoTray{position:fixed;left:max(12px,env(safe-area-inset-left));bottom:calc(max(12px,env(safe-area-inset-bottom)) + 56px);z-index:1650;display:none;gap:4px;padding:6px;background:var(--card);border:1px solid var(--line);border-radius:20px;box-shadow:var(--shadow-up)}
+#emoTray{position:fixed;left:max(12px,env(safe-area-inset-left));bottom:calc(max(12px,env(safe-area-inset-bottom)) + 56px);z-index:1650;display:none;gap:4px;padding:6px;background:var(--card);border:1px solid var(--line);border-radius:8px;box-shadow:var(--shadow-up)}
 #emoTray.on{display:flex;animation:slide .18s ease}
 body[data-screen=game] #emoTray{top:calc(max(10px,env(safe-area-inset-top)) + 62px + 50px);bottom:auto;left:max(10px,env(safe-area-inset-left))}
-.emob{width:52px;height:52px;padding:3px;border:0;border-radius:16px;background:none;cursor:pointer;display:grid;place-items:center;transition:transform .12s,background .15s,opacity .15s}
+.emob{width:52px;height:52px;padding:3px;border:0;border-radius:6px;background:none;cursor:pointer;display:grid;place-items:center;transition:transform .12s,background .15s,opacity .15s}
 .emob .emo{width:100%;height:100%}
 .emob:hover{background:var(--card2)}
 .emob:active{transform:scale(.86)}
@@ -557,7 +533,7 @@ body[data-screen=game] #emoTray{top:calc(max(10px,env(safe-area-inset-top)) + 62
 .msg p.emoMsg{display:flex;align-items:center;gap:8px;padding:3px 12px 3px 3px;font-weight:700}
 .msg p.emoMsg .emo{width:34px;height:34px}
 #emoLayer{position:fixed;left:50%;top:calc(max(10px,env(safe-area-inset-top)) + 70px);transform:translateX(-50%);z-index:1700;display:flex;flex-direction:column;align-items:center;gap:8px;width:max-content;max-width:calc(100vw - 116px);pointer-events:none}
-.emo-pop{display:flex;align-items:center;gap:10px;max-width:100%;padding:6px 16px 6px 8px;background:var(--glass);-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);border:1px solid var(--line);border-left:5px solid var(--c);border-radius:18px;box-shadow:var(--shadow-up);animation:emIn .5s cubic-bezier(.2,1.5,.4,1) both}
+.emo-pop{display:flex;align-items:center;gap:10px;max-width:100%;padding:6px 16px 6px 8px;background:var(--glass);border:1px solid var(--line);border-radius:6px;box-shadow:var(--shadow-up);animation:emIn .5s cubic-bezier(.2,1.5,.4,1) both}
 .emo-pop.out{animation:emOut .25s ease forwards}
 .emo-pop .emo{width:clamp(48px,14vw,58px);height:clamp(48px,14vw,58px)}
 .emo-txt{display:flex;flex-direction:column;gap:1px;min-width:0}
@@ -628,19 +604,6 @@ body[data-screen=game] #emoLayer{left:max(10px,env(safe-area-inset-left));transf
   .mapctl{right:auto;left:max(10px,env(safe-area-inset-left));flex-direction:row;top:auto;bottom:max(10px,env(safe-area-inset-bottom))}
   #rmap{height:60vh;min-height:160px}
   .podium{min-height:170px}
-  <!-- Dwaallicht: verzonnen wezen. Klokvormig lijf met franjerand, een groot oog en twee voelsprieten met gloeiende bolletjes. -->
-  <symbol id="av-wisp" viewBox="0 0 32 32">
-    <path d="M12.2 8.4C10.4 6.2 8.2 5 5.8 4.6" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" opacity=".9"/>
-    <path d="M19.8 8.4C21.6 6.2 23.8 5 26.2 4.6" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" opacity=".9"/>
-    <circle cx="5.6" cy="4.4" r="4.2" fill="url(#av-lure)"/><circle cx="26.4" cy="4.4" r="4.2" fill="url(#av-lure)"/>
-    <circle cx="5.6" cy="4.4" r="1.8" fill="#fff7e2"/><circle cx="26.4" cy="4.4" r="1.8" fill="#fff7e2"/>
-    <path d="M5.6 23V17.4C5.6 11 10.2 5.8 16 5.8S26.4 11 26.4 17.4V23A2.6 2.6 0 0 1 21.2 23 2.6 2.6 0 0 1 16 23 2.6 2.6 0 0 1 10.8 23 2.6 2.6 0 0 1 5.6 23Z" fill="#fff" opacity=".96"/>
-    <path d="M5.6 21.8V23A2.6 2.6 0 0 0 10.8 23 2.6 2.6 0 0 0 16 23 2.6 2.6 0 0 0 21.2 23 2.6 2.6 0 0 0 26.4 23V21.8Z" fill="#15151f" opacity=".14"/>
-    <circle cx="9.4" cy="18.6" r="1.6" fill="#ff7a94" opacity=".5"/><circle cx="22.6" cy="18.6" r="1.6" fill="#ff7a94" opacity=".5"/>
-    <circle cx="16" cy="14.6" r="4.8" fill="#15151f" opacity=".85"/>
-    <circle cx="17.9" cy="12.6" r="1.7" fill="#fff"/><circle cx="13.9" cy="16.6" r=".85" fill="#fff" opacity=".45"/>
-    <path d="M13.4 20.4Q16 22.2 18.6 20.4" fill="none" stroke="#15151f" stroke-opacity=".5" stroke-width="1.4" stroke-linecap="round"/>
-  </symbol>
 }
 @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
 </style>
@@ -657,16 +620,20 @@ body[data-screen=game] #emoLayer{left:max(10px,env(safe-area-inset-left));transf
     <circle cx="5.7" cy="15.5" r="1.35" fill="#000"/>
     <circle cx="26.3" cy="15.5" r="1.35" fill="#000"/>
   </mask></defs>
-  <!-- Toernooi-icoon: rode 3D pin op een goud, zilver en brons podium -->
-  <defs>
-    <radialGradient id="tp-red" cx=".36" cy=".28" r=".85"><stop offset="0" stop-color="#ff9d77"/><stop offset=".36" stop-color="#ee5b2c"/><stop offset=".78" stop-color="#c13b12"/><stop offset="1" stop-color="#86240a"/></radialGradient>
-    <linearGradient id="tp-side" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#7c2108"/><stop offset="1" stop-color="#4a1203"/></linearGradient>
-    <radialGradient id="tp-hole" cx=".66" cy=".7" r=".85"><stop offset="0" stop-color="#fff"/><stop offset=".65" stop-color="#f6ebe5"/><stop offset="1" stop-color="#cdb3a6"/></radialGradient>
-    <linearGradient id="tp-g1" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffd76a"/><stop offset="1" stop-color="#b07a0c"/></linearGradient>
-    <linearGradient id="tp-g2" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#f2f4f7"/><stop offset="1" stop-color="#8e96a3"/></linearGradient>
-    <linearGradient id="tp-g3" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#f3a86c"/><stop offset="1" stop-color="#94501f"/></linearGradient>
-  </defs>
   <!-- Avatars: eenvoudige silhouetten, wit op de kleur van de speler -->
+  <!-- Dwaallicht: verzonnen wezen. Klokvormig lijf met franjerand, een groot oog en twee voelsprieten met gloeiende bolletjes. -->
+  <symbol id="av-wisp" viewBox="0 0 32 32">
+    <path d="M12.2 8.4C10.4 6.2 8.2 5 5.8 4.6" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" opacity=".9"/>
+    <path d="M19.8 8.4C21.6 6.2 23.8 5 26.2 4.6" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" opacity=".9"/>
+    <circle cx="5.6" cy="4.4" r="4.2" fill="url(#av-lure)"/><circle cx="26.4" cy="4.4" r="4.2" fill="url(#av-lure)"/>
+    <circle cx="5.6" cy="4.4" r="1.8" fill="#fff7e2"/><circle cx="26.4" cy="4.4" r="1.8" fill="#fff7e2"/>
+    <path d="M5.6 23V17.4C5.6 11 10.2 5.8 16 5.8S26.4 11 26.4 17.4V23A2.6 2.6 0 0 1 21.2 23 2.6 2.6 0 0 1 16 23 2.6 2.6 0 0 1 10.8 23 2.6 2.6 0 0 1 5.6 23Z" fill="#fff" opacity=".96"/>
+    <path d="M5.6 21.8V23A2.6 2.6 0 0 0 10.8 23 2.6 2.6 0 0 0 16 23 2.6 2.6 0 0 0 21.2 23 2.6 2.6 0 0 0 26.4 23V21.8Z" fill="#15151f" opacity=".14"/>
+    <circle cx="9.4" cy="18.6" r="1.6" fill="#ff7a94" opacity=".5"/><circle cx="22.6" cy="18.6" r="1.6" fill="#ff7a94" opacity=".5"/>
+    <circle cx="16" cy="14.6" r="4.8" fill="#15151f" opacity=".85"/>
+    <circle cx="17.9" cy="12.6" r="1.7" fill="#fff"/><circle cx="13.9" cy="16.6" r=".85" fill="#fff" opacity=".45"/>
+    <path d="M13.4 20.4Q16 22.2 18.6 20.4" fill="none" stroke="#15151f" stroke-opacity=".5" stroke-width="1.4" stroke-linecap="round"/>
+  </symbol>
   <symbol id="av-angler" viewBox="0 0 32 32">
     <path d="M16.8 9.4C15.6 5 11.8 3.2 8.6 5" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" opacity=".9"/>
     <circle cx="7.4" cy="5.7" r="6" fill="url(#av-lure)"/>
@@ -797,25 +764,26 @@ body[data-screen=game] #emoLayer{left:max(10px,env(safe-area-inset-left));transf
   <symbol id="i-play" viewBox="0 0 24 24"><path d="M7 4.5v15l12-7.5z"/></symbol>
   <symbol id="i-next" viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></symbol>
   <symbol id="i-redo" viewBox="0 0 24 24"><path d="M20 11a8 8 0 1 0-2.3 6.3M20 4v7h-7"/></symbol>
-  <symbol id="i-trophy" viewBox="0 0 24 24"><path d="M8 4h8v6a4 4 0 0 1-8 0zM8 6H4v2a4 4 0 0 0 4 4M16 6h4v2a4 4 0 0 1-4 4M12 14v4M8 21h8M9 21c0-1.7 1.3-3 3-3s3 1.3 3 3"/></symbol>
+  <symbol id="i-trophy" viewBox="0 0 24 24"><path d="M7.5 4h9v5.5a4.5 4.5 0 0 1-9 0zM7.5 6h-3v1.5a3 3 0 0 0 3 3M16.5 6h3v1.5a3 3 0 0 1-3 3M12 14v3.5M10 17.5h4v3h-4zM7.5 20.5h9"/></symbol>
   <symbol id="i-locate" viewBox="0 0 24 24"><circle cx="12" cy="12" r="7"/><circle cx="12" cy="12" r="2"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3"/></symbol>
   <symbol id="i-chev" viewBox="0 0 24 24"><path d="m6 9 6 6 6-6"/></symbol>
-  <symbol id="i-bulb" viewBox="0 0 24 24"><path d="M9 18h6M10 21h4M12 3a6 6 0 0 0-3.8 10.6c.6.500.8 1.200.8 1.9V16h6v-.5c0-.7.2-1.400.8-1.9A6 6 0 0 0 12 3z"/></symbol>
+  <symbol id="i-bulb" viewBox="0 0 24 24"><path d="M9 18.5h6M10 21.5h4M8.2 13.6a6 6 0 1 1 7.6 0c-.5.5-.8 1.1-.8 1.9v.5H9v-.5c0-.8-.3-1.4-.8-1.9z"/></symbol>
   <symbol id="i-lock" viewBox="0 0 24 24"><path d="m5 12.5 4.5 4.5L19 7.5"/></symbol>
   <symbol id="i-pin" viewBox="0 0 24 24"><path d="M12 21.5s7-6.3 7-11.5a7 7 0 1 0-14 0c0 5.2 7 11.5 7 11.5z"/><circle cx="12" cy="10" r="2.5"/></symbol>
   <symbol id="i-arrow" viewBox="0 0 24 24"><path d="M12 20V4M6 10l6-6 6 6"/></symbol>
-  <symbol id="i-dart" viewBox="0 0 24 24"><path d="M17.6 11.2A8 8 0 1 1 12.8 6.4"/><path d="M13.7 12.1a3.4 3.4 0 1 1-1.8-1.8"/><path d="M10.5 13.5 20 4M20 4V1.5M20 4h2.5M17.6 6.4V3.4M17.6 6.4h3"/></symbol>
+  <symbol id="i-dart" viewBox="0 0 24 24"><circle cx="11" cy="13" r="8"/><circle cx="11" cy="13" r="3"/><path d="M11 13l9.5-9.5M17.5 3.5v3h3"/></symbol>
   <symbol id="i-globe" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c2.6 2.6 3.8 5.6 3.8 9s-1.2 6.4-3.8 9c-2.6-2.6-3.8-5.6-3.8-9S9.4 5.6 12 3z"/></symbol>
   <!-- Soorten hints: landschap, $ en euro, hekje (landcode en domein), twee huizen (buren), vlag -->
   <symbol id="g-geo" viewBox="0 0 24 24"><path d="M2.5 16 8.5 6l4 6.5L15 9l6.5 7"/><path d="M2.5 20c1.6 0 1.6-1.2 3.2-1.2s1.6 1.2 3.2 1.2 1.6-1.2 3.1-1.2 1.6 1.2 3.2 1.2 1.6-1.2 3.2-1.2 1.6 1.2 3.1 1.2"/></symbol>
   <symbol id="g-money" viewBox="0 0 24 24"><path d="M5.6 3v18M8.7 7.4c-.5-1.1-1.6-1.7-3-1.7-1.7 0-2.9.9-2.9 2.3 0 3.3 6.1 2 6.1 5.6 0 1.5-1.3 2.6-3.1 2.6-1.5 0-2.7-.7-3.2-1.8"/><path d="M21 7.9A5.3 5.3 0 1 0 21 16.1M11.8 10.6h5M11.8 13.4h5"/></symbol>
   <symbol id="g-codes" viewBox="0 0 24 24"><path d="M10 3.5 8 20.5M16 3.5l-2 17M4.5 9h16M3.5 15h16"/></symbol>
-  <symbol id="g-nb" viewBox="0 0 24 24"><path d="M2 20.5h20M3.5 20.5V11L8 6.5l4.5 4.5v9.5M12.5 20.5v-7.5L17 9l4.5 4v7.5"/></symbol>
+  <symbol id="g-nb" viewBox="0 0 24 24"><path d="M3 20.5V11l5-4.5 5 4.5v9.5zM13 13.5l4-3.5 4 3.5v7h-8"/></symbol>
   <symbol id="g-name" viewBox="0 0 24 24"><path d="M5.5 21V3.5M5.5 4.5h13l-3 4 3 4h-13"/></symbol>
   <symbol id="i-eye" viewBox="0 0 24 24"><path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></symbol>
   <!-- Modusiconen: vlak, twee tinten. Hoofdvorm in currentColor, tweede tint met opacity. -->
+  <symbol id="m-tour" viewBox="0 0 24 24"><rect x="2" y="16" width="6.5" height="6" rx="1" opacity=".45"/><rect x="15.5" y="18" width="6.5" height="4" rx="1" opacity=".45"/><rect x="8.5" y="13.5" width="7" height="8.5" rx="1"/><path fill-rule="evenodd" d="M12 12.4s4-3.3 4-6.5a4 4 0 1 0-8 0c0 3.2 4 6.5 4 6.5zM12 4.4a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3z"/></symbol>
   <symbol id="m-map" viewBox="0 0 24 24"><g transform="rotate(-45 12 12)"><rect x="9" y="7.5" width="6" height="9" rx="1.6"/><rect x="1.2" y="9" width="6" height="6" rx="1" opacity=".45"/><rect x="16.8" y="9" width="6" height="6" rx="1" opacity=".45"/><rect x="7" y="11.3" width="2.2" height="1.4"/><rect x="14.8" y="11.3" width="2.2" height="1.4"/><rect x="11.2" y="16" width="1.6" height="2.6"/><circle cx="12" cy="19.4" r="1.3"/></g><g fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><path d="M17.5 20.9A3.4 3.4 0 0 0 20.9 17.5"/><path d="M17.5 23A5.5 5.5 0 0 0 23 17.5"/></g></symbol>
-  <symbol id="m-street" viewBox="0 0 24 24"><clipPath id="m-street-c"><rect x="1.5" y="3" width="21" height="18" rx="4"/></clipPath><rect x="1.5" y="3" width="21" height="18" rx="4" opacity=".45"/><circle cx="17.6" cy="8" r="2.3"/><path clip-path="url(#m-street-c)" fill-rule="evenodd" d="M10.4 10.2h3.2l6.4 13H4zM11.3 12.6h1.4v2.1h-1.4zM11 16.4h2v2.6h-2z"/></symbol>
+  <symbol id="m-street" viewBox="0 0 24 24"><rect x="11" y="2" width="2" height="19.5" rx="1"/><rect x="7.5" y="20.4" width="9" height="1.8" rx=".9"/><path d="M5 4.5h11.5l3.5 3-3.5 3H5a1 1 0 0 1-1-1v-4a1 1 0 0 1 1-1z"/><path opacity=".45" d="M19 12.5H7.5l-3.5 3 3.5 3H19a1 1 0 0 0 1-1v-4a1 1 0 0 0-1-1z"/></symbol>
   <symbol id="m-dutch" viewBox="0 0 24 24"><path fill-rule="evenodd" d="M9.8 11h4.4L16.6 22.5H7.4zM10.9 22.5v-3.2a1.1 1.1 0 0 1 2.2 0v3.2z"/><g transform="translate(12 9.6) rotate(45)"><g><rect x="-1.9" y="-9.6" width="3.8" height="7.6" rx=".9" opacity=".5"/><rect x="-.55" y="-9.6" width="1.1" height="9.6" rx=".5"/></g><g transform="rotate(90)"><rect x="-1.9" y="-9.6" width="3.8" height="7.6" rx=".9" opacity=".5"/><rect x="-.55" y="-9.6" width="1.1" height="9.6" rx=".5"/></g><g transform="rotate(180)"><rect x="-1.9" y="-9.6" width="3.8" height="7.6" rx=".9" opacity=".5"/><rect x="-.55" y="-9.6" width="1.1" height="9.6" rx=".5"/></g><g transform="rotate(270)"><rect x="-1.9" y="-9.6" width="3.8" height="7.6" rx=".9" opacity=".5"/><rect x="-.55" y="-9.6" width="1.1" height="9.6" rx=".5"/></g></g><circle cx="12" cy="9.6" r="2"/></symbol>
   <symbol id="m-hunt" viewBox="0 0 24 24"><circle cx="10.5" cy="10.5" r="6.4" fill-opacity=".45" stroke="currentColor" stroke-width="2.2"/><path d="M16.2 16.2l5 5" stroke="currentColor" stroke-width="3" stroke-linecap="round"/><path fill-rule="evenodd" d="M10.5 15s3.1-2.6 3.1-5.2a3.1 3.1 0 1 0-6.2 0c0 2.6 3.1 5.2 3.1 5.2zM10.5 8.7a1.1 1.1 0 1 1 0 2.2 1.1 1.1 0 0 1 0-2.2z"/></symbol>
   <symbol id="m-darts" viewBox="0 0 24 24"><circle cx="10.5" cy="13.5" r="9.5" opacity=".45"/><path fill-rule="evenodd" d="M10.5 7a6.5 6.5 0 1 1 0 13 6.5 6.5 0 0 1 0-13zm0 3.4a3.1 3.1 0 1 0 0 6.2 3.1 3.1 0 0 0 0-6.2z"/><circle cx="10.5" cy="13.5" r="1.5"/><path d="M10.5 13.5l8.6-8.6" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"/><path d="M18.4 5.6l.3-4.4 2 2.1zM18.4 5.6l4.4-.3-2.1-2z"/></symbol>
@@ -828,7 +796,7 @@ body[data-screen=game] #emoLayer{left:max(10px,env(safe-area-inset-left));transf
   <symbol id="i-building" viewBox="0 0 24 24"><path d="M5 21V5a2 2 0 0 1 2-2h7a2 2 0 0 1 2 2v16M16 10h2a2 2 0 0 1 2 2v9M3 21h18M9 7h3M9 11h3M9 15h3"/></symbol>
   <symbol id="i-church" viewBox="0 0 24 24"><path d="M12 2v4M10 4h4M12 6l-5 5v10h10V11zM7 13l-3 3v5h3M17 13l3 3v5h-3M10 21v-4a2 2 0 0 1 4 0v4"/></symbol>
   <symbol id="i-tree" viewBox="0 0 24 24"><path d="M12 22v-7M12 3a5 5 0 0 0-4.7 6.7A4 4 0 0 0 8 17.5h8a4 4 0 0 0 .7-7.8A5 5 0 0 0 12 3z"/></symbol>
-  <symbol id="i-train" viewBox="0 0 24 24"><rect x="5" y="3" width="14" height="14" rx="3"/><path d="M5 11h14M9 21l1.5-4M15 21l-1.5-4M9 14v.01M15 14v.01"/></symbol>
+  <symbol id="i-train" viewBox="0 0 24 24"><rect x="5" y="3" width="14" height="14" rx="3"/><path d="M5 10.5h14M9 17l-2 4M15 17l2 4M9 13.8v.01M15 13.8v.01"/></symbol>
   <symbol id="i-cup" viewBox="0 0 24 24"><path d="M4 9h13v5a6 6 0 0 1-6 6h-1a6 6 0 0 1-6-6zM17 10h1.5a2.5 2.5 0 0 1 0 5H17M8 3v3M12 3v3"/></symbol>
   <symbol id="i-monument" viewBox="0 0 24 24"><path d="M3 21h18M5 21v-3h14v3M8 18V9M12 18V9M16 18V9M5 9l7-6 7 6z"/></symbol>
   <!-- Werelddelen: vlakke aardschijven uit data/countries.geojson (Rusland gesplitst op de Oeral); werelddeel vol, rest gedempt -->
@@ -925,7 +893,7 @@ body[data-screen=game] #emoLayer{left:max(10px,env(safe-area-inset-left));transf
   <div id="dmap" hidden></div>
   <div id="shape" hidden><div id="shapeBox"><svg id="shapeSvg" aria-hidden="true"></svg></div></div>
   <div class="chip shapetag" id="shapeTag" hidden></div>
-  <div id="draw" hidden><div id="drawArea" class="drawing"><svg id="drawSvg" viewBox="0 0 1000 1000" preserveAspectRatio="xMidYMid meet" aria-hidden="true"><rect class="paper" x="0" y="0" width="1000" height="1000" rx="28"/><g id="drawG"></g><text id="drawWait" x="500" y="510"></text></svg></div></div>
+  <div id="draw" hidden><div id="drawArea" class="drawing"><svg id="drawSvg" viewBox="0 0 1000 1000" preserveAspectRatio="xMidYMid meet" aria-hidden="true"><rect class="paper" x="0" y="0" width="1000" height="1000" rx="12"/><g id="drawG"></g><text id="drawWait" x="500" y="510"></text></svg></div></div>
   <div class="chip shapetag" id="drawTag" hidden></div>
   <div id="tourCard" aria-live="polite"></div>
   <div class="hud">
@@ -1176,21 +1144,8 @@ const avKey = a => (a === 'heart' ? 'xavi' : AVATARS.includes(a) ? a : 'letter')
 const HINT_GROUPS = ['geo','people','money','codes','nb','name'];
 // Toernooi: welke modi meedoen en de continenten die je kunt aan- en uitzetten.
 const TOUR_MODES = ['map','street','dutch','hunt','darts','shape','draw'], CONTS = ['EU','AM','AS','OC','AF'];
-// Rode pin op het podium (goud in het midden, zilver links, brons rechts). Kleurverlopen staan in de sprite (tp-*).
-const TOUR_ICON = `<svg viewBox="0 0 48 48" aria-hidden="true">
-  <path d="M41 4.5l1 2.6 2.6 1-2.6 1-1 2.6-1-2.6-2.6-1 2.6-1z" fill="#ffd76a"/><path d="M7 9l.7 1.8 1.8.7-1.8.7L7 14l-.7-1.8-1.8-.7 1.8-.7z" fill="#ffd76a" opacity=".85"/>
-  <rect x="3" y="45" width="42" height="2" rx="1" fill="#000" opacity=".22"/>
-  <rect x="4" y="37" width="12" height="8.5" fill="url(#tp-g2)"/><path d="M4 37.1h12l-1.3-1.7H5.3z" fill="#fff"/>
-  <rect x="32" y="39.6" width="12" height="5.9" fill="url(#tp-g3)"/><path d="M32 39.7h12l-1.3-1.6H33.3z" fill="#ffd3b0"/>
-  <rect x="16" y="33.6" width="16" height="11.9" fill="url(#tp-g1)"/><path d="M16 33.7h16l-1.5-1.8H17.5z" fill="#ffecb0"/>
-  <path d="M23.2 38.2l1.6-.9v6" fill="none" stroke="#7a5405" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" opacity=".55"/>
-  <ellipse cx="24.6" cy="32.9" rx="4.6" ry="1.1" fill="#000" opacity=".3"/>
-  <g class="tp-pin">
-    <path d="M25.4 34.1Q19.9 27.6 16.9 22.2A10.5 10.5 0 1 1 34 22.2Q31 27.6 25.4 34.1Z" fill="url(#tp-side)"/>
-    <path d="M24 33Q18.5 26.5 15.5 21.1A10.5 10.5 0 1 1 32.5 21.1Q29.5 26.5 24 33Z" fill="url(#tp-red)"/>
-    <circle cx="24" cy="15" r="4.4" fill="#6e1c05" opacity=".6"/><circle cx="24.5" cy="15.5" r="3.9" fill="url(#tp-hole)"/>
-    <ellipse cx="19.4" cy="9.8" rx="3.6" ry="1.9" transform="rotate(-38 19.4 9.8)" fill="#fff" opacity=".55"/><circle cx="16.9" cy="13.4" r=".9" fill="#fff" opacity=".45"/>
-  </g></svg>`;
+// Toernooi: vlak podium met een pin, zelfde stijl als de andere modusiconen (#m-tour).
+const TOUR_ICON = `<svg viewBox="0 0 24 24" aria-hidden="true"><use href="#m-tour"/></svg>`;
 const HINT_ICON = { geo:'g-geo', people:'i-users', money:'g-money', codes:'g-codes', nb:'g-nb', name:'g-name' };
 // Valuta-correcties (de brondata heeft enkele fouten of verouderde codes)
 const CUR_FIX = { ZW:['ZWG','USD'], FM:['USD'], SL:['SLE'], BG:['EUR'], CU:['CUP'], PS:['ILS','JOD'], EH:['MAD'], SV:['USD'], CD:['CDF','USD'], LR:['LRD','USD'], VE:['VES','USD'], TL:['USD'], ZM:['ZMW'], KH:['KHR','USD'], PA:['PAB','USD'], EC:['USD'], MH:['USD'], PW:['USD'], KI:['AUD'], TV:['AUD'], NR:['AUD'], LI:['CHF'], MC:['EUR'], SM:['EUR'], VA:['EUR'], AD:['EUR'], XK:['EUR'], ME:['EUR'], HR:['EUR'], SK:['EUR'] };
