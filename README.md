@@ -91,6 +91,7 @@ punten = 1000 x nauwkeurigheid x hintfactor x tijdfactor
 | Nederland | Goed 1. Fout: 0,25 x e^(-d/10 km), d = afstand van de plek tot jouw plaats |
 | Straatjacht | e^(-(d-20 m)/(0,17 x straal)) x (0,85 + 0,15 x deel ongebruikte scans) |
 | Darts | e^(-(d-25 km)/1500 km), geschaald per continent. x2: dubbel binnen de binnenring, anders 0 |
+| Silhouet | Als Satelliet. De plek is het punt in het hoofddeel dat het dichtst bij het midden ligt |
 
 Fout telt met dezelfde hint- en tijdfactor, dus op hetzelfde moment wint goed altijd van fout. Het juiste continent of de juiste provincie geeft geen vaste punten meer: die staan al in de eerste hint.
 
@@ -159,6 +160,26 @@ Kies in de lobby de modus **Darts**. Je ziet een plek (satelliet of straatfoto) 
 * Continent, landkeuze, kleine landen en soorten hints werken zoals bij Satelliet. **Beeld** kiest satelliet of straatbeeld (Panoramax).
 * Op het uitslagscherm zie je het dartbord rond de plek en ieders pijltje met afstand.
 * Ringen en afval staan in `CONFIG.darts`. Afstand is over de bol (`gcKm`), niet plat.
+
+## Silhouet
+
+Kies in de lobby de modus **Silhouet**. Je ziet alleen de omtrek van een land op een leeg vel, en je raadt het land.
+
+* Elke speler tekent de vorm zelf uit `data/countries.geojson`. De host stuurt alleen hoe hij getoond wordt (draaiing, spiegeling, welke delen), dus er gaat geen extra data over het netwerk.
+* De vorm is op schaal: lengtegraden worden versmald met de cosinus van de breedte, zodat Rusland en Canada niet uitrekken. Landen over de datumgrens (Rusland, Fiji) blijven één geheel.
+* Overzeese delen vallen weg: alleen delen binnen 1,5 keer de grootte van het hoofddeel (5 tot 25 graden) tellen mee. Frankrijk zonder Frans-Guyana, de VS zonder Alaska en Hawaï, Nederland zonder de Caribische eilanden.
+
+| Moeilijkheid | Draaiing | Delen | Extra |
+|---|---|---|---|
+| Makkelijk | Noord boven | Alle delen vanaf 0,2% van het hoofddeel | Lengte en breedtelijnen zonder getallen, schaalbalk in km |
+| Normaal | 15 tot 60 graden, links of rechts | Delen vanaf 1% | Geen |
+| Moeilijk | Willekeurig, de helft van de keren gespiegeld | Alleen het grootste deel | Geen |
+
+* Een label linksboven zegt of noord boven is, of dat de vorm gedraaid (en misschien gespiegeld) is.
+* De vorm tekent zichzelf in ongeveer 1,5 seconde: eerst de omtrek, dan de vulling. Met "minder beweging" aan staat hij er meteen.
+* Continent, landkeuze, kleine landen en soorten hints werken zoals bij Satelliet. Kleine landen staan standaard uit, want een stadstaat is een vlek.
+* Op het uitslagscherm zie je het land op de kaart en naast de vlag de vorm zoals jij hem zag.
+* Instellingen staan in `CONFIG.shape`.
 
 ## Avatars en kleuren
 
