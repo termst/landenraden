@@ -2560,6 +2560,15 @@ let H = null;               // host-only private state
 let recvAt = 0, latency = 0;
 let myAnswer = null;        // { roundId, code, hintsSeen, frac }
 let sendMsg = null, joinTimer = null, hostWatch = null;
+// Eén maak-, join- of solo-actie tegelijk. Een tweede klik of Enter startte anders een tweede zoektimer die niemand meer stopte:
+// je kwam binnen en werd 15 s later met "kamer niet gevonden" uit de lobby gezet. Een nieuwe kamer wacht ook tot de vorige verlaten is.
+let entering = false, leaving = Promise.resolve();
+const busy = () => entering || !!room || !!S;
+async function enter(fn){
+  if (busy()) return;
+  entering = true;
+  try { await leaving; await fn(); } finally { entering = false; }
+}
 
 /* ================= NETWORK ================= */
 function connect(code){
@@ -2584,7 +2593,8 @@ function connect(code){
   location.hash = 'room=' + code;
 }
 const helloPayload = () => ({ id: me.id, name: me.name, color: me.color, avatar: me.avatar });
-async function disconnect(){
+function disconnect(){ return leaving = leaving.then(doDisconnect, doDisconnect); }
+async function doDisconnect(){
   clearTimeout(joinTimer); clearInterval(hostWatch);
   if (H) { clearInterval(H.loop); clearTimeout(H.autoNext); }
   if (room) { try { await room.leave(); } catch(e){} }
@@ -3837,7 +3847,8 @@ $('#avatars').addEventListener('keydown', e => {
   const n = bs[Math.max(0, Math.min(bs.length-1, i+d))]; bs[i].tabIndex = -1; n.tabIndex = 0; n.focus();
 });
 $('#name').addEventListener('input', e => { me.name = e.target.value.trim(); store.set('lr_name', me.name); renderAvatar(true); syncAvLetter(); });
-$('#name').addEventListener('keydown', e => { if (e.key==='Enter') $('#createBtn').click(); });
+// Enter in het naamveld: staat er al een code (getypt of uit de link), dan joinen in plaats van een eigen kamer maken.
+$('#name').addEventListener('keydown', e => { if (e.key==='Enter' && !e.repeat) $(cleanCode($('#codeIn').value).length === 4 ? '#joinBtn' : '#createBtn').click(); });
 $('#hintChips').addEventListener('click', e => {
   const b = e.target.closest('[data-g]'); if (!b) return;
   const g = b.dataset.g, nm = t('g_'+g);
@@ -3887,8 +3898,21 @@ document.addEventListener('keydown', e => {
   if (!S || S.phase !== 'round' || S.round?.hunt || S.round?.darts || drawMe(S.round) || e.ctrlKey || e.metaKey || e.altKey || e.key.length !== 1) return;
   const g = $('#guess'); if (document.activeElement !== g && myAnswer == null && /\S/.test(e.key) && document.activeElement.tagName !== 'INPUT') g.focus();
 });
-$('#codeIn').addEventListener('input', e => { e.target.value = e.target.value.toUpperCase().replace(/[^A-Z0-9]/g,''); });
-$('#codeIn').addEventListener('keydown', e => { if (e.key==='Enter') $('#joinBtn').click(); });
+const cleanCode = v => String(v).toUpperCase().replace(/[^A-Z0-9]/g,'').slice(0,4);
+// Geplakte tekst: een hele link (#room=ABCD), of een losse code met tekst of spaties eromheen. I, O, 0 en 1 komen in een code niet voor.
+function codeFrom(v){
+  const s = String(v), m = s.match(/room=([A-Z0-9]{4})/i) || s.match(/(?:^|[^A-Z0-9])([A-HJ-NP-Z2-9]{4})(?![A-Z0-9])/i);
+  return m ? m[1].toUpperCase() : cleanCode(s);
+}
+// Hoofdletters komen uit de CSS. De waarde alleen aanpassen als dat nodig is en niet midden in een woord van het schermtoetsenbord:
+// op Android verdubbelt dat letters, en met maximaal 4 tekens staat er dan een andere code dan je typte.
+function tidyCode(e){ if (e.isComposing) return; const v = cleanCode(e.target.value); if (v !== e.target.value) e.target.value = v; }
+['input','compositionend','change'].forEach(ev => $('#codeIn').addEventListener(ev, tidyCode));
+$('#codeIn').addEventListener('paste', e => {
+  const txt = e.clipboardData && e.clipboardData.getData('text'); if (!txt) return;
+  e.preventDefault(); e.target.value = codeFrom(txt);
+});
+$('#codeIn').addEventListener('keydown', e => { if (e.key==='Enter' && !e.repeat) $('#joinBtn').click(); });
 $('#langSeg').addEventListener('click', e => { const b = e.target.closest('[data-lang]'); if (b){ lang = b.dataset.lang; store.set('lr_lang', lang); applyI18n(); } });
 $('#soundBtn').addEventListener('click', () => { sound = !sound; store.set('lr_sound', sound?'1':'0'); applyI18n(); beep(); });
 ['#rulesBtn','#rulesBtn2'].forEach(s => $(s).addEventListener('click', () => $('#ovRules').classList.add('on')));
@@ -3962,26 +3986,36 @@ async function netOk(){
   if (!joinRoom) $('#startErr').textContent = t('netFail');
   return !!joinRoom;
 }
-$('#createBtn').addEventListener('click', async () => {
-  if (needName() || !(await netOk())) return;
-  const code = makeCode();
-  connect(code); hostInit();
+$('#createBtn').addEventListener('click', () => {
+  if (busy() || needName()) return;
+  enter(async () => { if (await netOk()){ connect(makeCode()); hostInit(); } });
 });
 $('#soloBtn').addEventListener('click', () => {
-  if (needName()) return;
-  solo = true; hostInit();
+  if (busy() || needName()) return;
+  enter(() => { solo = true; hostInit(); });
 });
 $('#joinBtn').addEventListener('click', () => {
-  if (needName()) return;
-  const code = $('#codeIn').value.trim().toUpperCase();
+  if (busy() || needName()) return;
+  const code = cleanCode($('#codeIn').value);
   if (code.length !== 4){ $('#startErr').textContent = t('codeNeeded'); return; }
+  $('#codeIn').value = code;
   joinAsPeer(code);
 });
-async function joinAsPeer(code){
-  if (!(await netOk())) return;
-  connect(code);
-  overlay(t('searching', { c: code }), t('searchingSub'), true);
-  joinTimer = setTimeout(() => { overlay(null); disconnect().then(()=>{ show('start'); $('#startErr').textContent = t('notFound'); }); }, CONFIG.joinTimeoutMs);
+function joinAsPeer(code){
+  return enter(async () => {
+    if (!(await netOk())) return;
+    connect(code);
+    overlay(t('searching', { c: code }), t('searchingSub'), true);
+    clearTimeout(joinTimer);
+    joinTimer = setTimeout(() => { overlay(null); disconnect().then(()=>{ show('start'); $('#startErr').textContent = t('notFound'); }); }, CONFIG.joinTimeoutMs);
+  });
+}
+// Link met #room=ABCD: bij het laden, en ook als de pagina al open stond en alleen de hash verandert (dan laadt de browser niet opnieuw).
+function joinFromHash(){
+  const m = location.hash.match(/room=([A-Z0-9]{4})/i);
+  if (!m || busy()) return;
+  $('#codeIn').value = m[1].toUpperCase();
+  if (me.name) joinAsPeer(m[1].toUpperCase());
 }
 $('#ovCancel').addEventListener('click', () => { overlay(null); disconnect().then(()=>show('start')); });
 async function leave(){ await disconnect(); huntClear(); renderedRound = null; renderedResult = null; show('start'); }
@@ -4149,8 +4183,8 @@ document.addEventListener('keydown', e => { if (e.key === 'Escape') closeEmoTray
 (async function boot(){
   $('#name').value = me.name; renderColors(); applyI18n(); show('start');
   try { await loadData(); } catch(e){ overlay(t('dataFail')); return; }
-  const m = location.hash.match(/room=([A-Z0-9]{4})/i);
-  if (m){ $('#codeIn').value = m[1].toUpperCase(); if (me.name) joinAsPeer(m[1].toUpperCase()); }
+  joinFromHash();
+  window.addEventListener('hashchange', joinFromHash);
 })();
 </script>
 </body>
