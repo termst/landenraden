@@ -210,26 +210,43 @@ Kies in de lobby de modus **Silhouet**. Je ziet alleen de omtrek van een land op
 
 ## Tekenen
 
-Kies in de lobby de modus **Tekenen**. Eén speler tekent een land uit het hoofd, de rest ziet de tekening live ontstaan en raadt het land.
+Kies in de lobby de modus **Tekenen**. Eén speler tekent de vlag van een land uit het hoofd, de rest ziet de vlag live ontstaan en raadt het land.
 
-* **Om de beurt.** Elke ronde tekent de speler die het minst heeft getekend (bij gelijke stand wie het langst geleden tekende). Bij 5 rondes en 3 spelers tekenen twee spelers twee keer.
-* **De tekenaar** ziet onderin de naam van het land en tekent op een vierkant vel met de vinger of muis. Gereedschap: inkt, water (blauw) en rood, dun of dik, terug (ook Ctrl+Z) en wissen. Wissen kun je terugdraaien.
-* **De raders** krijgen hints zoals bij Satelliet en raden met de gewone invoer. Sneller en met minder hints is meer punten.
-* **Regel:** teken de vorm, geen letters, cijfers of vlaggen. Het spel controleert dat niet.
+* **Om de beurt.** Elke ronde tekent de speler die het minst heeft getekend (bij gelijke stand wie het langst geleden tekende).
+* **De tekenaar** ziet onderin de naam van het land en tekent op een vel van 3:2. Acht vaste kleuren (zwart, wit, rood, oranje, geel, groen, lichtblauw, blauw), drie kwasten, een rechthoek en een rondje, terug (ook Ctrl+Z) en wissen. Wit is de kleur van het vel en werkt als gum.
+* **Vormen klikken vast** op de randen, de helft en een derde van het vel (`CONFIG.draw.snap`), zodat een driekleur strak wordt. De streepjes rond het vel wijzen die plekken aan.
+* **De raders** krijgen hints zoals bij Satelliet, zonder de hint met de vlag.
 
-| Moeilijkheid | Tekenaar ziet | Kleuren |
-|---|---|---|
-| Makkelijk | Naam, vlag en de omtrek als voorbeeld (tik om te vergroten) | Inkt, water, rood |
-| Normaal | Naam en vlag | Inkt, water, rood |
-| Moeilijk | Alleen de naam | Alleen inkt |
+| Moeilijkheid | Tekenaar |
+|---|---|
+| Makkelijk | Ziet de echte vlag als voorbeeld (tik om te vergroten) |
+| Normaal | Alleen de naam |
+| Moeilijk | Alleen de naam, alleen de kwast (geen vormen) |
 
-**Punten.** Raders als Silhouet (goed 1, fout naar afstand, hint- en tijdfactor). De tekenaar krijgt het gemiddelde van de raders: raadt iedereen het snel, dan bijna 1000, raadt de helft het, dan ongeveer de helft, raadt niemand het, dan 0 (of een paar punten voor gokken in de buurt). Wie verbonden is maar niets invult telt mee met 0, wie wegging zonder antwoord telt niet mee. Raadt minstens de helft het (`CONFIG.draw.half`), dan telt de ronde voor de tekenaar als goed.
+**Punten.** Raders als Silhouet. De tekenaar krijgt het gemiddelde van de raders. Raadt minstens de helft het (`CONFIG.draw.half`), dan telt de ronde voor de tekenaar als goed.
 
-**Netwerk.** De tekenaar stuurt zijn lijnen elke 50 ms in kleine stukjes rechtstreeks naar iedereen, op een vel van 1000 x 1000. Elk stukje heeft een volgnummer. Mist een speler er een, of komt iemand terug na herladen, dan vraagt hij de hele tekening op bij de tekenaar of de host. De host stuurt de hele tekening mee naar het uitslagscherm, daar staat hij naast het echte land. Grens per ronde: 8000 punten.
+**Netwerk.** Kwaststreken gaan elke 50 ms in stukjes naar iedereen, een vorm gaat bij loslaten als één stukje. Elk stukje heeft een volgnummer: mist een speler er een, dan vraagt hij de hele tekening op. Op het uitslagscherm staat de tekening naast de echte vlag.
 
-* Met één speler wordt elke ronde Silhouet. In een toernooi dat je alleen speelt valt Tekenen uit het schema.
-* Continent, landkeuze, kleine landen en soorten hints werken zoals bij Satelliet. Een land van 2 km² tekenen is weinig zinvol: laat kleine landen uit.
+* Met één speler wordt elke ronde Silhouet.
 * Instellingen staan in `CONFIG.draw`.
+
+## Sabotage
+
+Zet in de lobby **Sabotage** aan (vanaf 2 spelers). Spelers krijgen kaarten en spelen die op elkaar.
+
+| Kaart | Wat het doet | Wanneer |
+|---|---|---|
+| **Blackout** | Het doelwit ziet de kaart, foto, vorm of tekening niet meer. Hints werken nog. Straatjacht: alleen het satellietbeeld valt weg | Meteen, of de hele volgende ronde als je hem op het uitslagscherm speelt |
+| **Delusion** | Alle hints van het doelwit gaan over een ander, willekeurig land uit hetzelfde werelddeel (zelfde soorten hints, andere antwoorden). Het doelwit hoort niets | Altijd de volgende ronde. Komt uit op het uitslagscherm |
+| **Jetlag** | De klok van het doelwit loopt twee keer zo snel. Tijd op: invoer dicht | Meteen, of vanaf de start van de volgende ronde |
+
+* **Varianten:** willekeurige speler (gewone rand), kies een speler (zilver), iedereen (goud).
+* **Kaarten krijgen:** 1 bij de start, daarna elke 2 rondes, hoogstens 3 in je hand. Wie achter staat krijgt vaker een sterke variant (`CONFIG.sab.odds`).
+* **Spelen:** hoogstens één kaart per ronde. Tik op een kaartje naast de chatknop.
+* De tekenaar is niet te raken: een kaart die op hem wacht, wacht een ronde langer.
+* `CONFIG.sab.mix: true` laat Delusion elke hint uit een ander land halen (losse onzin in plaats van één vals spoor).
+* Alles staat in de gewone snapshot, net als de plek van de ronde. Wie in de browser zoekt kan het vinden.
+* Het eindscherm toont de saboteur, het mikpunt en het aantal gespeelde kaarten.
 
 ## Toernooi
 

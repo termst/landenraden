@@ -346,9 +346,9 @@ body.kb .photorow{display:none}
 .locked img{height:18px;border-radius:2px}
 .locked span{margin-left:auto;font-size:13px;opacity:.75;flex:none;font-family:var(--font);text-transform:none;letter-spacing:0}
 .who{display:flex;gap:6px;flex-wrap:wrap}
-.who span{font-size:12px;font-weight:600;padding:4px 9px;border-radius:3px;background:var(--glass);border:1px solid var(--line);display:flex;align-items:center;gap:6px;box-shadow:var(--shadow-up);transition:all .2s}
-.who span.done{border-color:var(--ok);background:var(--done)}
-.who span.off{opacity:.45}
+.who>span{font-size:12px;font-weight:600;padding:4px 9px;border-radius:3px;background:var(--glass);border:1px solid var(--line);display:flex;align-items:center;gap:6px;box-shadow:var(--shadow-up);transition:all .2s}
+.who>span.done{border-color:var(--ok);background:var(--done)}
+.who>span.off{opacity:.45}
 body.kb .who{display:none}
 body.kb #hintList{max-height:18vh;max-height:18dvh}
 /* Straatjacht */
@@ -403,44 +403,46 @@ body.chat-on .shapetag{top:calc(max(10px,env(safe-area-inset-top)) + 116px)}
 .silmini svg{width:42px;height:42px}
 .silmini .sil{fill:var(--ink);stroke:none}
 @media (prefers-reduced-motion:reduce){#shapeSvg .sil{fill-opacity:1;stroke:var(--ink);stroke-dashoffset:0}}
-/* Tekenen: vel papier van 1000 x 1000 (viewBox), lijndikte schaalt mee. Kleuren volgen het thema. */
+/* Tekenen: het vel is een vlag van 1500 x 1000 (viewBox), lijndikte schaalt mee. Vel en kleuren zijn vast, los van het thema: een vlag heeft echte kleuren. */
 #draw{position:absolute;inset:0;overflow:hidden;background:radial-gradient(color-mix(in srgb,var(--ink) 13%,transparent) 1px,transparent 1.5px) 0 0/22px 22px,var(--paper)}
 #drawArea{position:absolute;left:max(16px,env(safe-area-inset-left));right:var(--shR,16px);top:calc(max(10px,env(safe-area-inset-top)) + 112px);bottom:var(--shB,300px);transition:bottom .3s,right .3s}
 #drawSvg{display:block;width:100%;height:100%;user-select:none;-webkit-user-select:none;-webkit-touch-callout:none}
 #draw.me #drawSvg{touch-action:none;cursor:crosshair}
-.drawing .paper{fill:var(--card);stroke:var(--line);stroke-width:3;filter:drop-shadow(0 8px 14px rgba(0,0,0,.16))}
-.drawing path{fill:none;stroke-linecap:round;stroke-linejoin:round}
-.drawing .k0{stroke:var(--ink)}.drawing .k1{stroke:var(--sea)}.drawing .k2{stroke:var(--acc)}
-.drawing .w0{stroke-width:7}.drawing .w1{stroke-width:18}
-#drawWait{fill:var(--mute);font-family:var(--font);font-size:34px;text-anchor:middle}
+.drawing .paper{fill:#fbfaf6;stroke:var(--line);stroke-width:3;filter:drop-shadow(0 8px 14px rgba(0,0,0,.16))}
+.drawing path{stroke-linecap:round;stroke-linejoin:round}
+/* Streepjes op de helft en op een derde, buiten het vel: alleen de tekenaar ziet ze. */
+.drawing .ticks{display:none;fill:none;stroke:var(--mute);stroke-width:4;stroke-linecap:round}
+#draw.me .ticks{display:block}
+#drawWait{fill:#8a8478;font-family:var(--font);font-size:46px;text-anchor:middle}
 .shapetag .avatar{width:20px;height:20px;font-size:11px}
-.drawpanel{background:var(--glass);border:1px solid var(--line);border-radius:var(--r);box-shadow:var(--shadow-up);padding:10px 12px;display:flex;flex-direction:column;gap:10px;animation:slide .25s ease}
+.drawpanel{background:var(--glass);border:1px solid var(--line);border-radius:var(--r);box-shadow:var(--shadow-up);padding:10px 12px;display:flex;flex-direction:column;gap:9px;animation:slide .25s ease}
 .dtarget{display:flex;align-items:center;gap:12px;min-width:0}
-.dtarget img{height:40px;border-radius:3px;box-shadow:0 0 0 1px var(--line);display:block}
 #drawName{font-size:clamp(20px,6vw,26px);line-height:1.05;overflow-wrap:anywhere;font-family:var(--display);font-weight:400;text-transform:uppercase}
-.dref{flex:none;width:58px;height:58px;padding:5px;border-radius:5px;border:1px solid var(--line);background:var(--card2);cursor:zoom-in;display:grid;place-items:center;transition:width .2s,height .2s}
-.dref svg{width:100%;height:100%}
-.dref .sil{fill:var(--ink);stroke:none}
-.dref.big{width:150px;height:150px;cursor:zoom-out}
+/* Makkelijk: de echte vlag als voorbeeld, tik om te vergroten. */
+.dref{flex:none;width:72px;height:48px;padding:0;border-radius:4px;border:1px solid var(--line);background:var(--card2);cursor:zoom-in;display:grid;place-items:center;overflow:hidden;transition:width .2s,height .2s}
+.dref img{width:100%;height:100%;object-fit:contain;display:block}
+.dref.big{width:210px;height:140px;cursor:zoom-out}
+.dcolors{display:flex;gap:6px}
 .dtools{display:flex;align-items:center;gap:6px;min-width:0}
 .dtools .grow{flex:1}
-.dsw{width:38px;height:38px;display:grid;place-items:center;padding:0;border-radius:50%;border:1px solid var(--line);background:var(--card);cursor:pointer;transition:transform .1s,box-shadow .15s}
-.dsw i{display:block;border-radius:50%;background:var(--c,var(--ink))}
-.dsw.on{box-shadow:0 0 0 2px var(--paper),0 0 0 4px var(--c,var(--ink))}
+.dset{display:flex;gap:6px}
+.dsw{width:38px;height:38px;flex:none;display:grid;place-items:center;padding:0;border-radius:50%;border:1px solid var(--line);background:var(--card);color:var(--ink2);cursor:pointer;transition:transform .1s,box-shadow .15s,background .15s,color .15s}
+.dcolors .dsw{flex:1;width:auto;height:auto;max-width:40px;aspect-ratio:1}
+.dcolors .dsw i{display:block;width:72%;height:72%;border-radius:50%;background:var(--c);box-shadow:inset 0 0 0 1px rgba(0,0,0,.24)}
+.dcolors .dsw.on{box-shadow:0 0 0 2px var(--paper),0 0 0 4px var(--ink)}
+.dset .dsw{border-radius:6px}
+.dset .dsw svg{width:22px;height:22px;display:block}
+.dset .dsw.on{background:var(--ink);border-color:var(--ink);color:var(--paper)}
 .dsw:active,.dbtn:active{transform:scale(.92)}
-.dsw[data-w] i{background:var(--ink)}
-.dsw[data-w].on{box-shadow:0 0 0 2px var(--paper),0 0 0 4px var(--ink)}
-.dsep{width:1px;height:26px;background:var(--line);margin:0 2px}
 .dbtn{width:40px;height:40px}
 .dbtn:disabled{opacity:.35;pointer-events:none}
+@media (max-width:360px){.dset .dsw,.dbtn{width:33px;height:33px}.dset,.dtools,.dcolors{gap:5px}}
 .who span .ic{width:13px;height:13px;stroke-width:2.2}
 .drawcmp{display:grid;grid-template-columns:1fr 1fr;gap:10px;padding:10px}
 .drawcmp figure{margin:0;display:flex;flex-direction:column;gap:6px;min-width:0}
-.drawcmp .dpane{aspect-ratio:1;border-radius:5px;background:var(--card2);display:grid;place-items:center;overflow:hidden}
-.drawcmp .dpane svg{width:100%;height:100%;display:block}
-.drawcmp .dpane.real{padding:12%}
-.drawcmp .drawing .w0{stroke-width:11}.drawcmp .drawing .w1{stroke-width:24}
-.drawcmp .real .sil{fill:var(--ink);stroke:none}
+.drawcmp .dpane{aspect-ratio:3/2;border-radius:5px;background:var(--card2);display:grid;place-items:center;overflow:hidden;box-shadow:0 0 0 1px var(--line)}
+.drawcmp .dpane svg,.drawcmp .dpane img{width:100%;height:100%;display:block}
+.drawcmp .dpane img{object-fit:contain}
 .drawcmp figcaption{font-size:13px;color:var(--mute);display:flex;align-items:center;gap:6px;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .dartbar{display:flex;gap:8px}
 .dartbar .btn{flex:none;box-shadow:var(--shadow-up),0 2px 0 var(--line)}
@@ -631,6 +633,127 @@ body[data-screen=game] #emoLayer{left:max(10px,env(safe-area-inset-left));transf
 @keyframes emCrown{0%{transform:translateY(-24px) rotate(-18deg);opacity:0}35%{opacity:1}100%{transform:none}}
 @keyframes emSway{50%{transform:rotate(7deg)}}
 @keyframes emTwinkle{0%,100%{transform:scale(.2);opacity:0}50%{transform:scale(1);opacity:1}}
+/* Sabotage: kaarten met eigen kleuren per soort (--k1 donker, --k2 licht, --ka accent), los van het thema.
+   De rand zegt welke variant het is: gewoon (willekeurig), zilver (kies), goud met een glans (iedereen). */
+[data-k=bo]{--k1:#121117;--k2:#34313f;--ka:#f6c453}
+[data-k=de]{--k1:#4b2276;--k2:#9c47b6;--ka:#ffb8e2}
+[data-k=jl]{--k1:#0b5c70;--k2:#2ba8c1;--ka:#ffe08a}
+.sc{position:relative;display:flex;flex-direction:column;align-items:center;gap:4px;flex:none;width:104px;aspect-ratio:5/7;padding:8px 6px 9px;border:0;border-radius:9px;color:#fff;font:inherit;text-align:center;
+  background:linear-gradient(165deg,var(--k2),var(--k1) 64%);box-shadow:inset 0 0 0 1.5px var(--edge,rgba(255,255,255,.3)),0 3px 0 rgba(0,0,0,.3);overflow:hidden;isolation:isolate}
+.sc[data-v=c]{--edge:#dfe5ee}
+.sc[data-v=a]{--edge:#f6c453}
+.sc .art{display:block;width:100%;flex:1;min-height:0}
+.sc-nm{font-family:var(--display);text-transform:uppercase;letter-spacing:.04em;font-size:15px;line-height:1}
+.sc-v{position:absolute;top:5px;right:5px;width:22px;height:22px;border-radius:50%;display:grid;place-items:center;background:rgba(0,0,0,.42);color:var(--edge,#fff)}
+.sc-v svg{width:14px;height:14px;fill:currentColor;stroke:none}
+.sc[data-v=a]::after{content:'';position:absolute;inset:0;z-index:1;background:linear-gradient(115deg,transparent 38%,rgba(255,255,255,.3) 50%,transparent 62%);transform:translateX(-130%);animation:scShine 3.6s ease-in-out infinite;pointer-events:none}
+@keyframes scShine{0%,55%{transform:translateX(-130%)}100%{transform:translateX(130%)}}
+/* Tekeningen op de kaarten. Blackout: de maan schuift voor de wereld. Delusion: de spiraal draait. Jetlag: de wijzers jagen, het vliegtuig komt over. */
+.sa-moon,.sa-tw{transform-box:fill-box;transform-origin:center}
+.sa-spin{transform-origin:32px 32px}
+.sa-hh,.sa-hm{transform-origin:29px 36px}
+:is(.sc.play,.sc:hover) .sa-moon{animation:saMoon 2.8s cubic-bezier(.4,0,.2,1) infinite alternate}
+:is(.sc.play,.sc:hover) .sa-rays{animation:saRays 2.8s ease-in-out infinite alternate}
+:is(.sc.play,.sc:hover) .sa-spin{animation:sp 3.2s linear infinite}
+:is(.sc.play,.sc:hover) .sa-tw{animation:emTwinkle 1.4s ease-in-out infinite}
+:is(.sc.play,.sc:hover) .sa-tw.two{animation-delay:.7s}
+:is(.sc.play,.sc:hover) .sa-hm{animation:sp .9s linear infinite}
+:is(.sc.play,.sc:hover) .sa-hh{animation:sp 5.4s linear infinite}
+:is(.sc.play,.sc:hover) .sa-plane{animation:saFly 2.2s ease-in-out infinite}
+@keyframes saMoon{0%{transform:translate(-31px,-9px)}62%,100%{transform:none}}
+@keyframes saRays{0%{opacity:.3}62%,100%{opacity:1}}
+@keyframes saFly{0%{transform:translate(-44px,20px);opacity:0}18%,82%{opacity:1}100%{transform:translate(14px,-10px);opacity:0}}
+/* Je hand: kleine kaarten naast de chatknoppen. Tik er een aan voor uitleg en om hem te spelen. */
+.sc.tiny{width:34px;padding:3px 3px 4px;border-radius:6px;gap:0;cursor:pointer;box-shadow:inset 0 0 0 1.5px var(--edge,rgba(255,255,255,.3)),var(--shadow-up)}
+.sc.tiny .sc-nm{display:none}
+.sc.tiny .sc-v{top:auto;bottom:2px;right:2px;width:13px;height:13px;background:rgba(0,0,0,.6)}
+.sc.tiny .sc-v svg{width:9px;height:9px}
+#sabHand{position:fixed;left:calc(max(12px,env(safe-area-inset-left)) + 112px);bottom:max(12px,env(safe-area-inset-bottom));z-index:1500;display:none;gap:5px;align-items:flex-end}
+#sabHand.show{display:flex}
+body[data-screen=game] #sabHand{top:calc(max(10px,env(safe-area-inset-top)) + 61px);bottom:auto;left:calc(max(10px,env(safe-area-inset-left)) + 100px);align-items:flex-start}
+#sabHand .sc{transition:transform .12s,filter .2s,opacity .2s,box-shadow .15s}
+#sabHand .sc:active{transform:scale(.9)}
+#sabHand .sc.sel{transform:translateY(-3px);box-shadow:inset 0 0 0 2px #fff,var(--shadow-up)}
+body[data-screen=game] #sabHand .sc.sel{transform:translateY(3px)}
+#sabHand.used .sc{filter:grayscale(.85);opacity:.55}
+#sabHand .sc.new{animation:scNew .7s cubic-bezier(.2,1.5,.4,1)}
+@keyframes scNew{from{transform:translateY(18px) rotate(-14deg) scale(.4);opacity:0}}
+#sabTray{position:fixed;left:max(12px,env(safe-area-inset-left));bottom:calc(max(12px,env(safe-area-inset-bottom)) + 58px);z-index:1750;display:none;flex-direction:column;gap:10px;width:min(336px,calc(100vw - 24px));padding:12px;background:var(--card);border:1px solid var(--line);border-radius:8px;box-shadow:var(--shadow-up)}
+#sabTray.on{display:flex;animation:slide .18s ease}
+body[data-screen=game] #sabTray{top:calc(max(10px,env(safe-area-inset-top)) + 116px);bottom:auto;left:max(10px,env(safe-area-inset-left))}
+.st-top{display:flex;gap:12px;align-items:stretch}
+.st-top .sc{width:96px}
+.st-txt{flex:1;min-width:0;display:flex;flex-direction:column;gap:6px}
+.st-txt>b{font-family:var(--display);font-weight:400;text-transform:uppercase;font-size:23px;line-height:1;letter-spacing:.02em}
+.st-var{display:inline-flex;align-items:center;gap:5px;align-self:flex-start;font-size:12px;font-weight:700;padding:3px 9px 3px 6px;border-radius:99px;background:var(--card2);color:var(--ink2);box-shadow:inset 0 0 0 1px var(--line)}
+.st-var svg{width:13px;height:13px;fill:currentColor;stroke:none}
+.st-txt p{margin:0;font-size:13.5px;line-height:1.35;color:var(--ink2)}
+.st-when{font-size:12.5px;font-weight:700;color:var(--mute)}
+.st-when.no{color:var(--bad)}
+.st-pick{display:flex;flex-wrap:wrap;gap:6px}
+.st-p{display:flex;align-items:center;gap:7px;min-height:42px;max-width:100%;padding:5px 12px 5px 8px;border:1px solid var(--line);border-radius:6px;background:var(--card2);font:inherit;font-weight:700;font-size:14px;color:var(--ink);cursor:pointer;transition:transform .08s,border-color .15s}
+.st-p:active{transform:scale(.95)}
+.st-p span:last-child{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+@media (hover:hover){.st-p:hover{border-color:var(--ink)}}
+.st-go{min-height:44px;font-size:17px}
+/* Melding als er een kaart gespeeld wordt, in dezelfde laag als de emotes. */
+.sab-pop{display:flex;align-items:center;gap:10px;max-width:100%;padding:6px 15px 6px 7px;border-radius:8px;color:#fff;background:linear-gradient(165deg,var(--k2),var(--k1) 70%);box-shadow:inset 0 0 0 1.5px rgba(255,255,255,.28),var(--shadow-up);animation:emIn .5s cubic-bezier(.2,1.5,.4,1) both}
+.sab-pop.out{animation:emOut .25s ease forwards}
+.sab-pop .sc{width:40px;aspect-ratio:1;padding:0;background:none;box-shadow:none;border-radius:0;overflow:visible}
+.sab-pop .sc::after,.sab-pop .sc-nm,.sab-pop .sc-v{display:none}
+.sp-t{display:flex;flex-direction:column;gap:2px;min-width:0}
+.sp-t b{font-family:var(--display);font-weight:400;text-transform:uppercase;letter-spacing:.03em;font-size:clamp(17px,5vw,22px);line-height:1.05;color:var(--ka);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.sp-t span{display:flex;align-items:center;gap:5px;flex-wrap:wrap;font-size:13px;font-weight:700;min-width:0}
+.sp-t span .ic{width:13px;height:13px;stroke-width:2.4}
+.sp-t small{font-size:11.5px;opacity:.82}
+/* Blackout: de kaart is weg. Een verduisterde zon met een gloeiende rand, de hints blijven staan. */
+#blackout{position:absolute;inset:0;z-index:440;display:grid;place-items:center;padding:0 20px 36vh;background:radial-gradient(120% 90% at 50% 32%,#1d1b27 0,#0a090e 64%);color:#efeadf;text-align:center}
+#blackout.hit{animation:boHit .9s steps(1) both}
+@keyframes boHit{0%{opacity:0}12%{opacity:1}20%{opacity:.15}34%{opacity:1}42%{opacity:.3}56%,100%{opacity:1}}
+.bo-in{display:flex;flex-direction:column;align-items:center;gap:6px}
+.bo-ring{width:88px;height:88px;border-radius:50%;margin-bottom:14px;background:#07060a;box-shadow:0 0 0 2px #f6c453,0 0 26px 5px rgba(246,196,83,.5),0 0 70px 18px rgba(232,85,42,.22);animation:boGlow 3.2s ease-in-out infinite alternate}
+@keyframes boGlow{to{box-shadow:0 0 0 2px #ffd97a,0 0 34px 9px rgba(246,196,83,.66),0 0 92px 26px rgba(232,85,42,.3)}}
+.bo-in b{font-family:var(--display);font-weight:400;text-transform:uppercase;letter-spacing:.14em;padding-left:.14em;font-size:clamp(26px,8vw,38px);line-height:1}
+.bo-in small{font-size:13px;font-weight:700;color:#f6c453}
+.bo-in small:empty{display:none}
+.bo-in i{font-style:normal;font-size:13px;line-height:1.35;color:#a8a294;max-width:250px}
+/* Straatjacht: de kaart blijft het speelveld, alleen het satellietbeeld valt weg. */
+#map.dark .leaflet-tile-pane{opacity:0}
+#fxTag{left:50%;transform:translateX(-50%);top:calc(max(10px,env(safe-area-inset-top)) + 116px);white-space:nowrap;background:#121117;border-color:#34313f;color:#f6c453}
+#fxTag svg{color:#f6c453}
+/* Jetlag: de klok van het doelwit loopt sneller. */
+.chip.timer.jet{background:linear-gradient(165deg,#2ba8c1,#0b5c70 72%);border-color:#0b5c70;color:#fff}
+.chip.timer.jet small{color:#ffe08a}
+.chip.timer.jet .tbar,.chip.timer.jet.low .tbar{background:#ffe08a}
+.chip.timer.jet.low b{color:#fff}
+.chip.timer.jet small,.chip.timer.jet b{position:relative;z-index:1}
+.chip.timer.jet::after{content:'';position:absolute;left:0;bottom:3px;width:12px;height:12px;opacity:.5;background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='%23ffe08a' d='M22 12c0 1-1.3 1.6-2.8 1.6h-4.1l-4.3 6.9H8.5l2.2-6.9H6.3l-1.8 2.4H2.7l1-4-1-4h1.8l1.8 2.4h4.4L8.5 3.5h2.3l4.3 6.9h4.1C20.7 10.4 22 11 22 12z'/%3E%3C/svg%3E") center/contain no-repeat;animation:jlFly 1.5s linear infinite}
+@keyframes jlFly{from{transform:translateX(-14px)}to{transform:translateX(84px)}}
+.chip.timer.zap{animation:jlZap .6s ease}
+@keyframes jlZap{20%{transform:translateX(-4px) rotate(-3deg)}40%{transform:translateX(4px) rotate(3deg)}60%{transform:translateX(-3px)}80%{transform:translateX(2px)}}
+.locked.out{background:#0b5c70}
+.locked.out .ic{fill:currentColor;stroke:none}
+/* Kleine tekens bij een speler: wie last heeft van welke kaart. */
+.fxi{width:13px;height:13px;flex:none;vertical-align:-2px}
+.fxi[data-k=bo]{color:var(--ink)}.fxi[data-k=de]{color:#a654c6}.fxi[data-k=jl]{color:#1f95ad}
+td .fxi{margin-left:5px}
+/* Uitslag: wie wie dwarszat. Delusion komt hier pas uit. */
+.sablist{padding:10px 12px;gap:9px}
+.sabrow{display:flex;align-items:center;gap:10px;min-width:0;font-size:14px}
+.sabrow.me{margin:-4px -6px;padding:4px 6px;border-radius:5px;background:var(--flash)}
+.sab-ic{flex:none;width:32px;height:32px;border-radius:6px;display:grid;place-items:center;color:var(--ka);background:linear-gradient(165deg,var(--k2),var(--k1) 70%)}
+.sab-ic svg{width:19px;height:19px}
+.sab-t{flex:1;min-width:0;display:flex;flex-direction:column;gap:1px}
+.sab-w{display:flex;align-items:center;gap:5px;flex-wrap:wrap;font-weight:700}
+.sab-w .ic{width:13px;height:13px;color:var(--mute);stroke-width:2.4}
+.sabrow small{font-size:12.5px;color:var(--mute)}
+.sabrow small b{color:var(--ink2)}
+/* Lobby: de drie soorten, tik voor uitleg. */
+.sabdeck{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.sabdeck .sc{width:100%;aspect-ratio:auto;padding:8px 4px 9px;cursor:pointer;transition:transform .1s}
+.sabdeck .sc:active{transform:scale(.96)}
+.sabdeck .sc .art{flex:none;height:54px}
+.sabdeck .sc-nm{font-size:14px}
 /* Telefoon */
 @media (max-width:420px){
   #result table th:nth-child(3),#result table td:nth-child(3){display:none}
@@ -652,6 +775,7 @@ body[data-screen=game] #emoLayer{left:max(10px,env(safe-area-inset-left));transf
   .mapctl{right:auto;left:max(10px,env(safe-area-inset-left));flex-direction:row;top:auto;bottom:max(10px,env(safe-area-inset-bottom))}
   #rmap{height:60vh;min-height:160px}
   .podium{min-height:170px}
+  #blackout{padding:0 min(430px,54vw) 0 20px}
 }
 @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
 </style>
@@ -840,7 +964,11 @@ body[data-screen=game] #emoLayer{left:max(10px,env(safe-area-inset-left));transf
   <symbol id="m-hunt" viewBox="0 0 24 24"><circle cx="10.5" cy="10.5" r="6.4" fill-opacity=".45" stroke="currentColor" stroke-width="2.2"/><path d="M16.2 16.2l5 5" stroke="currentColor" stroke-width="3" stroke-linecap="round"/><path fill-rule="evenodd" d="M10.5 15s3.1-2.6 3.1-5.2a3.1 3.1 0 1 0-6.2 0c0 2.6 3.1 5.2 3.1 5.2zM10.5 8.7a1.1 1.1 0 1 1 0 2.2 1.1 1.1 0 0 1 0-2.2z"/></symbol>
   <symbol id="m-darts" viewBox="0 0 24 24"><circle cx="10.5" cy="13.5" r="9.5" opacity=".45"/><path fill-rule="evenodd" d="M10.5 7a6.5 6.5 0 1 1 0 13 6.5 6.5 0 0 1 0-13zm0 3.4a3.1 3.1 0 1 0 0 6.2 3.1 3.1 0 0 0 0-6.2z"/><circle cx="10.5" cy="13.5" r="1.5"/><path d="M10.5 13.5l8.6-8.6" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"/><path d="M18.4 5.6l.3-4.4 2 2.1zM18.4 5.6l4.4-.3-2.1-2z"/></symbol>
   <symbol id="m-shape" viewBox="0 0 24 24"><path d="M19.4 9.7 18.5 9.9 17.1 12.4 18.2 12.0 18.6 13.0 18.3 13.3 18.8 14.0 18.0 14.6 18.6 15.4 18.4 16.0 19.5 16.6 19.2 17.2 17.9 18.4 16.9 18.6 15.9 17.9 15.4 18.0 14.3 17.7 13.2 18.9 13.4 19.9 12.6 20.1 11.7 20.0 11.3 19.6 10.0 19.1 9.7 19.4 8.2 19.2 7.0 18.7 7.1 18.3 6.5 18.0 7.0 17.7 7.5 15.4 7.3 15.5 7.5 13.8 8.1 14.6 7.9 13.9 7.4 13.4 7.6 13.3 7.4 12.2 6.6 11.8 6.1 11.1 6.1 10.4 6.6 10.4 5.6 10.2 5.7 9.9 5.2 9.6 3.1 9.2 2.6 8.8 3.1 8.5 2.8 8.3 3.2 8.3 2.5 8.0 2.8 7.6 4.6 7.2 5.3 7.8 7.1 7.6 6.5 5.5 7.3 5.5 7.4 6.1 8.8 6.3 9.6 6.0 9.2 5.9 9.3 5.5 10.9 4.7 11.2 3.3 11.6 2.9 12.4 2.7 12.8 3.4 13.2 3.4 14.0 4.3 14.7 4.4 14.7 5.0 15.6 4.6 15.6 5.3 16.5 5.9 17.5 5.9 18.2 6.6 20.1 6.9 19.4 8.5zM21.9 19.2 22.0 20.5 21.5 22.0 21.0 21.6 20.9 20.7 20.9 19.7 21.7 19.4 21.8 18.7z"/></symbol>
-  <symbol id="m-draw" viewBox="0 0 24 24"><path d="M21.5 21.2c-2.3.3-3.1-2.3-5.4-2.3-1.9 0-3 1.7-5.6 1.6" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" opacity=".45"/><g transform="rotate(45 12 11)"><rect x="9.4" y="0" width="5.2" height="13.4" rx="1.2"/><rect x="9.4" y="0" width="5.2" height="2.8" rx="1.2" opacity=".45"/><path d="M9.4 14.6h5.2L12 20.2z" opacity=".45"/><path d="M11.1 18.3h1.8L12 20.2z"/></g></symbol>
+  <symbol id="m-draw" viewBox="0 0 24 24"><rect x="2" y="2" width="2.2" height="20" rx="1.1"/><path opacity=".45" d="M5.2 3.5h13.3a1 1 0 0 1 1 1v8.3a1 1 0 0 1-1 1H5.2z"/><path d="M5.2 3.5h13.3a1 1 0 0 1 1 1v2.4H5.2z"/><g transform="rotate(45 16.5 15.5)"><rect x="14.4" y="6.5" width="4.2" height="10.2" rx="1"/><path d="M14.4 17.7h4.2l-2.1 4.3z" opacity=".45"/><path d="M15.8 20.6h1.4l-.7 1.4z"/></g></symbol>
+  <!-- Sabotage: klein teken per soort (verduistering, spiraal, vliegtuig). Kleuren staan in het teken zelf, zodat .ic ze niet leegmaakt. -->
+  <symbol id="s-bo" viewBox="0 0 24 24"><circle cx="12" cy="12" r="6.2" fill="currentColor" stroke="none"/><circle cx="12" cy="12" r="9.8" fill="none" stroke="currentColor" stroke-width="1.8" stroke-dasharray="1.9 3.231" stroke-linecap="round"/></symbol>
+  <symbol id="s-de" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" d="M12.6 12.0Q12.8 12.4 12.8 12.7Q12.7 12.9 12.4 13.2Q12.2 13.4 11.8 13.5Q11.5 13.6 11.1 13.5Q10.6 13.4 10.3 13.1Q9.9 12.7 9.8 12.1Q9.6 11.6 9.7 11.0Q9.8 10.4 10.2 9.9Q10.6 9.3 11.3 9.0Q12.0 8.7 12.8 8.8Q13.6 8.9 14.3 9.4Q15.1 9.8 15.6 10.6Q16.0 11.4 16.1 12.4Q16.1 13.3 15.7 14.3Q15.3 15.3 14.4 16.0Q13.5 16.6 12.3 16.9Q11.2 17.1 10.0 16.8Q8.8 16.4 7.9 15.5Q7.0 14.6 6.5 13.3Q6.1 12.0 6.3 10.6Q6.5 9.2 7.3 8.0Q8.2 6.8 9.6 6.0Q10.9 5.3 12.6 5.3Q14.2 5.3 15.7 6.1Q17.1 6.9 18.1 8.3Q19.2 9.7 19.4 11.4Q19.7 13.2 19.1 14.9Q18.5 16.7 17.1 18.0Q15.8 19.4 13.9 20.0L12.0 20.6"/></symbol>
+  <symbol id="s-jl" viewBox="0 0 24 24"><path fill="currentColor" stroke="none" d="M22 12c0 1-1.3 1.6-2.8 1.6h-4.1l-4.3 6.9H8.5l2.2-6.9H6.3l-1.8 2.4H2.7l1-4-1-4h1.8l1.8 2.4h4.4L8.5 3.5h2.3l4.3 6.9h4.1C20.7 10.4 22 11 22 12z"/></symbol>
   <symbol id="i-pen" viewBox="0 0 24 24"><path d="M4 20l1.2-4.7L16.4 4.1a2 2 0 0 1 2.8 0l.7.7a2 2 0 0 1 0 2.8L8.7 18.8z"/><path d="M14.4 6.1l3.5 3.5"/></symbol>
   <symbol id="i-undo" viewBox="0 0 24 24"><path d="M9 14 4 9l5-5"/><path d="M4 9h10.5a5.5 5.5 0 0 1 0 11H11"/></symbol>
   <symbol id="i-trash" viewBox="0 0 24 24"><path d="M4 7h16M10 11v6M14 11v6M6 7l1 12a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2l1-12M9 7V4h6v3"/></symbol>
@@ -922,6 +1050,8 @@ body[data-screen=game] #emoLayer{left:max(10px,env(safe-area-inset-left));transf
       <div class="field" data-for="world dutch hunt"><label data-i="difficulty"></label><div class="seg diff" data-set="difficulty" data-opts="easy,normal,hard"></div></div>
       <div class="field" data-for="world"><label data-i="continent"></label><div class="seg sm cont" data-set="continent" data-opts="ALL,EU,AM,AS,OC,AF"></div></div>
       <div class="toggle" data-for="tour"><div class="tl"><label data-i="tourFinal"></label><small data-i="tourFinalSub"></small></div><button class="sw" data-sw="tourFinal" aria-label="toggle"></button></div>
+      <div class="toggle"><div class="tl"><label data-i="sabotage"></label><small data-i="sabotageSub"></small></div><button class="sw" data-sw="sabotage" aria-label="toggle"></button></div>
+      <div class="sabdeck" id="sabDeck" hidden></div>
     </div>
     <details class="card" id="hintCard">
       <summary data-i="more"></summary>
@@ -945,14 +1075,16 @@ body[data-screen=game] #emoLayer{left:max(10px,env(safe-area-inset-left));transf
   <div id="dmap" hidden></div>
   <div id="shape" hidden><div id="shapeBox"><svg id="shapeSvg" aria-hidden="true"></svg></div></div>
   <div class="chip shapetag" id="shapeTag" hidden></div>
-  <div id="draw" hidden><div id="drawArea" class="drawing"><svg id="drawSvg" viewBox="0 0 1000 1000" preserveAspectRatio="xMidYMid meet" aria-hidden="true"><rect class="paper" x="0" y="0" width="1000" height="1000" rx="12"/><g id="drawG"></g><text id="drawWait" x="500" y="510"></text></svg></div></div>
+  <div id="draw" hidden><div id="drawArea" class="drawing"><svg id="drawSvg" viewBox="-28 -28 1556 1056" preserveAspectRatio="xMidYMid meet" aria-hidden="true"><rect class="paper" x="0" y="0" width="1500" height="1000" rx="5"/><path class="ticks" d="M500-22v14M750-24v16M1000-22v14M500 1008v14M750 1008v16M1000 1008v14M-22 333h14M-24 500h16M-22 667h14M1508 333h14M1508 500h16M1508 667h14"/><svg id="drawG" x="0" y="0" width="1500" height="1000" viewBox="0 0 1500 1000"></svg><text id="drawWait" x="750" y="516"></text></svg></div></div>
   <div class="chip shapetag" id="drawTag" hidden></div>
+  <div id="blackout" hidden><div class="bo-in"><span class="bo-ring"></span><b data-i="sab_bo"></b><small id="boBy"></small><i data-i="boSub"></i></div></div>
+  <div class="chip shapetag" id="fxTag" hidden></div>
   <div id="tourCard" aria-live="polite"></div>
   <div class="hud">
     <div class="chip"><small data-i="roundLbl"></small><b id="roundChip"></b></div>
     <div class="grow"></div>
     <div class="chip"><small data-i="scoreLbl"></small><b id="scoreChip"></b></div>
-    <div class="chip timer"><small data-i="timeLbl"></small><b id="timerChip"></b><i class="tbar" id="timerBar"></i></div>
+    <div class="chip timer"><small id="timeLbl" data-i="timeLbl"></small><b id="timerChip"></b><i class="tbar" id="timerBar"></i></div>
     <div class="chip" title="net" style="padding:7px 10px"><span class="netdot" id="netDot"></span></div>
     <button class="iconbtn" id="setBtn3" aria-label="settings"><svg class="ic"><use href="#i-gear"/></svg></button>
   </div>
@@ -977,8 +1109,9 @@ body[data-screen=game] #emoLayer{left:max(10px,env(safe-area-inset-left));transf
       <button class="btn pri" id="dartThrow"></button>
     </div>
     <div class="drawpanel" id="drawPanel" hidden>
-      <div class="dtarget"><span id="drawFlag"></span><div class="htxt"><small data-i="drawYou"></small><b id="drawName"></b></div><button class="dref" id="drawRef" type="button" hidden></button></div>
-      <div class="dtools"><span class="row" id="drawColors" style="gap:6px"></span><span class="dsep"></span><span class="row" id="drawWidths" style="gap:6px"></span><span class="grow"></span>
+      <div class="dtarget"><button class="dref" id="drawRef" type="button" hidden></button><div class="htxt"><small data-i="drawYou"></small><b id="drawName"></b></div></div>
+      <div class="dcolors" id="drawColors"></div>
+      <div class="dtools"><span class="dset" id="drawTools"></span><span class="grow"></span>
         <button class="iconbtn dbtn" id="drawUndo" type="button"><svg class="ic"><use href="#i-undo"/></svg></button><button class="iconbtn dbtn" id="drawClear" type="button"><svg class="ic"><use href="#i-trash"/></svg></button></div>
     </div>
     <div class="answer" id="answerBox">
@@ -999,6 +1132,7 @@ body[data-screen=game] #emoLayer{left:max(10px,env(safe-area-inset-left));transf
     <p class="sub" id="resCredit" hidden></p>
     <div class="card"><div class="answerbig"><span id="resFlag"></span><div><div class="nm-big" id="resName"></div><div class="sub" id="resSub"></div></div></div></div>
     <div class="card drawcmp" id="resDraw" hidden></div>
+    <div class="card sablist" id="resSab" hidden></div>
     <div class="card" style="padding:10px 12px">
       <table><thead><tr><th data-i="player"></th><th data-i="guessCol"></th><th class="n" data-i="timeCol"></th><th class="n">+</th><th class="n" data-i="total"></th></tr></thead><tbody id="resBody"></tbody></table>
     </div>
@@ -1053,6 +1187,8 @@ body[data-screen=game] #emoLayer{left:max(10px,env(safe-area-inset-left));transf
 <button id="chatBtn" aria-label="chat"><svg class="ic" style="width:21px;height:21px"><use href="#i-chat"/></svg><span id="chatBadge"></span></button>
 <button id="emoBtn" aria-label="emotes" aria-expanded="false" aria-controls="emoTray"><svg class="ic"><use href="#i-emote"/></svg></button>
 <div id="emoTray" role="toolbar"></div>
+<div id="sabHand" role="toolbar"></div>
+<div id="sabTray" role="dialog"></div>
 <div id="emoLayer" aria-live="polite"></div>
 <div id="chat"><div class="chead"><h2 data-i="chat"></h2><button class="x" id="chatClose" aria-label="close">&times;</button></div><div id="chatLog"></div><div class="emostrip" id="emoStrip" role="toolbar"></div><form id="chatForm" autocomplete="off"><input type="text" id="chatIn" maxlength="500" enterkeyhint="send"><button class="btn pri" aria-label="send"><svg class="ic"><use href="#i-send"/></svg></button></form></div>
 <div class="toast" id="toast"></div>
@@ -1080,7 +1216,7 @@ body[data-screen=game] #emoLayer{left:max(10px,env(safe-area-inset-left));transf
     const key=Array.prototype.indexOf.call(c.children,el)+'|'+el.textContent;
     if(set.has(key)) return false; set.add(key); return true;
   }
-  const LIST='.pl,.who span,tbody tr,.stat,.msg,.chipbtn,.colors button';
+  const LIST='.pl,.who>span,tbody tr,.stat,.msg,.chipbtn,.colors button';
   function stagger(list,step=55,base=0){
     let i=0; list.forEach(e=>{ if(vis(e)) reveal(e,base+i++*R(step*.5,step*1.4)); });
   }
@@ -1160,10 +1296,16 @@ const CONFIG = {
   // (in graden, tussen reachMin en reachMax) doen mee, als ze minstens keep x de oppervlakte van het hoofddeel hebben.
   // rot: graden. Normaal draait tussen de twee waarden, links of rechts. Moeilijk draait willekeurig en spiegelt de helft van de keren.
   shape: { reach: 1.5, reachMin: 5, reachMax: 25, keep: { easy: .002, normal: .01 }, rot: [15, 60], flipChance: .5, pad: .08 },
-  // Tekenen: het vel is 1000 x 1000. flushMs: zo vaak gaan nieuwe punten de deur uit. step: punten dichter bij elkaar vallen weg.
+  // Tekenen: het vel is een vlag van w x h. flushMs: zo vaak gaan nieuwe punten de deur uit. step: punten dichter bij elkaar vallen weg.
   // maxPts en maxOps: grens per ronde (de host stuurt de hele tekening mee naar het uitslagscherm). syncMs: zo lang stil en achter, dan opvragen.
   // half: de tekenaar telt als goed als minstens dit deel van de raders het land raadt.
-  draw: { flushMs: 50, step: 4, maxPts: 8000, maxOps: 4000, syncMs: 1500, half: .5 },
+  // snap: een rechthoek of rondje klikt vast op een rand, de helft of een derde als je er zo dichtbij komt. minShape: kleiner is een mistik.
+  draw: { w: 1500, h: 1000, flushMs: 50, step: 5, maxPts: 8000, maxOps: 4000, syncMs: 1500, half: .5, snap: 26, minShape: 16 },
+  // Sabotage: hand = hoogstens zoveel kaarten, start = kaarten bij het begin, every = daarna om de zoveel rondes een kaart erbij.
+  // odds: kans op de variant (willekeurige speler, kies een speler, iedereen) voor de koploper en voor de laatste; ertussen loopt het gelijkmatig.
+  // maxJet: zo vaak stapelt Jetlag op één speler (elke keer loopt de klok een keer sneller).
+  // mix: Delusion haalt elke hint uit een ander willekeurig land (onzin die je kunt doorzien). Uit: alle hints uit hetzelfde verkeerde land (een samenhangend vals spoor).
+  sab: { hand: 3, start: 1, every: 2, odds: { lead: [60, 32, 8], last: [28, 42, 30] }, maxJet: 2, mix: false },
   // Toernooi: aantal rondes (min, max, standaard) en hoe lang het rondekaartje in beeld blijft.
   tour: { min: 3, max: 30, rounds: 12, cardMs: 3200 },
   // Kaartlaag. Satelliet zonder labels. Wissel hier voor Mapbox/Google tiles (zie README).
@@ -1250,9 +1392,24 @@ const I18N = {
   md_map:'Raad het land op een satellietbeeld.', md_street:'Raad het land op een straatfoto.', md_dutch:'Raad welke Nederlandse plaats dit is.', md_hunt:'Vind een straat of gebouw. Elke tik toont wat er ligt en hoe warm je zit.',
   darts:'Darts', md_darts:'Gooi een pijltje op de wereldkaart, zo dicht mogelijk bij de plek.',
   shape:'Silhouet', md_shape:'Raad het land aan alleen zijn omtrek.',
-  draw:'Tekenen', md_draw:'Eén speler tekent een land uit het hoofd, de rest raadt.', drawYou:'Teken dit land', drawYouTour:'Jij tekent. Onderin zie je welk land.', drawIs:'{n} tekent', drawWaitTxt:'{n} gaat tekenen...', drawHere:'Teken hier',
-  drawGot:'{a} van {b} geraden', drawBy:'Tekening van {n}', drawReal:'Het echte land', drawSolo:'Geen raders, deze ronde silhouet', drawNeed2:'Met één speler wordt elke ronde Silhouet.', drawFull:'Het vel is vol',
-  drawUndo:'Terug', drawClear:'Wissen', drawRefTip:'Omtrek als voorbeeld, tik om te vergroten', c_ink:'Inkt', c_sea:'Water', c_red:'Rood', w_thin:'Dun', w_thick:'Dik',
+  draw:'Tekenen', md_draw:'Eén speler tekent een vlag uit het hoofd, de rest raadt het land.', drawYou:'Teken de vlag van', drawYouTour:'Jij tekent. Onderin zie je welke vlag.', drawIs:'{n} tekent een vlag', drawWaitTxt:'{n} gaat tekenen...', drawHere:'Teken hier de vlag',
+  drawGot:'{a} van {b} geraden', drawBy:'Tekening van {n}', drawReal:'De echte vlag', drawSolo:'Geen raders, deze ronde silhouet', drawNeed2:'Met één speler wordt elke ronde Silhouet.', drawFull:'Het vel is vol',
+  drawUndo:'Terug', drawClear:'Wissen', drawRefTip:'De vlag als voorbeeld, tik om te vergroten',
+  c_black:'Zwart', c_white:'Wit, ook als gum', c_red:'Rood', c_orange:'Oranje', c_yellow:'Geel', c_green:'Groen', c_sky:'Lichtblauw', c_blue:'Blauw',
+  dt_w0:'Dunne kwast', dt_w1:'Kwast', dt_w2:'Dikke kwast', dt_rect:'Rechthoek: sleep van hoek naar hoek', dt_disc:'Rondje: sleep vanuit het midden',
+  sabotage:'Sabotage', sabotageSub:'Kaarten om elkaar dwars te zitten, vanaf 2 spelers',
+  sab_bo:'Blackout', sab_de:'Delusion', sab_jl:'Jetlag', sabv_r:'Willekeurig', sabv_c:'Kies', sabv_a:'Iedereen',
+  sabd_bo:'Het doelwit ziet de kaart, foto of tekening niet meer. De hints werken nog.',
+  sabd_de:'Alle hints van het doelwit gaan over een ander, willekeurig land. Het doelwit krijgt dat niet te horen.',
+  sabd_jl:'De klok van het doelwit loopt twee keer zo snel.',
+  sabw_r:'Raakt een willekeurige andere speler.', sabw_c:'Jij kiest wie.', sabw_a:'Raakt alle andere spelers.',
+  sabNow:'Werkt meteen, tot het einde van deze ronde', sabNext:'Werkt de hele volgende ronde', sabPlayRnd:'Speel', sabPlayAll:'Speel op iedereen',
+  sabUsed:'Je hebt deze ronde al een kaart gespeeld', sabNoNext:'Er komt geen ronde meer', sabNoTarget:'Iedereen is al klaar: er is niemand om te raken', sabNotNow:'Nu even niet',
+  sabNew:'Nieuwe kaart', sabBy:'door {n}', sabAll:'iedereen', sabNextShort:'volgende ronde', sabSecret:'geheim, volgende ronde',
+  boSub:'De kaart is weg. Je hints werken nog.', jlHit:'Jetlag: je klok loopt sneller', jlOut:'Tijd op',
+  sabList:'Sabotage deze ronde', sabs_bo:'zag de kaart niet', sabs_jl:'klok liep sneller', deOf:'hints gingen over {c}', deOfHunt:'hints wezen naar een andere plek',
+  deReveal:'Delusion: je hints gingen over {c}', deRevealHunt:'Delusion: je hints wezen naar een andere plek',
+  sabMost:'Saboteur', sabTarget:'Mikpunt', sabTotal:'Kaarten', sabCards:'{n} gespeeld', sabHits:'{n}x geraakt', sabPlayed:'gespeeld',
   tour:'Toernooi', tourSub:'Alle modi, jouw regels', md_tour:'Modi door elkaar in één potje. Jij kiest welke, hoeveel rondes en waar.',
   tourModes:'Modi', tourOrder:'Volgorde', mix:'Door elkaar', cycle:'Om de beurt', block:'Per blok', rise:'Oplopend', tourConts:'Continenten', tourProvs:'Provincies',
   tourFinal:'Finale telt dubbel', tourFinalSub:'Laatste ronde x2 punten', tourFin:'Finale', allOn:'Alle', onlyOne:'Alleen {g}. Tik meer om toe te voegen', keepOne:'Houd er minstens één aan',
@@ -1302,7 +1459,8 @@ const I18N = {
    <li><b>Darts</b>: je ziet de plek, opent de <b>kaart</b> en gooit een pijltje. Punten lopen vloeiend af met de afstand: op de wereld halveert het per ${halfKm(CONFIG.darts.falloffKm)} km. De ringen schalen met het continent (roos: wereld ${CONFIG.darts.km[0]} km, Europa ${Math.round(CONFIG.darts.km[0]*CONFIG.darts.scale.EU)} km). <b>x2</b> is dubbel of niks: roos of binnenring telt dubbel, daarbuiten krijg je 0. Alleen op makkelijk staan er namen op de kaart. Niet gegooid? Dan telt je pijltje bij het einde van de tijd, zonder tijdbonus.</li>
    <li><b>Toernooi</b>: jij kiest welke modi meedoen, ${CONFIG.tour.min} tot ${CONFIG.tour.max} rondes, de volgorde, continenten en provincies. <b>Oplopend</b> gaat van makkelijk naar moeilijk. Met <b>finale</b> telt de laatste ronde dubbel. Elke ronde telt zoals in zijn eigen modus. Op het eindscherm zie je de punten per modus.</li>
    <li><b>Silhouet</b>: je ziet alleen de omtrek van een land. <b>Makkelijk</b>: noord boven, met lengte en breedtelijnen en een schaal. <b>Normaal</b>: ${CONFIG.shape.rot[0]} tot ${CONFIG.shape.rot[1]} graden gedraaid, kleine eilanden weg. <b>Moeilijk</b>: willekeurig gedraaid, soms gespiegeld, alleen het grootste deel. Punten zoals bij Satelliet.</li>
-   <li><b>Tekenen</b>: één speler ziet de naam en vlag van een land en tekent het uit het hoofd. De rest ziet de tekening ontstaan en raadt, met hints en punten zoals bij Satelliet: sneller is meer. Geen letters, cijfers of vlaggen tekenen. De tekenaar krijgt het gemiddelde van de raders: hoe minder het raden, hoe minder punten. Raadt minstens ${pc(CONFIG.draw.half)}, dan telt het voor de tekenaar als goed. <b>Makkelijk</b>: de tekenaar ziet ook de omtrek. <b>Moeilijk</b>: alleen de naam, één kleur. Iedereen tekent om de beurt. Met één speler wordt het Silhouet.</li>
+   <li><b>Tekenen</b>: één speler ziet de naam van een land en tekent de vlag uit het hoofd, met acht kleuren, een kwast, een rechthoek en een rondje. De rest ziet de vlag ontstaan en raadt het land, met hints en punten zoals bij Satelliet: sneller is meer. De hint met de vlag vervalt. Geen letters of cijfers tekenen. De tekenaar krijgt het gemiddelde van de raders: hoe minder het raden, hoe minder punten. Raadt minstens ${pc(CONFIG.draw.half)}, dan telt het voor de tekenaar als goed. <b>Makkelijk</b>: de tekenaar ziet de vlag als voorbeeld. <b>Moeilijk</b>: alleen de kwast, geen vormen. Iedereen tekent om de beurt. Met één speler wordt het Silhouet.</li>
+   <li><b>Sabotage</b> zet de host aan in de lobby, vanaf 2 spelers. Je krijgt ${CONFIG.sab.start} kaart bij de start en daarna elke ${CONFIG.sab.every} rondes een nieuwe, hoogstens ${CONFIG.sab.hand} in je hand. Je speelt hoogstens één kaart per ronde. <b>Blackout</b>: het doelwit ziet de kaart niet meer. <b>Delusion</b>: de hele volgende ronde gaan de hints van het doelwit over een ander land, en dat krijgt het doelwit niet te horen. Het komt pas uit op het uitslagscherm. <b>Jetlag</b>: de klok van het doelwit loopt twee keer zo snel. Blackout en Jetlag werken meteen, of de hele volgende ronde als je ze op het uitslagscherm speelt. Elke kaart bestaat in drie varianten: een willekeurige speler, een speler die jij kiest, of iedereen. Wie achter staat krijgt vaker een sterke variant. De tekenaar is niet te raken.</li>
    <li><b>Gelijke stand</b>: meeste goed wint, daarna het snelste goede antwoord.</li>
   </ul>`,
  },
@@ -1350,9 +1508,24 @@ const I18N = {
   md_map:'Guess the country from a satellite view.', md_street:'Guess the country from a street photo.', md_dutch:'Guess which Dutch town this is.', md_hunt:'Find a street or building. Each tap shows what is there and how warm you are.',
   darts:'Darts', md_darts:'Throw a dart on the world map, as close to the spot as you can.',
   shape:'Silhouette', md_shape:'Guess the country from its outline alone.',
-  draw:'Draw', md_draw:'One player draws a country from memory, the rest guess.', drawYou:'Draw this country', drawYouTour:'You draw. The country is at the bottom.', drawIs:'{n} is drawing', drawWaitTxt:'{n} is about to draw...', drawHere:'Draw here',
-  drawGot:'{a} of {b} guessed', drawBy:'Drawing by {n}', drawReal:'The real country', drawSolo:'No one to guess, silhouette this round', drawNeed2:'With one player every round becomes Silhouette.', drawFull:'The sheet is full',
-  drawUndo:'Undo', drawClear:'Clear', drawRefTip:'Outline as an example, tap to enlarge', c_ink:'Ink', c_sea:'Water', c_red:'Red', w_thin:'Thin', w_thick:'Thick',
+  draw:'Draw', md_draw:'One player draws a flag from memory, the rest guess the country.', drawYou:'Draw the flag of', drawYouTour:'You draw. The flag to draw is at the bottom.', drawIs:'{n} is drawing a flag', drawWaitTxt:'{n} is about to draw...', drawHere:'Draw the flag here',
+  drawGot:'{a} of {b} guessed', drawBy:'Drawing by {n}', drawReal:'The real flag', drawSolo:'No one to guess, silhouette this round', drawNeed2:'With one player every round becomes Silhouette.', drawFull:'The sheet is full',
+  drawUndo:'Undo', drawClear:'Clear', drawRefTip:'The flag as an example, tap to enlarge',
+  c_black:'Black', c_white:'White, also the eraser', c_red:'Red', c_orange:'Orange', c_yellow:'Yellow', c_green:'Green', c_sky:'Light blue', c_blue:'Blue',
+  dt_w0:'Thin brush', dt_w1:'Brush', dt_w2:'Thick brush', dt_rect:'Rectangle: drag from corner to corner', dt_disc:'Circle: drag out from the middle',
+  sabotage:'Sabotage', sabotageSub:'Cards to mess with each other, from 2 players',
+  sab_bo:'Blackout', sab_de:'Delusion', sab_jl:'Jetlag', sabv_r:'Random', sabv_c:'Pick', sabv_a:'Everyone',
+  sabd_bo:'The target can no longer see the map, photo or drawing. Hints still work.',
+  sabd_de:'Every hint the target gets is about a different, random country. They are not told.',
+  sabd_jl:'The clock of the target runs twice as fast.',
+  sabw_r:'Hits a random other player.', sabw_c:'You pick who.', sabw_a:'Hits all other players.',
+  sabNow:'Works right away, until this round ends', sabNext:'Works for the whole next round', sabPlayRnd:'Play', sabPlayAll:'Play on everyone',
+  sabUsed:'You already played a card this round', sabNoNext:'There is no next round', sabNoTarget:'Everyone is done: there is nobody to hit', sabNotNow:'Not right now',
+  sabNew:'New card', sabBy:'by {n}', sabAll:'everyone', sabNextShort:'next round', sabSecret:'secret, next round',
+  boSub:'The map is gone. Your hints still work.', jlHit:'Jetlag: your clock is running faster', jlOut:'Out of time',
+  sabList:'Sabotage this round', sabs_bo:'could not see the map', sabs_jl:'clock ran faster', deOf:'hints were about {c}', deOfHunt:'hints pointed to another spot',
+  deReveal:'Delusion: your hints were about {c}', deRevealHunt:'Delusion: your hints pointed to another spot',
+  sabMost:'Saboteur', sabTarget:'Punching bag', sabTotal:'Cards', sabCards:'{n} played', sabHits:'hit {n}x', sabPlayed:'played',
   tour:'Tournament', tourSub:'All modes, your rules', md_tour:'Modes mixed in one game. You pick which, how many rounds and where.',
   tourModes:'Modes', tourOrder:'Order', mix:'Shuffled', cycle:'Rotating', block:'In blocks', rise:'Rising', tourConts:'Continents', tourProvs:'Provinces',
   tourFinal:'Final counts double', tourFinalSub:'Last round scores x2', tourFin:'Final', allOn:'All', onlyOne:'Only {g}. Tap more to add', keepOne:'Keep at least one on',
@@ -1402,7 +1575,8 @@ const I18N = {
    <li><b>Darts</b>: you see the spot, open the <b>map</b> and throw a dart. Points drop smoothly with distance: on the world map they halve every ${halfKm(CONFIG.darts.falloffKm)} km. The rings scale with the continent (bullseye: world ${CONFIG.darts.km[0]} km, Europe ${Math.round(CONFIG.darts.km[0]*CONFIG.darts.scale.EU)} km). <b>x2</b> is double or nothing: bullseye or inner ring counts double, anything else scores 0. Only easy shows names on the map. Did not throw? Your dart counts when time runs out, without time bonus.</li>
    <li><b>Tournament</b>: you pick which modes take part, ${CONFIG.tour.min} to ${CONFIG.tour.max} rounds, the order, continents and provinces. <b>Rising</b> goes from easy to hard. With the <b>final</b> on, the last round counts double. Each round scores as in its own mode. The final screen shows points per mode.</li>
    <li><b>Silhouette</b>: you only see the outline of a country. <b>Easy</b>: north up, with grid lines and a scale. <b>Normal</b>: rotated ${CONFIG.shape.rot[0]} to ${CONFIG.shape.rot[1]} degrees, small islands left out. <b>Hard</b>: random rotation, sometimes mirrored, only the largest part. Points work as in Satellite.</li>
-   <li><b>Draw</b>: one player sees the name and flag of a country and draws it from memory. The others watch the drawing appear and guess, with hints and points as in Satellite: faster is more. No letters, numbers or flags. The drawer gets the average of the guessers: the fewer get it, the fewer points. If at least ${pc(CONFIG.draw.half)} get it, it counts as correct for the drawer. <b>Easy</b>: the drawer also sees the outline. <b>Hard</b>: only the name, one color. Everyone takes turns. With one player it becomes Silhouette.</li>
+   <li><b>Draw</b>: one player sees the name of a country and draws its flag from memory, with eight colors, a brush, a rectangle and a circle. The others watch the flag appear and guess the country, with hints and points as in Satellite: faster is more. The flag hint is left out. No letters or numbers. The drawer gets the average of the guessers: the fewer get it, the fewer points. If at least ${pc(CONFIG.draw.half)} get it, it counts as correct for the drawer. <b>Easy</b>: the drawer sees the flag as an example. <b>Hard</b>: brush only, no shapes. Everyone takes turns. With one player it becomes Silhouette.</li>
+   <li><b>Sabotage</b> is switched on by the host in the lobby, from 2 players. You get ${CONFIG.sab.start} card at the start and a new one every ${CONFIG.sab.every} rounds, with at most ${CONFIG.sab.hand} in your hand. You play at most one card per round. <b>Blackout</b>: the target can no longer see the map. <b>Delusion</b>: for the whole next round the hints of the target are about a different country, and they are not told. It only comes out on the results screen. <b>Jetlag</b>: the clock of the target runs twice as fast. Blackout and Jetlag work right away, or for the whole next round when you play them on the results screen. Every card comes in three variants: a random player, a player you pick, or everyone. Players who are behind get the strong variants more often. The drawer cannot be hit.</li>
    <li><b>Ties</b>: most correct wins, then the fastest correct answer.</li>
   </ul>`,
  }
@@ -1448,11 +1622,14 @@ const $ = s => document.querySelector(s);
 const esc = s => String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const norm = s => String(s).normalize('NFD').replace(/[̀-ͯ]/g,'').toLowerCase().replace(/[^a-z]/g,'');
 const rnd = a => a[Math.floor(Math.random()*a.length)];
+// Eigen sleutel van een object. Wat over het netwerk binnenkomt mag niet op "constructor" of "__proto__" uitkomen.
+const own = (o, k) => typeof k === 'string' && Object.prototype.hasOwnProperty.call(o, k);
 const shuffle = a => { a = a.slice(); for (let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];} return a; };
 const now = () => performance.now();
 const fmtTime = ms => { const s = Math.max(0, Math.ceil(ms/1000)); return Math.floor(s/60)+':'+String(s%60).padStart(2,'0'); };
 let toastT;
-function toast(msg){ const el=$('#toast'); el.textContent=msg; el.classList.add('on'); clearTimeout(toastT); toastT=setTimeout(()=>el.classList.remove('on'),2600); }
+// Een langere tekst blijft langer staan.
+function toast(msg){ const el=$('#toast'); el.textContent=msg; el.classList.add('on'); clearTimeout(toastT); toastT=setTimeout(()=>el.classList.remove('on'), Math.min(6000, Math.max(2600, String(msg).length*55))); }
 function show(id){ if (id !== 'game') dropPano(); if (document.body.dataset.screen === id) return; document.body.dataset.screen = id; updateChat(); document.querySelectorAll('.screen').forEach(s=>s.classList.toggle('on', s.id===id)); }
 function overlay(text, sub='', cancel=false){ const o=$('#ovLoad'); if(!text){o.classList.remove('on');return;} $('#ovText').textContent=text; $('#ovSub').textContent=sub; $('#ovCancel').style.display=cancel?'':'none'; o.classList.add('on'); }
 const cname = code => code && CITIES[code] ? CITIES[code].name : code && COUNTRIES[code] ? COUNTRIES[code][lang] || COUNTRIES[code].en : '?';
@@ -2087,14 +2264,15 @@ function huntHintKeys(h, wanted){
   const all = ['q_side', 'q_dist', ...(h.hood ? ['q_hood'] : []), ...(h.pc ? ['q_pc'] : []), ...(h.near ? ['q_near'] : []), 'q_circle'];
   return wanted >= all.length ? all : [...all.slice(0, Math.max(0, wanted-1)), 'q_circle'];
 }
-function huntHintValue(k, r){
-  const h = r.hunt, [a, b] = huntMid(h.g);
+// fake (Delusion): { pt, ad }: een andere plek in het speelgebied, met wat daar ligt. Dan wijzen alle hints daarheen.
+function huntHintValue(k, r, fake){
+  const h = r.hunt, [a, b] = fake ? fake.pt : huntMid(h.g), ad = (fake && fake.ad) || {};
   switch (k){
     case 'q_side': return bearing8(r.lat, r.lng, a, b);
     case 'q_dist': return Math.max(50, Math.round(metres(r.lat, r.lng, a, b)/50)*50);
-    case 'q_hood': return h.hood;
-    case 'q_pc': return h.pc;
-    case 'q_near': return h.near;
+    case 'q_hood': return ad.hood || h.hood;
+    case 'q_pc': return ad.pc || h.pc;
+    case 'q_near': return ad.near || h.near;
     case 'q_circle': { const R = CONFIG.hunt.circleM, ang = Math.random()*2*Math.PI, d = Math.random()*R*.6; return { lat:+(a + d*Math.sin(ang)/110570).toFixed(5), lng:+(b + d*Math.cos(ang)/(111320*Math.cos(a*Math.PI/180))).toFixed(5), r:R }; }
   }
 }
@@ -2162,35 +2340,50 @@ function geoCircle(lat, lng, km, n = 96){
 const DART_VIEW = { ALL:[[-56,-168],[75,190]], EU:[[34,-25],[71,45]], AF:[[-36,-19],[38,53]], AS:[[-11,25],[56,150]], AM:[[-56,-128],[72,-32]], OC:[[-48,110],[10,195]] };
 
 /* ================= TEKENEN ================= */
-// Eén speler tekent een land uit het hoofd, de rest kijkt live mee en raadt. De tekenaar stuurt zijn lijnen in stukjes (ops) rechtstreeks
-// naar iedereen. Elke op heeft een volgnummer i: mist iemand er een, of komt iemand terug na herladen, dan vraagt hij de hele tekening op.
-// Op: { i, s (lijn), c (kleur), w (dikte), p:[x,y,x,y...] } op een vel van 1000 x 1000, of { i, u:1 } (terug), of { i, x:1 } (wissen).
-const DRAW_COLORS = ['ink', 'sea', 'red'], DRAW_CSS = ['ink', 'sea', 'acc'], DRAW_W = ['thin', 'thick'];
+// Eén speler tekent de vlag van een land uit het hoofd, de rest kijkt live mee en raadt het land. De tekenaar stuurt zijn werk in stukjes (ops)
+// rechtstreeks naar iedereen. Elke op heeft een volgnummer i: mist iemand er een, of komt iemand terug na herladen, dan vraagt hij de hele tekening op.
+// Het vel is een vlag van 1500 x 1000. Op: { i, s (nummer van de lijn of vorm), c (kleur) } met w (dikte) en p:[x,y,x,y...] voor een kwaststreek,
+// r:[x0,y0,x1,y1] voor een rechthoek of o:[x,y,straal] voor een rondje. Of { i, u:1 } (terug), of { i, x:1 } (wissen).
+// De kleuren staan vast, los van het thema: een vlag heeft echte kleuren. Wit is de kleur van het vel en werkt dus ook als gum.
+const DRAW_COLORS = ['black', 'white', 'red', 'orange', 'yellow', 'green', 'sky', 'blue'];
+const DRAW_HEX = ['#1b1b1f', '#fbfaf6', '#d62a2a', '#f08a1c', '#f7ce24', '#1f9a4c', '#57b4e6', '#1d47a8'];
+const DRAW_W = [10, 28, 72];   // dikte van de kwast: dun, gewoon, dik
+const DRAW_TOOLS = ['w0', 'w1', 'w2', 'rect', 'disc'];
+const drawLine = w => `<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 15.5c3.5-9 5.5 3 8.5-2.5s4-4.5 7.5-5.5" fill="none" stroke="currentColor" stroke-width="${w}" stroke-linecap="round"/></svg>`;
+const DRAW_ICON = { w0: drawLine(2.2), w1: drawLine(4.6), w2: drawLine(8),
+  rect: '<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="6" width="18" height="12" rx="1.5" fill="currentColor"/></svg>',
+  disc: '<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="7.5" fill="currentColor"/></svg>' };
+const SVG_NS = 'http://www.w3.org/2000/svg';
 let DR = null;   // tekening van deze ronde, bij iedereen, ook de host: { roundId, code, ops, sid, cur, buf, pts, got, asked }
 let drawPtr = null, drawTimer = 0, drawRaf = 0, drawInv = null;
-const drawPen = { c:0, w:0 };   // gekozen kleur en dikte, blijft staan tussen rondes
+const drawPen = { c:0, t:'w1' };   // gekozen kleur en gereedschap, blijft staan tussen rondes
 const okInt = (v, lo, hi) => Number.isInteger(v) && v >= lo && v <= hi;
 const drawMe = r => !!(r && r.draw && r.draw.by === me.id);
 const iDraw = () => !!(S && S.phase === 'round' && drawMe(S.round) && DR && DR.roundId === S.round.id);
+// Moeilijk: alleen de kwast. Stond er nog een vorm gekozen, dan wordt dat de gewone kwast.
+const drawTool = r => r && r.draw && r.draw.brush && drawPen.t[0] !== 'w' ? 'w1' : drawPen.t;
 // Alles wat over het netwerk binnenkomt opnieuw opbouwen: alleen gehele getallen binnen het vel, niets extra.
 function drawClean(o){
-  const C = CONFIG.draw;
+  const C = CONFIG.draw, inX = v => okInt(v, 0, C.w), inY = v => okInt(v, 0, C.h);
   if (!o || typeof o !== 'object' || !okInt(o.i, 0, C.maxOps)) return null;
   if (o.u === 1) return { i:o.i, u:1 };
   if (o.x === 1) return { i:o.i, x:1 };
-  if (!okInt(o.s, 0, 1e6) || !okInt(o.c, 0, DRAW_COLORS.length-1) || !okInt(o.w, 0, DRAW_W.length-1)) return null;
-  if (!Array.isArray(o.p) || !o.p.length || o.p.length % 2 || o.p.length > 1000 || !o.p.every(v => okInt(v, 0, 1000))) return null;
+  if (!okInt(o.s, 0, 1e6) || !okInt(o.c, 0, DRAW_HEX.length-1)) return null;
+  if (Array.isArray(o.r)) return o.r.length === 4 && inX(o.r[0]) && inY(o.r[1]) && inX(o.r[2]) && inY(o.r[3]) && o.r[2] > o.r[0] && o.r[3] > o.r[1] ? { i:o.i, s:o.s, c:o.c, r:o.r.slice() } : null;
+  if (Array.isArray(o.o)) return o.o.length === 3 && inX(o.o[0]) && inY(o.o[1]) && okInt(o.o[2], 1, C.w) ? { i:o.i, s:o.s, c:o.c, o:o.o.slice() } : null;
+  if (!okInt(o.w, 0, DRAW_W.length-1)) return null;
+  if (!Array.isArray(o.p) || !o.p.length || o.p.length % 2 || o.p.length > 1000 || !o.p.every((v, j) => j % 2 ? inY(v) : inX(v))) return null;
   return { i:o.i, s:o.s, c:o.c, w:o.w, p:o.p.slice() };
 }
-// Van ops naar lijnen. Terug haalt de laatste lijn weg, of zet een gewist vel terug.
+// Van ops naar lijnen en vormen. Terug haalt de laatste weg, of zet een gewist vel terug.
 function drawStrokes(ops){
   let st = []; const acts = [];
   for (const o of ops){
     if (o.x){ if (st.length){ acts.push(st); st = []; } continue; }
     if (o.u){ const a = acts.pop(); if (a === 1) st.pop(); else if (a) st = a; continue; }
     const top = st[st.length-1];
-    if (top && top.s === o.s) top.p.push(...o.p);
-    else { st.push({ s:o.s, c:o.c, w:o.w, p:o.p.slice() }); acts.push(1); }
+    if (o.p && top && top.p && top.s === o.s) top.p.push(...o.p);
+    else { st.push(o.p ? { s:o.s, c:o.c, w:o.w, p:o.p.slice() } : o.r ? { s:o.s, c:o.c, r:o.r } : { s:o.s, c:o.c, o:o.o }); acts.push(1); }
   }
   return { st, undo: acts.length > 0 };
 }
@@ -2201,22 +2394,41 @@ function strokeD(p){
   for (let i = 2; i < p.length - 2; i += 2) d += `Q${p[i]} ${p[i+1]} ${(p[i]+p[i+2])/2} ${(p[i+1]+p[i+3])/2}`;
   return d + `L${p[p.length-2]} ${p[p.length-1]}`;
 }
-const drawSvg = ops => `<svg viewBox="0 0 1000 1000" xmlns="http://www.w3.org/2000/svg">${drawStrokes(ops || []).st.map(x => `<path class="k${x.c} w${x.w}" d="${strokeD(x.p)}"/>`).join('')}</svg>`;
+// Lijn, rechthoek of rondje als SVG: [soort element, eigenschappen].
+function drawEl(x){
+  const col = DRAW_HEX[x.c];
+  if (x.r) return ['rect', { x:x.r[0], y:x.r[1], width:x.r[2]-x.r[0], height:x.r[3]-x.r[1], fill:col }];
+  if (x.o) return ['circle', { cx:x.o[0], cy:x.o[1], r:x.o[2], fill:col }];
+  return ['path', { d:strokeD(x.p), fill:'none', stroke:col, 'stroke-width':DRAW_W[x.w] }];
+}
+// De hele tekening als los plaatje, voor het uitslagscherm.
+const drawSvg = ops => `<svg viewBox="0 0 ${CONFIG.draw.w} ${CONFIG.draw.h}" xmlns="${SVG_NS}"><rect width="100%" height="100%" fill="${DRAW_HEX[1]}"/>`
+  + drawStrokes(ops || []).st.map(x => { const [tag, at] = drawEl(x); return `<${tag} ${Object.entries(at).map(([k, v]) => `${k}="${v}"`).join(' ')}/>`; }).join('') + '</svg>';
 function drawReset(r){
   DR = { roundId:r.id, code:countryAt(r.lat, r.lng), ops:[], sid:0, cur:null, buf:[], pts:0, got:0, asked:0, full:false };
   drawPtr = null; clearInterval(drawTimer); $('#drawG').innerHTML = ''; drawSoon();
 }
-// Tekenen per beeldje: alleen de lijn die verandert krijgt een nieuw pad.
+// Vorm van de lopende sleep: rechthoek tussen twee hoeken, of rondje vanuit het midden. Te klein telt niet (een mistik).
+function drawShape(cur){
+  const C = CONFIG.draw, a = cur.a, b = cur.b;
+  if (cur.shape === 'rect'){
+    const r = [Math.min(a[0], b[0]), Math.min(a[1], b[1]), Math.max(a[0], b[0]), Math.max(a[1], b[1])];
+    return r[2] - r[0] >= C.minShape && r[3] - r[1] >= C.minShape ? { s:cur.s, c:cur.c, r } : null;
+  }
+  const rad = Math.min(C.w, Math.round(Math.hypot(b[0] - a[0], b[1] - a[1])));
+  return rad >= C.minShape / 2 ? { s:cur.s, c:cur.c, o:[a[0], a[1], rad] } : null;
+}
+// Tekenen per beeldje: alleen wat verandert krijgt nieuwe eigenschappen. De lopende streek of vorm tekent mee.
 function drawPaint(){
   drawRaf = 0;
   if (!DR) return;
-  const ops = DR.buf.length && DR.cur ? DR.ops.concat([{ s:DR.cur.s, c:DR.cur.c, w:DR.cur.w, p:DR.buf }]) : DR.ops;
-  const { st, undo } = drawStrokes(ops), g = $('#drawG'), kids = g.children;
+  const cur = DR.cur, live = !cur ? null : cur.shape ? drawShape(cur) : DR.buf.length ? { s:cur.s, c:cur.c, w:cur.w, p:DR.buf } : null;
+  const { st, undo } = drawStrokes(live ? DR.ops.concat([live]) : DR.ops), g = $('#drawG'), kids = g.children;
   for (let i = 0; i < st.length; i++){
-    const x = st[i], key = x.s + ':' + x.p.length + ':' + x.c + x.w;
+    const x = st[i], [tag, at] = drawEl(x), key = x.s + ':' + (x.p ? x.p.length : (x.r || x.o).join()) + ':' + x.c + (x.w || 0);
     let el = kids[i];
-    if (!el){ el = document.createElementNS('http://www.w3.org/2000/svg', 'path'); g.appendChild(el); }
-    if (el.dataset.k !== key){ el.dataset.k = key; el.setAttribute('class', `k${x.c} w${x.w}`); el.setAttribute('d', strokeD(x.p)); }
+    if (!el || el.tagName !== tag){ const n = document.createElementNS(SVG_NS, tag); if (el) g.replaceChild(n, el); else g.appendChild(n); el = n; }
+    if (el.dataset.k !== key){ el.dataset.k = key; for (const a in at) el.setAttribute(a, at[a]); }
   }
   while (kids.length > st.length) g.lastChild.remove();
   const r = S && S.round, dp = r && r.draw && playerById(r.draw.by);
@@ -2281,11 +2493,9 @@ function showDraw(r){
   if (!DR || DR.roundId !== r.id) drawReset(r);
   const mine = drawMe(r), ref = $('#drawRef');
   $('#draw').classList.toggle('me', mine);
-  if (mine){
-    $('#drawFlag').innerHTML = r.draw.flag ? flagImg(DR.code, 80) : ''; $('#drawFlag').hidden = !r.draw.flag;
-    ref.hidden = !r.draw.ref; ref.classList.remove('big');
-    ref.innerHTML = r.draw.ref ? shapeSvg(DR.code, { rot:0, flip:false, keep:CONFIG.shape.keep.easy, main:false, grid:false }, true) : '';
-  }
+  // Makkelijk: de tekenaar ziet de echte vlag als voorbeeld.
+  ref.hidden = !(mine && r.draw.ref); ref.classList.remove('big');
+  ref.innerHTML = mine && r.draw.ref ? flagImg(DR.code, 320) : '';
   fitWatch(); drawSoon();
 }
 // Elke render: label voor de raders, naam en gereedschap voor de tekenaar.
@@ -2297,21 +2507,23 @@ function drawHud(r){
     tools.dataset.k = r.id + lang;
     $('#drawName').textContent = plain(cname(DR ? DR.code : countryAt(r.lat, r.lng)));
     const ref = $('#drawRef'); ref.title = t('drawRefTip'); ref.setAttribute('aria-label', t('drawRefTip'));
-    const sw = (k, i, name, inner, on) => `<button class="dsw${on ? ' on' : ''}" type="button" data-${k}="${i}" aria-label="${esc(name)}" title="${esc(name)}" aria-pressed="${on}"${k === 'c' ? ` style="--c:var(--${DRAW_CSS[i]})"` : ''}>${inner}</button>`;
-    // Moeilijk: één kleur, dan geen kleurkeuze.
-    $('#drawColors').hidden = $('.dsep').hidden = !!r.draw.ink;
-    $('#drawColors').innerHTML = DRAW_COLORS.map((c, i) => sw('c', i, t('c_' + c), '<i style="width:18px;height:18px"></i>', drawPen.c === i)).join('');
-    $('#drawWidths').innerHTML = DRAW_W.map((w, i) => sw('w', i, t('w_' + w), `<i style="width:${i ? 15 : 6}px;height:${i ? 15 : 6}px"></i>`, drawPen.w === i)).join('');
+    const sw = (k, v, name, inner, on, style = '') => `<button class="dsw${on ? ' on' : ''}" type="button" data-${k}="${v}" aria-label="${esc(name)}" title="${esc(name)}" aria-pressed="${on}"${style}>${inner}</button>`;
+    $('#drawColors').innerHTML = DRAW_COLORS.map((c, i) => sw('c', i, t('c_' + c), '<i></i>', drawPen.c === i, ` style="--c:${DRAW_HEX[i]}"`)).join('');
+    // Moeilijk: alleen de kwast, geen vormen.
+    $('#drawTools').innerHTML = (r.draw.brush ? DRAW_TOOLS.filter(k => k[0] === 'w') : DRAW_TOOLS).map(k => sw('t', k, t('dt_' + k), DRAW_ICON[k], drawTool(r) === k)).join('');
     $('#drawUndo').title = t('drawUndo'); $('#drawUndo').setAttribute('aria-label', t('drawUndo'));
     $('#drawClear').title = t('drawClear'); $('#drawClear').setAttribute('aria-label', t('drawClear'));
   }
   drawSoon();
 }
 {
-  const svg = $('#drawSvg');
-  // Scherm naar vel: de omgekeerde matrix van het SVG-element, met de hand (werkt ook in oudere Safari).
+  const svg = $('#drawSvg'), C = CONFIG.draw;
+  // Scherm naar vel: de omgekeerde matrix van het SVG-element, met de hand (werkt ook in oudere Safari). Buiten het vel telt de rand.
   const pt = e => { const m = drawInv; if (!m) return null; const x = m.a*e.clientX + m.c*e.clientY + m.e, y = m.b*e.clientX + m.d*e.clientY + m.f;
-    return [Math.round(Math.max(0, Math.min(1000, x))), Math.round(Math.max(0, Math.min(1000, y)))]; };
+    return [Math.round(Math.max(0, Math.min(C.w, x))), Math.round(Math.max(0, Math.min(C.h, y)))]; };
+  // Vormen klikken vast op de randen, de helft en een derde van het vel: zo wordt een driekleur strak.
+  const snap1 = (v, max) => { for (const g of [0, max/3, max/2, max*2/3, max]) if (Math.abs(v - g) <= C.snap) return Math.round(g); return v; };
+  const snap = q => q && [snap1(q[0], C.w), snap1(q[1], C.h)];
   svg.addEventListener('pointerdown', e => {
     if (!iDraw() || drawPtr != null || e.button > 0) return;
     e.preventDefault();
@@ -2320,23 +2532,37 @@ function drawHud(r){
     const m = svg.getScreenCTM(); if (!m) return;
     drawInv = m.inverse(); drawPtr = e.pointerId;
     try { svg.setPointerCapture(e.pointerId); } catch(_){}
-    DR.cur = { s: ++DR.sid, c: S.round.draw.ink ? 0 : drawPen.c, w: drawPen.w, x:0, y:0 };
-    drawAddPt(pt(e), true);
-    clearInterval(drawTimer); drawTimer = setInterval(drawFlush, CONFIG.draw.flushMs);
+    const tool = drawTool(S.round), q = pt(e);
+    if (tool[0] !== 'w'){ const a = snap(q); DR.cur = { s: ++DR.sid, c: drawPen.c, shape: tool, a, b: a }; return; }
+    DR.cur = { s: ++DR.sid, c: drawPen.c, w: +tool[1], x:0, y:0 };
+    drawAddPt(q, true);
+    clearInterval(drawTimer); drawTimer = setInterval(drawFlush, C.flushMs);
   });
   svg.addEventListener('pointermove', e => {
-    if (e.pointerId !== drawPtr || !iDraw()) return;
+    if (e.pointerId !== drawPtr || !iDraw() || !DR.cur) return;
+    if (DR.cur.shape){ const q = pt(e); DR.cur.b = DR.cur.shape === 'rect' ? snap(q) : q; drawSoon(); return; }
     const evs = e.getCoalescedEvents ? e.getCoalescedEvents() : [];
     for (const ev of evs.length ? evs : [e]) drawAddPt(pt(ev));
   });
-  const end = e => { if (e.pointerId !== drawPtr) return; drawPtr = null; clearInterval(drawTimer); drawFlush(); if (DR) DR.cur = null; drawSoon(); };
+  const end = e => {
+    if (e.pointerId !== drawPtr) return;
+    drawPtr = null; clearInterval(drawTimer);
+    const cur = DR && DR.cur;
+    if (cur && cur.shape){
+      // Een vorm gaat pas bij loslaten de deur uit, als één stukje.
+      const op = e.type === 'pointerup' && iDraw() ? drawShape(cur) : null;
+      if (op && DR.ops.length < C.maxOps){ op.i = DR.ops.length; DR.ops.push(op); drawSend([op]); }
+      else if (op && !DR.full){ DR.full = true; toast(t('drawFull')); }
+    } else drawFlush();
+    if (DR) DR.cur = null; drawSoon();
+  };
   ['pointerup', 'pointercancel', 'lostpointercapture'].forEach(ev => svg.addEventListener(ev, end));
   const pick = (box, key) => $(box).addEventListener('click', e => {
     const b = e.target.closest('[data-' + key + ']'); if (!b) return;
-    drawPen[key] = +b.dataset[key]; beep(620, .03);
+    drawPen[key] = key === 'c' ? +b.dataset.c : b.dataset.t; beep(620, .03);
     $(box).querySelectorAll('.dsw').forEach(x => { x.classList.toggle('on', x === b); x.setAttribute('aria-pressed', String(x === b)); });
   });
-  pick('#drawColors', 'c'); pick('#drawWidths', 'w');
+  pick('#drawColors', 'c'); pick('#drawTools', 't');
   $('#drawUndo').addEventListener('click', () => drawOp({ u:1 }));
   $('#drawClear').addEventListener('click', () => drawOp({ x:1 }));
   $('#drawRef').addEventListener('click', e => e.currentTarget.classList.toggle('big'));
@@ -2391,6 +2617,9 @@ const HINT_DEFS = [
   { k:'olym',     r:5, g:'cult',   f:'event',  ok:c=>!!c.oly },
   { k:'wcup',     r:5, g:'cult',   f:'event',  ok:c=>!!c.wc },
 ];
+const HINT_DEF = Object.fromEntries(HINT_DEFS.map(h => [h.k, h]));
+// Tekenen: de vlag is het raadsel, dus de hint met de vlag vervalt.
+const drawSkip = r => r && r.draw ? ['flag'] : null;
 // Bekende landen als ijkpunt voor de hint "vanaf": het dichtstbijzijnde (geen buurland, minstens 300 km).
 const ANCHORS = ['US','CA','MX','BR','AR','PE','CO','CL','GB','FR','DE','ES','IT','PL','SE','RU','TR','GR','EG','MA','NG','KE','ZA','CD','ET','SA','IR','IN','CN','JP','TH','ID','AU','NZ','KZ','PK'];
 function anchorOf(code){
@@ -2411,12 +2640,13 @@ function hintShare(h, code, c){
   return pool.length ? pool.filter(x => key(x) === mine).length / pool.length : 1;
 }
 // cont: het werelddeel van de lobby of de toernooironde. Staat dat vast, dan is de continent-hint niets waard.
-function chooseHints(code, count, groups, cont){
+// skip: hints die deze ronde niet mogen (Tekenen: de vlag is daar zelf het raadsel).
+function chooseHints(code, count, groups, cont, skip){
   const nl = !!CITIES[code], c = nl ? CITIES[code] : COUNTRIES[code], defs = nl ? nlDefs : HINT_DEFS;
   const on = (groups && groups.length) ? groups : HINT_GROUPS;
   const fixed = !nl && cont && cont !== 'ALL';
   const useful = h => nl || !INFO_KEYS.has(h.k) || hintShare(h, code, c) <= 0.8;
-  const base = defs.filter(h => h.ok(c, code) && !(fixed && h.k === 'cont') && (count >= 8 || h.k !== 'name'));
+  const base = defs.filter(h => h.ok(c, code) && !(fixed && h.k === 'cont') && (count >= 8 || h.k !== 'name') && !(skip && skip.includes(h.k)));
   let avail = base.filter(h => (nl || on.includes(h.g)) && useful(h));
   if (!avail.length) avail = base.filter(useful);
   if (!avail.length) avail = base;
@@ -2541,7 +2771,7 @@ if (navigator.locks) navigator.locks.request('lr_pid_' + me.id, { ifAvailable:tr
   return new Promise(()=>{});
 });
 
-const DEFAULT_SETTINGS = { mode:'map', rounds:5, roundTime:60, hintEvery:10, hintCount:6, hintGroups:[...HINT_GROUPS], difficulty:'normal', continent:'ALL', weighting:'uniform', small:false, nlPlaces:'all', nlView:'sat', huntCity:'',
+const DEFAULT_SETTINGS = { mode:'map', rounds:5, roundTime:60, hintEvery:10, hintCount:6, hintGroups:[...HINT_GROUPS], difficulty:'normal', continent:'ALL', weighting:'uniform', small:false, nlPlaces:'all', nlView:'sat', huntCity:'', sabotage:false,
   tourModes:[...TOUR_MODES], tourConts:[...CONTS], tourProvs:[...PROV], tourRounds:CONFIG.tour.rounds, tourOrder:'mix', tourDiff:'normal', tourFinal:true };
 // Lijsten die je in een toernooi aan- en uitzet. solo: tik vanuit "alles aan" kiest alleen die ene.
 const TOUR_SETS = { tourModes:{ all:TOUR_MODES, name:m => t(m) }, tourConts:{ all:CONTS, name:c => t(c), solo:true }, tourProvs:{ all:PROV, name:p => t('p'+p), solo:true } };
@@ -2554,6 +2784,7 @@ function cleanSettings(p){
   if (!p || typeof p !== 'object') return out;
   for (const [k, opts] of Object.entries(SETTING_OPTS)) if (opts.includes(p[k])) out[k] = p[k];
   if (typeof p.small === 'boolean') out.small = p.small;
+  if (typeof p.sabotage === 'boolean') out.sabotage = p.sabotage;
   if (typeof p.huntCity === 'string' && (p.huntCity === '' || Object.prototype.hasOwnProperty.call(CITIES, p.huntCity))) out.huntCity = p.huntCity;
   if (Array.isArray(p.hintGroups)){ const g = HINT_GROUPS.filter(x => p.hintGroups.includes(x)); if (g.length) out.hintGroups = g; }
   for (const [k, d] of Object.entries(TOUR_SETS)) if (Array.isArray(p[k])){ const v = d.all.filter(x => p[k].includes(x)); if (v.length) out[k] = v; }
@@ -2678,6 +2909,7 @@ async function doDisconnect(){
   if (H) { clearInterval(H.loop); clearTimeout(H.autoNext); }
   if (room) { try { await room.leave(); } catch(e){} }
   room = null; sendMsg = null; sendChat = null; chatLog = []; unread = 0; $('#chat').classList.remove('on'); closeEmoTray(); $('#emoLayer').innerHTML = ''; isHost = false; solo = false; S = null; H = null; myAnswer = null; roomCode = null; lastSig = ''; HS = null; dartReset(null); DR = null; ovFinding = false;
+  sabSeen = 0; sabOutId = null; sabUi();
   history.replaceState(null, '', location.pathname + location.search);
 }
 
@@ -2721,7 +2953,7 @@ function onPeerLeave(peerId){
     if (p) {
       p.connected = false; p.leftAt = Date.now();
       // Was deze speler de laatste die nog niet "hint nu" had gestemd? Dan gaat de hint nu door.
-      if (H.phase === 'round' && H.round && Object.keys(H.round.wants).length){ const cp = guessers(); if (cp.length && cp.every(x => H.round.wants[x.id])){ H.round.forced = H.round.hints.length + 1; releaseHints(); } }
+      checkWants();
       if (!checkSkip() && !checkAllAnswered()) broadcast();
     }
     return;
@@ -2769,13 +3001,14 @@ function becomeHost(oldHostPeer){
     players: snap.players.map(p => ({ ...p, connected: p.peerId===oldHostPeer ? false : p.connected, leftAt: p.peerId===oldHostPeer ? Date.now() : null })),
     settings: snap.settings, phase: snap.phase, roundN: snap.roundN, used: snap.used || [], plan: Array.isArray(snap.plan) ? snap.plan.slice() : null,
     nextJoin: Math.max(...snap.players.map(p=>p.joinIdx)) + 1, result: snap.result, final: snap.final, round: null, blocked: [], term: (snap.term||0) + 1, termAt: now(),
+    ev: snap.ev || [], evN: (snap.ev || []).reduce((a, e) => Math.max(a, e.id), 0),   // sabotage: handen en wat er loopt staan al in de snapshot
   };
   if (snap.phase === 'round' && snap.round){
     const r = snap.round;
     // De laatste uit "used" is het antwoord van deze ronde. Terugrekenen vanuit de coördinaten kan misgaan op een kustlijn.
     const code = (snap.used || []).at(-1) || (isNL({ mode: r.mode || snap.settings.mode }) ? nlNearest(r.lat, r.lng).id : countryAt(r.lat, r.lng));
     const elapsed = r.durationMs - Math.max(0, r.remainingMs - (now()-recvAt));
-    const moreHints = r.hunt ? huntHintKeys(r.hunt, r.hintTotal) : chooseHints(code, r.hintTotal, snap.settings.hintGroups, r.continent);
+    const moreHints = r.hunt ? huntHintKeys(r.hunt, r.hintTotal) : chooseHints(code, r.hintTotal, snap.settings.hintGroups, r.continent, drawSkip(r));
     H.round = { ...r, code, pins: {}, hintKeys: [...r.hints.map(h=>h.k), ...moreHints.filter(k=>!r.hints.some(h=>h.k===k))].slice(0, r.hintTotal),
       startAt: now() - elapsed, answers: {}, order: 0, forced: r.hints.length, wants: {}, skips: {} };
     if (myAnswer && myAnswer.roundId === r.id) H.round.answers[me.id] = { ...myAnswer, ms: Math.round(r.durationMs*(1-myAnswer.frac)), order: H.round.order++ };
@@ -2823,7 +3056,7 @@ function hostHandle(msg, peerId){
     case 'sync': broadcast(); break;
     case 'pin': {
       const r = H.round;
-      if (!player || H.phase !== 'round' || !r || p.roundId !== r.id || r.answers[player.id]) break;
+      if (!player || H.phase !== 'round' || !r || p.roundId !== r.id || r.answers[player.id] || sabOut(r, player.id, CONFIG.score.latencyMs)) break;
       if (r.hunt && huntValidPin(p.pin)) r.pins[player.id] = { pin:p.pin, scans:huntCount(r, player.id, p.pin, p.scans) };
       else if (r.darts && dartValidPin(p.pin)) r.pins[player.id] = { pin:p.pin, dbl:!!p.dbl };
       break;
@@ -2845,12 +3078,12 @@ function hostHandle(msg, peerId){
     }
     case 'wanthint': {
       if (!player || H.phase !== 'round' || !H.round || H.finding) return;
-      const r = H.round; if (r.hints.length >= r.hintKeys.length || (r.draw && r.draw.by === player.id)) return;
-      r.wants[player.id] = true;
-      const cp = guessers();
-      if (cp.length && cp.every(x => r.wants[x.id])) { r.forced = r.hints.length + 1; releaseHints(); }
+      // Alleen wie nog moet antwoorden stemt mee: wie al klaar is heeft de hint niet meer nodig.
+      const r = H.round; if (r.hints.length >= r.hintKeys.length || !waiting().includes(player)) return;
+      r.wants[player.id] = true; checkWants();
       broadcast(); break;
     }
+    case 'card': sabPlay(player, p); break;
     case 'start':
       if (H.phase === 'lobby' ? !isOp(peerId) : peerId !== selfId) return;
       if (H.phase === 'lobby' || H.phase === 'result') nextRound(); break;
@@ -2869,19 +3102,22 @@ function hostHandle(msg, peerId){
       if (!player || H.phase !== 'round' || !H.round || p.roundId !== H.round.id || H.finding) return;   // finding: de ronde wordt net vervangen door een andere foto
       if (H.round.answers[player.id]) return;  // eerste telt
       if (H.round.draw && H.round.draw.by === player.id) return;   // de tekenaar raadt niet
-      if (H.round.hunt ? !huntValidPin(p.pin) : H.round.darts ? !dartValidPin(p.pin) : !(isNL({ mode: H.round.mode }) ? CITIES[p.code] : COUNTRIES[p.code])) return;
-      const el = now() - H.round.startAt;
-      let hintsSeen = H.round.hints.length, frac = Math.max(0, 1 - el / H.round.durationMs);
+      if (H.round.hunt ? !huntValidPin(p.pin) : H.round.darts ? !dartValidPin(p.pin) : !own(isNL({ mode: H.round.mode }) ? CITIES : COUNTRIES, p.code)) return;
+      // De eigen klok van de speler telt: met Jetlag loopt die sneller dan de ronde (sabRem). lagF: de vertraging die we compenseren, als deel van de ronde.
+      const el = now() - H.round.startAt, lagF = CONFIG.score.latencyMs * sabRate(H.round, player.id, el) / H.round.durationMs;
+      let hintsSeen = H.round.hints.length, frac = sabRem(H.round, player.id, H.round.durationMs - el) / H.round.durationMs;
       const cs = Math.round(+p.hintsSeen) || hintsSeen, cf = Number.isFinite(+p.frac) ? +p.frac : frac;
       // Opnieuw sturen na een hostwissel: alleen kort erna en voor een ronde die al liep. Anders telt het als gewoon antwoord.
       const resend = p.resend && H.termAt && now() - H.termAt < CONFIG.score.resendMs && H.round.startAt < H.termAt;
+      if (!resend && frac + lagF <= 0) return;   // Jetlag: de tijd van deze speler is om
+      frac = Math.max(0, frac);
       if (resend) { hintsSeen = Math.max(1, Math.min(hintsSeen, cs)); frac = Math.min(1, Math.max(0, cf)); }
       else if (peerId !== selfId){
         // Vertraging compenseren: de klok en hints van de speler tellen, maar maximaal latencyMs gunstiger dan wat de host ziet.
         const lag = CONFIG.score.latencyMs, at = H.round.hintAt || [];
         const sure = Math.max(1, H.round.hints.filter((_, i) => at[i] == null || now() - at[i] > lag).length);
         hintsSeen = Math.max(sure, Math.min(hintsSeen, cs));
-        frac = Math.min(1, Math.max(frac, Math.min(cf, frac + lag / H.round.durationMs)));
+        frac = Math.min(1, Math.max(frac, Math.min(cf, frac + lagF)));
       }
       const a = H.round.answers[player.id] = { code: p.code, hintsSeen, frac, ms: Math.round(H.round.durationMs*(1-frac)), order: H.round.order++, pin: p.pin, scans: 0, hit: false, dbl: !!p.dbl };
       if (H.round.hunt){
@@ -2890,14 +3126,14 @@ function hostHandle(msg, peerId){
         a.hit = !!p.hit && huntIsHit(H.round.hunt.g, huntClosest(p.pin[0], p.pin[1], H.round.hunt.g).d);
         if (p.hit && !a.hit) huntVerify(H.round, a);
       }
-      if (!checkAllAnswered()) broadcast();
+      if (!checkAllAnswered()){ checkWants(); broadcast(); }
       break;
     }
     case 'rematch':
       if (peerId !== selfId) return;
-      H.phase = 'lobby'; H.roundN = 0; H.used = []; H.result = null; H.final = null; H.round = null; H.huntUsed = []; H.huntPre = null; H.plan = null; H.cfg = null;
+      H.phase = 'lobby'; H.roundN = 0; H.used = []; H.result = null; H.final = null; H.round = null; H.huntUsed = []; H.huntPre = null; H.plan = null; H.cfg = null; H.ev = [];
       H.players = H.players.filter(x=>x.connected);
-      H.players.forEach(x=>Object.assign(x,{score:0,correct:0,best:0,fastest:null,bm:null,drew:0,drewAt:0}));
+      H.players.forEach(x=>Object.assign(x,{score:0,correct:0,best:0,fastest:null,bm:null,drew:0,drewAt:0,cards:[],fx:[],played:0,sp:0,sh:0}));
       broadcast(); break;
   }
 }
@@ -2971,15 +3207,23 @@ async function nextRound(){
   const total = roundsOf(H.settings), final = H.settings.mode === 'tour' && !!H.settings.tourFinal && total > 1 && H.roundN === total;
   const durationMs = H.settings.roundTime*1000, hintIntervalMs = H.settings.hintEvery*1000;
   const wanted = Math.min(H.settings.hintCount || 6, Math.max(2, Math.ceil(durationMs / hintIntervalMs)));
-  const hintKeys = loc.hunt ? huntHintKeys(loc.hunt, wanted) : chooseHints(loc.code, wanted, H.settings.hintGroups, s.continent), hintTotal = hintKeys.length;
+  const hintKeys = loc.hunt ? huntHintKeys(loc.hunt, wanted) : chooseHints(loc.code, wanted, H.settings.hintGroups, s.continent, drawer ? ['flag'] : null), hintTotal = hintKeys.length;
+  // Sabotage: bij de eerste ronde begint iedereen met een lege hand en krijgt de startkaart. Niet opnieuw als die ronde overnieuw begint (andere foto).
+  if (sabOn(H.settings) && H.roundN === 1 && !H.redo){
+    for (const p of H.players) Object.assign(p, { cards:[], fx:[], played:0, sp:0, sh:0 });
+    H.ev = [];
+    for (let i = 0; i < CONFIG.sab.start; i++) sabDeal(total <= 1);
+  }
   H.round = { id: Math.random().toString(36).slice(2,9), n: H.roundN, mode, continent: s.continent, final, lat: loc.lat, lng: loc.lng, code: loc.code, photo: loc.photo || null,
     hunt: loc.hunt || null, darts, pins: {}, shape: shape ? shapeSpec(s.difficulty) : null,
-    // Tekenaar: makkelijk ook de omtrek als voorbeeld, moeilijk geen vlag en één kleur.
-    draw: drawer ? { by:drawer.id, flag:s.difficulty !== 'hard', ref:s.difficulty === 'easy', ink:s.difficulty === 'hard' } : null,
+    // Tekenaar: makkelijk met de echte vlag als voorbeeld, moeilijk alleen de kwast (geen rechthoek of rondje).
+    draw: drawer ? { by:drawer.id, ref:s.difficulty === 'easy', brush:s.difficulty === 'hard' } : null,
     zoom: loc.hunt ? 14 : (nl ? CONFIG.nl.zoom : CONFIG.zoom)[s.difficulty], pan: loc.hunt ? 1 : shape || drawer ? 0 : (nl ? CONFIG.nl.pan : CONFIG.pan)[s.difficulty], difficulty: s.difficulty,
     durationMs, hintIntervalMs, hintTotal, hintKeys, hints: [], startAt: now(), answers: {}, order: 0, forced: 0, wants: {}, skips: {}, redo: !!H.redo };
   H.redo = false;
   H.phase = 'round'; H.result = null;
+  // Sabotage die op deze ronde wachtte. Wie tekent raadt niet: bij die speler wacht het een ronde langer.
+  for (const p of H.players) if (p.fx && p.fx.length && !(drawer && drawer.id === p.id)){ for (const e of p.fx) sabApply(H.round, p, e, 0, s); p.fx = []; }
   releaseHints(); broadcast();
 }
 function releaseHints(){
@@ -2992,6 +3236,11 @@ function releaseHints(){
     changed = true;
   }
   if (changed) r.wants = {};
+  // Delusion: het doelwit krijgt van elke hint een eigen, valse versie (r.alt), even lang als de echte lijst.
+  if (r.fx) for (const [pid, f] of Object.entries(r.fx)) if (f.de){
+    const a = (r.alt = r.alt || {})[pid] = (r.alt[pid] || []);
+    while (a.length < r.hints.length){ const k = r.hints[a.length].k; a.push({ k, v: sabFake(r, f.de, k) }); }
+  }
   return changed;
 }
 function connectedPlayers(){
@@ -3013,13 +3262,31 @@ function checkSkip(){
   const cp = guessers(), v = r.skips || {};
   if (!cp.length || !cp.every(p => v[p.id])) return false;
   H.roundN--; H.redo = true;
+  // Sabotage die in deze ronde liep, geldt ook voor de nieuwe poging.
+  if (r.fx) for (const p of H.players){
+    const f = r.fx[p.id]; if (!f) continue;
+    p.fx = p.fx || [];
+    for (const k of SAB_TYPES) if (f[k]) for (let i = 0; i < (k === 'jl' ? f.jl.at.length : 1); i++) p.fx.push({ k, by: f[k].by });
+  }
   nextRound();
   return true;
 }
+// Wie nog moet antwoorden: verbonden, geen tekenaar, nog geen antwoord en nog tijd over (Jetlag).
+const waiting = () => guessers().filter(p => !H.round.answers[p.id] && !sabOut(H.round, p.id));
+// Hint nu: iedereen die nog moet antwoorden wil het. Wie al klaar is hoeft niet mee te stemmen.
+function checkWants(){
+  const r = H.round;
+  if (H.phase !== 'round' || !r || H.finding || r.hints.length >= r.hintKeys.length) return false;
+  const need = waiting();
+  if (!need.length || !need.every(p => r.wants[p.id])) return false;
+  r.forced = r.hints.length + 1; releaseHints();
+  return true;
+}
+// Iedereen klaar: een antwoord, of geen tijd meer (Jetlag). Dan hoeft de ronde niet uit te lopen.
 function checkAllAnswered(){
   if (H.phase !== 'round' || !H.round || H.finding) return false;
-  const cp = guessers();
-  if (cp.length && cp.every(p => H.round.answers[p.id] && !H.round.answers[p.id].verify)) { endRound(); return true; }
+  const r = H.round, cp = guessers();
+  if (cp.length && cp.every(p => r.answers[p.id] ? !r.answers[p.id].verify : sabOut(r, p.id))) { endRound(); return true; }
   return false;
 }
 function startHostLoop(){
@@ -3035,8 +3302,108 @@ function startHostLoop(){
     if (H.phase !== 'round' || !H.round || H.finding) return;
     if (releaseHints()) broadcast();
     if (now() - H.round.startAt >= H.round.durationMs) endRound();
+    else if (H.round.fx && !checkAllAnswered() && checkWants()) broadcast();   // Jetlag: op wie geen tijd meer heeft wacht de ronde niet
   }, 200);
 }
+/* ================= SABOTAGE ================= */
+// Aan te zetten in de lobby. Spelers krijgen kaarten en spelen die op elkaar. Soort: bo = Blackout (kaart weg), de = Delusion (valse hints, de ronde erna),
+// jl = Jetlag (klok loopt sneller). Variant: r = een willekeurige speler, c = een speler die je kiest, a = iedereen. Een kaart is soort + variant: 'boc'.
+// Alles staat in de gewone snapshot (handen, wie geraakt is, de valse hints), net als de plek van de ronde: het scherm laat alleen zien wat je mag weten.
+// Zo werkt een hostwissel vanzelf. Wie in de browser gaat zoeken kan het vinden, net als het antwoord zelf.
+const SAB_TYPES = ['bo', 'de', 'jl'], SAB_VARS = ['r', 'c', 'a'], SAB_CARDS = SAB_TYPES.flatMap(k => SAB_VARS.map(v => k + v));
+const sabType = c => String(c).slice(0, 2), sabVar = c => String(c)[2];
+const sabOn = s => !!(s && s.sabotage);
+// Jetlag: vanaf "at" (ms na de start van de ronde) loopt de klok van die speler een keer zo snel. Twee keer geraakt is drie keer zo snel.
+// rem: tijd die de ronde nog duurt. Uitkomst: tijd die deze speler nog heeft.
+function sabRem(r, pid, rem){
+  const j = r && r.fx && r.fx[pid] && r.fx[pid].jl; if (!j) return rem;
+  const el = r.durationMs - rem;
+  return rem - j.at.reduce((a, t0) => a + Math.max(0, el - t0), 0);
+}
+const sabRate = (r, pid, el) => { const j = r && r.fx && r.fx[pid] && r.fx[pid].jl; return 1 + (j ? j.at.filter(t0 => el >= t0).length : 0); };
+// Host: is de tijd van deze speler om? slack: zoveel ms eerder kijken (vertraging van het netwerk).
+const sabOut = (r, pid, slack = 0) => sabRem(r, pid, r.durationMs - (now() - r.startAt) + slack) <= 0;
+// Wie een kaart kan raken: elke verbonden speler behalve jezelf. Werkt de kaart meteen, dan niet de tekenaar en niet wie al klaar is (done).
+const sabCanHit = (r, p, byId, direct, done) => p.id !== byId && p.connected && !(direct && r && ((r.draw && r.draw.by === p.id) || done(p)));
+// Elke verbonden speler met plek in de hand krijgt een kaart. Wie achter staat krijgt vaker een sterke variant.
+// lastChance: er komt nog maar één ronde, dus geen Delusion (die werkt pas de ronde na het spelen).
+function sabDeal(lastChance){
+  const C = CONFIG.sab, ps = H.players.filter(p => p.connected);
+  if (ps.length < 2) return;
+  for (const p of ps){
+    p.cards = p.cards || [];
+    if (p.cards.length >= C.hand) continue;
+    const ahead = ps.filter(x => x.score > p.score).length, behind = ps.filter(x => x.score < p.score).length;
+    const q = ahead + behind ? ahead / (ahead + behind) : .5;   // 0 = koploper, 1 = laatste
+    const v = pickWeighted([0, 1, 2], i => C.odds.lead[i] + (C.odds.last[i] - C.odds.lead[i]) * q);
+    // Liever een soort die je nog niet in je hand hebt.
+    const types = SAB_TYPES.filter(k => !(lastChance && k === 'de')), fresh = types.filter(k => !p.cards.some(c => sabType(c) === k));
+    p.cards.push(rnd(fresh.length ? fresh : types) + SAB_VARS[v]);
+  }
+}
+// Een speler speelt een kaart. Blackout en Jetlag werken meteen als er een ronde loopt, en anders vanaf de start van de volgende ronde.
+// Delusion werkt altijd pas de volgende ronde: midden in een ronde zou het doelwit zijn hints zien veranderen.
+function sabPlay(pl, p){
+  const r = H.round, card = String(p.card), k = sabType(card), v = sabVar(card);
+  if (!pl || !sabOn(H.settings) || H.finding || (H.phase !== 'round' && H.phase !== 'result')) return;
+  if (!SAB_CARDS.includes(card) || !(pl.cards || []).includes(card) || pl.played === H.roundN) return;   // één kaart per ronde
+  const direct = H.phase === 'round' && k !== 'de';
+  if (!direct && H.roundN >= roundsOf(H.settings)) return;   // er komt geen ronde meer
+  const pool = connectedPlayers().filter(x => sabCanHit(r, x, pl.id, direct, y => !!r.answers[y.id] || sabOut(r, y.id)));
+  const to = v === 'a' ? pool : v === 'r' ? pool.length ? [rnd(pool)] : [] : pool.filter(x => x.id === p.to);
+  if (!to.length) return;
+  pl.cards.splice(pl.cards.indexOf(card), 1); pl.played = H.roundN; pl.sp = (pl.sp || 0) + 1;
+  for (const x of to){
+    x.sh = (x.sh || 0) + 1;
+    if (direct) sabApply(r, x, { k, by: pl.id }, now() - r.startAt);
+    else (x.fx = x.fx || []).push({ k, by: pl.id });
+  }
+  // Melding voor iedereen (Delusion alleen voor wie hem speelde, zie sabAnnounce). Het nummer loopt door, zodat niemand een melding twee keer ziet.
+  H.evN = (H.evN || 0) + 1;
+  H.ev = (H.ev || []).concat({ id: H.evN, n: H.roundN, by: pl.id, card, to: to.map(x => x.id), direct }).slice(-10);
+  broadcast();
+}
+// Kaart laten werken in ronde r, vanaf el ms na de start. s: instellingen van de ronde (voor het valse land van Delusion).
+function sabApply(r, pl, e, el, s){
+  const f = (r.fx = r.fx || {})[pl.id] = (r.fx[pl.id] || {});
+  if (e.k === 'bo') f.bo = f.bo || { by: e.by };
+  else if (e.k === 'jl'){ f.jl = f.jl || { by: e.by, at: [] }; if (f.jl.at.length < CONFIG.sab.maxJet) f.jl.at.push(Math.max(0, Math.round(el))); }
+  else if (e.k === 'de' && !f.de) f.de = sabDecoy(r, s || H.settings, e.by);
+}
+// Delusion: de hints van het doelwit gaan over een ander land of een andere plaats. Zelfde soorten hints als de rest krijgt, andere antwoorden.
+// Het valse land komt uit hetzelfde werelddeel en kent zoveel mogelijk van de hints van deze ronde. Straatjacht: een andere plek in het speelgebied,
+// aan de overkant van het midden, met de buurt, postcode en straat die daar liggen (één verzoek aan Nominatim, lukt dat niet dan blijven die drie echt).
+function sabDecoy(r, s, by){
+  if (r.hunt){
+    const [a, b] = huntMid(r.hunt.g), k = Math.cos(r.lat*Math.PI/180);
+    const ang = Math.atan2(r.lat - a, (r.lng - b)*k) + (Math.random() - .5)*2.4, d = r.hunt.rad*(.35 + Math.random()*.45);
+    const de = { by, pt: [R5(r.lat + d*Math.sin(ang)/110570), R5(r.lng + d*Math.cos(ang)/(111320*k))] };
+    nomReverse(de.pt[0], de.pt[1], 17).then(j => {
+      const ad = (j && j.address) || {};
+      de.ad = { hood: ad.neighbourhood || ad.quarter || ad.suburb || ad.city_district || '', pc: (ad.postcode || '').replace(/\s.*/, ''), near: (j && j.name) || ad.road || '' };
+    }).catch(() => {});
+    return de;
+  }
+  if (CITIES[r.code]){
+    const pool = nlPool(s, [r.code]).filter(c => c.id !== r.code);
+    return { by, code: rnd(pool.length ? pool : CITY_LIST.filter(c => c.id !== r.code)).id };
+  }
+  const all = Object.keys(GEO).filter(c => COUNTRIES[c] && c !== r.code);
+  let pool = all.filter(c => COUNTRIES[c].cont === COUNTRIES[r.code].cont && (s.small || !COUNTRIES[c].small));
+  if (!pool.length) pool = all;
+  const fit = c => r.hintKeys.filter(k => HINT_DEF[k] && HINT_DEF[k].ok(COUNTRIES[c], c)).length, best = Math.max(...pool.map(fit));
+  return { by, code: rnd(pool.filter(c => fit(c) === best)) };
+}
+// De valse versie van één hint. Kent het valse land deze hint niet (of staat mix aan), dan komt hij uit een willekeurig ander land dat hem wel heeft.
+function sabFake(r, de, k){
+  if (r.hunt) return huntHintValue(k, r, de);
+  if (CITIES[de.code]) return nlHintValue(k, de.code);
+  const d = HINT_DEF[k], has = c => !!d && d.ok(COUNTRIES[c], c);
+  if (!CONFIG.sab.mix && has(de.code)) return hintValue(k, de.code);
+  const alt = Object.keys(GEO).filter(c => COUNTRIES[c] && c !== r.code && has(c));
+  return hintValue(k, alt.length ? rnd(alt) : r.code, r);
+}
+
 /* ================= SCORE ================= */
 // Elke modus: punten = max x nauwkeurigheid (0..1) x hintfactor x tijdfactor. Fout telt met dezelfde factoren,
 // dus op hetzelfde moment wint goed altijd van fout.
@@ -3115,8 +3482,12 @@ function endRound(){
   H.result = { roundId: r.id, n: r.n, mode: r.mode, final: !!r.final, code: r.code, lat: mid[0], lng: mid[1], photo: r.photo, rows, last: H.roundN >= roundsOf(H.settings), nextAt: CONFIG.resultAutoMs, darts: !!r.darts,
     dkm: r.darts ? dartKm(r) : null, shape: r.shape || null,
     draw: r.draw ? { by:r.draw.by, ops: DR && DR.roundId === r.id ? DR.ops.slice() : [] } : null,
-    hunt: r.hunt ? { n:r.hunt.n, k:r.hunt.k, city:r.hunt.city, g:r.hunt.g } : null };
+    hunt: r.hunt ? { n:r.hunt.n, k:r.hunt.k, city:r.hunt.city, g:r.hunt.g } : null,
+    fx: r.fx || null };   // sabotage van deze ronde: hier komt ook Delusion uit
   H.phase = 'result'; H.round = null;
+  // Sabotage: om de zoveel rondes een nieuwe kaart, behalve na de laatste ronde.
+  const total = roundsOf(H.settings);
+  if (sabOn(H.settings) && H.roundN < total && H.roundN % CONFIG.sab.every === 0) sabDeal(H.roundN >= total - 1);
   scheduleAutoNext(); huntPreload(H); broadcast();
 }
 function scheduleAutoNext(){
@@ -3129,16 +3500,20 @@ function finish(){
   H.phase = 'final';
   // Gelijke stand: meeste goed, dan snelste goede antwoord.
   const fast = p => p.fastest == null ? Infinity : p.fastest;
-  H.final = { gid: Math.random().toString(36).slice(2,10), ranking: H.players.slice().sort((a,b)=>b.score-a.score || b.correct-a.correct || fast(a)-fast(b)).map(p=>({ id:p.id, score:p.score, correct:p.correct, best:p.best, fastest:p.fastest, bm:p.bm || null })) };
+  H.final = { gid: Math.random().toString(36).slice(2,10), ranking: H.players.slice().sort((a,b)=>b.score-a.score || b.correct-a.correct || fast(a)-fast(b)).map(p=>({ id:p.id, score:p.score, correct:p.correct, best:p.best, fastest:p.fastest, bm:p.bm || null, ...(p.sp || p.sh ? { sp:p.sp || 0, sh:p.sh || 0 } : {}) })) };
   broadcast();
 }
 function publicState(){
-  const r = H.round;
+  const r = H.round, sab = sabOn(H.settings);
   return {
     hostPeer: selfId, term: H.term||0, finding: !!H.finding, phase: H.phase, settings: H.settings, roundN: H.roundN, used: H.used, plan: H.plan || null,
-    players: H.players.map(({id,peerId,name,color,avatar,joinIdx,score,connected,correct,best,fastest,op,bm,drew,drewAt}) => ({id,peerId,name,color,avatar,joinIdx,score,connected,correct,best,fastest,op:!!op,...(bm ? {bm} : {}),...(drew ? {drew,drewAt} : {})})),
+    // Sabotage: hand (cards), in welke ronde je voor het laatst speelde (played), wat op de volgende ronde wacht (fx) en de tellers voor het eindscherm.
+    players: H.players.map(({id,peerId,name,color,avatar,joinIdx,score,connected,correct,best,fastest,op,bm,drew,drewAt,cards,played,fx,sp,sh}) => ({id,peerId,name,color,avatar,joinIdx,score,connected,correct,best,fastest,op:!!op,...(bm ? {bm} : {}),...(drew ? {drew,drewAt} : {}),
+      ...(sab ? { cards: cards || [], played: played || 0, fx: fx || [], sp: sp || 0, sh: sh || 0 } : {})})),
     round: r ? { id:r.id, n:r.n, mode:r.mode, continent:r.continent, final:!!r.final, lat:r.lat, lng:r.lng, photo:r.photo, hunt:r.hunt||null, darts:!!r.darts, shape:r.shape||null, draw:r.draw||null, drawN: r.draw && DR && DR.roundId === r.id ? DR.ops.length : 0, zoom:r.zoom, pan:r.pan, difficulty:r.difficulty, durationMs:r.durationMs, hintIntervalMs:r.hintIntervalMs, hintTotal:r.hintTotal,
-      hints: r.hints, remainingMs: Math.max(0, r.durationMs - (now()-r.startAt)), answered: Object.keys(r.answers), wants: Object.keys(r.wants||{}), skips: Object.keys(r.skips||{}), redo: !!r.redo } : null,
+      hints: r.hints, remainingMs: Math.max(0, r.durationMs - (now()-r.startAt)), answered: Object.keys(r.answers), wants: Object.keys(r.wants||{}), skips: Object.keys(r.skips||{}), redo: !!r.redo,
+      ...(r.fx ? { fx: r.fx, alt: r.alt || {} } : {}) } : null,
+    ...(sab && H.ev && H.ev.length ? { ev: H.ev } : {}),
     result: H.result ? { ...H.result, nextAt: Math.max(0, CONFIG.resultAutoMs - (now()-(H.resultStart||now()))) } : null,
     final: H.final,
   };
@@ -3148,6 +3523,8 @@ function publicState(){
 let areaRing = null, HS = null, huntLayer = null, resLabels = null, ovFinding = false;
 let DS = null, dmap = null, dmapTiles = null, dmapKey = '';   // darts: eigen staat per ronde en de wereldkaart
 let renderedRound = null, renderedResult = null, map = null, rmap = null, pano = null, lastSig = '';
+// Sabotage: gekozen kaart in mijn hand, laatst getoonde melding, de ronde waarin mijn tijd om was (Jetlag) en waarin Blackout al is aangekondigd.
+let sabSel = -1, sabSeen = 0, sabOutId = null, boShown = null;
 function onState(snap){
   const prev = S;
   S = snap; recvAt = now();
@@ -3155,6 +3532,9 @@ function onState(snap){
   // Spelers even laten weten dat de host een foto of buurt aan het zoeken is.
   if (!isHost && !!S.finding !== ovFinding){ ovFinding = !!S.finding; overlay(ovFinding ? t('loading') : null); }
   if (prev && prev.round && S.round && prev.round.id===S.round.id && S.round.hints.length > prev.round.hints.length) beep(740,.07);
+  // Nieuwe ronde: meldingen van de vorige ronde gaan weg, anders hangen ze over het nieuwe beeld.
+  if (S.round && !(prev && prev.round && prev.round.id === S.round.id)) $('#emoLayer').innerHTML = '';
+  sabNews(prev, snap);
   rerender();
 }
 function rerender(){
@@ -3167,8 +3547,15 @@ function rerender(){
   else if (S.phase === 'round') renderGame();
   else if (S.phase === 'result') renderResult();
   else if (S.phase === 'final') renderFinal();
+  sabUi();
 }
 const isMeHost = () => S && S.hostPeer === selfId;
+// Tijd die de ronde nog duurt, en de tijd die ik zelf nog heb (met Jetlag loopt mijn klok sneller).
+const remNow = r => r.remainingMs - (now() - recvAt) - latency;
+const myRem = r => sabRem(r, me.id, remNow(r));
+// Wat er deze ronde op mij werkt, en mijn hints: met Delusion de valse lijst.
+const myFx = r => (r && r.fx && r.fx[me.id]) || {};
+const myHints = r => (r.alt && r.alt[me.id]) || r.hints;
 // Modus van de ronde die nu speelt (in een toernooi wisselt die per ronde), anders die uit de lobby.
 function curMode(){ return S ? (S.round && S.round.mode) || (S.result && S.result.mode) || S.settings.mode : null; }
 function nlNow(){ return isNL({ mode: curMode() }); }
@@ -3239,6 +3626,9 @@ function renderLobby(){
   hc.innerHTML = HINT_GROUPS.map(g => { const nm = esc(t('g_'+g)), o = on.includes(g);
     return `<button class="chipbtn ${o?'on':''}" data-g="${g}" aria-pressed="${o}" aria-label="${nm}" title="${nm}"><svg class="ic" aria-hidden="true"><use href="#${HINT_ICON[g]}"/></svg></button>`; }).join('');
   document.querySelectorAll('.sw[data-sw]').forEach(sw => { sw.classList.toggle('on', !!S.settings[sw.dataset.sw]); sw.style.pointerEvents = edit?'':'none'; });
+  // Sabotage aan: de drie soorten kaarten als voorproefje, tik voor uitleg. In de lobby begint ook het tellen van meldingen opnieuw.
+  const deck = $('#sabDeck'); deck.hidden = !S.settings.sabotage; sabSeen = 0;
+  if (!deck.hidden && deck.dataset.lang !== lang){ deck.dataset.lang = lang; deck.innerHTML = SAB_TYPES.map(k => `<button class="sc" type="button" data-k="${k}" aria-label="${esc(t('sab_' + k))}">${SAB_ART[k]}<span class="sc-nm">${esc(t('sab_' + k))}</span></button>`).join(''); }
   if (tour) renderTourSettings(edit, tm);
   const n = S.players.filter(p=>p.connected).length;
   $('#startBtn').style.display = edit ? '' : 'none';
@@ -3388,7 +3778,7 @@ function huntLabel(j){
 }
 async function huntTap(ll){
   const r = S.round, h = r.hunt;
-  if (!HS || HS.roundId !== r.id || (myAnswer && myAnswer.roundId === r.id) || r.answered.includes(me.id) || HS.busy) return;
+  if (!HS || HS.roundId !== r.id || (myAnswer && myAnswer.roundId === r.id) || r.answered.includes(me.id) || HS.busy || sabOutId === r.id) return;
   const lat = R5(ll.lat), lng = R5(ll.lng), roundId = r.id;
   if (metres(lat, lng, r.lat, r.lng) > h.rad){ toast(t('huntOutside')); return; }
   HS.pin = [lat, lng];
@@ -3418,10 +3808,9 @@ async function huntTap(ll){
 }
 function huntLock(name, hit){
   const r = S && S.round;
-  if (!r || !r.hunt || !HS || myAnswer) return;
+  if (!r || !r.hunt || !HS || myAnswer || sabOutId === r.id) return;
   if (!HS.pin){ toast(t('huntNoPin')); return; }
-  const rem = r.remainingMs - (now()-recvAt) - latency;
-  myAnswer = { roundId:r.id, code:'pin', pin:HS.pin, scans:r.hunt.scans-HS.left, hintsSeen:r.hints.length, frac:Math.max(0, rem/r.durationMs), name: name || '', hit: !!hit };
+  myAnswer = { roundId:r.id, code:'pin', pin:HS.pin, scans:r.hunt.scans-HS.left, hintsSeen:r.hints.length, frac:Math.max(0, myRem(r)/r.durationMs), name: name || '', hit: !!hit };
   beep(990,.08);
   act({ t:'answer', p: myAnswer });
   if (S.phase === 'round' && S.round) renderGame();
@@ -3445,11 +3834,11 @@ function renderHunt(){
   }
   $('#huntProbe').innerHTML = html;
   $('#huntLock').disabled = !HS.pin;
-  const c = r.hints.find(x => x.k === 'q_circle');
+  const c = myHints(r).find(x => x.k === 'q_circle');
   if (c && !HS.circle && huntLayer) HS.circle = L.circle([c.v.lat, c.v.lng], { radius:c.v.r, color:'#ffd66b', weight:2, fillColor:'#ffd66b', fillOpacity:.1, dashArray:'4 6', interactive:false }).addTo(huntLayer);
 }
 /* Darts: wereldkaart, pijltje en gooien */
-const dartLocked = r => !!r && ((myAnswer && myAnswer.roundId === r.id) || r.answered.includes(me.id));
+const dartLocked = r => !!r && ((myAnswer && myAnswer.roundId === r.id) || r.answered.includes(me.id) || sabOutId === r.id);
 const dartOpen = () => !!(DS && DS.open && dmap);
 function dartIcon(color){
   // Punt linksonder (daar zit het anker), veren in de kleur van de speler rechtsboven.
@@ -3520,8 +3909,7 @@ function dartThrow(){
   const r = S && S.round;
   if (!r || !r.darts || !DS || dartLocked(r)) return;
   if (!DS.pin){ toast(t('dartNoPin')); if (!DS.open) dartView(true); return; }
-  const rem = r.remainingMs - (now()-recvAt) - latency;
-  myAnswer = { roundId:r.id, code:'pin', pin:DS.pin, dbl:DS.dbl, hintsSeen:r.hints.length, frac:Math.max(0, rem/r.durationMs) };
+  myAnswer = { roundId:r.id, code:'pin', pin:DS.pin, dbl:DS.dbl, hintsSeen:r.hints.length, frac:Math.max(0, myRem(r)/r.durationMs) };
   beep(150, .1, 'square', .05); setTimeout(() => beep(990, .07), 110);
   act({ t:'answer', p: myAnswer });
   if (S.phase === 'round' && S.round) renderGame();
@@ -3540,9 +3928,11 @@ function renderDarts(){
   $('#dartView').innerHTML = `<svg class="ic"><use href="#i-${DS.open ? 'eye' : 'globe'}"/></svg><span>${t(DS.open ? 'dartSpot' : 'dartMap')}</span>`;
   const dbl = $('#dartDbl'); dbl.hidden = locked; dbl.classList.toggle('on', DS.dbl); dbl.setAttribute('aria-pressed', String(DS.dbl)); dbl.title = t('dartDbl'); dbl.setAttribute('aria-label', t('dartDbl'));
   const th = $('#dartThrow'); th.classList.toggle('thrown', locked);
-  th.innerHTML = locked ? `<svg class="ic"><use href="#i-lock"/></svg><span>${t('dartThrown')}</span>${mine && myAnswer.dbl ? ' <b class="x2">x2</b>' : ''}`
+  // Jetlag: tijd om voor je gooide. Het pijltje dat er stond telt nog.
+  th.innerHTML = locked && sabOutId === r.id && !mine ? `<svg class="ic"><use href="#i-lock"/></svg><span>${t('jlOut')}</span>`
+    : locked ? `<svg class="ic"><use href="#i-lock"/></svg><span>${t('dartThrown')}</span>${mine && myAnswer.dbl ? ' <b class="x2">x2</b>' : ''}`
     : `<svg class="ic"><use href="#i-dart"/></svg><span>${t('dartThrow')}</span>`;
-  $('#mapctl').classList.toggle('off', r.pan === 0 && !DS.open);
+  $('#mapctl').classList.toggle('off', (r.pan === 0 || !!myFx(r).bo) && !DS.open);
 }
 
 let pannellumReady = null;
@@ -3589,10 +3979,12 @@ async function showPano(r){
   });
   pano.on('load', () => { if (pano.getScene() === 'sd') upgradePano(r); });
 }
+// Kleine tekens achter een naam: wie deze ronde last heeft van Blackout of Jetlag. Delusion staat er niet bij: dat blijft geheim tot de uitslag.
+const fxIcons = (f, all) => SAB_TYPES.filter(k => f && f[k] && (all || k !== 'de')).map(k => `<svg class="fxi" data-k="${k}" viewBox="0 0 24 24" aria-label="${esc(t('sab_' + k))}"><use href="#s-${k}"/></svg>`).join('');
 function renderGame(){
   show('game');
-  const r = S.round;
-  if (renderedRound !== r.id){
+  const r = S.round, first = renderedRound !== r.id;
+  if (first){
     renderedRound = r.id;
     if (!myAnswer || myAnswer.roundId !== r.id) myAnswer = null;
     huntClear(); HS = null; dartReset(r);
@@ -3606,8 +3998,7 @@ function renderGame(){
     $('#guess').placeholder = t(nlNow() ? 'guessPhNl' : 'guessPh');
     $('#guess').value = ''; closeAc(); $('#hintList').innerHTML = ''; delete $('#hintList').dataset.sig;
     // In Straatjacht is de kaart het spel: op een telefoon de hints standaard inklappen tot de nieuwste.
-    // De tekenaar heeft de hints niet nodig: ingeklapt, dan blijft er meer vel over.
-    $('#hintsBox').classList.toggle('shut', (!!r.hunt && innerHeight < 900) || drawMe(r));
+    $('#hintsBox').classList.toggle('shut', !!r.hunt && innerHeight < 900);
     if (matchMedia('(pointer:fine)').matches && !drawMe(r)) setTimeout(()=>$('#guess').focus(), 100);
     if (S.settings.mode === 'tour') tourIntro(r); else $('#tourCard').classList.remove('go');
     beep(520,.12,'triangle');
@@ -3618,11 +4009,24 @@ function renderGame(){
     : r.n + '/' + total;
   const mine = playerById(me.id);
   $('#scoreChip').textContent = mine ? mine.score : 0;
-  $('#mapctl').classList.toggle('off', r.pan === 0);
+  // Sabotage op mij. Blackout: het beeld gaat op zwart (in Straatjacht alleen het satellietbeeld: de kaart blijft daar het speelveld).
+  // Jetlag: mijn klok loopt sneller, zie tick(). Delusion: mijn hints komen uit myHints, zonder dat er iets aan te zien is.
+  const fx = myFx(r), dark = !!fx.bo && !r.hunt, bx = $('#blackout'), boBy = fx.bo && playerById(fx.bo.by);
+  if (fx.bo && boShown !== r.id){ boShown = r.id; bx.classList.toggle('hit', !first); beep(196, .3, 'sawtooth', .05); setTimeout(() => beep(98, .45, 'sawtooth', .05), 170); }
+  bx.hidden = !dark; $('#map').classList.toggle('dark', !!fx.bo && !!r.hunt);
+  $('#boBy').textContent = boBy ? t('sabBy', { n: boBy.name }) : '';
+  const ft = $('#fxTag'); ft.hidden = !(fx.bo && r.hunt);
+  if (!ft.hidden) ft.innerHTML = `<svg viewBox="0 0 24 24" aria-hidden="true"><use href="#s-bo"/></svg><span>${esc(t('sab_bo') + (boBy ? ' ' + t('sabBy', { n: boBy.name }) : ''))}</span>`;
+  if (r.shape) $('#shapeTag').hidden = dark;
+  $('#timerChip').parentElement.classList.toggle('jet', !!fx.jl);
+  $('#timeLbl').textContent = fx.jl ? t('sab_jl') + ' x' + (1 + fx.jl.at.length) : t('timeLbl');
+  if (first && fx.jl) toast(t('jlHit'));
+  $('#mapctl').classList.toggle('off', r.pan === 0 || dark);
+  $('#hintsBox').hidden = drawMe(r);   // de tekenaar kent het antwoord: zonder hints blijft er meer vel over
   const hl = $('#hintList'), sig = r.id + ':' + lang + ':' + r.hints.length;
   if (hl.dataset.sig !== sig){
     const prevCount = hl.dataset.sig && hl.dataset.sig.startsWith(r.id + ':' + lang + ':') ? hl.children.length : 0;
-    hl.innerHTML = r.hints.map((h,i)=>{
+    hl.innerHTML = myHints(r).map((h,i)=>{
       const val = renderHintValue(h.k, h.v), txt = h.k==='flag' ? val : esc(val);
       const fresh = i >= prevCount && prevCount > 0;
       return `<div class="hint ${fresh?'new':''}" ${fresh?'':'style="animation:none"'}><span class="k">${t('h_'+h.k)}</span><span class="v">${txt}</span></div>`;
@@ -3630,30 +4034,35 @@ function renderGame(){
     hl.dataset.sig = sig; hl.scrollTop = hl.scrollHeight;
   }
   $('#hintCountTxt').textContent = r.hints.length + '/' + r.hintTotal;
-  const conn = S.players.filter(p=>p.connected && !(r.draw && r.draw.by === p.id)).length, wants = r.wants || [], iWant = wants.includes(me.id);
-  const hn = $('#hintNow'); hn.style.display = r.hints.length < r.hintTotal && !drawMe(r) ? '' : 'none';
+  // Na opnieuw verbinden weet de host al dat je hebt geantwoord, ook als deze pagina dat is vergeten.
+  // out: met Jetlag is mijn tijd om terwijl de ronde nog loopt.
+  const mineLocked = myAnswer && myAnswer.roundId === r.id, locked = mineLocked || r.answered.includes(me.id), out = !locked && sabOutId === r.id;
+  // Hint nu: alleen wie nog moet antwoorden stemt mee. Wie al klaar is heeft de hint niet meer nodig.
+  const rem = remNow(r), pend = S.players.filter(p => p.connected && !(r.draw && r.draw.by === p.id) && !r.answered.includes(p.id) && sabRem(r, p.id, rem) > 0);
+  const wants = (r.wants || []).filter(id => pend.some(p => p.id === id)), iWant = wants.includes(me.id);
+  const hn = $('#hintNow'); hn.style.display = r.hints.length < r.hintTotal && !locked && !out && pend.some(p => p.id === me.id) ? '' : 'none';
   hn.classList.toggle('voted', iWant);
-  hn.textContent = conn > 1 ? t(iWant ? 'hintVoted' : 'hintNowVote', { a: wants.length, b: conn }) : t('hintNow');
+  hn.textContent = pend.length > 1 ? t(iWant ? 'hintVoted' : 'hintNowVote', { a: wants.length, b: pend.length }) : t('hintNow');
   // Andere foto: alleen bij een straatfoto, en alleen als de host het kent (een oudere host stuurt geen skips mee).
-  const skips = r.skips || [], iSkip = skips.includes(me.id), sb = $('#skipBtn');
+  const conn = S.players.filter(p=>p.connected && !(r.draw && r.draw.by === p.id)).length, skips = r.skips || [], iSkip = skips.includes(me.id), sb = $('#skipBtn');
   $('#photoRow').hidden = !r.photo; sb.hidden = !Array.isArray(r.skips);
   sb.classList.toggle('voted', iSkip);
   sb.textContent = conn > 1 ? t(iSkip ? 'skipVoted' : 'skipVote', { a: skips.length, b: conn }) : t('skipPhoto');
   $('#who').innerHTML = S.players.length > 1 ? S.players.map(p => { const ok = r.answered.includes(p.id), dr = r.draw && r.draw.by === p.id;
-    return `<span class="${ok?'done':''} ${p.connected?'':'off'}">${dotHtml(p)}${esc(p.name)}${dr ? '<svg class="ic"><use href="#i-pen"/></svg>' : ok ? ' &#10003;' : ''}</span>`; }).join('') : '';
-  // Na opnieuw verbinden weet de host al dat je hebt geantwoord, ook als deze pagina dat is vergeten.
-  const mineLocked = myAnswer && myAnswer.roundId === r.id, locked = mineLocked || r.answered.includes(me.id);
-  $('#answerBox').style.display = locked || r.hunt || r.darts || drawMe(r) ? 'none' : '';
+    return `<span class="${ok?'done':''} ${p.connected?'':'off'}">${dotHtml(p)}${esc(p.name)}${fxIcons(r.fx && r.fx[p.id])}${dr ? '<svg class="ic"><use href="#i-pen"/></svg>' : ok ? ' &#10003;' : ''}</span>`; }).join('') : '';
+  $('#answerBox').style.display = locked || out || r.hunt || r.darts || drawMe(r) ? 'none' : '';
   $('#drawPanel').hidden = !drawMe(r);
   if (r.draw) drawHud(r);
-  $('#huntBox').hidden = !r.hunt || locked;
+  $('#huntBox').hidden = !r.hunt || locked || out;
   if (r.hunt && !HS) huntReset(r);
   if (r.hunt) renderHunt();
   $('#dartBox').hidden = !r.darts;
   if (r.darts && !DS) dartReset(r);
   if (r.darts) renderDarts();
-  $('#lockedBox').style.display = locked && !r.darts ? '' : 'none';
-  if (locked) $('#lockedBox').innerHTML = r.hunt
+  const lb = $('#lockedBox');
+  lb.style.display = (locked || out) && !r.darts ? '' : 'none'; lb.classList.toggle('out', out);
+  if (out) lb.innerHTML = `<svg class="ic" viewBox="0 0 24 24"><use href="#s-jl"/></svg><b>${t('jlOut')}</b><span>${t('sab_jl')}</span>`;
+  else if (locked) lb.innerHTML = r.hunt
     ? `<svg class="ic"><use href="#i-pin"/></svg><b>${esc(plain(mineLocked && myAnswer.name || t('huntPinned')))}</b><span>${t('lockedAs')}</span>`
     : mineLocked ? `${flagImg(myAnswer.code, 40)}<b>${esc(plain(cname(myAnswer.code)))}</b><span>${t('lockedAs')}</span>` : `<b>${t('lockedAs')}</b>`;
 }
@@ -3668,9 +4077,14 @@ function tick(){
   if (!S) return;
   if (S.phase === 'round' && S.round){
     const r = S.round;
-    const rem = r.remainingMs - (now() - recvAt) - latency;
-    setTimer(fmtTime(rem)); $('#timerChip').parentElement.classList.toggle('low', rem < 10000);
-    $('#timerBar').style.transform = `scaleX(${Math.max(0, Math.min(1, rem / r.durationMs))})`;
+    // rem: de ronde zelf (hints en einde). mine: mijn eigen klok, die met Jetlag sneller loopt.
+    const rem = remNow(r), mine = sabRem(r, me.id, rem);
+    setTimer(fmtTime(mine)); $('#timerChip').parentElement.classList.toggle('low', mine < 10000);
+    $('#timerBar').style.transform = `scaleX(${Math.max(0, Math.min(1, mine / r.durationMs))})`;
+    // Jetlag: mijn tijd is om terwijl de ronde doorloopt. Invoer dicht, een pin die er al stond telt nog.
+    if (mine <= 0 && rem > 300 && sabOutId !== r.id && !(myAnswer && myAnswer.roundId === r.id) && !r.answered.includes(me.id)){
+      sabOutId = r.id; closeAc(); $('#guess').blur(); toast(t('jlOut')); beep(160, .35, 'square', .05); renderGame();
+    }
     const elapsed = r.durationMs - rem;
     const nextIdx = r.hints.length;
     if (nextIdx < r.hintTotal){
@@ -3729,12 +4143,12 @@ $('#guess').addEventListener('keydown', e => {
 $('#ac').addEventListener('pointerdown', e => { const d = e.target.closest('[data-code]'); if (d){ e.preventDefault(); submitGuess(d.dataset.code); } });
 $('#guessBtn').addEventListener('click', () => submitGuess(acItems[acSel]));
 function submitGuess(code){
-  if (!S || S.phase!=='round' || !S.round || S.round.hunt || drawMe(S.round) || myAnswer) return;
+  if (!S || S.phase!=='round' || !S.round || S.round.hunt || drawMe(S.round) || myAnswer || sabOutId === S.round.id) return;
   const nl = nlNow();
   if (!code){ const exact = (nl ? CITY_SEARCH : SEARCH).find(s => s.keys.includes(norm($('#guess').value))); code = exact && exact.code; }
   if (!code){ toast(t(nl ? 'unknownNl' : 'unknown')); return; }
-  const r = S.round, rem = r.remainingMs - (now()-recvAt) - latency;
-  myAnswer = { roundId: r.id, code, hintsSeen: r.hints.length, frac: Math.max(0, rem / r.durationMs) };
+  const r = S.round;
+  myAnswer = { roundId: r.id, code, hintsSeen: r.hints.length, frac: Math.max(0, myRem(r) / r.durationMs) };
   closeAc(); $('#guess').blur(); beep(990,.08);
   act({ t:'answer', p: myAnswer });
   if (S.phase === 'round' && S.round) renderGame();
@@ -3760,15 +4174,24 @@ function renderResult(){
   const P = R.photo;
   $('#resCredit').hidden = !P;
   if (P) $('#resCredit').textContent = t('photoBy') + ' ' + [P.by, 'Panoramax', P.lic].filter(Boolean).join(', ');
-  // Tekenen: de tekening naast het echte land, noord boven.
+  // Tekenen: de getekende vlag naast de echte.
   const RD = R.draw, rd = $('#resDraw');
   rd.hidden = !RD;
   if (RD && rd.dataset.k !== R.roundId + lang){
     rd.dataset.k = R.roundId + lang;
     const dp = playerById(RD.by) || { name:'?', color:'#888' };
     rd.innerHTML = `<figure><div class="dpane drawing">${drawSvg(RD.ops)}</div><figcaption>${dotHtml(dp)}<span>${esc(t('drawBy', { n: dp.name }))}</span></figcaption></figure>`
-      + `<figure><div class="dpane real">${shapeSvg(R.code, { rot:0, flip:false, keep:CONFIG.shape.keep.easy, main:false, grid:false })}</div><figcaption>${esc(t('drawReal'))}</figcaption></figure>`;
+      + `<figure><div class="dpane real">${flagImg(R.code, 320)}</div><figcaption>${esc(t('drawReal'))}</figcaption></figure>`;
   }
+  // Sabotage van deze ronde: wie wie dwarszat. Delusion komt hier pas uit, met het land waar de valse hints over gingen.
+  const fxs = [], rs = $('#resSab'), who = id => playerById(id) || { name:'?', color:'#888' };
+  for (const [pid, f] of Object.entries(R.fx || {})) for (const k of SAB_TYPES) if (f[k]) fxs.push({ k, to: pid, by: f[k].by, code: f[k].code });
+  rs.hidden = !fxs.length;
+  if (fxs.length) rs.innerHTML = `<label>${esc(t('sabList'))}</label>` + fxs.map(x => {
+    const a = who(x.by), b = who(x.to), sub = x.k !== 'de' ? t('sabs_' + x.k) : x.code ? t('deOf', { c: cname(x.code) }) : t('deOfHunt');
+    return `<div class="sabrow${x.to === me.id ? ' me' : ''}" data-k="${x.k}"><span class="sab-ic"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="#s-${x.k}"/></svg></span><span class="sab-t">`
+      + `<span class="sab-w">${dotHtml(a)}${esc(a.name)}<svg class="ic" aria-hidden="true"><use href="#i-next"/></svg>${dotHtml(b)}${esc(b.name)}</span><small><b>${esc(t('sab_' + x.k))}</b> ${esc(sub)}</small></span></div>`;
+  }).join('');
   const firstPaint = renderedResult !== R.roundId;
   $('#resBody').innerHTML = R.rows.map((row, i) => {
     const p = playerById(row.id) || { name:'?', color:'#888' };
@@ -3776,7 +4199,7 @@ function renderResult(){
       : row.dist != null && R.darts ? `<span class="${row.kind}">${t('dr' + row.ring)}, ${row.dist.toLocaleString(lang === 'nl' ? 'nl-NL' : 'en-GB')} km</span>${row.dbl ? ' <b class="x2">x2</b>' : ''}`
       : row.dist != null ? `<span class="${row.kind}">${row.dist} m</span>`
       : row.guess ? `<span class="${row.kind}">${flagImg(row.guess,20)}${esc(cname(row.guess))}</span>` : `<span class="sub">${t('noAnswer')}</span>`;
-    return `<tr style="${firstPaint ? 'animation-delay:'+(i*90)+'ms' : 'animation:none'}"><td><span class="row" style="gap:6px">${dotHtml(p)}<span>${esc(p.name)}</span></span></td><td>${g}</td><td class="n">${row.ms!=null?(row.ms/1000).toFixed(1)+'s':''}</td><td class="n plus ${row.kind}">+${row.pts}</td><td class="n">${row.total}</td></tr>`;
+    return `<tr style="${firstPaint ? 'animation-delay:'+(i*90)+'ms' : 'animation:none'}"><td><span class="row" style="gap:6px">${dotHtml(p)}<span>${esc(p.name)}${fxIcons(R.fx && R.fx[row.id], true)}</span></span></td><td>${g}</td><td class="n">${row.ms!=null?(row.ms/1000).toFixed(1)+'s':''}</td><td class="n plus ${row.kind}">+${row.pts}</td><td class="n">${row.total}</td></tr>`;
   }).join('');
   const host = isMeHost();
   $('#nextBtn').style.display = host ? '' : 'none';
@@ -3785,6 +4208,9 @@ function renderResult(){
     renderedResult = R.roundId;
     const mineRow = R.rows.find(r=>r.id===me.id);
     if (mineRow) beep(mineRow.kind==='good'?1046:mineRow.kind==='half'?660:220, .18, mineRow.kind==='miss'?'sawtooth':'sine');
+    // Delusion: nu pas hoor je dat je hints niet klopten.
+    const de = R.fx && R.fx[me.id] && R.fx[me.id].de;
+    if (de){ toast(de.code ? t('deReveal', { c: cname(de.code) }) : t('deRevealHunt')); setTimeout(() => beep(311, .2, 'triangle'), 260); setTimeout(() => beep(233, .3, 'triangle'), 440); }
     setTimeout(() => drawResultMap(R), 30);
   }
 }
@@ -3875,10 +4301,18 @@ function renderFinal(){
   const best = F.ranking.reduce((a,b)=>b.best>a.best?b:a, F.ranking[0]);
   const fast = F.ranking.filter(r=>r.fastest!=null).sort((a,b)=>a.fastest-b.fastest)[0];
   const most = F.ranking.reduce((a,b)=>b.correct>a.correct?b:a, F.ranking[0]);
+  // Sabotage: wie de meeste kaarten speelde, wie het vaakst geraakt werd en hoeveel kaarten er in totaal vielen.
+  const lead = k => F.ranking.reduce((a, b) => (b[k] || 0) > (a[k] || 0) ? b : a, F.ranking[0]), cardsPlayed = F.ranking.reduce((a, r) => a + (r.sp || 0), 0);
+  const sabTiles = cardsPlayed ? [
+    [t('sabMost'), P(lead('sp').id).name, t('sabCards', { n: lead('sp').sp })],
+    [t('sabTarget'), P(lead('sh').id).name, t('sabHits', { n: lead('sh').sh })],
+    [t('sabTotal'), String(cardsPlayed), t('sabPlayed')],
+  ] : [];
   $('#finStats').innerHTML = [
     [t('bestRound'), best && P(best.id).name, best && best.best+' pt'],
     [t('fastest'), fast ? P(fast.id).name : '-', fast ? (fast.fastest/1000).toFixed(1)+'s' : ''],
     [t('mostCorrect'), most && P(most.id).name, most && most.correct+'x'],
+    ...sabTiles,
   ].map(([k,v,s])=>`<div class="stat"><small>${k}</small><b>${esc(plain(v||'-'))}</b><i>${s||''}</i></div>`).join('');
   $('#rematchBtn').style.display = isMeHost() ? '' : 'none';
   if (renderedResult !== 'final'){ renderedResult = 'final'; beep(523,.12); setTimeout(()=>beep(659,.12),130); setTimeout(()=>beep(784,.2),260); }
@@ -4195,7 +4629,7 @@ function receiveChat(m, peerId){
   if (typeof m.text !== 'string' || !m.text.trim()) return;
   addChat({ ...who, text: m.text.slice(0,500), mine:false });
 }
-$('#chatBtn').addEventListener('click', () => { closeEmoTray(); $('#chat').classList.add('on'); unread = 0; renderChat(); $('#chatIn').focus(); });
+$('#chatBtn').addEventListener('click', () => { closeEmoTray(); closeSabTray(); $('#chat').classList.add('on'); unread = 0; renderChat(); $('#chatIn').focus(); });
 $('#chatClose').addEventListener('click', () => $('#chat').classList.remove('on'));
 $('#chatForm').addEventListener('submit', e => {
   e.preventDefault(); const text = $('#chatIn').value.trim(); if (!text || !sendChat) return;
@@ -4278,12 +4712,129 @@ function showEmote(who, id){
   setTimeout(() => { el.classList.add('out'); setTimeout(() => el.remove(), 280); }, 3400);
 }
 $('#emoBtn').addEventListener('click', () => {
-  const open = !emoOpen(); $('#chat').classList.remove('on');
+  const open = !emoOpen(); $('#chat').classList.remove('on'); closeSabTray();
   $('#emoTray').classList.toggle('on', open); $('#emoBtn').classList.toggle('on', open); $('#emoBtn').setAttribute('aria-expanded', String(open));
 });
 document.addEventListener('click', e => { const b = e.target.closest('.emob'); if (b) sendEmote(b.dataset.e); });
 document.addEventListener('pointerdown', e => { if (emoOpen() && !e.target.closest('#emoTray,#emoBtn')) closeEmoTray(); });
 document.addEventListener('keydown', e => { if (e.key === 'Escape') closeEmoTray(); });
+
+/* ================= SABOTAGE (scherm) =================
+   Kaarten, je hand, de uitleg met de speelknop en de meldingen. De regels zelf staan bij de host (SABOTAGE hierboven).
+   De tekening op een kaart is inline SVG van 64 x 64. Bewegende delen hebben een klasse (.sa-*): de animatie staat in de CSS en loopt bij .play of hover. */
+const SAB_PLANE = 'M22 12c0 1-1.3 1.6-2.8 1.6h-4.1l-4.3 6.9H8.5l2.2-6.9H6.3l-1.8 2.4H2.7l1-4-1-4h1.8l1.8 2.4h4.4L8.5 3.5h2.3l4.3 6.9h4.1C20.7 10.4 22 11 22 12z';
+const SAB_ART = {
+  // Blackout: de maan schuift voor de wereld, alleen de gloed blijft over
+  bo: `<svg class="art" viewBox="0 0 64 64" aria-hidden="true"><g class="sa-rays" fill="none" stroke="var(--ka)" stroke-width="2.6" stroke-linecap="round"><path d="M32 5v6M32 53v6M5 32h6M53 32h6M12.9 12.9l4.2 4.2M46.9 46.9l4.2 4.2M12.9 51.1l4.2-4.2M46.9 17.1l4.2-4.2"/></g>
+    <circle cx="32" cy="32" r="15.5" fill="#e8552a"/><g fill="none" stroke="#fff" stroke-opacity=".7" stroke-width="1.6"><path d="M16.5 32h31"/><ellipse cx="32" cy="32" rx="7" ry="15.5"/></g>
+    <circle class="sa-moon" cx="32" cy="32" r="13.6" fill="#08070b"/></svg>`,
+  // Delusion: een spiraal die blijft draaien
+  de: `<svg class="art" viewBox="0 0 64 64" aria-hidden="true"><circle cx="32" cy="32" r="23" fill="#fff" fill-opacity=".1"/>
+    <path class="sa-spin" fill="none" stroke="var(--ka)" stroke-width="3.6" stroke-linecap="round" d="M33.5 32.0Q33.8 32.7 33.7 33.2Q33.6 33.6 33.3 34.1Q33.0 34.5 32.5 34.8Q32.0 35.1 31.3 35.2Q30.7 35.2 30.0 35.0Q29.3 34.7 28.6 34.2Q28.0 33.6 27.7 32.8Q27.3 32.0 27.3 31.0Q27.3 30.1 27.7 29.1Q28.1 28.1 28.9 27.3Q29.8 26.6 30.9 26.1Q32.0 25.7 33.3 25.8Q34.6 25.8 35.8 26.4Q37.0 27.0 37.9 28.1Q38.9 29.1 39.4 30.6Q39.9 32.0 39.7 33.6Q39.6 35.2 38.9 36.6Q38.1 38.1 36.8 39.2Q35.5 40.4 33.7 40.9Q32.0 41.5 30.1 41.3Q28.2 41.1 26.5 40.2Q24.8 39.2 23.5 37.7Q22.2 36.1 21.6 34.0Q21.0 32.0 21.2 29.8Q21.4 27.6 22.5 25.6Q23.6 23.6 25.5 22.2Q27.3 20.7 29.7 20.0Q32.0 19.4 34.5 19.7Q37.0 20.0 39.2 21.2Q41.5 22.5 43.1 24.6Q44.8 26.7 45.5 29.4Q46.2 32.0 45.9 34.8Q45.5 37.6 44.1 40.1Q42.6 42.6 40.3 44.4Q37.9 46.2 35.0 47.0Q32.0 47.8 28.9 47.4Q25.8 47.0 23.0 45.4Q20.3 43.7 18.3 41.1Q16.3 38.5 15.4 35.3Q14.6 32.0 15.1 28.6Q15.5 25.2 17.3 22.2Q19.1 19.1 22.0 17.0Q24.9 14.8 28.4 13.9L32.0 13.0"/>
+    <path class="sa-tw" fill="#fff" d="M53 8l1.3 3.2 3.2 1.3-3.2 1.3L53 17l-1.3-3.2-3.2-1.3 3.2-1.3z"/><path class="sa-tw two" fill="#fff" d="M10 47l1 2.5 2.5 1-2.5 1L10 54l-1-2.5-2.5-1 2.5-1z"/></svg>`,
+  // Jetlag: de wijzers jagen rond en er komt een vliegtuig over
+  jl: `<svg class="art" viewBox="0 0 64 64" aria-hidden="true"><circle cx="29" cy="36" r="18" fill="#fff"/><circle cx="29" cy="36" r="18" fill="none" stroke="#08323d" stroke-opacity=".35" stroke-width="2.5"/>
+    <path d="M29 21.5v3M29 47.5v3M14.5 36h3M40.5 36h3" fill="none" stroke="#0b5c70" stroke-width="2.2" stroke-linecap="round"/>
+    <path class="sa-hh" d="M29 36v-8" fill="none" stroke="#08323d" stroke-width="3.2" stroke-linecap="round"/><path class="sa-hm" d="M29 36h11.5" fill="none" stroke="#e8552a" stroke-width="2.6" stroke-linecap="round"/>
+    <circle cx="29" cy="36" r="2.2" fill="#08323d"/>
+    <g class="sa-plane"><path transform="translate(37 3) rotate(-28 12 12)" fill="var(--ka)" stroke="#08323d" stroke-opacity=".4" stroke-width=".8" d="${SAB_PLANE}"/></g></svg>`,
+};
+// Variant: dobbelsteen (willekeurig), vizier (kies), groepje (iedereen)
+const SAB_VAR_ICON = {
+  r: '<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3.5" y="3.5" width="17" height="17" rx="4" fill="none" stroke="currentColor" stroke-width="2.2"/><circle cx="8.5" cy="8.5" r="1.7"/><circle cx="12" cy="12" r="1.7"/><circle cx="15.5" cy="15.5" r="1.7"/></svg>',
+  c: '<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="6.5" fill="none" stroke="currentColor" stroke-width="2.2"/><path d="M12 2v4.5M12 17.5V22M2 12h4.5M17.5 12H22" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/><circle cx="12" cy="12" r="1.8"/></svg>',
+  a: '<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="6.8" r="3.6"/><circle cx="6" cy="16.8" r="3.6"/><circle cx="18" cy="16.8" r="3.6"/></svg>',
+};
+// Een kaart als HTML. Met n (de plek in je hand) is het een knop.
+function sabCard(card, cls = '', n = null){
+  const k = sabType(card), v = sabVar(card), nm = t('sab_' + k) + ', ' + t('sabv_' + v), tag = n == null ? 'span' : 'button';
+  return `<${tag} class="sc ${cls}" data-k="${k}" data-v="${v}"${n == null ? '' : ` type="button" data-n="${n}" aria-label="${esc(nm)}" title="${esc(nm)}"`}>${SAB_ART[k]}<span class="sc-nm">${esc(t('sab_' + k))}</span><span class="sc-v">${SAB_VAR_ICON[v]}</span></${tag}>`;
+}
+const sabOpen = () => $('#sabTray').classList.contains('on');
+function closeSabTray(){ sabSel = -1; $('#sabTray').classList.remove('on'); document.querySelectorAll('#sabHand .sc.sel').forEach(b => b.classList.remove('sel')); }
+// Kan deze kaart nu gespeeld worden, en op wie? Zelfde regels als de host (sabPlay), zodat de knop niets belooft wat niet kan.
+function sabState(card){
+  const mine = playerById(me.id), r = S.round, k = sabType(card);
+  if (!mine || S.finding || (S.phase !== 'round' && S.phase !== 'result')) return { why:'sabNotNow' };
+  if (mine.played === S.roundN) return { why:'sabUsed' };
+  const direct = S.phase === 'round' && k !== 'de';
+  if (!direct && S.roundN >= roundsOf(S.settings)) return { why:'sabNoNext' };
+  const rem = r ? remNow(r) : 0, pool = S.players.filter(p => sabCanHit(r, p, me.id, direct, x => r.answered.includes(x.id) || sabRem(r, x.id, rem) <= 0));
+  return pool.length ? { ok:true, direct, pool } : { why:'sabNoTarget' };
+}
+// Uitleg van de gekozen kaart, wanneer hij werkt en de knop om hem te spelen (bij "kies": de spelers die je kunt raken).
+function renderSabTray(){
+  const mine = S && playerById(me.id), card = mine && (mine.cards || [])[sabSel], el = $('#sabTray');
+  if (!card){ closeSabTray(); return; }
+  const k = sabType(card), v = sabVar(card), st = sabState(card);
+  const html = `<div class="st-top">${sabCard(card, 'play')}<div class="st-txt"><b>${esc(t('sab_' + k))}</b><span class="st-var">${SAB_VAR_ICON[v]}${esc(t('sabv_' + v))}</span><p>${esc(t('sabd_' + k) + ' ' + t('sabw_' + v))}</p></div></div>`
+    + `<div class="st-when${st.ok ? '' : ' no'}">${esc(t(st.ok ? (st.direct ? 'sabNow' : 'sabNext') : st.why))}</div>`
+    + (!st.ok ? '' : v === 'c' ? `<div class="st-pick">${st.pool.map(p => `<button class="st-p" type="button" data-to="${esc(p.id)}">${avaHtml(p, 'xs')}<span>${esc(p.name)}</span></button>`).join('')}</div>`
+      : `<button class="btn pri st-go" type="button" data-to="">${esc(t(v === 'a' ? 'sabPlayAll' : 'sabPlayRnd'))}</button>`);
+  if (el.dataset.h !== html){ el.dataset.h = html; el.innerHTML = html; }   // alleen bij verandering: anders begint de tekening steeds opnieuw
+}
+// Hand en uitleg bijwerken. Loopt na elke render en bij het verlaten van een kamer.
+function sabUi(){
+  const hand = $('#sabHand'), mine = S && S.players.find(p => p.id === me.id);
+  const live = !!(mine && sabOn(S.settings) && (S.phase === 'round' || S.phase === 'result') && S.players.filter(p => p.connected).length > 1);
+  const cards = live ? mine.cards || [] : [], used = live && mine.played === S.roundN, sig = cards.join() + lang;
+  if (hand.dataset.sig !== sig){
+    const grew = cards.length > (+hand.dataset.n || 0);
+    hand.dataset.sig = sig; hand.dataset.n = cards.length;
+    hand.innerHTML = cards.map((c, i) => sabCard(c, 'tiny' + (grew && i === cards.length - 1 ? ' new' : ''), i)).join('');
+  }
+  hand.classList.toggle('show', cards.length > 0); hand.classList.toggle('used', used);
+  if (sabSel >= cards.length) closeSabTray();
+  hand.querySelectorAll('.sc').forEach((b, i) => b.classList.toggle('sel', i === sabSel));
+  if (sabOpen()) renderSabTray();
+}
+// Melding in de laag van de emotes: de tekening van de kaart, een titel en een regel eronder.
+function sabPop(k, title, lineHtml, sub, sfx){
+  const layer = $('#emoLayer');
+  while (layer.children.length >= 3) layer.firstElementChild.remove();
+  const el = document.createElement('div'); el.className = 'sab-pop'; el.dataset.k = k;
+  el.innerHTML = `<span class="sc play" data-k="${k}">${SAB_ART[k]}</span><div class="sp-t"><b>${esc(title)}</b><span>${lineHtml}</span>${sub ? `<small>${esc(sub)}</small>` : ''}</div>`;
+  layer.appendChild(el);
+  (sfx || []).forEach(([f, d]) => setTimeout(() => beep(f, .1, 'triangle', .07), d));
+  setTimeout(() => { el.classList.add('out'); setTimeout(() => el.remove(), 280); }, 3600);
+}
+// Iemand speelde een kaart. Delusion ziet alleen wie hem speelde: voor de rest blijft het geheim tot de uitslag.
+function sabAnnounce(e){
+  const k = sabType(e.card), v = sabVar(e.card);
+  if (!SAB_TYPES.includes(k) || !Array.isArray(e.to) || (k === 'de' && e.by !== me.id)) return;
+  const hitNow = e.direct && e.to.includes(me.id);
+  if (hitNow && k === 'bo') return;   // het zwarte scherm zegt zelf al wie het deed
+  const by = playerById(e.by) || { name:'?', color:'#888' }, to = e.to.map(id => playerById(id)).filter(Boolean);
+  const names = v === 'a' && to.length > 1 ? esc(t('sabAll')) : to.map(p => dotHtml(p) + esc(p.name)).join(', ');
+  sabPop(k, t('sab_' + k), `${dotHtml(by)}${esc(by.name)}<svg class="ic" aria-hidden="true"><use href="#i-next"/></svg>${names}`, k === 'de' ? t('sabSecret') : e.direct ? '' : t('sabNextShort'),
+    k === 'bo' ? [[330,0],[220,110],[147,220]] : k === 'jl' ? [[494,0],[659,80],[880,160]] : [[523,0],[494,140],[415,280]]);
+  if (hitNow && k === 'jl'){ const c = $('#timerChip').parentElement; c.classList.remove('zap'); void c.offsetWidth; c.classList.add('zap'); }
+}
+// Nieuwe meldingen en nieuwe kaarten uit een snapshot halen. Bij binnenkomst (of terugkomst) wordt niets nagespeeld.
+function sabNews(prev, snap){
+  const evs = snap.ev || [], top = evs.reduce((a, e) => Math.max(a, e.id), 0);
+  if (!prev){ sabSeen = top; return; }
+  for (const e of evs) if (e.id > sabSeen) sabAnnounce(e);
+  sabSeen = Math.max(sabSeen, top);
+  const a = prev.players.find(p => p.id === me.id), b = snap.players.find(p => p.id === me.id);
+  if (a && b && b.cards && b.cards.length > (a.cards || []).length){ const c = b.cards[b.cards.length - 1]; sabPop(sabType(c), t('sabNew'), esc(t('sab_' + sabType(c)) + ', ' + t('sabv_' + sabVar(c))), '', [[880,0],[1175,90]]); }
+}
+$('#sabHand').addEventListener('click', e => {
+  const b = e.target.closest('[data-n]'); if (!b) return;
+  const n = +b.dataset.n, same = sabOpen() && sabSel === n;
+  closeEmoTray(); $('#chat').classList.remove('on');
+  if (same){ closeSabTray(); return; }
+  sabSel = n; $('#sabTray').classList.add('on'); beep(560, .04); sabUi();
+});
+$('#sabTray').addEventListener('click', e => {
+  const b = e.target.closest('[data-to]'), mine = S && playerById(me.id), card = mine && (mine.cards || [])[sabSel];
+  if (!b || !card) return;
+  act({ t:'card', p:{ card, to: b.dataset.to || null } });
+  closeSabTray(); beep(700, .06);
+});
+$('#sabDeck').addEventListener('click', e => { const b = e.target.closest('[data-k]'); if (b){ toast(t('sabd_' + b.dataset.k)); beep(560, .04); } });
+document.addEventListener('pointerdown', e => { if (sabOpen() && !e.target.closest('#sabTray,#sabHand')) closeSabTray(); });
+document.addEventListener('keydown', e => { if (e.key === 'Escape' && sabOpen()) closeSabTray(); });
 
 /* ================= BOOT ================= */
 (async function boot(){
