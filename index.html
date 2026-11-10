@@ -20,7 +20,7 @@
 :root{
   --paper:#f2eee5;--card:#fffdf8;--card-hi:#fffdf8;--card2:#e9e3d6;--line:#d5cdbc;--ink:#1c1b18;--mute:#6a655a;
   --acc:#d4461b;--acc-d:#c13d15;--acc-hi:#d4461b;--acc-edge:#8c2b0c;--on-acc:#fff;--delft:#1f4e96;--sea:#1f5280;
-  --gold:#9a6a08;--on-gold:#fff;--bad:#c0322b;--ok:#2f7a4a;--r:6px;
+  --gold:#9a6a08;--on-gold:#fff;--bad:#c0322b;--ok:#2f7a4a;--r:6px;--d-easy:#2f8a4e;--d-normal:#b98a0a;--d-hard:#c0322b;
   --display:'The Logo Font','The Bold Font',Impact,'Arial Black',sans-serif;--font:'Madani','The Bold Font',system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;
   --field:#fff;--flash:#fbe3d6;--done:#dcecdf;--ink2:#3a372f;--glass:rgba(255,253,248,.97);--sel:#fff;
   --shadow:0 2px 0 rgba(28,27,24,.08);
@@ -30,7 +30,7 @@
   color-scheme:dark;
   --paper:#151513;--card:#1e1d1a;--card-hi:#1e1d1a;--card2:#282722;--line:#3a3831;--ink:#eee9de;--mute:#9e988a;
   --acc:#e8552a;--acc-d:#d84a20;--acc-hi:#f06a3f;--acc-edge:#8f300f;--on-acc:#fff;--delft:#2a5aa8;--sea:#7eaed6;
-  --gold:#e0b04a;--on-gold:#15151f;--bad:#ee6a5a;--ok:#74c08d;
+  --gold:#e0b04a;--on-gold:#15151f;--bad:#ee6a5a;--ok:#74c08d;--d-easy:#6cc488;--d-normal:#e6bd4a;--d-hard:#f0695a;
   --field:#121210;--flash:#3d2a1e;--done:#1f3326;--ink2:#d6d0c3;--glass:rgba(30,29,26,.97);--sel:#34322c;
   --shadow:0 2px 0 rgba(0,0,0,.35);
   --shadow-up:0 2px 0 rgba(0,0,0,.45);
@@ -158,6 +158,29 @@ span.pill{cursor:default}
 .seg button.on{background:var(--sel);color:var(--ink);box-shadow:0 0 0 1px var(--line)}
 .seg.ro button{pointer-events:none}
 .seg.sm button{font-size:12.5px;padding:5px 1px}
+/* Volgorde: zes tegeltjes in moduskleur laten het patroon zien. */
+.seg .ord{display:flex;justify-content:center;align-items:center;gap:2px;height:13px;margin-bottom:3px}
+.seg .ord i{width:7px;height:7px;border-radius:2px;background:var(--mc);opacity:.62;transition:opacity .2s,transform .3s cubic-bezier(.2,.8,.2,1)}
+.seg button.on .ord i{opacity:1}
+.seg .ord-mix i:nth-child(1){transform:translateY(-2px)}.seg .ord-mix i:nth-child(2){transform:translateY(2px)}.seg .ord-mix i:nth-child(3){transform:translateY(-1px)}
+.seg .ord-mix i:nth-child(4){transform:translateY(3px)}.seg .ord-mix i:nth-child(5){transform:translateY(-3px)}.seg .ord-mix i:nth-child(6){transform:translateY(1px)}
+.seg .ord-block{gap:0}
+.seg .ord-block i{height:9px}
+.seg .ord-block i:nth-child(odd){border-radius:2px 0 0 2px}
+.seg .ord-block i:nth-child(even){border-radius:0 2px 2px 0;margin-right:4px}
+.seg .ord-block i:last-child{margin-right:0}
+/* Moeilijkheid: groen, geel, rood. Oplopend is een helling die door alle drie loopt. */
+.seg.diff button{position:relative;isolation:isolate;overflow:hidden;padding-bottom:9px;--dc:var(--d-normal);color:color-mix(in srgb,var(--dc) 45%,var(--mute))}
+.seg.diff button[data-val=easy]{--dc:var(--d-easy)}.seg.diff button[data-val=hard]{--dc:var(--d-hard)}
+.seg.diff button::after{content:'';position:absolute;left:26%;right:26%;bottom:4px;height:3px;border-radius:2px;background:var(--dc);opacity:.5;transition:left .25s,right .25s,opacity .2s}
+.seg.diff button.on{background:color-mix(in srgb,var(--dc) 20%,var(--sel));color:color-mix(in srgb,var(--dc) 62%,var(--ink));font-weight:700;box-shadow:0 0 0 1px color-mix(in srgb,var(--dc) 65%,transparent)}
+.seg.diff button.on::after{left:14%;right:14%;opacity:1}
+.seg.diff button[data-val=rise]{--dg:linear-gradient(90deg,var(--d-easy),var(--d-normal) 50%,var(--d-hard));color:var(--mute)}
+.seg.diff button[data-val=rise]::after{display:none}
+.seg.diff button[data-val=rise]::before{content:'';position:absolute;z-index:-1;inset:0;background:var(--dg);opacity:.32;clip-path:polygon(0 100%,0 86%,100% 42%,100% 100%);transition:opacity .25s,clip-path .5s cubic-bezier(.2,.8,.2,1)}
+.seg.diff button[data-val=rise].on{background:var(--sel);color:var(--ink);box-shadow:0 0 0 1px color-mix(in srgb,var(--d-normal) 65%,transparent)}
+.seg.diff button[data-val=rise].on::before{opacity:.62;clip-path:polygon(0 100%,0 78%,100% 8%,100% 100%);background-size:220% 100%;animation:riseFlow 3.6s ease-in-out infinite alternate}
+@keyframes riseFlow{from{background-position:0 0}to{background-position:100% 0}}
 .seg.modes{display:grid;grid-template-columns:1fr 1fr;gap:8px;background:none;padding:0;box-shadow:none;border-radius:0}
 .seg.modes button{display:flex;align-items:center;justify-content:flex-start;gap:9px;min-height:52px;padding:7px 8px;text-align:left;font-weight:700;font-size:15px;line-height:1.1;color:var(--ink2);background:var(--card2);border:1.5px solid transparent;border-radius:6px;box-shadow:var(--shadow);transition:background .15s,border-color .15s,color .15s,transform .1s}
 .seg.modes button:active{transform:scale(.97)}
@@ -193,6 +216,26 @@ span.pill{cursor:default}
 .provs .chipbtn{min-width:0;padding:7px 4px;border-radius:4px;font-size:13px;text-align:center;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .provs.ro .chipbtn{cursor:default}
 .provs.ro .chipbtn:not(.on){opacity:.6}
+/* Provincies: de vlag als strook links (uit) of als hele tegel onder een donkere waas (aan). */
+.provs .chipbtn{position:relative;isolation:isolate;background:var(--card2);padding-left:11px}
+.provs .chipbtn::before{content:'';position:absolute;z-index:-2;inset:0;background:var(--fl,var(--delft));clip-path:inset(0 calc(100% - 6px) 0 0);transition:clip-path .4s cubic-bezier(.2,.8,.2,1)}
+.provs .chipbtn::after{content:'';position:absolute;z-index:-1;inset:0;background:linear-gradient(180deg,rgba(255,255,255,.2),transparent 46%,rgba(0,0,0,.28)),linear-gradient(100deg,rgba(13,14,19,.06),rgba(13,14,19,.5) 48%,rgba(13,14,19,.74));opacity:0;transition:opacity .3s}
+.provs .chipbtn.on{background:#14151a;border-color:#0d0e13;color:#fff;font-weight:700;text-shadow:0 1px 2px rgba(0,0,0,.75);box-shadow:var(--shadow-up)}
+.provs .chipbtn.on::before{clip-path:inset(0)}
+.provs .chipbtn.on::after{opacity:1}
+.provs .chipbtn:active{transform:scale(.97)}
+.provs [data-tv=GR]{--fl:linear-gradient(90deg,transparent 39%,#fff 0 43%,#1a8f3c 0 57%,#fff 0 61%,transparent 0),linear-gradient(180deg,transparent 30%,#fff 0 37%,#1a8f3c 0 63%,#fff 0 70%,transparent 0),conic-gradient(#1f4e96 0 25%,#c8102e 0 50%,#1f4e96 0 75%,#c8102e 0)}
+.provs [data-tv=FR]{--fl:linear-gradient(135deg,#1f5fae 0 14.3%,#fff 0 28.6%,#1f5fae 0 42.9%,#fff 0 57.1%,#1f5fae 0 71.4%,#fff 0 85.7%,#1f5fae 0 100.0%)}
+.provs [data-tv=DR]{--fl:linear-gradient(180deg,#fff 0 24%,#c8102e 0 38%,#fff 0 62%,#c8102e 0 76%,#fff 0)}
+.provs [data-tv=OV]{--fl:linear-gradient(180deg,#c8102e 0 30%,#f6c800 0 43%,#1f4e96 0 57%,#f6c800 0 70%,#c8102e 0)}
+.provs [data-tv=FL]{--fl:linear-gradient(180deg,#0a66b4 0 44%,#f6c800 0 56%,#0f9a48 0)}
+.provs [data-tv=GE]{--fl:linear-gradient(180deg,#0e4f9e 0 33.4%,#fecb00 0 66.7%,#111 0)}
+.provs [data-tv=UT]{--fl:linear-gradient(180deg,transparent 38%,#fff 0 62%,transparent 0) 0 0/34% 50% no-repeat,linear-gradient(90deg,#c8102e 38%,#fff 0 62%,#c8102e 0) 0 0/34% 50% no-repeat,linear-gradient(180deg,#fff 50%,#c8102e 0)}
+.provs [data-tv=NH]{--fl:linear-gradient(180deg,#f6c800 0 33.4%,#c8102e 0 66.7%,#1f4e96 0)}
+.provs [data-tv=ZH]{--fl:radial-gradient(ellipse 34% 62% at 24% 50%,#c8102e 0 55%,transparent 100%),#f6c800}
+.provs [data-tv=ZE]{--fl:linear-gradient(180deg,#1f5fae 0 14.3%,#fff 0 28.6%,#1f5fae 0 42.9%,#fff 0 57.1%,#1f5fae 0 71.4%,#fff 0 85.7%,#1f5fae 0 100.0%)}
+.provs [data-tv=NB]{--fl:conic-gradient(#c8102e 25%,#fff 0 50%,#c8102e 0 75%,#fff 0) 0 0/33.34% 50%}
+.provs [data-tv=LI]{--fl:radial-gradient(ellipse 22% 60% at 22% 50%,#c8102e 0 55%,transparent 100%),linear-gradient(180deg,#fff 0 40%,#1f4e96 0 60%,#f6c800 0)}
 .toggle .tl{display:flex;flex-direction:column;gap:2px;min-width:0}
 .toggle .tl small{font-size:12px;color:var(--mute)}
 .stepper{display:flex;align-items:center;gap:2px;background:var(--card2);border-radius:5px;padding:3px;box-shadow:inset 0 0 0 1px var(--line);flex:none}
@@ -860,7 +903,7 @@ body[data-screen=game] #emoLayer{left:max(10px,env(safe-area-inset-left));transf
       <div class="field" data-for="tour"><label data-i="tourOrder"></label><div class="seg" data-set="tourOrder" data-opts="mix,cycle,block"></div></div>
       <div class="toggle" data-for="tour"><div class="tl"><label data-i="rounds"></label><small id="tourSplit"></small></div>
         <div class="stepper" id="tourStep"><button type="button" data-step="-1" aria-label="-1"><svg class="ic"><use href="#i-minus"/></svg></button><b id="tourRoundsVal" aria-live="polite"></b><button type="button" data-step="1" aria-label="+1"><svg class="ic"><use href="#i-plus"/></svg></button></div></div>
-      <div class="field" data-for="tour"><label data-i="difficulty"></label><div class="seg" data-set="tourDiff" data-opts="easy,normal,hard,rise"></div></div>
+      <div class="field" data-for="tour"><label data-i="difficulty"></label><div class="seg diff" data-set="tourDiff" data-opts="easy,normal,hard,rise"></div></div>
       <div class="field" data-for="tour" data-tm="map street darts shape draw"><div class="lrow"><label data-i="tourConts"></label><button class="mini" data-all="tourConts" data-i="allOn"></button></div><div class="chips ico c5" id="tourConts" data-tset="tourConts" role="group"></div></div>
       <div class="field" data-for="tour" data-tm="dutch hunt" id="tourProvsField"><div class="lrow"><label data-i="tourProvs"></label><button class="mini" data-all="tourProvs" data-i="allOn"></button></div><div class="provs" id="tourProvs" data-tset="tourProvs" role="group"></div></div>
       <div class="field" data-for="hunt tour" data-tm="hunt"><label id="huntCityLbl" data-i="huntCity" for="huntCity"></label><select id="huntCity"></select></div>
@@ -868,7 +911,7 @@ body[data-screen=game] #emoLayer{left:max(10px,env(safe-area-inset-left));transf
       <div class="field" data-for="dutch darts tour" data-tm="dutch darts"><label data-i="nlView"></label><div class="seg" data-set="nlView" data-opts="sat,photo"></div></div>
       <div class="field" data-for="world dutch hunt"><label data-i="rounds"></label><div class="seg" data-set="rounds" data-opts="5,10,15"></div></div>
       <div class="field"><label data-i="roundTime"></label><div class="seg" data-set="roundTime" data-opts="30,60,90" data-suf="s"></div></div>
-      <div class="field" data-for="world dutch hunt"><label data-i="difficulty"></label><div class="seg" data-set="difficulty" data-opts="easy,normal,hard"></div></div>
+      <div class="field" data-for="world dutch hunt"><label data-i="difficulty"></label><div class="seg diff" data-set="difficulty" data-opts="easy,normal,hard"></div></div>
       <div class="field" data-for="world"><label data-i="continent"></label><div class="seg sm cont" data-set="continent" data-opts="ALL,EU,AM,AS,OC,AF"></div></div>
       <div class="toggle" data-for="tour"><div class="tl"><label data-i="tourFinal"></label><small data-i="tourFinalSub"></small></div><button class="sw" data-sw="tourFinal" aria-label="toggle"></button></div>
     </div>
@@ -3076,6 +3119,9 @@ function renderLobby(){
       if (key==='continent') return `<button class="${cls}" data-val="${o}" aria-label="${esc(label)}" title="${esc(label)}"><svg class="ic"><use href="#i-${o}"/></svg></button>`;
       if (key==='mode' && o==='tour') return `<button class="tourBtn ${cls}${cls && justOn ? ' go' : ''}" data-val="${o}" data-m="${o}"><span class="mi">${TOUR_ICON}</span><span class="ml"><b>${label}</b><small>${esc(t('tourSub'))}</small></span></button>`;
       if (key==='mode') return `<button class="${cls}" data-val="${o}" data-m="${o}"><span class="mi"><svg aria-hidden="true"><use href="#m-${o}"/></svg></span><span class="ml">${label}</span></button>`;
+      if (key==='tourOrder'){ const tmodes = S.settings.tourModes && S.settings.tourModes.length ? S.settings.tourModes : TOUR_MODES, om = [0,1,2].map(i => tmodes[i % tmodes.length]);
+        const pat = { mix:[1,0,2,0,1,2], cycle:[0,1,2,0,1,2], block:[0,0,1,1,2,2] }[o];
+        return `<button class="${cls}" data-val="${o}"><span class="ord ord-${o}" aria-hidden="true">${pat.map(i => `<i data-m="${om[i]}"></i>`).join('')}</span>${html}</button>`; }
       return `<button class="${cls}" data-val="${o}">${html}</button>`;
     }).join('');
   });
