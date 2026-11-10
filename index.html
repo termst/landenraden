@@ -20,7 +20,7 @@
 :root{
   --paper:#f2eee5;--card:#fffdf8;--card-hi:#fffdf8;--card2:#e9e3d6;--line:#d5cdbc;--ink:#1c1b18;--mute:#6a655a;
   --acc:#d4461b;--acc-d:#c13d15;--acc-hi:#d4461b;--acc-edge:#8c2b0c;--on-acc:#fff;--delft:#1f4e96;--sea:#1f5280;
-  --gold:#9a6a08;--on-gold:#fff;--bad:#c0322b;--ok:#2f7a4a;--r:6px;
+  --gold:#9a6a08;--on-gold:#fff;--bad:#c0322b;--ok:#2f7a4a;--r:6px;--d-easy:#2f8a4e;--d-normal:#b98a0a;--d-hard:#c0322b;
   --display:'The Logo Font','The Bold Font',Impact,'Arial Black',sans-serif;--font:'Madani','The Bold Font',system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;
   --field:#fff;--flash:#fbe3d6;--done:#dcecdf;--ink2:#3a372f;--glass:rgba(255,253,248,.97);--sel:#fff;
   --shadow:0 2px 0 rgba(28,27,24,.08);
@@ -30,7 +30,7 @@
   color-scheme:dark;
   --paper:#151513;--card:#1e1d1a;--card-hi:#1e1d1a;--card2:#282722;--line:#3a3831;--ink:#eee9de;--mute:#9e988a;
   --acc:#e8552a;--acc-d:#d84a20;--acc-hi:#f06a3f;--acc-edge:#8f300f;--on-acc:#fff;--delft:#2a5aa8;--sea:#7eaed6;
-  --gold:#e0b04a;--on-gold:#15151f;--bad:#ee6a5a;--ok:#74c08d;
+  --gold:#e0b04a;--on-gold:#15151f;--bad:#ee6a5a;--ok:#74c08d;--d-easy:#6cc488;--d-normal:#e6bd4a;--d-hard:#f0695a;
   --field:#121210;--flash:#3d2a1e;--done:#1f3326;--ink2:#d6d0c3;--glass:rgba(30,29,26,.97);--sel:#34322c;
   --shadow:0 2px 0 rgba(0,0,0,.35);
   --shadow-up:0 2px 0 rgba(0,0,0,.45);
@@ -158,6 +158,29 @@ span.pill{cursor:default}
 .seg button.on{background:var(--sel);color:var(--ink);box-shadow:0 0 0 1px var(--line)}
 .seg.ro button{pointer-events:none}
 .seg.sm button{font-size:12.5px;padding:5px 1px}
+/* Volgorde: zes tegeltjes in moduskleur laten het patroon zien. */
+.seg .ord{display:flex;justify-content:center;align-items:center;gap:2px;height:13px;margin-bottom:3px}
+.seg .ord i{width:7px;height:7px;border-radius:2px;background:var(--mc);opacity:.62;transition:opacity .2s,transform .3s cubic-bezier(.2,.8,.2,1)}
+.seg button.on .ord i{opacity:1}
+.seg .ord-mix i:nth-child(1){transform:translateY(-2px)}.seg .ord-mix i:nth-child(2){transform:translateY(2px)}.seg .ord-mix i:nth-child(3){transform:translateY(-1px)}
+.seg .ord-mix i:nth-child(4){transform:translateY(3px)}.seg .ord-mix i:nth-child(5){transform:translateY(-3px)}.seg .ord-mix i:nth-child(6){transform:translateY(1px)}
+.seg .ord-block{gap:0}
+.seg .ord-block i{height:9px}
+.seg .ord-block i:nth-child(odd){border-radius:2px 0 0 2px}
+.seg .ord-block i:nth-child(even){border-radius:0 2px 2px 0;margin-right:4px}
+.seg .ord-block i:last-child{margin-right:0}
+/* Moeilijkheid: groen, geel, rood. Oplopend is een helling die door alle drie loopt. */
+.seg.diff button{position:relative;isolation:isolate;overflow:hidden;min-height:28px;padding:3px 4px 7px;--dc:var(--d-normal);color:color-mix(in srgb,var(--dc) 45%,var(--mute))}
+.seg.diff button[data-val=easy]{--dc:var(--d-easy)}.seg.diff button[data-val=hard]{--dc:var(--d-hard)}
+.seg.diff button::after{content:'';position:absolute;left:26%;right:26%;bottom:3px;height:2px;border-radius:1px;background:var(--dc);opacity:.5;transition:left .25s,right .25s,opacity .2s}
+.seg.diff button.on{background:color-mix(in srgb,var(--dc) 20%,var(--sel));color:color-mix(in srgb,var(--dc) 62%,var(--ink));box-shadow:0 0 0 1px color-mix(in srgb,var(--dc) 65%,transparent)}
+.seg.diff button.on::after{left:14%;right:14%;opacity:1}
+.seg.diff button[data-val=rise]{--dg:linear-gradient(90deg,var(--d-easy),var(--d-normal) 50%,var(--d-hard));color:var(--mute)}
+.seg.diff button[data-val=rise]::after{display:none}
+.seg.diff button[data-val=rise]::before{content:'';position:absolute;z-index:-1;inset:0;background:var(--dg);opacity:.32;clip-path:polygon(0 100%,0 86%,100% 42%,100% 100%);transition:opacity .25s,clip-path .5s cubic-bezier(.2,.8,.2,1)}
+.seg.diff button[data-val=rise].on{background:var(--sel);color:var(--ink);box-shadow:0 0 0 1px color-mix(in srgb,var(--d-normal) 65%,transparent)}
+.seg.diff button[data-val=rise].on::before{opacity:.62;clip-path:polygon(0 100%,0 78%,100% 8%,100% 100%);background-size:220% 100%;animation:riseFlow 3.6s ease-in-out infinite alternate}
+@keyframes riseFlow{from{background-position:0 0}to{background-position:100% 0}}
 .seg.modes{display:grid;grid-template-columns:1fr 1fr;gap:8px;background:none;padding:0;box-shadow:none;border-radius:0}
 .seg.modes button{display:flex;align-items:center;justify-content:flex-start;gap:9px;min-height:52px;padding:7px 8px;text-align:left;font-weight:700;font-size:15px;line-height:1.1;color:var(--ink2);background:var(--card2);border:1.5px solid transparent;border-radius:6px;box-shadow:var(--shadow);transition:background .15s,border-color .15s,color .15s,transform .1s}
 .seg.modes button:active{transform:scale(.97)}
@@ -193,6 +216,25 @@ span.pill{cursor:default}
 .provs .chipbtn{min-width:0;padding:7px 4px;border-radius:4px;font-size:13px;text-align:center;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .provs.ro .chipbtn{cursor:default}
 .provs.ro .chipbtn:not(.on){opacity:.6}
+/* Provincies: vlak tegeltje met de vlag in 3:2 ervoor. Uit is de vlag grijs. */
+.provs .chipbtn{display:flex;align-items:center;gap:6px;padding:7px 6px;text-align:left;background:transparent;border-color:var(--line);color:var(--mute)}
+.provs .chipbtn::before{content:'';flex:none;width:21px;height:14px;border-radius:2px;background:var(--fl) center/100% 100% no-repeat;box-shadow:0 0 0 1px color-mix(in srgb,var(--ink) 16%,transparent);filter:grayscale(1);opacity:.4;transition:filter .15s,opacity .15s}
+.provs .chipbtn .pn{min-width:0;overflow:hidden;text-overflow:ellipsis}
+.provs .chipbtn.on{background:var(--sel);border-color:color-mix(in srgb,var(--ink) 30%,var(--line));color:var(--ink)}
+.provs .chipbtn.on::before{filter:none;opacity:1}
+@media (max-width:380px){.provs .chipbtn{gap:5px;padding:7px 5px;font-size:12px}.provs .chipbtn::before{width:18px;height:12px}}
+.provs [data-tv=NH]{--fl:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 20'%3E%3Crect x='0' y='0' width='30' height='20' fill='%23fcd116'/%3E%3Crect x='0' y='6.67' width='30' height='6.67' fill='%23d21034'/%3E%3Crect x='0' y='13.33' width='30' height='6.67' fill='%231e4fa3'/%3E%3C/svg%3E")}
+.provs [data-tv=GE]{--fl:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 20'%3E%3Crect x='0' y='0' width='30' height='20' fill='%231650b0'/%3E%3Crect x='0' y='6.67' width='30' height='6.67' fill='%23fcd116'/%3E%3Crect x='0' y='13.33' width='30' height='6.67' fill='%2316161a'/%3E%3C/svg%3E")}
+.provs [data-tv=DR]{--fl:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 20'%3E%3Crect x='0' y='0' width='30' height='20' fill='%23fff'/%3E%3Crect x='0' y='4.6' width='30' height='2' fill='%23d21034'/%3E%3Crect x='0' y='13.4' width='30' height='2' fill='%23d21034'/%3E%3Cpath fill='%2316161a' d='M5 12.4V8.6h.9v.8h.8v-.8h.9v.8h.8v-.8h.9v3.8H8.1v-1.3a.75.75 0 0 0-1.5 0v1.3Z'/%3E%3Cpath fill='%23d21034' transform='translate(12.6 10.1)' d='M0-1.25L.37-.4L1.19-.39L.6.15L.73 1.01L0 .55L-.73 1.01L-.6.15L-1.19-.39L-.37-.4Z'/%3E%3Cpath fill='%23d21034' transform='translate(15.5 10.1)' d='M0-1.25L.37-.4L1.19-.39L.6.15L.73 1.01L0 .55L-.73 1.01L-.6.15L-1.19-.39L-.37-.4Z'/%3E%3Cpath fill='%23d21034' transform='translate(18.4 10.1)' d='M0-1.25L.37-.4L1.19-.39L.6.15L.73 1.01L0 .55L-.73 1.01L-.6.15L-1.19-.39L-.37-.4Z'/%3E%3Cpath fill='%23d21034' transform='translate(21.3 10.1)' d='M0-1.25L.37-.4L1.19-.39L.6.15L.73 1.01L0 .55L-.73 1.01L-.6.15L-1.19-.39L-.37-.4Z'/%3E%3Cpath fill='%23d21034' transform='translate(24.2 10.1)' d='M0-1.25L.37-.4L1.19-.39L.6.15L.73 1.01L0 .55L-.73 1.01L-.6.15L-1.19-.39L-.37-.4Z'/%3E%3Cpath fill='%23d21034' transform='translate(27.1 10.1)' d='M0-1.25L.37-.4L1.19-.39L.6.15L.73 1.01L0 .55L-.73 1.01L-.6.15L-1.19-.39L-.37-.4Z'/%3E%3C/svg%3E")}
+.provs [data-tv=OV]{--fl:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 20'%3E%3Crect x='0' y='0' width='30' height='20' fill='%23d21034'/%3E%3Crect x='0' y='5.8' width='30' height='8.4' fill='%23fcd116'/%3E%3Cpath fill='none' stroke='%231e4fa3' stroke-width='2.5' d='M-1 10q2 -1.5 4 0t4 0q2 -1.5 4 0t4 0q2 -1.5 4 0t4 0q2 -1.5 4 0t4 0'/%3E%3C/svg%3E")}
+.provs [data-tv=FL]{--fl:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 20'%3E%3Crect x='0' y='0' width='30' height='20' fill='%231269b8'/%3E%3Crect x='0' y='11.6' width='30' height='8.4' fill='%231f9a48'/%3E%3Cpath fill='none' stroke='%23fcd116' stroke-width='1.9' d='M-1 11.6q2 -1.3 4 0t4 0q2 -1.3 4 0t4 0H31'/%3E%3Cpath fill='%23fff' d='M7 2.6c.9 1 .9 2.3.45 3.2c.5-.9 1.5-1.2 2.2-.5c.6.7.2 1.7-.7 1.8H8v.7h-.5l.1 1.3H6.4l.1-1.3H6v-.7H5.05c-.9-.1-1.3-1.1-.7-1.8c.7-.7 1.7-.4 2.2.5C6.1 4.9 6.1 3.6 7 2.6Z'/%3E%3C/svg%3E")}
+.provs [data-tv=UT]{--fl:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 20'%3E%3Crect x='0' y='0' width='30' height='10' fill='%23fff'/%3E%3Crect x='0' y='10' width='30' height='10' fill='%23d21034'/%3E%3Crect x='0' y='0' width='10' height='10' fill='%23d21034'/%3E%3Crect x='4' y='0' width='2' height='10' fill='%23fff'/%3E%3Crect x='0' y='4' width='10' height='2' fill='%23fff'/%3E%3C/svg%3E")}
+.provs [data-tv=GR]{--fl:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 20'%3E%3Crect x='0' y='0' width='15' height='10' fill='%23d21034'/%3E%3Crect x='15' y='0' width='15' height='10' fill='%231e4fa3'/%3E%3Crect x='0' y='10' width='15' height='10' fill='%231e4fa3'/%3E%3Crect x='15' y='10' width='15' height='10' fill='%23d21034'/%3E%3Crect x='12' y='0' width='6' height='20' fill='%23fff'/%3E%3Crect x='0' y='7' width='30' height='6' fill='%23fff'/%3E%3Crect x='13.5' y='0' width='3' height='20' fill='%231f9a48'/%3E%3Crect x='0' y='8.5' width='30' height='3' fill='%231f9a48'/%3E%3C/svg%3E")}
+.provs [data-tv=FR]{--fl:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 20'%3E%3Crect x='0' y='0' width='30' height='20' fill='%231757b5'/%3E%3Cpath fill='%23fff' transform='matrix(-1 0 0 1 30 0)' d='M8.57 0H17.14L-12.86 20H-21.43ZM25.71 0H34.29L4.29 20H-4.29ZM42.86 0H51.43L21.43 20H12.86Z'/%3E%3Cpath fill='%23d21034' transform='translate(20.4 2.2) rotate(34)' d='M0 1.25C-2.1-.2-1-1.75 0-.65C1-1.75 2.1-.2 0 1.25Z'/%3E%3Cpath fill='%23d21034' transform='translate(26.6 6.3) rotate(34)' d='M0 1.25C-2.1-.2-1-1.75 0-.65C1-1.75 2.1-.2 0 1.25Z'/%3E%3Cpath fill='%23d21034' transform='translate(7.5 5) rotate(34)' d='M0 1.25C-2.1-.2-1-1.75 0-.65C1-1.75 2.1-.2 0 1.25Z'/%3E%3Cpath fill='%23d21034' transform='translate(15 10) rotate(34)' d='M0 1.25C-2.1-.2-1-1.75 0-.65C1-1.75 2.1-.2 0 1.25Z'/%3E%3Cpath fill='%23d21034' transform='translate(22.5 15) rotate(34)' d='M0 1.25C-2.1-.2-1-1.75 0-.65C1-1.75 2.1-.2 0 1.25Z'/%3E%3Cpath fill='%23d21034' transform='translate(3.4 13.7) rotate(34)' d='M0 1.25C-2.1-.2-1-1.75 0-.65C1-1.75 2.1-.2 0 1.25Z'/%3E%3Cpath fill='%23d21034' transform='translate(9.6 17.8) rotate(34)' d='M0 1.25C-2.1-.2-1-1.75 0-.65C1-1.75 2.1-.2 0 1.25Z'/%3E%3C/svg%3E")}
+.provs [data-tv=ZH]{--fl:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 20'%3E%3Crect x='0' y='0' width='30' height='20' fill='%23fcd116'/%3E%3Cg transform='translate(8.85 2) scale(0.12)' fill='none' stroke='%23d21034' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath stroke-width='31' d='M60 82L48 44'/%3E%3Cpath stroke-width='12' d='M44 40L22 30L15 20M50 56L24 56L15 47M62 86L70 106L58 121L46 121M54 88L34 92L25 106'/%3E%3Cpath stroke-width='8' d='M68 86C96 84 94 54 80 48S76 22 92 14'/%3E%3Ccircle cx='41' cy='22' r='15' fill='%23d21034' stroke='none'/%3E%3Ccircle cx='51' cy='33' r='17' fill='%23d21034' stroke='none'/%3E%3Cpath stroke-width='11' d='M34 27L25 29'/%3E%3C/g%3E%3C/svg%3E")}
+.provs [data-tv=LI]{--fl:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 20'%3E%3Crect x='0' y='0' width='30' height='20' fill='%23fff'/%3E%3Crect x='0' y='8' width='30' height='4' fill='%231e4fa3'/%3E%3Crect x='0' y='12' width='30' height='8' fill='%23fcd116'/%3E%3Cg transform='translate(4.73 2.5) scale(0.12)' fill='none' stroke='%23d21034' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath stroke-width='31' d='M60 82L48 44'/%3E%3Cpath stroke-width='12' d='M44 40L22 30L15 20M50 56L24 56L15 47M62 86L70 106L58 121L46 121M54 88L34 92L25 106'/%3E%3Cpath stroke-width='8' d='M68 86C96 84 94 54 80 48S76 22 92 14'/%3E%3Ccircle cx='41' cy='22' r='15' fill='%23d21034' stroke='none'/%3E%3Ccircle cx='51' cy='33' r='17' fill='%23d21034' stroke='none'/%3E%3Cpath stroke-width='11' d='M34 27L25 29'/%3E%3C/g%3E%3C/svg%3E")}
+.provs [data-tv=ZE]{--fl:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 20'%3E%3Crect x='0' y='0' width='30' height='20' fill='%231757b5'/%3E%3Cpath fill='none' stroke='%23fff' stroke-width='2.86' d='M-1 4.29q2.67 -1.1 5.33 0t5.33 0q2.67 -1.1 5.33 0t5.33 0q2.67 -1.1 5.33 0t5.33 0'/%3E%3Cpath fill='none' stroke='%23fff' stroke-width='2.86' d='M-1 10q2.67 -1.1 5.33 0t5.33 0q2.67 -1.1 5.33 0t5.33 0q2.67 -1.1 5.33 0t5.33 0'/%3E%3Cpath fill='none' stroke='%23fff' stroke-width='2.86' d='M-1 15.71q2.67 -1.1 5.33 0t5.33 0q2.67 -1.1 5.33 0t5.33 0q2.67 -1.1 5.33 0t5.33 0'/%3E%3Cpath fill='%23fcd116' d='M12.6 5.6l.9.9l.75-1.1l.75 1.1l.75-1.1l.75 1.1l.9-.9v2H12.6Z'/%3E%3Cpath fill='%23fcd116' stroke='%2316161a' stroke-width='.35' d='M12.4 7.8h5.2v4.2c0 1.6-1.3 2.6-2.6 3.1c-1.3-.5-2.6-1.5-2.6-3.1Z'/%3E%3Cpath fill='%231757b5' d='M12.6 11.2h4.8v.8c0 1.4-1.2 2.4-2.4 2.9c-1.2-.5-2.4-1.5-2.4-2.9Z'/%3E%3Cpath fill='none' stroke='%23fff' stroke-width='.5' d='M12.9 12.5q.52-.5 1.05 0t1.05 0t1.05 0t1.05 0'/%3E%3Ccircle cx='15' cy='9.6' r='1.05' fill='%23d21034'/%3E%3C/svg%3E")}
+.provs [data-tv=NB]{--fl:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 20'%3E%3Crect x='0' y='0' width='30' height='20' fill='%23fff'/%3E%3Cpath fill='%23d21034' d='M0 0h5v5h-5ZM10 0h5v5h-5ZM20 0h5v5h-5ZM5 5h5v5h-5ZM15 5h5v5h-5ZM25 5h5v5h-5ZM0 10h5v5h-5ZM10 10h5v5h-5ZM20 10h5v5h-5ZM5 15h5v5h-5ZM15 15h5v5h-5ZM25 15h5v5h-5Z'/%3E%3C/svg%3E")}
 .toggle .tl{display:flex;flex-direction:column;gap:2px;min-width:0}
 .toggle .tl small{font-size:12px;color:var(--mute)}
 .stepper{display:flex;align-items:center;gap:2px;background:var(--card2);border-radius:5px;padding:3px;box-shadow:inset 0 0 0 1px var(--line);flex:none}
@@ -860,7 +902,7 @@ body[data-screen=game] #emoLayer{left:max(10px,env(safe-area-inset-left));transf
       <div class="field" data-for="tour"><label data-i="tourOrder"></label><div class="seg" data-set="tourOrder" data-opts="mix,cycle,block"></div></div>
       <div class="toggle" data-for="tour"><div class="tl"><label data-i="rounds"></label><small id="tourSplit"></small></div>
         <div class="stepper" id="tourStep"><button type="button" data-step="-1" aria-label="-1"><svg class="ic"><use href="#i-minus"/></svg></button><b id="tourRoundsVal" aria-live="polite"></b><button type="button" data-step="1" aria-label="+1"><svg class="ic"><use href="#i-plus"/></svg></button></div></div>
-      <div class="field" data-for="tour"><label data-i="difficulty"></label><div class="seg" data-set="tourDiff" data-opts="easy,normal,hard,rise"></div></div>
+      <div class="field" data-for="tour"><label data-i="difficulty"></label><div class="seg diff" data-set="tourDiff" data-opts="easy,normal,hard,rise"></div></div>
       <div class="field" data-for="tour" data-tm="map street darts shape draw"><div class="lrow"><label data-i="tourConts"></label><button class="mini" data-all="tourConts" data-i="allOn"></button></div><div class="chips ico c5" id="tourConts" data-tset="tourConts" role="group"></div></div>
       <div class="field" data-for="tour" data-tm="dutch hunt" id="tourProvsField"><div class="lrow"><label data-i="tourProvs"></label><button class="mini" data-all="tourProvs" data-i="allOn"></button></div><div class="provs" id="tourProvs" data-tset="tourProvs" role="group"></div></div>
       <div class="field" data-for="hunt tour" data-tm="hunt"><label id="huntCityLbl" data-i="huntCity" for="huntCity"></label><select id="huntCity"></select></div>
@@ -868,7 +910,7 @@ body[data-screen=game] #emoLayer{left:max(10px,env(safe-area-inset-left));transf
       <div class="field" data-for="dutch darts tour" data-tm="dutch darts"><label data-i="nlView"></label><div class="seg" data-set="nlView" data-opts="sat,photo"></div></div>
       <div class="field" data-for="world dutch hunt"><label data-i="rounds"></label><div class="seg" data-set="rounds" data-opts="5,10,15"></div></div>
       <div class="field"><label data-i="roundTime"></label><div class="seg" data-set="roundTime" data-opts="30,60,90" data-suf="s"></div></div>
-      <div class="field" data-for="world dutch hunt"><label data-i="difficulty"></label><div class="seg" data-set="difficulty" data-opts="easy,normal,hard"></div></div>
+      <div class="field" data-for="world dutch hunt"><label data-i="difficulty"></label><div class="seg diff" data-set="difficulty" data-opts="easy,normal,hard"></div></div>
       <div class="field" data-for="world"><label data-i="continent"></label><div class="seg sm cont" data-set="continent" data-opts="ALL,EU,AM,AS,OC,AF"></div></div>
       <div class="toggle" data-for="tour"><div class="tl"><label data-i="tourFinal"></label><small data-i="tourFinalSub"></small></div><button class="sw" data-sw="tourFinal" aria-label="toggle"></button></div>
     </div>
@@ -3076,6 +3118,9 @@ function renderLobby(){
       if (key==='continent') return `<button class="${cls}" data-val="${o}" aria-label="${esc(label)}" title="${esc(label)}"><svg class="ic"><use href="#i-${o}"/></svg></button>`;
       if (key==='mode' && o==='tour') return `<button class="tourBtn ${cls}${cls && justOn ? ' go' : ''}" data-val="${o}" data-m="${o}"><span class="mi">${TOUR_ICON}</span><span class="ml"><b>${label}</b><small>${esc(t('tourSub'))}</small></span></button>`;
       if (key==='mode') return `<button class="${cls}" data-val="${o}" data-m="${o}"><span class="mi"><svg aria-hidden="true"><use href="#m-${o}"/></svg></span><span class="ml">${label}</span></button>`;
+      if (key==='tourOrder'){ const tmodes = S.settings.tourModes && S.settings.tourModes.length ? S.settings.tourModes : TOUR_MODES, om = [0,1,2].map(i => tmodes[i % tmodes.length]);
+        const pat = { mix:[1,0,2,0,1,2], cycle:[0,1,2,0,1,2], block:[0,0,1,1,2,2] }[o];
+        return `<button class="${cls}" data-val="${o}"><span class="ord ord-${o}" aria-hidden="true">${pat.map(i => `<i data-m="${om[i]}"></i>`).join('')}</span>${html}</button>`; }
       return `<button class="${cls}" data-val="${o}">${html}</button>`;
     }).join('');
   });
@@ -3097,7 +3142,7 @@ function renderTourSettings(edit, tm){
   const btn = (k, v, nm, inner, cls = '') => `<button class="chipbtn ${cls} ${on(k, v) ? 'on' : ''}" data-tv="${v}" aria-pressed="${on(k, v)}" aria-label="${lbl(nm)}" title="${lbl(nm)}"${cls === 'mc' ? ` data-m="${v}"` : ''}>${inner}</button>`;
   $('#tourModes').innerHTML = TOUR_MODES.map(m => btn('tourModes', m, t(m), `<svg aria-hidden="true"><use href="#m-${m}"/></svg>`, 'mc')).join('');
   $('#tourConts').innerHTML = CONTS.map(c => btn('tourConts', c, t(c), `<svg class="ic" aria-hidden="true"><use href="#i-${c}"/></svg>`)).join('');
-  $('#tourProvs').innerHTML = PROV_GRID.map(p => btn('tourProvs', p, t('p'+p), esc(provShort(p)))).join('');
+  $('#tourProvs').innerHTML = PROV_GRID.map(p => btn('tourProvs', p, t('p'+p), `<span class="pn">${esc(provShort(p))}</span>`)).join('');
   ['#tourModes', '#tourConts', '#tourProvs'].forEach(s => $(s).classList.toggle('ro', !edit));
   document.querySelectorAll('[data-all]').forEach(b => { const k = b.dataset.all; b.hidden = !edit || (S.settings[k] || TOUR_SETS[k].all).length >= TOUR_SETS[k].all.length; });
   const n = stepVal ?? roundsOf(S.settings);
