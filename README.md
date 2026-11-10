@@ -22,7 +22,7 @@ Online multiplayer aardrijkskundespel voor 2 tot 6 spelers, ook op de telefoon. 
 ## Spelen
 
 * Host: vul naam in, klik **Maak kamer**, deel de link of de 4 letter code.
-* Vrienden: open de link (join gaat automatisch) of typ de code en klik **Join**.
+* Vrienden: open de link (join gaat automatisch) of typ de code en klik **Join**. De hele link in het codeveld plakken werkt ook.
 * Verbinden duurt 1 tot 15 seconden.
 * OP: de host zet in de lobby bij een speler de knop **OP** aan. Een OP kan de instellingen aanpassen en de lobby starten. Kicken, OP geven, volgende ronde en rematch blijven bij de host. OP blijft behouden als de host wisselt.
 
@@ -137,6 +137,7 @@ Kies in de lobby de modus **Straatbeeld**. De foto's komen van [Panoramax](https
 * 360-foto's gaan voor. Niet elk land heeft ze, dan krijg je een gewone foto waarin je beperkt kunt rondkijken.
 * Moeilijk: je kunt niet rondkijken.
 * De maker en licentie van de foto staan op het uitslagscherm.
+* **Andere foto**: is de plek slecht (binnen, wazig, niets te zien), tik dan op **Andere foto**. Heeft iedereen gestemd, dan begint dezelfde ronde opnieuw op een andere plek: volle tijd, geen punten, eerdere antwoorden vervallen. Alleen spelen: één tik is genoeg. Werkt bij elke ronde met een straatfoto, dus ook in Nederland en Darts met foto.
 
 Google Street View zit er niet in: dat vraagt een eigen API key met betaalaccount.
 
