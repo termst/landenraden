@@ -208,6 +208,7 @@ span.pill{cursor:default}
 .lrow .mini{min-height:22px;padding:2px 9px;font-size:11px;border-radius:4px}
 .chips.ico.c5{grid-template-columns:repeat(5,1fr)}
 #tourModes{grid-template-columns:repeat(7,1fr)}
+#hintChips{grid-template-columns:repeat(9,1fr)}
 .chips.ico .chipbtn.mc{color:color-mix(in srgb,var(--mc) 72%,var(--mute))}
 .chips.ico .chipbtn.mc svg{width:24px;height:24px;fill:currentColor}
 .chips.ico .chipbtn.mc.on{background:var(--mc);border-color:var(--mc);color:#fff}
@@ -820,13 +821,16 @@ body[data-screen=game] #emoLayer{left:max(10px,env(safe-area-inset-left));transf
   <symbol id="i-arrow" viewBox="0 0 24 24"><path d="M12 20V4M6 10l6-6 6 6"/></symbol>
   <symbol id="i-dart" viewBox="0 0 24 24"><circle cx="11" cy="13" r="8"/><circle cx="11" cy="13" r="3"/><path d="M11 13l9.5-9.5M17.5 3.5v3h3"/></symbol>
   <symbol id="i-globe" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c2.6 2.6 3.8 5.6 3.8 9s-1.2 6.4-3.8 9c-2.6-2.6-3.8-5.6-3.8-9S9.4 5.6 12 3z"/></symbol>
-  <!-- Soorten hints: lijn met een zachte tint. Tafelglobe, persoon met tekstballon (inwoners en taal), bankbiljet, hoorn met plus (landnummer), kaart met grensgebieden (buren), vlag met letterstreepjes -->
+  <!-- Soorten hints: lijn met een zachte tint. Tafelglobe, persoon met tekstballon (inwoners en taal), bankbiljet, hoorn met plus (landnummer), kaart met grensgebieden (buren), vlag met letterstreepjes, tempel (geschiedenis en staat), fabriek (economie), beker (cultuur en sport) -->
   <symbol id="g-geo" viewBox="0 0 24 24"><circle cx="10.5" cy="10" r="5.2" fill="currentColor" stroke="none" opacity=".28"/><circle cx="10.5" cy="10" r="5.2"/><path d="M5.7 8Q9.6 12.2 15.3 12"/><path d="M14.4 1.9A9 9 0 0 1 6.3 18M10.5 19v2.5M6.5 21.5h8"/></symbol>
   <symbol id="g-people" viewBox="0 0 24 24"><circle cx="8" cy="11.5" r="3.2"/><path d="M2 21.5a6 6 0 0 1 12 0"/><path fill="currentColor" stroke="none" opacity=".28" d="M14 2.5h6.5A1.5 1.5 0 0 1 22 4v4.5a1.5 1.5 0 0 1-1.5 1.5h-3.3l-2.7 2.4V10H14a1.5 1.5 0 0 1-1.5-1.5V4A1.5 1.5 0 0 1 14 2.5z"/><path d="M14 2.5h6.5A1.5 1.5 0 0 1 22 4v4.5a1.5 1.5 0 0 1-1.5 1.5h-3.3l-2.7 2.4V10H14a1.5 1.5 0 0 1-1.5-1.5V4A1.5 1.5 0 0 1 14 2.5z"/></symbol>
   <symbol id="g-money" viewBox="0 0 24 24"><rect x="2" y="6" width="20" height="12" rx="1.6"/><circle cx="12" cy="12" r="3" fill="currentColor" stroke="none" opacity=".28"/><circle cx="12" cy="12" r="3"/><path d="M5.6 12v.01M18.4 12v.01"/></symbol>
   <symbol id="g-codes" viewBox="0 0 24 24"><path d="M21.5 16.9v2.6a2 2 0 0 1-2.2 2 18.6 18.6 0 0 1-8.1-2.9 18.3 18.3 0 0 1-5.6-5.6A18.6 18.6 0 0 1 2.7 4.8a2 2 0 0 1 2-2.2h2.6a2 2 0 0 1 2 1.7c.1.9.3 1.7.6 2.5a2 2 0 0 1-.4 2.1L8.4 10a15 15 0 0 0 5.6 5.6l1.1-1.1a2 2 0 0 1 2.1-.4c.8.3 1.6.5 2.5.6a2 2 0 0 1 1.8 2.2z"/><path d="M17.5 3v6M14.5 6h6"/></symbol>
   <symbol id="g-nb" viewBox="0 0 24 24"><path fill="currentColor" stroke="none" opacity=".28" d="M10.5 3 17 4.5l4.5 5-1.2 6.5-6.3-2.5-1-3.5-3-2z"/><path d="M4.5 5.5 10.5 3 17 4.5l4.5 5L20 17l-6 4.5-7.5-1.5-4-6.5z"/><path d="M10.5 3 10 8l3 2 1 3.5 6.3 2.5M14 13.5 11 16l.5 4.8"/></symbol>
   <symbol id="g-name" viewBox="0 0 24 24"><path fill="currentColor" stroke="none" opacity=".28" d="M5 4c3-1.6 5 1.4 8 0s4.5-.6 6.5 0v8.5c-2-.6-3.5-1.4-6.5 0s-5-1.6-8 0z"/><path d="M5 21.5V4c3-1.6 5 1.4 8 0s4.5-.6 6.5 0v8.5c-2-.6-3.5-1.4-6.5 0s-5-1.6-8 0"/><path d="M9 20.5h2.5M13.8 20.5h2.5M18.6 20.5h2.5"/></symbol>
+  <symbol id="g-hist" viewBox="0 0 24 24"><path fill="currentColor" stroke="none" opacity=".28" d="M12 2.5 21 8H3z"/><path d="M12 2.5 21 8H3zM5.5 11v6.5M10 11v6.5M14 11v6.5M18.5 11v6.5M3 21h18"/></symbol>
+  <symbol id="g-econ" viewBox="0 0 24 24"><path fill="currentColor" stroke="none" opacity=".28" d="M3.5 20.5V10l5 3.5V10l5 3.5V4h4.5v16.5z"/><path d="M3.5 20.5V10l5 3.5V10l5 3.5V4h4.5v16.5zM2 20.5h20"/></symbol>
+  <symbol id="g-cult" viewBox="0 0 24 24"><path fill="currentColor" stroke="none" opacity=".28" d="M7 3h10v5a5 5 0 0 1-10 0z"/><path d="M7 3h10v5a5 5 0 0 1-10 0zM7 5H4a3 3 0 0 0 3.3 4M17 5h3a3 3 0 0 1-3.3 4M12 13v4.5M9.5 17.5h5M8 21h8"/></symbol>
   <symbol id="i-eye" viewBox="0 0 24 24"><path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></symbol>
   <!-- Modusiconen: vlak, twee tinten. Hoofdvorm in currentColor, tweede tint met opacity. -->
   <symbol id="m-tour" viewBox="0 0 24 24"><rect x="2" y="16" width="6.5" height="6" rx="1" opacity=".45"/><rect x="15.5" y="18" width="6.5" height="4" rx="1" opacity=".45"/><rect x="8.5" y="13.5" width="7" height="8.5" rx="1"/><path fill-rule="evenodd" d="M12 12.4s4-3.3 4-6.5a4 4 0 1 0-8 0c0 3.2 4 6.5 4 6.5zM12 4.4a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3z"/></symbol>
@@ -1189,12 +1193,12 @@ const XAVI_SRC = (() => { try { const b = atob(XAVI_IMG.slice(XAVI_IMG.indexOf('
   return URL.createObjectURL(new Blob([u], { type:'image/jpeg' })); } catch { return XAVI_IMG; } })();
 const avKey = a => (a === 'heart' ? 'xavi' : AVATARS.includes(a) ? a : 'letter');   // heart is vervangen door xavi
 // Hintgroepen die de host aan/uit kan zetten in de lobby
-const HINT_GROUPS = ['geo','people','money','codes','nb','name'];
+const HINT_GROUPS = ['geo','people','money','codes','nb','name','hist','econ','cult'];
 // Toernooi: welke modi meedoen en de continenten die je kunt aan- en uitzetten.
 const TOUR_MODES = ['map','street','dutch','hunt','darts','shape','draw'], CONTS = ['EU','AM','AS','OC','AF'];
 // Toernooi: vlak podium met een pin, zelfde stijl als de andere modusiconen (#m-tour).
 const TOUR_ICON = `<svg viewBox="0 0 24 24" aria-hidden="true"><use href="#m-tour"/></svg>`;
-const HINT_ICON = { geo:'g-geo', people:'g-people', money:'g-money', codes:'g-codes', nb:'g-nb', name:'g-name' };
+const HINT_ICON = { geo:'g-geo', people:'g-people', money:'g-money', codes:'g-codes', nb:'g-nb', name:'g-name', hist:'g-hist', econ:'g-econ', cult:'g-cult' };
 // Valuta-correcties (de brondata heeft enkele fouten of verouderde codes)
 const CUR_FIX = { ZW:['ZWG','USD'], FM:['USD'], SL:['SLE'], BG:['EUR'], CU:['CUP'], PS:['ILS','JOD'], EH:['MAD'], SV:['USD'], CD:['CDF','USD'], LR:['LRD','USD'], VE:['VES','USD'], TL:['USD'], ZM:['ZMW'], KH:['KHR','USD'], PA:['PAB','USD'], EC:['USD'], MH:['USD'], PW:['USD'], KI:['AUD'], TV:['AUD'], NR:['AUD'], LI:['CHF'], MC:['EUR'], SM:['EUR'], VA:['EUR'], AD:['EUR'], XK:['EUR'], ME:['EUR'], HR:['EUR'], SK:['EUR'] };
 
@@ -1263,9 +1267,20 @@ const I18N = {
   nNear:'Ongeveer {km} km {d} {c}', nNearClose:'Vlak bij {c}',
   d0:'ten noorden van', d1:'ten noordoosten van', d2:'ten oosten van', d3:'ten zuidoosten van', d4:'ten zuiden van', d5:'ten zuidwesten van', d6:'ten westen van', d7:'ten noordwesten van',
   pGR:'Groningen', pFR:'Friesland', pDR:'Drenthe', pOV:'Overijssel', pFL:'Flevoland', pGE:'Gelderland', pUT:'Utrecht', pNH:'Noord-Holland', pZH:'Zuid-Holland', pZE:'Zeeland', pNB:'Noord-Brabant', pLI:'Limburg',
-  g_geo:'Geografie', g_people:'Mensen', g_money:'Geld', g_codes:'Codes', g_nb:'Buren', g_name:'Naam en vlag',
+  g_geo:'Geografie', g_people:'Mensen', g_money:'Geld', g_codes:'Codes', g_nb:'Buren', g_name:'Naam en vlag', g_hist:'Geschiedenis en staat', g_econ:'Economie', g_cult:'Cultuur en sport',
   h_hemi:'Halfrond', h_climate:'Klimaat', h_size:'Grootte', h_cursym:'Symbool', h_curshare:'Munt gedeeld', h_nb1:'Grenst aan', h_namelen:'Lengte naam', h_flag:'Vlag',
   h_nbcount:'Buurlanden', h_telzone:'Landnummer', h_caplen:'Lengte hoofdstad', h_anchor:'Ligging', h_area_nl:'Oppervlakte',
+  h_gov:'Staatsvorm', h_org:'Lid van', h_indy:'Onafhankelijk', h_indfrom:'Los van', h_owner:'Hoort bij', h_oldname:'Vroegere naam', h_inc:'BBP', h_exp:'Export', h_brand:'Bekend van',
+  h_rel:'Religie', h_script:'Schrift', h_sport:'Sport', h_dish:'Gerecht', h_olym:'Olympische Spelen', h_wcup:'WK voetbal',
+  gv_mon:'monarchie', gv_rep:'republiek', gv_com:'communistische eenpartijstaat', gv_ter:'geen zelfstandig land',
+  or_EU:'EU', or_NATO:'NAVO', or_ASEAN:'ASEAN', or_CW:'Gemenebest', or_AU:'Afrikaanse Unie', indyTxt:'sinds {y}', hostIn:'gastland in {y}',
+  fr_SU:'Sovjet-Unie', fr_YU:'Joegoslavië', fr_OT:'Ottomaanse Rijk', fr_CS:'Servië en Montenegro', fr_CSK:'Tsjecho-Slowakije', fr_HRE:'Heilige Roomse Rijk',
+  inc0:'minder dan $5.000 per inwoner', inc1:'$5.000 tot $15.000 per inwoner', inc2:'$15.000 tot $40.000 per inwoner', inc3:'meer dan $40.000 per inwoner',
+  rl_cat:'christendom, vooral katholiek', rl_pro:'christendom, vooral protestants', rl_ort:'christendom, vooral orthodox', rl_chr:'christendom', rl_mus:'islam', rl_bud:'boeddhisme', rl_hin:'hindoeïsme',
+  sc_lat:'Latijns', sc_cyr:'Cyrillisch', sc_ara:'Arabisch', sc_han:'Chinese karakters', sc_own:'niet Latijns, Cyrillisch of Arabisch',
+  sp_cricket:'cricket', sp_rugby:'rugby', sp_baseball:'honkbal', sp_hockey:'ijshockey', sp_basket:'basketbal', sp_amfoot:'American football', sp_gaelic:'Gaelic football en hurling', sp_sumo:'sumoworstelen',
+  sp_taekwondo:'taekwondo', sp_ttennis:'tafeltennis', sp_wrestling:'worstelen', sp_archery:'boogschieten', sp_badminton:'badminton', sp_athletics:'atletiek', sp_skiing:'skiën', sp_cycling:'wielrennen',
+  sp_handball:'handbal', sp_skating:'schaatsen', sp_aussie:'Australian football',
   nbCount1:'1 buurland', telZone:'begint met +{z}', areaNl:'{n}x zo groot als Nederland', areaNlSmall:'Nederland is {n}x zo groot',
   hN:'noordelijk', hS:'zuidelijk', hE:'oostelijk', hW:'westelijk',
   cl0:'tropisch', cl1:'subtropisch', cl2:'gematigd', cl3:'koud', cl4:'poolgebied',
@@ -1352,9 +1367,20 @@ const I18N = {
   nNear:'About {km} km {d} {c}', nNearClose:'Right next to {c}',
   d0:'north of', d1:'northeast of', d2:'east of', d3:'southeast of', d4:'south of', d5:'southwest of', d6:'west of', d7:'northwest of',
   pGR:'Groningen', pFR:'Friesland', pDR:'Drenthe', pOV:'Overijssel', pFL:'Flevoland', pGE:'Gelderland', pUT:'Utrecht', pNH:'North Holland', pZH:'South Holland', pZE:'Zeeland', pNB:'North Brabant', pLI:'Limburg',
-  g_geo:'Geography', g_people:'People', g_money:'Money', g_codes:'Codes', g_nb:'Neighbours', g_name:'Name and flag',
+  g_geo:'Geography', g_people:'People', g_money:'Money', g_codes:'Codes', g_nb:'Neighbours', g_name:'Name and flag', g_hist:'History and state', g_econ:'Economy', g_cult:'Culture and sport',
   h_hemi:'Hemisphere', h_climate:'Climate', h_size:'Size', h_cursym:'Symbol', h_curshare:'Shared currency', h_nb1:'Borders', h_namelen:'Name length', h_flag:'Flag',
   h_nbcount:'Neighbours', h_telzone:'Calling code', h_caplen:'Capital length', h_anchor:'Location', h_area_nl:'Area',
+  h_gov:'Government', h_org:'Member of', h_indy:'Independent', h_indfrom:'Broke from', h_owner:'Belongs to', h_oldname:'Former name', h_inc:'GDP', h_exp:'Exports', h_brand:'Known for',
+  h_rel:'Religion', h_script:'Script', h_sport:'Sport', h_dish:'Dish', h_olym:'Olympic Games', h_wcup:'Football World Cup',
+  gv_mon:'monarchy', gv_rep:'republic', gv_com:'communist one party state', gv_ter:'not a sovereign country',
+  or_EU:'EU', or_NATO:'NATO', or_ASEAN:'ASEAN', or_CW:'Commonwealth', or_AU:'African Union', indyTxt:'since {y}', hostIn:'host in {y}',
+  fr_SU:'Soviet Union', fr_YU:'Yugoslavia', fr_OT:'Ottoman Empire', fr_CS:'Serbia and Montenegro', fr_CSK:'Czechoslovakia', fr_HRE:'Holy Roman Empire',
+  inc0:'under $5,000 per person', inc1:'$5,000 to $15,000 per person', inc2:'$15,000 to $40,000 per person', inc3:'over $40,000 per person',
+  rl_cat:'Christianity, mostly Catholic', rl_pro:'Christianity, mostly Protestant', rl_ort:'Christianity, mostly Orthodox', rl_chr:'Christianity', rl_mus:'Islam', rl_bud:'Buddhism', rl_hin:'Hinduism',
+  sc_lat:'Latin', sc_cyr:'Cyrillic', sc_ara:'Arabic', sc_han:'Chinese characters', sc_own:'not Latin, Cyrillic or Arabic',
+  sp_cricket:'cricket', sp_rugby:'rugby', sp_baseball:'baseball', sp_hockey:'ice hockey', sp_basket:'basketball', sp_amfoot:'American football', sp_gaelic:'Gaelic football and hurling', sp_sumo:'sumo wrestling',
+  sp_taekwondo:'taekwondo', sp_ttennis:'table tennis', sp_wrestling:'wrestling', sp_archery:'archery', sp_badminton:'badminton', sp_athletics:'athletics', sp_skiing:'skiing', sp_cycling:'cycling',
+  sp_handball:'handball', sp_skating:'speed skating', sp_aussie:'Australian football',
   nbCount1:'1 neighbour', telZone:'starts with +{z}', areaNl:'{n}x the size of the Netherlands', areaNlSmall:'the Netherlands is {n}x bigger',
   hN:'northern', hS:'southern', hE:'eastern', hW:'western',
   cl0:'tropical', cl1:'subtropical', cl2:'temperate', cl3:'cold', cl4:'polar',
@@ -1382,7 +1408,9 @@ const I18N = {
  }
 };
 const SUB_NL = {'Australia and New Zealand':'Australië en Nieuw-Zeeland','Caribbean':'Caribisch gebied','Central America':'Midden-Amerika','Central Asia':'Centraal-Azië','Central Europe':'Centraal-Europa','Eastern Africa':'Oost-Afrika','Eastern Asia':'Oost-Azië','Eastern Europe':'Oost-Europa','Melanesia':'Melanesië','Micronesia':'Micronesië','Middle Africa':'Centraal-Afrika','North America':'Noord-Amerika','Northern Africa':'Noord-Afrika','Northern Europe':'Noord-Europa','Polynesia':'Polynesië','South America':'Zuid-Amerika','South-Eastern Asia':'Zuidoost-Azië','Southeast Europe':'Zuidoost-Europa','Southern Africa':'Zuidelijk Afrika','Southern Asia':'Zuid-Azië','Southern Europe':'Zuid-Europa','Western Africa':'West-Afrika','Western Asia':'West-Azië','Western Europe':'West-Europa'};
-const LANG_NL = {English:'Engels',French:'Frans',Arabic:'Arabisch',Spanish:'Spaans',Portuguese:'Portugees',Russian:'Russisch',Dutch:'Nederlands',German:'Duits',Italian:'Italiaans',Chinese:'Chinees',Swahili:'Swahili',Swedish:'Zweeds',Tamil:'Tamil',Malay:'Maleis',Serbian:'Servisch',Turkish:'Turks',Korean:'Koreaans',Slovak:'Slowaaks',Greek:'Grieks',Danish:'Deens',Croatian:'Kroatisch',Vietnamese:'Vietnamees',Latin:'Latijn',Ukrainian:'Oekraïens',Thai:'Thai',Slovene:'Sloveens',Romanian:'Roemeens',Polish:'Pools',Filipino:'Filipijns',Japanese:'Japans',Hindi:'Hindi',Persian:'Perzisch','Persian (Farsi)':'Perzisch',Hungarian:'Hongaars',Czech:'Tsjechisch',Finnish:'Fins',Norwegian:'Noors','Norwegian Nynorsk':'Noors (Nynorsk)','Norwegian Bokmål':'Noors (Bokmål)',Icelandic:'IJslands',Irish:'Iers',Bulgarian:'Bulgaars',Albanian:'Albanees',Armenian:'Armeens',Georgian:'Georgisch',Hebrew:'Hebreeuws',Indonesian:'Indonesisch',Bengali:'Bengaals',Urdu:'Urdu',Mongolian:'Mongools',Kazakh:'Kazachs',Uzbek:'Oezbeeks',Estonian:'Ests',Latvian:'Lets',Lithuanian:'Litouws',Belarusian:'Wit-Russisch',Macedonian:'Macedonisch',Bosnian:'Bosnisch',Maltese:'Maltees',Luxembourgish:'Luxemburgs',Catalan:'Catalaans',Afrikaans:'Afrikaans',Amharic:'Amhaars',Somali:'Somalisch',Berber:'Berbers',Burmese:'Birmaans',Khmer:'Khmer',Lao:'Laotiaans',Nepali:'Nepalees',Pashto:'Pasjtoe',Dari:'Dari',Turkmen:'Turkmeens',Tajik:'Tadzjieks',Kyrgyz:'Kirgizisch',Azerbaijani:'Azerbeidzjaans',Sinhala:'Singalees','Swiss German':'Zwitserduits',Romansh:'Reto-Romaans',Guaraní:'Guarani',Quechua:'Quechua',Aymara:'Aymara',Papiamento:'Papiaments'};
+const LANG_NL = {English:'Engels',French:'Frans',Arabic:'Arabisch',Spanish:'Spaans',Portuguese:'Portugees',Russian:'Russisch',Dutch:'Nederlands',German:'Duits',Italian:'Italiaans',Chinese:'Chinees',Swahili:'Swahili',Swedish:'Zweeds',Tamil:'Tamil',Malay:'Maleis',Serbian:'Servisch',Turkish:'Turks',Korean:'Koreaans',Slovak:'Slowaaks',Greek:'Grieks',Danish:'Deens',Croatian:'Kroatisch',Vietnamese:'Vietnamees',Latin:'Latijn',Ukrainian:'Oekraïens',Thai:'Thai',Slovene:'Sloveens',Romanian:'Roemeens',Polish:'Pools',Filipino:'Filipijns',Japanese:'Japans',Hindi:'Hindi',Persian:'Perzisch','Persian (Farsi)':'Perzisch',Hungarian:'Hongaars',Czech:'Tsjechisch',Finnish:'Fins',Norwegian:'Noors','Norwegian Nynorsk':'Noors (Nynorsk)','Norwegian Bokmål':'Noors (Bokmål)',Icelandic:'IJslands',Irish:'Iers',Bulgarian:'Bulgaars',Albanian:'Albanees',Armenian:'Armeens',Georgian:'Georgisch',Hebrew:'Hebreeuws',Indonesian:'Indonesisch',Bengali:'Bengaals',Urdu:'Urdu',Mongolian:'Mongools',Kazakh:'Kazachs',Uzbek:'Oezbeeks',Estonian:'Ests',Latvian:'Lets',Lithuanian:'Litouws',Belarusian:'Wit-Russisch',Macedonian:'Macedonisch',Bosnian:'Bosnisch',Maltese:'Maltees',Luxembourgish:'Luxemburgs',Catalan:'Catalaans',Afrikaans:'Afrikaans',Amharic:'Amhaars',Somali:'Somalisch',Berber:'Berbers',Burmese:'Birmaans',Khmer:'Khmer',Lao:'Laotiaans',Nepali:'Nepalees',Pashto:'Pasjtoe',Dari:'Dari',Turkmen:'Turkmeens',Tajik:'Tadzjieks',Kyrgyz:'Kirgizisch',Azerbaijani:'Azerbeidzjaans',Sinhala:'Singalees','Swiss German':'Zwitserduits',Romansh:'Reto-Romaans',Guaraní:'Guarani',Quechua:'Quechua',Aymara:'Aymara',Papiamento:'Papiaments',Zulu:'Zoeloe','Northern Ndebele':'Noord-Ndebele',Kurdish:'Koerdisch',Sami:'Samisch',Montenegrin:'Montenegrijns',Greenlandic:'Groenlands',Faroese:'Faeröers',Samoan:'Samoaans',Tongan:'Tongaans',Malagasy:'Malagassisch','Haitian Creole':'Haïtiaans Creools',Maldivian:'Maldivisch',Comorian:'Comorees',Fijian:'Fijisch',Māori:'Maori','Mauritian Creole':'Mauritiaans Creools','Seychellois Creole':'Seychels Creools','Belizean Creole':'Belizaans Creools','Jamaican Patois':'Jamaicaans Patois',Nauruan:'Nauruaans',Palauan:'Palaus',Marshallese:'Marshallees',Tuvaluan:'Tuvaluaans',Gilbertese:'Gilbertees',Niuean:'Niueaans'};
+// Exportproducten uit het CIA World Factbook (Engels), hier de Nederlandse naam.
+const EXP_NL = {"abrasive powder":"schuurpoeder","aircraft":"vliegtuigen","alcohols":"alcoholen","aluminum":"aluminium","aluminum ore":"bauxiet","aluminum oxide":"aluminiumoxide","animal meal":"diermeel","artwork":"kunstwerken","bananas":"bananen","beef":"rundvlees","beverages":"dranken","broadcasting equipment":"zendapparatuur","cars":"auto's","cloves":"kruidnagel","coal":"steenkool","cobalt":"kobalt","cocoa beans":"cacaobonen","coconut oil":"kokosolie","coconuts/brazil nuts/cashews":"kokosnoten en cashewnoten","coffee":"koffie","coin":"munten","computers":"computers","connectors for audio and video":"audio en videostekkers","copper ore":"kopererts","corn":"mais","cotton":"katoen","cotton yarn":"katoengaren","crude petroleum":"ruwe aardolie","cut flowers":"snijbloemen","diamonds":"diamanten","electric batteries":"accu's","electricity":"elektriciteit","essential oils":"etherische oliën","fabric":"stoffen","fake hair":"nephaar","fertilizers":"kunstmest","fish":"vis","footwear":"schoenen","furniture":"meubels","garments":"kleding","gas turbines":"gasturbines","gold":"goud","grapes":"druiven","gravel and crushed stone":"grind en steenslag","insulated wire":"geïsoleerde kabels","integrated circuits":"chips","iron alloys":"ijzerlegeringen","iron blocks":"ijzerblokken","iron ore":"ijzererts","jewelry":"sieraden","knotted carpets":"geknoopte tapijten","liquor":"sterkedrank","lumber":"timmerhout","machine parts":"machineonderdelen","mattress materials":"matrasmaterialen","measuring instruments":"meetinstrumenten","medical instruments":"medische instrumenten","milk":"melk","natural gas":"aardgas","nickel":"nikkel","nutmeg/cardamons":"nootmuskaat en kardemom","oil seeds":"oliezaden","olive oil":"olijfolie","other foods":"voedingsmiddelen","packaged medicine":"medicijnen","paintings":"schilderijen","palm oil":"palmolie","paper":"papier","pearls":"parels","perfumes":"parfum","petroleum coke":"petroleumcokes","phosphates":"fosfaat","photo lab equipment":"fotolabapparatuur","pine seeds":"pijnboompitten","plastic products":"kunststof producten","plastics":"kunststoffen","platinum":"platina","precious metal ore":"edelmetaalerts","processed crustaceans":"bewerkte schaaldieren","railway cargo containers":"spoorcontainers","rapeseed oil":"koolzaadolie","rare earth ores":"zeldzame aardmetalen","raw copper":"ruw koper","raw sugar":"ruwe suiker","reaction and catalytic products":"katalysatoren","refined copper":"geraffineerd koper","refined petroleum":"geraffineerde olie","sand":"zand","scented mixtures":"geurstoffen","scrap copper":"koperschroot","scrap iron":"schroot","seats":"stoelen","seed oils":"zaadolie","semiconductors":"halfgeleiders","sheep and goats":"schapen en geiten","shellfish":"schaaldieren","ships":"schepen","small specialty machinery":"kleine machines","soybean meal":"sojameel","soybeans":"sojabonen","special use vessels":"speciale schepen","sulfur":"zwavel","tea":"thee","titanium ore":"titaniumerts","tobacco":"tabak","tropical fruits":"tropisch fruit","vaccines":"vaccins","vehicle parts/accessories":"auto-onderdelen","washing and bottling machines":"was en bottelmachines","water":"water","wheat":"tarwe","wheat flours":"tarwemeel","wood":"hout","wood pulp":"houtpulp","zinc ore":"zinkerts"};
 
 /* ================= OPSLAG ================= */
 // Profiel, voorkeuren en statistieken staan in localStorage van deze browser: geen account, geen server.
@@ -2336,14 +2364,32 @@ const HINT_DEFS = [
   { k:'cursym',   r:3, g:'money',  f:'cur',    ok:(c,code)=>!!(CODES[code]&&CODES[code][0]) },
   { k:'cur',      r:4, g:'money',  f:'cur',    ok:(c,code)=>!!(CODES[code]&&CODES[code][0]) },
   { k:'nb1',      r:4, g:'nb',     f:'nb',     ok:c=>c.nb.length>0 },
-  { k:'caplen',   r:4, g:'name',   f:'caplen', ok:c=>!!c.cap },
+  { k:'caplen',   r:4, g:'name',   f:'cap',    ok:c=>!!c.cap },
   { k:'tel',      r:5, g:'codes',  f:'tel',    ok:c=>!!c.tel && c.tel.length>2 },
-  { k:'tld',      r:5, g:'codes',  f:'tld',    ok:c=>!!c.tld },
   { k:'namelen',  r:5, g:'name',   f:'name',   ok:c=>true },
   { k:'nb',       r:6, g:'nb',     f:'nb',     ok:c=>c.nb.length>1, late:true },
+  { k:'tld',      r:6, g:'codes',  f:'tld',    ok:c=>!!c.tld, late:true },
   { k:'cap',      r:6, g:'name',   f:'cap',    ok:c=>!!c.cap, late:true },
   { k:'flag',     r:6, g:'name',   f:'flag',   ok:c=>true, late:true },
   { k:'name',     r:7, g:'name',   f:'name',   ok:c=>true, late:true },
+  // Geschiedenis en staat. Alleen de Afrikaanse Unie zegt binnen Afrika niets, dus die telt niet als lidmaatschap.
+  { k:'gov',      r:1, g:'hist',   f:'gov',    ok:c=>!!c.gov },
+  { k:'org',      r:3, g:'hist',   f:'org',    ok:c=>!!c.org && c.org.some(x=>x!=='AU') },
+  { k:'indy',     r:3, g:'hist',   f:'indy',   ok:c=>!!c.ind },
+  { k:'indfrom',  r:4, g:'hist',   f:'from',   ok:c=>!!c.from && c.from.length>0 },
+  { k:'owner',    r:4, g:'hist',   f:'from',   ok:c=>!!c.of },
+  { k:'oldname',  r:6, g:'hist',   f:'old',    ok:c=>!!c.old, late:true },
+  // Economie
+  { k:'inc',      r:2, g:'econ',   f:'inc',    ok:c=>c.inc!=null },
+  { k:'exp',      r:4, g:'econ',   f:'exp',    ok:c=>!!c.exp && c.exp.length>0 },
+  { k:'brand',    r:5, g:'econ',   f:'brand',  ok:c=>!!c.brand },
+  // Cultuur en sport
+  { k:'rel',      r:2, g:'cult',   f:'rel',    ok:c=>!!c.rel },
+  { k:'script',   r:2, g:'cult',   f:'script', ok:c=>!!c.script },
+  { k:'sport',    r:4, g:'cult',   f:'sport',  ok:c=>!!c.sport },
+  { k:'dish',     r:5, g:'cult',   f:'dish',   ok:c=>!!c.dish },
+  { k:'olym',     r:5, g:'cult',   f:'event',  ok:c=>!!c.oly },
+  { k:'wcup',     r:5, g:'cult',   f:'event',  ok:c=>!!c.wc },
 ];
 // Bekende landen als ijkpunt voor de hint "vanaf": het dichtstbijzijnde (geen buurland, minstens 300 km).
 const ANCHORS = ['US','CA','MX','BR','AR','PE','CO','CL','GB','FR','DE','ES','IT','PL','SE','RU','TR','GR','EG','MA','NG','KE','ZA','CD','ET','SA','IR','IN','CN','JP','TH','ID','AU','NZ','KZ','PK'];
@@ -2358,7 +2404,7 @@ function anchorOf(code){
   return best && { c: best.c, km: Math.round(best.d/100)*100, d: bearing8(GEO[best.c].mid[0], GEO[best.c].mid[1], g.mid[0], g.mid[1]) };
 }
 // Vage hints die binnen het werelddeel bijna iedereen deelt (halfrond, klimaat in Europa) zeggen niets en kosten wel punten.
-const INFO_KEYS = new Set(['hemi','climate','drive','coast','size','pop','nbcount','telzone','curshare','sub']);
+const INFO_KEYS = new Set(['hemi','climate','drive','coast','size','pop','nbcount','telzone','curshare','sub','gov','org','inc','rel','script']);
 function hintShare(h, code, c){
   const key = x => JSON.stringify(hintValue(h.k, x)), mine = key(code);
   const pool = Object.keys(GEO).filter(x => COUNTRIES[x] && COUNTRIES[x].cont === c.cont && h.ok(COUNTRIES[x], x));
@@ -2380,10 +2426,17 @@ function chooseHints(code, count, groups, cont){
   const last = lates.length ? rnd(lates) : avail.filter(h=>h!==first).sort((a,b)=>b.r-a.r)[0];
   const used = new Set([first && first.f, last && last.f]);
   const middle = [];
-  for (const h of shuffle(avail.filter(h => h!==first && h!==last && !h.late))){
-    if (middle.length >= Math.max(0, count-2)) break;
-    if (used.has(h.f)) continue;
-    used.add(h.f); middle.push(h);
+  // Om de beurt uit elke groep: anders vult de grootste groep (geografie) bijna elke plek.
+  const need = Math.max(0, count-2), byG = {};
+  for (const h of shuffle(avail.filter(h => h!==first && h!==last && !h.late))) (byG[h.g] = byG[h.g] || []).push(h);
+  const gs = shuffle(Object.keys(byG));
+  for (let more = true; more && middle.length < need; ){
+    more = false;
+    for (const g of gs){
+      if (middle.length >= need) break;
+      let h; while ((h = byG[g].shift()) && used.has(h.f));
+      if (h){ used.add(h.f); middle.push(h); more = true; }
+    }
   }
   middle.sort((a,b)=>a.r-b.r);
   return [...new Set([first, ...middle, last].filter(Boolean))].slice(0, count).map(h=>h.k);
@@ -2410,6 +2463,10 @@ function hintValue(k, code, loc){
     case 'cap': return c.cap[0]; case 'name': return { nl: nm('nl'), en: nm('en') };
     case 'namelen': return { nl: nm('nl').n, en: nm('en').n };
     case 'flag': return code;
+    case 'gov': return c.gov; case 'org': return c.org; case 'indy': return c.ind; case 'indfrom': return c.from; case 'owner': return [c.of];
+    case 'oldname': return c.old; case 'inc': return c.inc; case 'exp': return c.exp; case 'brand': return c.brand;
+    case 'rel': return c.rel; case 'script': return c.script; case 'sport': return c.sport; case 'dish': return c.dish;
+    case 'olym': return c.oly; case 'wcup': return c.wc;
     case 'hemi': return { ns: lat>=0?'N':'S', ew: lng>=0?'E':'W' };
     case 'climate': { const a = Math.abs(lat); return a<23.5?0 : a<35?1 : a<55?2 : a<66?3 : 4; }
     case 'size': { const a = c.area; return a<1e4?0 : a<1e5?1 : a<5e5?2 : a<2e6?3 : 4; }
@@ -2449,6 +2506,19 @@ function renderHintValue(k, v){
     case 'name': { const x = v[lang] || v.en; return t('nameLetter', { l: x.l, n: x.n }); }
     case 'namelen': return t('nameLen', { n: v[lang] || v.en });
     case 'flag': return flagImg(v, 160);
+    case 'gov': return t('gv_'+v);
+    case 'org': return v.map(x => t('or_'+x)).join(', ');
+    case 'indy': return t('indyTxt', { y: v });
+    // Landen die niet meer bestaan (Sovjet-Unie, Joegoslavië) staan niet in de landenlijst en hebben een eigen tekst.
+    case 'indfrom': case 'owner': return v.map(x => COUNTRIES[x] ? cname(x) : t('fr_'+x)).join(', ');
+    case 'oldname': case 'dish': return lang==='nl' ? (v[1]||v[0]) : v[0];
+    case 'inc': return t('inc'+v);
+    case 'exp': return v.map(x => lang==='nl' ? (EXP_NL[x]||x) : x).join(', ');
+    case 'brand': return v;
+    case 'rel': return t('rl_'+v);
+    case 'script': return t('sc_'+v);
+    case 'sport': return t('sp_'+v);
+    case 'olym': case 'wcup': return t('hostIn', { y: v.join(', ') });
     case 'hemi': return t(v.ns==='N'?'hN':'hS') + ', ' + t(v.ew==='E'?'hE':'hW');
     case 'climate': return t('cl'+v);
     case 'size': return t('s'+v);
@@ -2723,6 +2793,8 @@ function hostInit(){
   isHost = true;
   let saved = {};
   try { saved = JSON.parse(store.get('lr_settings')||'{}') || {}; } catch(e){}
+  // Wie al een keuze had opgeslagen voordat er soorten hints bijkwamen, krijgt de nieuwe soorten erbij (één keer).
+  if (store.get('lr_hgv') !== '2'){ if (Array.isArray(saved.hintGroups)) saved.hintGroups = [...saved.hintGroups, 'hist', 'econ', 'cult']; store.set('lr_hgv', '2'); }
   H = { players: [], settings: { ...DEFAULT_SETTINGS, ...cleanSettings(saved) }, phase:'lobby', roundN:0, used:[], nextJoin:0, round:null, result:null, final:null, blocked:[], term:0 };
   hostAddPlayer({ ...helloPayload() }, selfId);
   startHostLoop();

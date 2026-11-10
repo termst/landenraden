@@ -8,7 +8,7 @@ Online multiplayer aardrijkskundespel voor 2 tot 6 spelers, ook op de telefoon. 
 |---|---|
 | `index.html` | Hele spel (HTML, CSS, JS) |
 | `data/countries.geojson` | Landgrenzen (Natural Earth 50m, 234 landen, zonder Antarctica) |
-| `data/countries.json` | Hintdata per land (continent, talen, valuta, buurlanden, enz.) |
+| `data/countries.json` | Hintdata per land (continent, talen, valuta, buurlanden, staatsvorm, export, religie, enz.) |
 
 ## Online zetten via GitHub Pages
 
@@ -113,19 +113,25 @@ Fout land na 5 s, plek in Brussel: Nederland 216, Frankrijk 208, Duitsland 186, 
 
 ## Hints (landen)
 
-Van vaag naar concreet. De eerste is gratis, de laatste is altijd een sterke (hoofdstad, vlag of alle buurlanden). Per familie hoogstens één hint per ronde (bijvoorbeeld valuta, symbool of gedeelde munt).
+Van vaag naar concreet. De eerste is gratis, de laatste is altijd een sterke (hoofdstad, vlag, domein, vroegere naam of alle buurlanden). De middelste hints komen om de beurt uit elke groep die aan staat, zodat geografie niet elke plek vult. Per familie hoogstens één hint per ronde (bijvoorbeeld valuta, symbool of gedeelde munt).
 
 | Groep | Hints (rang) |
 |---|---|
 | Geografie | continent (0), halfrond (1), klimaat (1), rijrichting (2), ligging aan zee (2), grootte (2), regio (2), afstand en richting vanaf een bekend land (3), oppervlakte tegenover Nederland (3) |
 | Mensen | inwoners (2), talen (3) |
 | Geld | gedeelde munt (3), symbool (3), naam van de valuta (4) |
-| Codes | eerste cijfer landnummer (2), landnummer (5), domein (5) |
+| Codes | eerste cijfer landnummer (2), landnummer (5), domein (6, laatste) |
 | Buren | aantal buurlanden (2), één buurland (4), alle buurlanden (6, laatste) |
 | Naam en vlag | lengte hoofdstad (4), lengte naam (5), hoofdstad beginletter (6), vlag (6), naam (7, alleen bij 8 hints) |
+| Geschiedenis en staat | staatsvorm (1), lid van EU, NAVO, ASEAN, Gemenebest of Afrikaanse Unie (3), jaar van onafhankelijkheid (3), los van welk land (4), hoort bij welk land (4, alleen gebieden), vroegere naam (6, laatste) |
+| Economie | BBP per inwoner in 4 klassen (2), de twee grootste exportproducten (4), bekende merken (5) |
+| Cultuur en sport | grootste religie (2), schrift (2), geliefde sport (4), gerecht (5), gastland Olympische Spelen (5), gastland WK voetbal (5) |
 
 * Staat het continent vast (lobby of toernooironde), dan vervalt de continent-hint en begint de ronde met de regio.
 * Een vage hint die binnen het werelddeel door meer dan 80% van de landen gedeeld wordt, valt weg (`INFO_KEYS`, `hintShare`). Halfrond of klimaat in Europa kost dus geen punten meer voor niets.
+* Lengte en beginletter van de hoofdstad zijn één familie: samen in één ronde verklapten ze de hoofdstad bijna.
+* Talen staan op volgorde van belang (hoofdtaal eerst), hoogstens drie.
+* Bronnen van de nieuwe groepen: CIA World Factbook (staatsvorm, onafhankelijkheid, BBP per inwoner in koopkracht, export, religie). Lidmaatschappen, vroegere namen, merken, schrift, sport, gerechten en gastlanden zijn met de hand ingevuld. Sport en gerecht staan alleen bij landen waar ze iets zeggen (geen voetbal). Religie ontbreekt waar geen geloof duidelijk de grootste is (bijvoorbeeld China, Tsjechië, Zuid-Korea).
 * Halfrond en klimaat gaan over het midden van het land, niet over de plek van de ronde. Grote landen geven dus elke ronde hetzelfde antwoord.
 * "Vanaf" kiest het dichtstbijzijnde land uit `ANCHORS` dat geen buurland is en minstens 300 km weg ligt. Niet voor landen groter dan 2 miljoen km².
 
