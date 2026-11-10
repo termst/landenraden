@@ -299,6 +299,11 @@ details.card[open]>summary::after{content:'\2212'}
 .panel{position:absolute;left:0;right:0;bottom:var(--kb,0px);z-index:500;padding:10px max(10px,env(safe-area-inset-right)) max(10px,env(safe-area-inset-bottom)) max(10px,env(safe-area-inset-left));display:flex;flex-direction:column;gap:8px;max-width:580px;margin:0 auto;pointer-events:none}
 .panel>*{pointer-events:auto}
 .credit{align-self:flex-end;font-size:11px;color:#fff;text-shadow:0 1px 2px #000;pointer-events:none}
+.photorow{display:flex;align-items:flex-end;justify-content:space-between;gap:8px;pointer-events:none}
+.photorow .mini{pointer-events:auto;box-shadow:var(--shadow-up)}
+.photorow .mini.voted{pointer-events:none}
+.photorow .credit{margin-left:auto}
+body.kb .photorow{display:none}
 .hints{background:var(--glass);border:1px solid var(--line);border-radius:var(--r);box-shadow:var(--shadow-up);display:flex;flex-direction:column;overflow:hidden}
 .hhead{display:flex;align-items:center;gap:8px;padding:7px 8px 7px 12px;min-height:44px;cursor:pointer;user-select:none}
 .hhead>.ic{color:var(--gold);width:16px;height:16px}
@@ -951,7 +956,7 @@ body[data-screen=game] #emoLayer{left:max(10px,env(safe-area-inset-left));transf
     <button id="zIn" aria-label="zoom in"><svg class="ic"><use href="#i-plus"/></svg></button><button id="zOut" aria-label="zoom out"><svg class="ic"><use href="#i-minus"/></svg></button><button id="zHome" aria-label="recenter"><svg class="ic"><use href="#i-locate"/></svg></button>
   </div>
   <div class="panel">
-    <div class="credit" id="photoCredit" hidden>Panoramax</div>
+    <div class="photorow" id="photoRow" hidden><button class="mini" id="skipBtn" type="button"></button><div class="credit" id="photoCredit">Panoramax</div></div>
     <div class="who" id="who"></div>
     <div class="hints" id="hintsBox">
       <div class="hhead" id="hintHead"><svg class="ic"><use href="#i-bulb"/></svg><span class="eyebrow"><span data-i="hintsTitle"></span><b id="hintCountTxt"></b></span><button class="mini" id="hintNow"></button><span class="chev"><svg class="ic"><use href="#i-chev"/></svg></span></div>
@@ -1221,6 +1226,7 @@ const I18N = {
   loading:'Laden', copied:'Link gekopieerd', cancel:'Annuleren', close:'Sluiten', dataFail:'Data laden mislukt. Draai via een webserver.',
   nameNeeded:'Vul je naam in.', codeNeeded:'Vul een code van 4 tekens in.', sound:'Geluid',
   findingPhoto:'Foto zoeken', noPhoto:'Geen foto gevonden, deze ronde satelliet', photoBy:'Foto',
+  skipPhoto:'Andere foto', skipVote:'Andere foto ({a}/{b})', skipVoted:'Wachten ({a}/{b})', skipDone:'Andere foto: de ronde begint opnieuw',
   h_cont:'Continent', h_sub:'Regio', h_drive:'Rijrichting', h_coast:'Ligging', h_pop:'Inwoners', h_lang:'Talen', h_cur:'Valuta',
   h_tel:'Landnummer', h_tld:'Domein', h_cap:'Hoofdstad', h_name:'Naam', h_nb:'Buurlanden',
   left:'links', right:'rechts', landlocked:'geen kust', coast:'aan zee', island:'geen landgrenzen', nbCount:'{n} buurlanden',
@@ -1268,6 +1274,7 @@ const I18N = {
   rulesHtml:`<ul>
    <li>Iedereen ziet dezelfde plek, op satelliet of straatbeeld.</li>
    <li>Hints komen vanzelf vrij, van vaag naar concreet. <b>Hint nu</b> werkt als iedereen het wil.</li>
+   <li>Slechte straatfoto? <b>Andere foto</b> begint de ronde opnieuw op een andere plek, als iedereen het wil.</li>
    <li>Je eerste antwoord telt.</li>
    <li><b>Punten</b> per ronde, in elke modus: ${CONFIG.score.max} maal hoe goed je zit, maal je hints, maal je tijd.</li>
    <li><b>Hints</b>: de eerste is gratis. Alle hints gezien kost ${pc(CONFIG.score.hintCut)}, sterkere hints kosten meer. Dat geldt ook bij 4 of 8 hints. Na de hint met de naam zelf krijg je nog ${pc(CONFIG.score.giveaway)}.</li>
@@ -1308,6 +1315,7 @@ const I18N = {
   loading:'Loading', copied:'Link copied', cancel:'Cancel', close:'Close', dataFail:'Could not load data. Run from a web server.',
   nameNeeded:'Enter your name.', codeNeeded:'Enter a 4 character code.', sound:'Sound',
   findingPhoto:'Finding photo', noPhoto:'No photo found, satellite this round', photoBy:'Photo',
+  skipPhoto:'Other photo', skipVote:'Other photo ({a}/{b})', skipVoted:'Waiting ({a}/{b})', skipDone:'Other photo: the round starts again',
   h_cont:'Continent', h_sub:'Region', h_drive:'Drives on', h_coast:'Geography', h_pop:'Population', h_lang:'Languages', h_cur:'Currency',
   h_tel:'Calling code', h_tld:'Domain', h_cap:'Capital', h_name:'Name', h_nb:'Neighbours',
   left:'left', right:'right', landlocked:'landlocked', coast:'coastal', island:'no land borders', nbCount:'{n} neighbours',
@@ -1355,6 +1363,7 @@ const I18N = {
   rulesHtml:`<ul>
    <li>Everyone sees the same spot, on satellite or street view.</li>
    <li>Hints unlock over time, vague to specific. <b>Hint now</b> works when everyone wants it.</li>
+   <li>Bad street photo? <b>Other photo</b> restarts the round on a different spot, when everyone wants it.</li>
    <li>Your first answer counts.</li>
    <li><b>Points</b> per round, in every mode: ${CONFIG.score.max} times how close you are, times your hints, times your time.</li>
    <li><b>Hints</b>: the first is free. Seeing all hints costs ${pc(CONFIG.score.hintCut)}, stronger hints cost more. Same with 4 or 8 hints. After the hint that shows the name itself you get ${pc(CONFIG.score.giveaway)}.</li>
@@ -2560,6 +2569,15 @@ let H = null;               // host-only private state
 let recvAt = 0, latency = 0;
 let myAnswer = null;        // { roundId, code, hintsSeen, frac }
 let sendMsg = null, joinTimer = null, hostWatch = null;
+// Eén maak-, join- of solo-actie tegelijk. Een tweede klik of Enter startte anders een tweede zoektimer die niemand meer stopte:
+// je kwam binnen en werd 15 s later met "kamer niet gevonden" uit de lobby gezet. Een nieuwe kamer wacht ook tot de vorige verlaten is.
+let entering = false, leaving = Promise.resolve();
+const busy = () => entering || !!room || !!S;
+async function enter(fn){
+  if (busy()) return;
+  entering = true;
+  try { await leaving; await fn(); } finally { entering = false; }
+}
 
 /* ================= NETWORK ================= */
 function connect(code){
@@ -2584,7 +2602,8 @@ function connect(code){
   location.hash = 'room=' + code;
 }
 const helloPayload = () => ({ id: me.id, name: me.name, color: me.color, avatar: me.avatar });
-async function disconnect(){
+function disconnect(){ return leaving = leaving.then(doDisconnect, doDisconnect); }
+async function doDisconnect(){
   clearTimeout(joinTimer); clearInterval(hostWatch);
   if (H) { clearInterval(H.loop); clearTimeout(H.autoNext); }
   if (room) { try { await room.leave(); } catch(e){} }
@@ -2633,7 +2652,7 @@ function onPeerLeave(peerId){
       p.connected = false; p.leftAt = Date.now();
       // Was deze speler de laatste die nog niet "hint nu" had gestemd? Dan gaat de hint nu door.
       if (H.phase === 'round' && H.round && Object.keys(H.round.wants).length){ const cp = guessers(); if (cp.length && cp.every(x => H.round.wants[x.id])){ H.round.forced = H.round.hints.length + 1; releaseHints(); } }
-      if (!checkAllAnswered()) broadcast();
+      if (!checkSkip() && !checkAllAnswered()) broadcast();
     }
     return;
   }
@@ -2688,7 +2707,7 @@ function becomeHost(oldHostPeer){
     const elapsed = r.durationMs - Math.max(0, r.remainingMs - (now()-recvAt));
     const moreHints = r.hunt ? huntHintKeys(r.hunt, r.hintTotal) : chooseHints(code, r.hintTotal, snap.settings.hintGroups, r.continent);
     H.round = { ...r, code, pins: {}, hintKeys: [...r.hints.map(h=>h.k), ...moreHints.filter(k=>!r.hints.some(h=>h.k===k))].slice(0, r.hintTotal),
-      startAt: now() - elapsed, answers: {}, order: 0, forced: r.hints.length, wants: {} };
+      startAt: now() - elapsed, answers: {}, order: 0, forced: r.hints.length, wants: {}, skips: {} };
     if (myAnswer && myAnswer.roundId === r.id) H.round.answers[me.id] = { ...myAnswer, ms: Math.round(r.durationMs*(1-myAnswer.frac)), order: H.round.order++ };
     else if (HS && HS.pin && HS.roundId === r.id) H.round.pins[me.id] = { pin:HS.pin, scans:r.hunt.scans-HS.left };
     else if (DS && DS.pin && DS.roundId === r.id) H.round.pins[me.id] = { pin:DS.pin, dbl:DS.dbl };
@@ -2745,8 +2764,15 @@ function hostHandle(msg, peerId){
       try { store.set('lr_settings', JSON.stringify(H.settings)); } catch(e){}
       broadcast(); break;
     }
+    case 'wantskip': {
+      // Andere foto: telt alleen bij een straatfoto. Wil iedereen die raadt het, dan begint de ronde opnieuw (checkSkip).
+      if (!player || H.phase !== 'round' || !H.round || !H.round.photo || H.finding) return;
+      (H.round.skips = H.round.skips || {})[player.id] = true;
+      if (!checkSkip()) broadcast();
+      break;
+    }
     case 'wanthint': {
-      if (!player || H.phase !== 'round' || !H.round) return;
+      if (!player || H.phase !== 'round' || !H.round || H.finding) return;
       const r = H.round; if (r.hints.length >= r.hintKeys.length || (r.draw && r.draw.by === player.id)) return;
       r.wants[player.id] = true;
       const cp = guessers();
@@ -2768,7 +2794,7 @@ function hostHandle(msg, peerId){
       sendMsg && sendMsg({ t:'kick' }, target.peerId); broadcast(); break;
     }
     case 'answer': {
-      if (!player || H.phase !== 'round' || !H.round || p.roundId !== H.round.id) return;
+      if (!player || H.phase !== 'round' || !H.round || p.roundId !== H.round.id || H.finding) return;   // finding: de ronde wordt net vervangen door een andere foto
       if (H.round.answers[player.id]) return;  // eerste telt
       if (H.round.draw && H.round.draw.by === player.id) return;   // de tekenaar raadt niet
       if (H.round.hunt ? !huntValidPin(p.pin) : H.round.darts ? !dartValidPin(p.pin) : !(isNL({ mode: H.round.mode }) ? CITIES[p.code] : COUNTRIES[p.code])) return;
@@ -2879,7 +2905,8 @@ async function nextRound(){
     // Tekenaar: makkelijk ook de omtrek als voorbeeld, moeilijk geen vlag en één kleur.
     draw: drawer ? { by:drawer.id, flag:s.difficulty !== 'hard', ref:s.difficulty === 'easy', ink:s.difficulty === 'hard' } : null,
     zoom: loc.hunt ? 14 : (nl ? CONFIG.nl.zoom : CONFIG.zoom)[s.difficulty], pan: loc.hunt ? 1 : shape || drawer ? 0 : (nl ? CONFIG.nl.pan : CONFIG.pan)[s.difficulty], difficulty: s.difficulty,
-    durationMs, hintIntervalMs, hintTotal, hintKeys, hints: [], startAt: now(), answers: {}, order: 0, forced: 0, wants: {} };
+    durationMs, hintIntervalMs, hintTotal, hintKeys, hints: [], startAt: now(), answers: {}, order: 0, forced: 0, wants: {}, skips: {}, redo: !!H.redo };
+  H.redo = false;
   H.phase = 'round'; H.result = null;
   releaseHints(); broadcast();
 }
@@ -2906,8 +2933,19 @@ function pickDrawer(){
   const cp = connectedPlayers();
   return cp.length < 2 ? null : cp.slice().sort((a, b) => (a.drew || 0) - (b.drew || 0) || (a.drewAt || 0) - (b.drewAt || 0) || a.joinIdx - b.joinIdx)[0];
 }
+// Andere foto: iedereen die raadt heeft gestemd. De ronde telt niet en begint opnieuw: zelfde nummer, zelfde modus, volle tijd, geen punten.
+// Het land (of de plaats) blijft in "used" staan, dus de nieuwe foto komt ergens anders vandaan. Tijdens het zoeken staat de oude ronde stil (H.finding).
+function checkSkip(){
+  const r = H.round;
+  if (H.phase !== 'round' || !r || !r.photo || H.finding) return false;
+  const cp = guessers(), v = r.skips || {};
+  if (!cp.length || !cp.every(p => v[p.id])) return false;
+  H.roundN--; H.redo = true;
+  nextRound();
+  return true;
+}
 function checkAllAnswered(){
-  if (H.phase !== 'round' || !H.round) return false;
+  if (H.phase !== 'round' || !H.round || H.finding) return false;
   const cp = guessers();
   if (cp.length && cp.every(p => H.round.answers[p.id] && !H.round.answers[p.id].verify)) { endRound(); return true; }
   return false;
@@ -2922,7 +2960,7 @@ function startHostLoop(){
       if (H.players.length !== before) broadcast();
     }
     if (now() - (H.lastBeat||0) > 3000) { H.lastBeat = now(); broadcast(); return; }
-    if (H.phase !== 'round' || !H.round) return;
+    if (H.phase !== 'round' || !H.round || H.finding) return;
     if (releaseHints()) broadcast();
     if (now() - H.round.startAt >= H.round.durationMs) endRound();
   }, 200);
@@ -3028,7 +3066,7 @@ function publicState(){
     hostPeer: selfId, term: H.term||0, finding: !!H.finding, phase: H.phase, settings: H.settings, roundN: H.roundN, used: H.used, plan: H.plan || null,
     players: H.players.map(({id,peerId,name,color,avatar,joinIdx,score,connected,correct,best,fastest,op,bm,drew,drewAt}) => ({id,peerId,name,color,avatar,joinIdx,score,connected,correct,best,fastest,op:!!op,...(bm ? {bm} : {}),...(drew ? {drew,drewAt} : {})})),
     round: r ? { id:r.id, n:r.n, mode:r.mode, continent:r.continent, final:!!r.final, lat:r.lat, lng:r.lng, photo:r.photo, hunt:r.hunt||null, darts:!!r.darts, shape:r.shape||null, draw:r.draw||null, drawN: r.draw && DR && DR.roundId === r.id ? DR.ops.length : 0, zoom:r.zoom, pan:r.pan, difficulty:r.difficulty, durationMs:r.durationMs, hintIntervalMs:r.hintIntervalMs, hintTotal:r.hintTotal,
-      hints: r.hints, remainingMs: Math.max(0, r.durationMs - (now()-r.startAt)), answered: Object.keys(r.answers), wants: Object.keys(r.wants||{}) } : null,
+      hints: r.hints, remainingMs: Math.max(0, r.durationMs - (now()-r.startAt)), answered: Object.keys(r.answers), wants: Object.keys(r.wants||{}), skips: Object.keys(r.skips||{}), redo: !!r.redo } : null,
     result: H.result ? { ...H.result, nextAt: Math.max(0, CONFIG.resultAutoMs - (now()-(H.resultStart||now()))) } : null,
     final: H.final,
   };
@@ -3492,7 +3530,7 @@ function renderGame(){
     else if (r.hunt){ dropPano(); huntReset(r); showHuntMap(r); }
     else if (r.photo) showPano(r);
     else { dropPano(); showMap(r); }
-    $('#photoCredit').hidden = !r.photo;
+    if (r.redo) toast(t(r.photo ? 'skipDone' : 'noPhoto'));
     $('#guess').placeholder = t(nlNow() ? 'guessPhNl' : 'guessPh');
     $('#guess').value = ''; closeAc(); $('#hintList').innerHTML = ''; delete $('#hintList').dataset.sig;
     // In Straatjacht is de kaart het spel: op een telefoon de hints standaard inklappen tot de nieuwste.
@@ -3524,6 +3562,11 @@ function renderGame(){
   const hn = $('#hintNow'); hn.style.display = r.hints.length < r.hintTotal && !drawMe(r) ? '' : 'none';
   hn.classList.toggle('voted', iWant);
   hn.textContent = conn > 1 ? t(iWant ? 'hintVoted' : 'hintNowVote', { a: wants.length, b: conn }) : t('hintNow');
+  // Andere foto: alleen bij een straatfoto, en alleen als de host het kent (een oudere host stuurt geen skips mee).
+  const skips = r.skips || [], iSkip = skips.includes(me.id), sb = $('#skipBtn');
+  $('#photoRow').hidden = !r.photo; sb.hidden = !Array.isArray(r.skips);
+  sb.classList.toggle('voted', iSkip);
+  sb.textContent = conn > 1 ? t(iSkip ? 'skipVoted' : 'skipVote', { a: skips.length, b: conn }) : t('skipPhoto');
   $('#who').innerHTML = S.players.length > 1 ? S.players.map(p => { const ok = r.answered.includes(p.id), dr = r.draw && r.draw.by === p.id;
     return `<span class="${ok?'done':''} ${p.connected?'':'off'}">${dotHtml(p)}${esc(p.name)}${dr ? '<svg class="ic"><use href="#i-pen"/></svg>' : ok ? ' &#10003;' : ''}</span>`; }).join('') : '';
   // Na opnieuw verbinden weet de host al dat je hebt geantwoord, ook als deze pagina dat is vergeten.
@@ -3837,7 +3880,8 @@ $('#avatars').addEventListener('keydown', e => {
   const n = bs[Math.max(0, Math.min(bs.length-1, i+d))]; bs[i].tabIndex = -1; n.tabIndex = 0; n.focus();
 });
 $('#name').addEventListener('input', e => { me.name = e.target.value.trim(); store.set('lr_name', me.name); renderAvatar(true); syncAvLetter(); });
-$('#name').addEventListener('keydown', e => { if (e.key==='Enter') $('#createBtn').click(); });
+// Enter in het naamveld: staat er al een code (getypt of uit de link), dan joinen in plaats van een eigen kamer maken.
+$('#name').addEventListener('keydown', e => { if (e.key==='Enter' && !e.repeat) $(cleanCode($('#codeIn').value).length === 4 ? '#joinBtn' : '#createBtn').click(); });
 $('#hintChips').addEventListener('click', e => {
   const b = e.target.closest('[data-g]'); if (!b) return;
   const g = b.dataset.g, nm = t('g_'+g);
@@ -3872,6 +3916,7 @@ document.querySelectorAll('[data-all]').forEach(b => b.addEventListener('click',
   st.addEventListener('click', e => { const b = e.target.closest('[data-step]'); if (b && e.detail === 0) tourStep(+b.dataset.step); });   // toetsenbord
 }
 $('#hintNow').addEventListener('click', e => { e.stopPropagation(); act({ t:'wanthint' }); beep(700,.05); });
+$('#skipBtn').addEventListener('click', () => { act({ t:'wantskip' }); beep(700,.05); });
 $('#hintHead').addEventListener('click', () => $('#hintsBox').classList.toggle('shut'));
 $('#zIn').addEventListener('click', () => dartOpen() ? dmap.zoomIn() : pano ? pano.setHfov(pano.getHfov() - 15) : map && map.zoomIn());
 $('#zOut').addEventListener('click', () => dartOpen() ? dmap.zoomOut() : pano ? pano.setHfov(pano.getHfov() + 15) : map && map.zoomOut());
@@ -3887,8 +3932,21 @@ document.addEventListener('keydown', e => {
   if (!S || S.phase !== 'round' || S.round?.hunt || S.round?.darts || drawMe(S.round) || e.ctrlKey || e.metaKey || e.altKey || e.key.length !== 1) return;
   const g = $('#guess'); if (document.activeElement !== g && myAnswer == null && /\S/.test(e.key) && document.activeElement.tagName !== 'INPUT') g.focus();
 });
-$('#codeIn').addEventListener('input', e => { e.target.value = e.target.value.toUpperCase().replace(/[^A-Z0-9]/g,''); });
-$('#codeIn').addEventListener('keydown', e => { if (e.key==='Enter') $('#joinBtn').click(); });
+const cleanCode = v => String(v).toUpperCase().replace(/[^A-Z0-9]/g,'').slice(0,4);
+// Geplakte tekst: een hele link (#room=ABCD), of een losse code met tekst of spaties eromheen. I, O, 0 en 1 komen in een code niet voor.
+function codeFrom(v){
+  const s = String(v), m = s.match(/room=([A-Z0-9]{4})/i) || s.match(/(?:^|[^A-Z0-9])([A-HJ-NP-Z2-9]{4})(?![A-Z0-9])/i);
+  return m ? m[1].toUpperCase() : cleanCode(s);
+}
+// Hoofdletters komen uit de CSS. De waarde alleen aanpassen als dat nodig is en niet midden in een woord van het schermtoetsenbord:
+// op Android verdubbelt dat letters, en met maximaal 4 tekens staat er dan een andere code dan je typte.
+function tidyCode(e){ if (e.isComposing) return; const v = cleanCode(e.target.value); if (v !== e.target.value) e.target.value = v; }
+['input','compositionend','change'].forEach(ev => $('#codeIn').addEventListener(ev, tidyCode));
+$('#codeIn').addEventListener('paste', e => {
+  const txt = e.clipboardData && e.clipboardData.getData('text'); if (!txt) return;
+  e.preventDefault(); e.target.value = codeFrom(txt);
+});
+$('#codeIn').addEventListener('keydown', e => { if (e.key==='Enter' && !e.repeat) $('#joinBtn').click(); });
 $('#langSeg').addEventListener('click', e => { const b = e.target.closest('[data-lang]'); if (b){ lang = b.dataset.lang; store.set('lr_lang', lang); applyI18n(); } });
 $('#soundBtn').addEventListener('click', () => { sound = !sound; store.set('lr_sound', sound?'1':'0'); applyI18n(); beep(); });
 ['#rulesBtn','#rulesBtn2'].forEach(s => $(s).addEventListener('click', () => $('#ovRules').classList.add('on')));
@@ -3962,26 +4020,36 @@ async function netOk(){
   if (!joinRoom) $('#startErr').textContent = t('netFail');
   return !!joinRoom;
 }
-$('#createBtn').addEventListener('click', async () => {
-  if (needName() || !(await netOk())) return;
-  const code = makeCode();
-  connect(code); hostInit();
+$('#createBtn').addEventListener('click', () => {
+  if (busy() || needName()) return;
+  enter(async () => { if (await netOk()){ connect(makeCode()); hostInit(); } });
 });
 $('#soloBtn').addEventListener('click', () => {
-  if (needName()) return;
-  solo = true; hostInit();
+  if (busy() || needName()) return;
+  enter(() => { solo = true; hostInit(); });
 });
 $('#joinBtn').addEventListener('click', () => {
-  if (needName()) return;
-  const code = $('#codeIn').value.trim().toUpperCase();
+  if (busy() || needName()) return;
+  const code = cleanCode($('#codeIn').value);
   if (code.length !== 4){ $('#startErr').textContent = t('codeNeeded'); return; }
+  $('#codeIn').value = code;
   joinAsPeer(code);
 });
-async function joinAsPeer(code){
-  if (!(await netOk())) return;
-  connect(code);
-  overlay(t('searching', { c: code }), t('searchingSub'), true);
-  joinTimer = setTimeout(() => { overlay(null); disconnect().then(()=>{ show('start'); $('#startErr').textContent = t('notFound'); }); }, CONFIG.joinTimeoutMs);
+function joinAsPeer(code){
+  return enter(async () => {
+    if (!(await netOk())) return;
+    connect(code);
+    overlay(t('searching', { c: code }), t('searchingSub'), true);
+    clearTimeout(joinTimer);
+    joinTimer = setTimeout(() => { overlay(null); disconnect().then(()=>{ show('start'); $('#startErr').textContent = t('notFound'); }); }, CONFIG.joinTimeoutMs);
+  });
+}
+// Link met #room=ABCD: bij het laden, en ook als de pagina al open stond en alleen de hash verandert (dan laadt de browser niet opnieuw).
+function joinFromHash(){
+  const m = location.hash.match(/room=([A-Z0-9]{4})/i);
+  if (!m || busy()) return;
+  $('#codeIn').value = m[1].toUpperCase();
+  if (me.name) joinAsPeer(m[1].toUpperCase());
 }
 $('#ovCancel').addEventListener('click', () => { overlay(null); disconnect().then(()=>show('start')); });
 async function leave(){ await disconnect(); huntClear(); renderedRound = null; renderedResult = null; show('start'); }
@@ -4149,8 +4217,8 @@ document.addEventListener('keydown', e => { if (e.key === 'Escape') closeEmoTray
 (async function boot(){
   $('#name').value = me.name; renderColors(); applyI18n(); show('start');
   try { await loadData(); } catch(e){ overlay(t('dataFail')); return; }
-  const m = location.hash.match(/room=([A-Z0-9]{4})/i);
-  if (m){ $('#codeIn').value = m[1].toUpperCase(); if (me.name) joinAsPeer(m[1].toUpperCase()); }
+  joinFromHash();
+  window.addEventListener('hashchange', joinFromHash);
 })();
 </script>
 </body>
