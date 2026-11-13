@@ -186,7 +186,7 @@ span.pill{cursor:default}
 .seg.modes button:active{transform:scale(.97)}
 /* Kleur per modus: knoppen, tegels, schema en HUD lezen allemaal --mc */
 [data-m]{--mc:var(--acc)}
-[data-m=map]{--mc:#3f78a8}[data-m=street]{--mc:#3e8a63}[data-m=dutch]{--mc:#c26c2e}[data-m=hunt]{--mc:#7563b0}[data-m=darts]{--mc:#b44f63}[data-m=shape]{--mc:#a8823a}[data-m=draw]{--mc:#23919a}[data-m=tour]{--mc:var(--gold)}
+[data-m=map]{--mc:#3f78a8}[data-m=street]{--mc:#3e8a63}[data-m=dutch]{--mc:#c26c2e}[data-m=hunt]{--mc:#7563b0}[data-m=darts]{--mc:#b44f63}[data-m=shape]{--mc:#a8823a}[data-m=draw]{--mc:#23919a}[data-m=trace]{--mc:#808a2c}[data-m=tour]{--mc:var(--gold)}
 #modeDesc{font-size:13px;line-height:1.35}
 /* Oneven aantal modi: de laatste over de hele breedte */
 .seg.modes button:last-child:nth-child(odd),.seg.modes button:nth-last-child(2):nth-child(odd){grid-column:1/-1}
@@ -207,7 +207,7 @@ span.pill{cursor:default}
 .lrow{display:flex;justify-content:space-between;align-items:center;gap:8px;min-height:22px}
 .lrow .mini{min-height:22px;padding:2px 9px;font-size:11px;border-radius:4px}
 .chips.ico.c5{grid-template-columns:repeat(5,1fr)}
-#tourModes{grid-template-columns:repeat(7,1fr)}
+#tourModes{grid-template-columns:repeat(8,1fr)}
 #hintChips{grid-template-columns:repeat(9,1fr)}
 .chips.ico .chipbtn.mc{color:color-mix(in srgb,var(--mc) 72%,var(--mute))}
 .chips.ico .chipbtn.mc svg{width:24px;height:24px;fill:currentColor}
@@ -414,6 +414,32 @@ body.chat-on .shapetag{top:calc(max(10px,env(safe-area-inset-top)) + 116px)}
 .drawing .ticks{display:none;fill:none;stroke:var(--mute);stroke-width:4;stroke-linecap:round}
 #draw.me .ticks{display:block}
 #drawWait{fill:#8a8478;font-family:var(--font);font-size:46px;text-anchor:middle}
+/* Grens trekken: vierkant vel van 1000 x 1000. Lijnen in de kleur van de speler (--pc, donker bij een lichte kleur). */
+#trace{position:absolute;inset:0;overflow:hidden;background:radial-gradient(color-mix(in srgb,var(--ink) 13%,transparent) 1px,transparent 1.5px) 0 0/22px 22px,var(--paper)}
+#traceArea{position:absolute;left:max(16px,env(safe-area-inset-left));right:var(--shR,16px);top:calc(max(10px,env(safe-area-inset-top)) + 112px);bottom:var(--shB,300px);transition:bottom .3s,right .3s}
+#traceSvg{display:block;width:100%;height:100%;user-select:none;-webkit-user-select:none;-webkit-touch-callout:none;touch-action:none;cursor:crosshair}
+#trace.done #traceSvg{cursor:default}
+#traceG path{fill:color-mix(in srgb,var(--pc) 20%,transparent);stroke:var(--pc);stroke-width:6;stroke-linejoin:round;stroke-linecap:round}
+#traceG path.cur{fill:none}
+#traceG line{stroke:var(--pc);stroke-width:3;stroke-dasharray:10 12;opacity:.55}
+#trace.blind #traceG{visibility:hidden}
+#traceFrame{fill:none;stroke:#8a8478;stroke-width:3;stroke-dasharray:14 12}
+#traceWait{fill:#8a8478;font-family:var(--font);font-size:38px;text-anchor:middle;pointer-events:none}
+.tflag{cursor:default}
+#traceName{font-size:clamp(20px,6vw,26px);line-height:1.05;overflow-wrap:anywhere;font-family:var(--display);font-weight:400;text-transform:uppercase}
+#traceInfo{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+#traceDone{flex:none;min-height:40px;padding:8px 14px}
+.tracegal{display:grid;grid-template-columns:repeat(auto-fill,minmax(128px,1fr));gap:10px;padding:10px}
+.tracegal figure{margin:0;display:flex;flex-direction:column;gap:6px;min-width:0}
+.tracegal .tpane{position:relative;aspect-ratio:1;border-radius:5px;background:#fbfaf6;display:grid;place-items:center;overflow:hidden;box-shadow:0 0 0 1px var(--line)}
+.tracegal .tpane svg{width:100%;height:100%;display:block}
+.tracegal .tt{fill:#1b1b1f;fill-opacity:.14;stroke:#1b1b1f;stroke-opacity:.55;stroke-width:1.5;vector-effect:non-scaling-stroke;stroke-linejoin:round}
+.tracegal .td{fill:color-mix(in srgb,var(--pc) 22%,transparent);stroke:var(--pc);stroke-width:2.5;vector-effect:non-scaling-stroke;stroke-linejoin:round}
+.tracegal .best .tpane{box-shadow:0 0 0 2px var(--gold)}
+.tracegal figcaption{font-size:13px;color:var(--mute);display:flex;align-items:center;gap:6px;min-width:0;white-space:nowrap}
+.tracegal figcaption span{min-width:0;overflow:hidden;text-overflow:ellipsis}
+.tracegal figcaption b{margin-left:auto;color:var(--ink);font-family:var(--display);font-weight:400}
+.tracegal .tnone{font-size:13px;color:#8a8478}
 .shapetag .avatar{width:20px;height:20px;font-size:11px}
 .drawpanel{background:var(--glass);border:1px solid var(--line);border-radius:var(--r);box-shadow:var(--shadow-up);padding:10px 12px;display:flex;flex-direction:column;gap:9px;animation:slide .25s ease}
 .dtarget{display:flex;align-items:center;gap:12px;min-width:0}
@@ -963,6 +989,7 @@ td .fxi{margin-left:5px}
   <symbol id="m-dutch" viewBox="0 0 24 24"><path fill-rule="evenodd" d="M9.8 11h4.4L16.6 22.5H7.4zM10.9 22.5v-3.2a1.1 1.1 0 0 1 2.2 0v3.2z"/><g transform="translate(12 9.6) rotate(45)"><g><rect x="-1.9" y="-9.6" width="3.8" height="7.6" rx=".9" opacity=".5"/><rect x="-.55" y="-9.6" width="1.1" height="9.6" rx=".5"/></g><g transform="rotate(90)"><rect x="-1.9" y="-9.6" width="3.8" height="7.6" rx=".9" opacity=".5"/><rect x="-.55" y="-9.6" width="1.1" height="9.6" rx=".5"/></g><g transform="rotate(180)"><rect x="-1.9" y="-9.6" width="3.8" height="7.6" rx=".9" opacity=".5"/><rect x="-.55" y="-9.6" width="1.1" height="9.6" rx=".5"/></g><g transform="rotate(270)"><rect x="-1.9" y="-9.6" width="3.8" height="7.6" rx=".9" opacity=".5"/><rect x="-.55" y="-9.6" width="1.1" height="9.6" rx=".5"/></g></g><circle cx="12" cy="9.6" r="2"/></symbol>
   <symbol id="m-hunt" viewBox="0 0 24 24"><circle cx="10.5" cy="10.5" r="6.4" fill-opacity=".45" stroke="currentColor" stroke-width="2.2"/><path d="M16.2 16.2l5 5" stroke="currentColor" stroke-width="3" stroke-linecap="round"/><path fill-rule="evenodd" d="M10.5 15s3.1-2.6 3.1-5.2a3.1 3.1 0 1 0-6.2 0c0 2.6 3.1 5.2 3.1 5.2zM10.5 8.7a1.1 1.1 0 1 1 0 2.2 1.1 1.1 0 0 1 0-2.2z"/></symbol>
   <symbol id="m-darts" viewBox="0 0 24 24"><circle cx="10.5" cy="13.5" r="9.5" opacity=".45"/><path fill-rule="evenodd" d="M10.5 7a6.5 6.5 0 1 1 0 13 6.5 6.5 0 0 1 0-13zm0 3.4a3.1 3.1 0 1 0 0 6.2 3.1 3.1 0 0 0 0-6.2z"/><circle cx="10.5" cy="13.5" r="1.5"/><path d="M10.5 13.5l8.6-8.6" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"/><path d="M18.4 5.6l.3-4.4 2 2.1zM18.4 5.6l4.4-.3-2.1-2z"/></symbol>
+  <symbol id="m-trace" viewBox="0 0 24 24"><path fill-rule="evenodd" d="M5 6.5 9 4l4 1.5 3-1 2.5 3-1 3.5 1.5 3-3 3.5-4-.5-3 2-3-2.5.5-4L3 10zM6.68 7.76 9.56 5.96 12.44 7.04 14.6 6.32 16.4 8.48 15.68 11 16.76 13.16 14.6 15.68 11.72 15.32 9.56 16.76 7.4 14.96 7.76 12.08 5.24 10.28z"/><path d="M13.5 22.5l1-3.6 6.3-6.3a1.4 1.4 0 0 1 2 0l.6.6a1.4 1.4 0 0 1 0 2l-6.3 6.3z"/></symbol>
   <symbol id="m-shape" viewBox="0 0 24 24"><path d="M19.4 9.7 18.5 9.9 17.1 12.4 18.2 12.0 18.6 13.0 18.3 13.3 18.8 14.0 18.0 14.6 18.6 15.4 18.4 16.0 19.5 16.6 19.2 17.2 17.9 18.4 16.9 18.6 15.9 17.9 15.4 18.0 14.3 17.7 13.2 18.9 13.4 19.9 12.6 20.1 11.7 20.0 11.3 19.6 10.0 19.1 9.7 19.4 8.2 19.2 7.0 18.7 7.1 18.3 6.5 18.0 7.0 17.7 7.5 15.4 7.3 15.5 7.5 13.8 8.1 14.6 7.9 13.9 7.4 13.4 7.6 13.3 7.4 12.2 6.6 11.8 6.1 11.1 6.1 10.4 6.6 10.4 5.6 10.2 5.7 9.9 5.2 9.6 3.1 9.2 2.6 8.8 3.1 8.5 2.8 8.3 3.2 8.3 2.5 8.0 2.8 7.6 4.6 7.2 5.3 7.8 7.1 7.6 6.5 5.5 7.3 5.5 7.4 6.1 8.8 6.3 9.6 6.0 9.2 5.9 9.3 5.5 10.9 4.7 11.2 3.3 11.6 2.9 12.4 2.7 12.8 3.4 13.2 3.4 14.0 4.3 14.7 4.4 14.7 5.0 15.6 4.6 15.6 5.3 16.5 5.9 17.5 5.9 18.2 6.6 20.1 6.9 19.4 8.5zM21.9 19.2 22.0 20.5 21.5 22.0 21.0 21.6 20.9 20.7 20.9 19.7 21.7 19.4 21.8 18.7z"/></symbol>
   <symbol id="m-draw" viewBox="0 0 24 24"><rect x="2" y="2" width="2.2" height="20" rx="1.1"/><path opacity=".45" d="M5.2 3.5h13.3a1 1 0 0 1 1 1v8.3a1 1 0 0 1-1 1H5.2z"/><path d="M5.2 3.5h13.3a1 1 0 0 1 1 1v2.4H5.2z"/><g transform="rotate(45 16.5 15.5)"><rect x="14.4" y="6.5" width="4.2" height="10.2" rx="1"/><path d="M14.4 17.7h4.2l-2.1 4.3z" opacity=".45"/><path d="M15.8 20.6h1.4l-.7 1.4z"/></g></symbol>
   <!-- Sabotage: klein teken per soort (verduistering, spiraal, vliegtuig). Kleuren staan in het teken zelf, zodat .ic ze niet leegmaakt. -->
@@ -1034,13 +1061,13 @@ td .fxi{margin-left:5px}
       <div class="players" id="lobbyPlayers"></div>
     </div>
     <div class="card" id="settingsCard">
-      <div class="field"><label data-i="mode"></label><div class="seg modes" data-set="mode" data-opts="map,street,dutch,hunt,darts,shape,draw,tour"></div><p class="sub" id="modeDesc"></p></div>
+      <div class="field"><label data-i="mode"></label><div class="seg modes" data-set="mode" data-opts="map,street,dutch,hunt,darts,shape,draw,trace,tour"></div><p class="sub" id="modeDesc"></p></div>
       <div class="field" data-for="tour"><div class="lrow"><label data-i="tourModes"></label><button class="mini" data-all="tourModes" data-i="allOn"></button></div><div class="chips ico" id="tourModes" data-tset="tourModes" role="group"></div></div>
       <div class="field" data-for="tour"><label data-i="tourOrder"></label><div class="seg" data-set="tourOrder" data-opts="mix,cycle,block"></div></div>
       <div class="toggle" data-for="tour"><div class="tl"><label data-i="rounds"></label><small id="tourSplit"></small></div>
         <div class="stepper" id="tourStep"><button type="button" data-step="-1" aria-label="-1"><svg class="ic"><use href="#i-minus"/></svg></button><b id="tourRoundsVal" aria-live="polite"></b><button type="button" data-step="1" aria-label="+1"><svg class="ic"><use href="#i-plus"/></svg></button></div></div>
       <div class="field" data-for="tour"><label data-i="difficulty"></label><div class="seg diff" data-set="tourDiff" data-opts="easy,normal,hard,rise"></div></div>
-      <div class="field" data-for="tour" data-tm="map street darts shape draw"><div class="lrow"><label data-i="tourConts"></label><button class="mini" data-all="tourConts" data-i="allOn"></button></div><div class="chips ico c5" id="tourConts" data-tset="tourConts" role="group"></div></div>
+      <div class="field" data-for="tour" data-tm="map street darts shape draw trace"><div class="lrow"><label data-i="tourConts"></label><button class="mini" data-all="tourConts" data-i="allOn"></button></div><div class="chips ico c5" id="tourConts" data-tset="tourConts" role="group"></div></div>
       <div class="field" data-for="tour" data-tm="dutch hunt" id="tourProvsField"><div class="lrow"><label data-i="tourProvs"></label><button class="mini" data-all="tourProvs" data-i="allOn"></button></div><div class="provs" id="tourProvs" data-tset="tourProvs" role="group"></div></div>
       <div class="field" data-for="hunt tour" data-tm="hunt"><label id="huntCityLbl" data-i="huntCity" for="huntCity"></label><select id="huntCity"></select></div>
       <div class="field" data-for="dutch hunt tour" data-tm="dutch hunt" id="nlPlacesField"><label data-i="nlPlaces"></label><div class="seg" data-set="nlPlaces" data-opts="all,big,towns"></div></div>
@@ -1056,11 +1083,11 @@ td .fxi{margin-left:5px}
     <details class="card" id="hintCard">
       <summary data-i="more"></summary>
       <div class="more">
-      <div class="field" data-for="world tour" data-tm="map street darts shape draw"><label data-i="weighting"></label><div class="seg" data-set="weighting" data-opts="uniform,area"></div></div>
-      <div class="toggle" data-for="world tour" data-tm="map street darts shape draw"><label data-i="smallCountries"></label><button class="sw" data-sw="small" aria-label="toggle"></button></div>
-      <div class="field"><label data-i="hintCount"></label><div class="seg" data-set="hintCount" data-opts="4,6,8"></div></div>
-      <div class="field"><label data-i="hintEvery"></label><div class="seg" data-set="hintEvery" data-opts="5,10,15,20" data-suf="s"></div></div>
-      <div class="field" data-for="world tour" data-tm="map street darts shape draw"><label data-i="hintTypes"></label><div class="chips ico" id="hintChips" role="group"></div></div>
+      <div class="field" data-for="world tour" data-tm="map street darts shape draw trace"><label data-i="weighting"></label><div class="seg" data-set="weighting" data-opts="uniform,area"></div></div>
+      <div class="toggle" data-for="world tour" data-tm="map street darts shape draw trace"><label data-i="smallCountries"></label><button class="sw" data-sw="small" aria-label="toggle"></button></div>
+      <div class="field" data-not="trace"><label data-i="hintCount"></label><div class="seg" data-set="hintCount" data-opts="4,6,8"></div></div>
+      <div class="field" data-not="trace"><label data-i="hintEvery"></label><div class="seg" data-set="hintEvery" data-opts="5,10,15,20" data-suf="s"></div></div>
+      <div class="field" data-for="world tour" data-tm="map street darts shape draw" data-not="trace"><label data-i="hintTypes"></label><div class="chips ico" id="hintChips" role="group"></div></div>
       </div>
     </details>
     <button class="btn pri" id="startBtn"><svg class="ic"><use href="#i-play"/></svg><span id="startTxt"></span></button>
@@ -1077,6 +1104,7 @@ td .fxi{margin-left:5px}
   <div class="chip shapetag" id="shapeTag" hidden></div>
   <div id="draw" hidden><div id="drawArea" class="drawing"><svg id="drawSvg" viewBox="-28 -28 1556 1056" preserveAspectRatio="xMidYMid meet" aria-hidden="true"><rect class="paper" x="0" y="0" width="1500" height="1000" rx="5"/><path class="ticks" d="M500-22v14M750-24v16M1000-22v14M500 1008v14M750 1008v16M1000 1008v14M-22 333h14M-24 500h16M-22 667h14M1508 333h14M1508 500h16M1508 667h14"/><svg id="drawG" x="0" y="0" width="1500" height="1000" viewBox="0 0 1500 1000"></svg><text id="drawWait" x="750" y="516"></text></svg></div></div>
   <div class="chip shapetag" id="drawTag" hidden></div>
+  <div id="trace" hidden><div id="traceArea" class="drawing"><svg id="traceSvg" viewBox="-20 -20 1040 1040" preserveAspectRatio="xMidYMid meet" aria-hidden="true"><rect class="paper" x="0" y="0" width="1000" height="1000" rx="5"/><rect id="traceFrame" hidden/><g id="traceG"></g><text id="traceWait" x="500" y="512"></text></svg></div></div>
   <div id="blackout" hidden><div class="bo-in"><span class="bo-ring"></span><b data-i="sab_bo"></b><small id="boBy"></small><i data-i="boSub"></i></div></div>
   <div class="chip shapetag" id="fxTag" hidden></div>
   <div id="tourCard" aria-live="polite"></div>
@@ -1114,6 +1142,12 @@ td .fxi{margin-left:5px}
       <div class="dtools"><span class="dset" id="drawTools"></span><span class="grow"></span>
         <button class="iconbtn dbtn" id="drawUndo" type="button"><svg class="ic"><use href="#i-undo"/></svg></button><button class="iconbtn dbtn" id="drawClear" type="button"><svg class="ic"><use href="#i-trash"/></svg></button></div>
     </div>
+    <div class="drawpanel" id="tracePanel" hidden>
+      <div class="dtarget"><span class="dref tflag" id="traceFlag"></span><div class="htxt"><small data-i="traceYou"></small><b id="traceName"></b></div></div>
+      <div class="dtools"><small class="sub" id="traceInfo"></small><span class="grow"></span>
+        <button class="iconbtn dbtn" id="traceUndo" type="button"><svg class="ic"><use href="#i-undo"/></svg></button><button class="iconbtn dbtn" id="traceClear" type="button"><svg class="ic"><use href="#i-trash"/></svg></button>
+        <button class="btn pri" id="traceDone" type="button"><svg class="ic"><use href="#i-lock"/></svg><span data-i="traceDone"></span></button></div>
+    </div>
     <div class="answer" id="answerBox">
       <div class="ac" id="ac"></div>
       <input type="text" id="guess" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" enterkeyhint="done">
@@ -1132,6 +1166,7 @@ td .fxi{margin-left:5px}
     <p class="sub" id="resCredit" hidden></p>
     <div class="card"><div class="answerbig"><span id="resFlag"></span><div><div class="nm-big" id="resName"></div><div class="sub" id="resSub"></div></div></div></div>
     <div class="card drawcmp" id="resDraw" hidden></div>
+    <div class="card tracegal" id="resTrace" hidden></div>
     <div class="card sablist" id="resSab" hidden></div>
     <div class="card" style="padding:10px 12px">
       <table><thead><tr><th data-i="player"></th><th data-i="guessCol"></th><th class="n" data-i="timeCol"></th><th class="n">+</th><th class="n" data-i="total"></th></tr></thead><tbody id="resBody"></tbody></table>
@@ -1301,6 +1336,13 @@ const CONFIG = {
   // half: de tekenaar telt als goed als minstens dit deel van de raders het land raadt.
   // snap: een rechthoek of rondje klikt vast op een rand, de helft of een derde als je er zo dichtbij komt. minShape: kleiner is een mistik.
   draw: { w: 1500, h: 1000, flushMs: 50, step: 5, maxPts: 8000, maxOps: 4000, syncMs: 1500, half: .5, snap: 26, minShape: 16 },
+  // Grens trekken: iedereen tekent de omtrek van hetzelfde land, wie hem het best raakt krijgt de meeste punten.
+  // Het vel is size x size. step: punten dichter bij elkaar vallen weg. maxLoops en maxPts: grens per tekening. minLoop: kleinere lussen zijn een mistik.
+  // minKm: alleen landen vanaf zoveel km² (een stadstaat is een stip). keep: eilanden vanaf dit deel van het hoofddeel tellen mee.
+  // grid: zoveel pixels op de lange kant bij het vergelijken. shift: zoveel pixels schuift de host de tekening om de beste plek te vinden.
+  // full: deel van de afstand tussen een cirkel en een perfecte vorm dat al de volle punten geeft. good, half: zo'n nauwkeurigheid telt als goed of half.
+  trace: { size: 1000, step: 6, maxLoops: 30, maxPts: 1200, minLoop: 500, minKm: { easy: 250000, normal: 60000, hard: 8000 }, keep: { easy: .08, normal: .03, hard: .01 },
+    grid: 200, shift: 3, full: .85, good: .6, half: .25 },
   // Sabotage: hand = hoogstens zoveel kaarten, start = kaarten bij het begin, every = daarna om de zoveel rondes een kaart erbij.
   // odds: kans op de variant (willekeurige speler, kies een speler, iedereen) voor de koploper en voor de laatste; ertussen loopt het gelijkmatig.
   // maxJet: zo vaak stapelt Jetlag op één speler (elke keer loopt de klok een keer sneller).
@@ -1337,7 +1379,7 @@ const avKey = a => (a === 'heart' ? 'xavi' : AVATARS.includes(a) ? a : 'letter')
 // Hintgroepen die de host aan/uit kan zetten in de lobby
 const HINT_GROUPS = ['geo','people','money','codes','nb','name','hist','econ','cult'];
 // Toernooi: welke modi meedoen en de continenten die je kunt aan- en uitzetten.
-const TOUR_MODES = ['map','street','dutch','hunt','darts','shape','draw'], CONTS = ['EU','AM','AS','OC','AF'];
+const TOUR_MODES = ['map','street','dutch','hunt','darts','shape','draw','trace'], CONTS = ['EU','AM','AS','OC','AF'];
 // Toernooi: vlak podium met een pin, zelfde stijl als de andere modusiconen (#m-tour).
 const TOUR_ICON = `<svg viewBox="0 0 24 24" aria-hidden="true"><use href="#m-tour"/></svg>`;
 const HINT_ICON = { geo:'g-geo', people:'g-people', money:'g-money', codes:'g-codes', nb:'g-nb', name:'g-name', hist:'g-hist', econ:'g-econ', cult:'g-cult' };
@@ -1394,6 +1436,7 @@ const I18N = {
   shape:'Silhouet', md_shape:'Raad het land aan alleen zijn omtrek.',
   draw:'Tekenen', md_draw:'Eén speler tekent een vlag uit het hoofd, de rest raadt het land.', drawYou:'Teken de vlag van', drawYouTour:'Jij tekent. Onderin zie je welke vlag.', drawIs:'{n} tekent een vlag', drawWaitTxt:'{n} gaat tekenen...', drawHere:'Teken hier de vlag',
   drawGot:'{a} van {b} geraden', drawBy:'Tekening van {n}', drawReal:'De echte vlag', drawSolo:'Geen raders, deze ronde silhouet', drawNeed2:'Met één speler wordt elke ronde Silhouet.', drawFull:'Het vel is vol',
+  trace:'Grens trekken', md_trace:'Iedereen tekent de omtrek van hetzelfde land. Wie hem het best raakt, wint.', traceYou:'Teken de omtrek van', traceDone:'Klaar', traceHere:'Trek een lijn rond het land', traceMore:'Eiland? Nog een lus', traceFull:'Genoeg lijnen', traceNeed:'Teken eerst een lus', traceSent:'Ingeleverd', traceFrame:'Kader in de goede verhouding', traceMatch:'{p}% raak', traceBest:'Beste omtrek', traceNone:'geen tekening', traceReal:'Echte vorm', traceBlind:'Je ziet je lijnen niet',
   drawUndo:'Terug', drawClear:'Wissen', drawRefTip:'De vlag als voorbeeld, tik om te vergroten',
   c_black:'Zwart', c_white:'Wit, ook als gum', c_red:'Rood', c_orange:'Oranje', c_yellow:'Geel', c_green:'Groen', c_sky:'Lichtblauw', c_blue:'Blauw',
   dt_w0:'Dunne kwast', dt_w1:'Kwast', dt_w2:'Dikke kwast', dt_rect:'Rechthoek: sleep van hoek naar hoek', dt_disc:'Rondje: sleep vanuit het midden',
@@ -1460,6 +1503,7 @@ const I18N = {
    <li><b>Toernooi</b>: jij kiest welke modi meedoen, ${CONFIG.tour.min} tot ${CONFIG.tour.max} rondes, de volgorde, continenten en provincies. <b>Oplopend</b> gaat van makkelijk naar moeilijk. Met <b>finale</b> telt de laatste ronde dubbel. Elke ronde telt zoals in zijn eigen modus. Op het eindscherm zie je de punten per modus.</li>
    <li><b>Silhouet</b>: je ziet alleen de omtrek van een land. <b>Makkelijk</b>: noord boven, met lengte en breedtelijnen en een schaal. <b>Normaal</b>: ${CONFIG.shape.rot[0]} tot ${CONFIG.shape.rot[1]} graden gedraaid, kleine eilanden weg. <b>Moeilijk</b>: willekeurig gedraaid, soms gespiegeld, alleen het grootste deel. Punten zoals bij Satelliet.</li>
    <li><b>Tekenen</b>: één speler ziet de naam van een land en tekent de vlag uit het hoofd, met acht kleuren, een kwast, een rechthoek en een rondje. De rest ziet de vlag ontstaan en raadt het land, met hints en punten zoals bij Satelliet: sneller is meer. De hint met de vlag vervalt. Geen letters of cijfers tekenen. De tekenaar krijgt het gemiddelde van de raders: hoe minder het raden, hoe minder punten. Raadt minstens ${pc(CONFIG.draw.half)}, dan telt het voor de tekenaar als goed. <b>Makkelijk</b>: de tekenaar ziet de vlag als voorbeeld. <b>Moeilijk</b>: alleen de kwast, geen vormen. Iedereen tekent om de beurt. Met één speler wordt het Silhouet.</li>
+   <li><b>Grens trekken</b>: iedereen ziet dezelfde landnaam en tekent de omtrek op een leeg vel. Elke lus is een eigen vlak, dus eilanden teken je los. Plek en grootte op het vel maken niets uit: de host legt jouw tekening even groot over de echte vorm (noord boven) en meet de overlap. Een rondje is nul punten, de volle punten krijg je al ruim voor perfect. Geen hints en geen tijdbonus: alleen de vorm telt. Klaar zet je tekening vast, anders telt hij bij het einde van de tijd. <b>Makkelijk</b>: grote landen, met een kader in de goede verhouding. <b>Moeilijk</b>: ook kleine landen, meer eilanden tellen mee.</li>
    <li><b>Sabotage</b> zet de host aan in de lobby, vanaf 2 spelers. Je krijgt ${CONFIG.sab.start} kaart bij de start en daarna elke ${CONFIG.sab.every} rondes een nieuwe, hoogstens ${CONFIG.sab.hand} in je hand. Je speelt hoogstens één kaart per ronde. <b>Blackout</b>: het doelwit ziet de kaart niet meer. <b>Delusion</b>: de hele volgende ronde gaan de hints van het doelwit over een ander land, en dat krijgt het doelwit niet te horen. Het komt pas uit op het uitslagscherm. <b>Jetlag</b>: de klok van het doelwit loopt twee keer zo snel. Blackout en Jetlag werken meteen, of de hele volgende ronde als je ze op het uitslagscherm speelt. Elke kaart bestaat in drie varianten: een willekeurige speler, een speler die jij kiest, of iedereen. Wie achter staat krijgt vaker een sterke variant. De tekenaar is niet te raken.</li>
    <li><b>Gelijke stand</b>: meeste goed wint, daarna het snelste goede antwoord.</li>
   </ul>`,
@@ -1510,6 +1554,7 @@ const I18N = {
   shape:'Silhouette', md_shape:'Guess the country from its outline alone.',
   draw:'Draw', md_draw:'One player draws a flag from memory, the rest guess the country.', drawYou:'Draw the flag of', drawYouTour:'You draw. The flag to draw is at the bottom.', drawIs:'{n} is drawing a flag', drawWaitTxt:'{n} is about to draw...', drawHere:'Draw the flag here',
   drawGot:'{a} of {b} guessed', drawBy:'Drawing by {n}', drawReal:'The real flag', drawSolo:'No one to guess, silhouette this round', drawNeed2:'With one player every round becomes Silhouette.', drawFull:'The sheet is full',
+  trace:'Outline', md_trace:'Everyone draws the outline of the same country. Whoever gets closest wins.', traceYou:'Draw the outline of', traceDone:'Done', traceHere:'Draw a line around the country', traceMore:'Island? Another loop', traceFull:'That is enough lines', traceNeed:'Draw a loop first', traceSent:'Handed in', traceFrame:'Frame in the right proportions', traceMatch:'{p}% match', traceBest:'Best outline', traceNone:'no drawing', traceReal:'Real shape', traceBlind:'You cannot see your lines',
   drawUndo:'Undo', drawClear:'Clear', drawRefTip:'The flag as an example, tap to enlarge',
   c_black:'Black', c_white:'White, also the eraser', c_red:'Red', c_orange:'Orange', c_yellow:'Yellow', c_green:'Green', c_sky:'Light blue', c_blue:'Blue',
   dt_w0:'Thin brush', dt_w1:'Brush', dt_w2:'Thick brush', dt_rect:'Rectangle: drag from corner to corner', dt_disc:'Circle: drag out from the middle',
@@ -1576,6 +1621,7 @@ const I18N = {
    <li><b>Tournament</b>: you pick which modes take part, ${CONFIG.tour.min} to ${CONFIG.tour.max} rounds, the order, continents and provinces. <b>Rising</b> goes from easy to hard. With the <b>final</b> on, the last round counts double. Each round scores as in its own mode. The final screen shows points per mode.</li>
    <li><b>Silhouette</b>: you only see the outline of a country. <b>Easy</b>: north up, with grid lines and a scale. <b>Normal</b>: rotated ${CONFIG.shape.rot[0]} to ${CONFIG.shape.rot[1]} degrees, small islands left out. <b>Hard</b>: random rotation, sometimes mirrored, only the largest part. Points work as in Satellite.</li>
    <li><b>Draw</b>: one player sees the name of a country and draws its flag from memory, with eight colors, a brush, a rectangle and a circle. The others watch the flag appear and guess the country, with hints and points as in Satellite: faster is more. The flag hint is left out. No letters or numbers. The drawer gets the average of the guessers: the fewer get it, the fewer points. If at least ${pc(CONFIG.draw.half)} get it, it counts as correct for the drawer. <b>Easy</b>: the drawer sees the flag as an example. <b>Hard</b>: brush only, no shapes. Everyone takes turns. With one player it becomes Silhouette.</li>
+   <li><b>Outline</b>: everyone sees the same country name and draws its outline on a blank sheet. Each loop is its own area, so draw islands separately. Position and size on the sheet do not matter: the host scales your drawing to the real shape (north up) and measures the overlap. A circle scores zero, full points come well before perfect. No hints and no time bonus: only the shape counts. Done locks your drawing, otherwise it counts when time runs out. <b>Easy</b>: large countries, with a frame in the right proportions. <b>Hard</b>: small countries too, more islands count.</li>
    <li><b>Sabotage</b> is switched on by the host in the lobby, from 2 players. You get ${CONFIG.sab.start} card at the start and a new one every ${CONFIG.sab.every} rounds, with at most ${CONFIG.sab.hand} in your hand. You play at most one card per round. <b>Blackout</b>: the target can no longer see the map. <b>Delusion</b>: for the whole next round the hints of the target are about a different country, and they are not told. It only comes out on the results screen. <b>Jetlag</b>: the clock of the target runs twice as fast. Blackout and Jetlag work right away, or for the whole next round when you play them on the results screen. Every card comes in three variants: a random player, a player you pick, or everyone. Players who are behind get the strong variants more often. The drawer cannot be hit.</li>
    <li><b>Ties</b>: most correct wins, then the fastest correct answer.</li>
   </ul>`,
@@ -1733,8 +1779,10 @@ function randomLocation(s, used){
 
 /* ================= SILHOUET ================= */
 // Host: een punt in het hoofddeel, zo dicht mogelijk bij het midden. Fout gokken telt dan vanaf het hart van het land, niet vanaf een toevallige plek.
-function shapeLocation(s, used){
+// ok: alleen landen die hieraan voldoen (Grens trekken: groot genoeg). Zijn die op, dan herhalen, en anders elk land.
+function shapeLocation(s, used, ok){
   let pool = countryPool(s, used);
+  if (ok){ const f = pool.filter(ok), g = f.length ? f : countryPool(s, []).filter(ok); if (g.length) pool = g; }
   while (pool.length){
     const code = pickCountry(s, pool), main = GEO[code].polys.reduce((a,b)=>a.area>b.area?a:b), [a,b,c,d] = main.bbox, mx = (a+c)/2, my = (b+d)/2;
     let best = null, bd = Infinity;
@@ -1756,13 +1804,19 @@ function shapeSpec(diff){
 }
 // Vorm als SVG. Lengte geschaald met cos(breedte) rond het midden van het hoofddeel, over de datumgrens heen gevouwen.
 // Uitkomst in eenheden van 1 breedtegraad x S, zodat de schaal (111 km per graad) klopt.
-function shapeSvg(code, sh, mini){
-  const g = GEO[code]; if (!g || !sh) return '';
+// Welke delen meedoen en de projectie: midden en cos(breedte) van het hoofddeel. Ook voor Grens trekken.
+function shapeBase(code, sh){
+  const g = GEO[code]; if (!g) return null;
   const C = CONFIG.shape, main = g.polys.reduce((a,b)=>a.area>b.area?a:b), [a,b,c,d] = main.bbox;
   const cx = (a+c)/2, cy = (b+d)/2, k = Math.cos(cy*Math.PI/180), wrap = x => ((x + 540) % 360) - 180;
   const dim = Math.max((c-a)*k, d-b) || 1, reach = Math.min(C.reachMax, Math.max(C.reachMin, dim*C.reach));
   const near = p => { const [pa,pb,pc,pd] = p.bbox; return Math.hypot(wrap((pa+pc)/2 - cx)*k, (pb+pd)/2 - cy) <= reach; };
   const keep = g.polys.filter(p => p === main || (!sh.main && p.area >= main.area*sh.keep && near(p)));
+  return { keep, cx, cy, k, dim, wrap };
+}
+function shapeSvg(code, sh, mini){
+  const B = sh && shapeBase(code, sh); if (!B) return '';
+  const C = CONFIG.shape, { keep, cx, cy, k, dim, wrap } = B;
   const S = 1000/dim, th = sh.rot*Math.PI/180, cs = Math.cos(th), sn = Math.sin(th), fx = sh.flip ? -1 : 1;
   const P = (x, y) => { const u = wrap(x - cx)*k*fx*S, v = (cy - y)*S; return [u*cs - v*sn, u*sn + v*cs]; };
   const tol = mini ? 8 : 1.5;   // punten dichter bij elkaar dan dit vallen weg (Rusland en Canada hebben er duizenden)
@@ -2570,6 +2624,234 @@ function drawHud(r){
   document.addEventListener('keydown', e => { if ((e.ctrlKey || e.metaKey) && !e.shiftKey && e.key.toLowerCase() === 'z' && iDraw() && document.activeElement.tagName !== 'INPUT'){ e.preventDefault(); drawOp({ u:1 }); } });
 }
 
+/* ================= GRENS TREKKEN ================= */
+// Iedereen tekent de omtrek van hetzelfde land op een leeg vel. Een tekening is een lijst lussen [x,y,x,y...] op een vel van size x size,
+// elke lus een eigen vlak (eilanden teken je los). De host legt tekening en echte vorm over elkaar: allebei even groot (zelfde oppervlakte),
+// met het zwaartepunt op dezelfde plek, en schuift de tekening een paar pixels voor de beste plek. Dan telt de overlap (doorsnede gedeeld
+// door vereniging). Plek en grootte op het vel maken dus niets uit, de vorm en de stand (noord boven) wel. Een cirkel even groot als het land
+// is de nul: wie niet beter doet dan een rondje krijgt niets. Iedereen kan dit zelf narekenen uit de eigen GeoJSON, de host stuurt alleen de lussen.
+const traceSpec = diff => ({ keep: CONFIG.trace.keep[diff] || CONFIG.trace.keep.normal, frame: diff === 'easy' });
+// Landen die groot genoeg zijn om te tekenen (oppervlakte uit de hintdata, in km²).
+const traceOk = diff => c => (COUNTRIES[c].area || 0) >= (CONFIG.trace.minKm[diff] || CONFIG.trace.minKm.normal);
+// Echte vorm als lussen in graden (lengte x cos(breedte)), y naar beneden zoals op het vel.
+const traceTruthC = {};
+function traceTruth(code, spec){
+  const key = code + ':' + spec.keep;
+  if (traceTruthC[key]) return traceTruthC[key];
+  const B = shapeBase(code, { keep: spec.keep, main: false }); if (!B) return null;
+  const rings = [];
+  for (const p of B.keep) for (const r of p.rings){
+    const out = [];
+    for (const [x, y] of r) out.push(B.wrap(x - B.cx)*B.k, B.cy - y);
+    if (out.length >= 6) rings.push(out);
+  }
+  return traceTruthC[key] = rings;
+}
+function ringsBox(rings){
+  let x0 = Infinity, y0 = Infinity, x1 = -Infinity, y1 = -Infinity;
+  for (const r of rings) for (let i = 0; i < r.length; i += 2){ const x = r[i], y = r[i+1]; if (x < x0) x0 = x; if (x > x1) x1 = x; if (y < y0) y0 = y; if (y > y1) y1 = y; }
+  return [x0, y0, x1, y1];
+}
+// Lussen op een raster van w x h, m(x, y) geeft de pixel. even: één pad met even-oneven (gaten in de echte vorm), anders elke lus apart gevuld.
+let traceCv = null;
+function traceMask(rings, w, h, m, even){
+  const cv = traceCv = traceCv || document.createElement('canvas');
+  cv.width = w; cv.height = h;
+  const g = cv.getContext('2d', { willReadFrequently: true });
+  g.clearRect(0, 0, w, h); g.fillStyle = '#000';
+  const path = r => { let q = m(r[0], r[1]); g.moveTo(q[0], q[1]); for (let i = 2; i < r.length; i += 2){ q = m(r[i], r[i+1]); g.lineTo(q[0], q[1]); } g.closePath(); };
+  if (even){ g.beginPath(); rings.forEach(path); g.fill('evenodd'); }
+  else for (const r of rings){ g.beginPath(); path(r); g.fill(); }
+  const d = g.getImageData(0, 0, w, h).data, out = new Uint8Array(w*h);
+  for (let i = 0; i < out.length; i++) out[i] = d[i*4+3] > 127 ? 1 : 0;
+  return out;
+}
+// Oppervlakte en zwaartepunt, gemeten op een raster van 200 op de lange kant (een tekening mag zichzelf kruisen).
+function traceMoments(rings, even){
+  const [x0, y0, x1, y1] = ringsBox(rings), s = 200 / Math.max(x1-x0, y1-y0, 1e-9), w = Math.ceil((x1-x0)*s) + 3, h = Math.ceil((y1-y0)*s) + 3;
+  const mk = traceMask(rings, w, h, (x, y) => [(x-x0)*s + 1, (y-y0)*s + 1], even);
+  let n = 0, sx = 0, sy = 0;
+  for (let y = 0; y < h; y++) for (let x = 0; x < w; x++) if (mk[y*w + x]){ n++; sx += x; sy += y; }
+  if (!n) return null;
+  return { a: n/(s*s), cx: (sx/n + .5 - 1)/s + x0, cy: (sy/n + .5 - 1)/s + y0 };
+}
+// Vergelijken. Uitkomst: iou (overlap 0..1), base (overlap van een cirkel), acc (0..1, voor de punten),
+// en voor het uitslagscherm de normalisatie van beide: punt -> (punt - c) x s (+ dx, dy voor de tekening).
+function traceFit(code, spec, tr){
+  const C = CONFIG.trace, truth = traceTruth(code, spec), loops = (tr || []).filter(l => l.length >= 6);
+  if (!truth || !truth.length || !loops.length) return null;
+  const mt = traceMoments(truth, true), md = traceMoments(loops, false);
+  if (!mt || !md) return null;
+  const nt = { cx: mt.cx, cy: mt.cy, s: 1/Math.sqrt(mt.a) }, nd = { cx: md.cx, cy: md.cy, s: 1/Math.sqrt(md.a) };
+  const norm = (b, n) => [(b[0]-n.cx)*n.s, (b[1]-n.cy)*n.s, (b[2]-n.cx)*n.s, (b[3]-n.cy)*n.s];
+  const bt = norm(ringsBox(truth), nt), bd = norm(ringsBox(loops), nd);
+  // Samen in één kader, begrensd: één verdwaalde lijn mag het raster niet grof maken.
+  const L = 4, X0 = Math.max(-L, Math.min(bt[0], bd[0])), Y0 = Math.max(-L, Math.min(bt[1], bd[1])), X1 = Math.min(L, Math.max(bt[2], bd[2])), Y1 = Math.min(L, Math.max(bt[3], bd[3]));
+  const sh = C.shift, px = C.grid / Math.max(X1-X0, Y1-Y0), w = Math.ceil((X1-X0)*px) + 2*sh + 2, h = Math.ceil((Y1-Y0)*px) + 2*sh + 2;
+  const at = n => (x, y) => [((x-n.cx)*n.s - X0)*px + sh + 1, ((y-n.cy)*n.s - Y0)*px + sh + 1];
+  const A = traceMask(truth, w, h, at(nt), true), D = traceMask(loops, w, h, at(nd), false);
+  let na = 0, nb = 0, ci = 0, cu = 0;
+  // De nul: een cirkel met dezelfde oppervlakte op het zwaartepunt.
+  const ox = -X0*px + sh + 1, oy = -Y0*px + sh + 1, rr = px*px/Math.PI;
+  for (let y = 0; y < h; y++) for (let x = 0; x < w; x++){
+    const i = y*w + x, a = A[i], c = (x+.5-ox)**2 + (y+.5-oy)**2 <= rr;
+    na += a; nb += D[i];
+    if (c && a) ci++; if (c || a) cu++;
+  }
+  // Een paar pixels schuiven: het zwaartepunt van een tekening met een scheef eiland ligt net anders.
+  let best = 0, bx = 0, by = 0;
+  for (let dy = -sh; dy <= sh; dy++) for (let dx = -sh; dx <= sh; dx++){
+    let inter = 0;
+    for (let y = Math.max(0, -dy), ye = Math.min(h, h-dy); y < ye; y++){
+      const ra = y*w, rd = (y+dy)*w + dx;
+      for (let x = Math.max(0, -dx), xe = Math.min(w, w-dx); x < xe; x++) if (A[ra+x] && D[rd+x]) inter++;
+    }
+    const iou = inter / (na + nb - inter || 1);
+    if (iou > best){ best = iou; bx = dx; by = dy; }
+  }
+  const base = cu ? ci/cu : 0, acc = Math.max(0, Math.min(1, (best - base) / ((1 - base) * C.full)));
+  return { iou: best, base, acc, nt, nd: { ...nd, dx: -bx/px, dy: -by/px } };
+}
+// Alles wat over het netwerk binnenkomt opnieuw opbouwen: lussen met gehele getallen binnen het vel, niet te veel.
+function traceClean(tr){
+  const C = CONFIG.trace;
+  if (!Array.isArray(tr) || tr.length > C.maxLoops) return null;
+  let n = 0;
+  for (const l of tr){
+    if (!Array.isArray(l) || l.length < 6 || l.length % 2 || !l.every(v => okInt(v, 0, C.size))) return null;
+    n += l.length / 2;
+  }
+  return n <= C.maxPts ? tr.map(l => l.slice()) : null;
+}
+// Host: punten. Geen hints en geen tijdbonus: alleen de vorm telt, dus wie het best tekent krijgt de meeste punten.
+function traceScore(ans, r){
+  if (!ans || !ans.tr || !ans.tr.length) return { pts:0, kind:'none' };
+  const f = traceFit(r.code, r.trace, ans.tr), C = CONFIG.trace;
+  if (!f) return { pts:0, kind:'miss', pct:0 };
+  return { pts: roundPts(f.acc, 1, 1), kind: f.acc >= C.good ? 'good' : f.acc >= C.half ? 'half' : 'miss', pct: Math.round(f.acc*100) };
+}
+
+// Vel bij iedereen: TR = { roundId, loops, cur, pts }. cur is de lus die je nu trekt.
+let TR = null, tracePtr = null, traceInv = null, traceRaf = 0, tracePinT = 0;
+const iTrace = () => !!(S && S.phase === 'round' && S.round && S.round.trace && TR && TR.roundId === S.round.id && !(myAnswer && myAnswer.roundId === S.round.id) && !S.round.answered.includes(me.id) && sabOutId !== S.round.id);
+const loopArea = l => { let a = 0; for (let i = 0; i < l.length; i += 2){ const j = (i + 2) % l.length; a += l[i]*l[j+1] - l[j]*l[i+1]; } return Math.abs(a/2); };
+const loopD = l => { let d = `M${l[0]} ${l[1]}`; for (let i = 2; i < l.length; i += 2) d += `L${l[i]} ${l[i+1]}`; return d; };
+function traceReset(r){ TR = { roundId: r.id, loops: [], cur: null, pts: 0 }; tracePtr = null; clearTimeout(tracePinT); traceSoon(); }
+function tracePaint(){
+  traceRaf = 0;
+  if (!TR) return;
+  const g = $('#traceG'), cur = TR.cur;
+  let html = TR.loops.map(l => `<path d="${loopD(l)}Z"/>`).join('');
+  if (cur && cur.length >= 4){
+    html += `<path class="cur" d="${loopD(cur)}"/>`;
+    html += `<line x1="${cur[cur.length-2]}" y1="${cur[cur.length-1]}" x2="${cur[0]}" y2="${cur[1]}"/>`;
+  }
+  g.innerHTML = html;
+  const n = TR.loops.length, done = !iTrace();
+  $('#traceWait').textContent = n || cur || done ? '' : t('traceHere');
+  $('#traceUndo').disabled = done || !n; $('#traceClear').disabled = done || !n;
+  $('#traceDone').disabled = done;
+  $('#traceInfo').textContent = done ? '' : n ? t('traceMore') : S && S.round && S.round.trace && S.round.trace.frame ? t('traceFrame') : '';
+}
+const traceSoon = () => { if (!traceRaf) traceRaf = requestAnimationFrame(tracePaint); };
+// De host kent steeds je laatste tekening (zoals een pin bij Darts): niet op Klaar gedrukt, dan telt die bij het einde van de tijd.
+function tracePin(){
+  clearTimeout(tracePinT);
+  tracePinT = setTimeout(() => { if (TR && S && S.round && S.round.id === TR.roundId && iTrace()) act({ t:'pin', p:{ roundId: TR.roundId, tr: TR.loops } }); }, 250);
+}
+function traceDone(){
+  const r = S && S.round;
+  if (!iTrace() || myAnswer) return;
+  if (!TR.loops.length){ toast(t('traceNeed')); return; }
+  myAnswer = { roundId: r.id, tr: TR.loops.map(l => l.slice()), hintsSeen: 0, frac: Math.max(0, myRem(r) / r.durationMs) };
+  clearTimeout(tracePinT); beep(990, .08);
+  act({ t:'answer', p: myAnswer });
+  if (S.phase === 'round' && S.round) renderGame();
+}
+// Speelveld bij een nieuwe ronde. Het land zoekt elke speler zelf op uit de plek, net als bij Silhouet.
+function showTrace(r){
+  $('#map').hidden = true; $('#pano').hidden = true; $('#trace').hidden = false;
+  if (!TR || TR.roundId !== r.id) traceReset(r);
+  const code = countryAt(r.lat, r.lng), pc = okColor(me.color, '#1b1b1f');
+  $('#trace').style.setProperty('--pc', isLight(pc) ? '#1b1b1f' : pc);
+  $('#traceName').textContent = plain(cname(code));
+  $('#traceFlag').innerHTML = flagImg(code, 160);
+  // Makkelijk: een kader in de verhouding van het land, zo groot mogelijk op het vel.
+  const fr = $('#traceFrame'), truth = r.trace.frame && traceTruth(code, r.trace);
+  fr.hidden = !truth;
+  if (truth){
+    const [x0, y0, x1, y1] = ringsBox(truth), w = x1-x0, h = y1-y0, k = 900 / Math.max(w, h, 1e-9);
+    const fw = w*k, fh = h*k;
+    [['x', 500 - fw/2], ['y', 500 - fh/2], ['width', fw], ['height', fh]].forEach(([a, v]) => fr.setAttribute(a, v.toFixed(1)));
+  }
+  fitWatch(); traceSoon();
+}
+// Uitslag: per speler de tekening over de echte vorm, allebei even groot. Rekent zelf na uit de lussen die de host meestuurt.
+function traceCard(R){
+  const out = [], spec = R.trace, truth = traceTruth(R.code, spec);
+  if (!truth) return '';
+  // Echte vorm met minder punten: een plaatje van 130 pixels heeft geen duizenden nodig.
+  const thin = (rings, f, tol) => rings.map(r => { const o = []; for (let i = 0; i < r.length; i += 2){ const q = f(r[i], r[i+1]), l = o.length; if (!l || Math.abs(q[0]-o[l-2]) + Math.abs(q[1]-o[l-1]) > tol) o.push(q[0], q[1]); } return o; }).filter(o => o.length >= 6);
+  const rows = R.rows.filter(row => playerById(row.id) || row.tr), top = Math.max(0, ...rows.map(row => row.pts));
+  for (const row of rows){
+    const p = playerById(row.id) || { name:'?', color:'#888' }, pc = okColor(p.color, '#888888'), col = isLight(pc) ? '#1b1b1f' : pc;
+    const f = row.tr && row.tr.length ? traceFit(R.code, spec, row.tr) : null;
+    let body;
+    if (f){
+      const T = (x, y) => [(x-f.nt.cx)*f.nt.s, (y-f.nt.cy)*f.nt.s], Dd = (x, y) => [(x-f.nd.cx)*f.nd.s + f.nd.dx, (y-f.nd.cy)*f.nd.s + f.nd.dy];
+      const tt = thin(truth, T, .01), dd = thin(row.tr, Dd, .01), b = ringsBox(tt.concat(dd)), pad = Math.max(b[2]-b[0], b[3]-b[1]) * .08;
+      const vb = [b[0]-pad, b[1]-pad, b[2]-b[0]+2*pad, b[3]-b[1]+2*pad].map(v => v.toFixed(3)).join(' ');
+      body = `<svg viewBox="${vb}" preserveAspectRatio="xMidYMid meet" xmlns="${SVG_NS}"><path class="tt" fill-rule="evenodd" d="${tt.map(l => loopD(l.map(v => +v.toFixed(3))) + 'Z').join('')}"/>`
+        + dd.map(l => `<path class="td" d="${loopD(l.map(v => +v.toFixed(3)))}Z"/>`).join('') + '</svg>';
+    } else body = `<span class="tnone">${esc(t('traceNone'))}</span>`;
+    const best = rows.length > 1 && row.pts > 0 && row.pts === top;
+    out.push(`<figure class="${best ? 'best' : ''}" style="--pc:${col}" title="${esc(best ? t('traceBest') : '')}"><div class="tpane">${body}</div><figcaption>${dotHtml(p)}<span>${esc(p.name)}</span><b>${row.pct != null ? row.pct + '%' : ''}</b></figcaption></figure>`);
+  }
+  return out.join('');
+}
+{
+  const svg = $('#traceSvg'), C = CONFIG.trace;
+  // Scherm naar vel, net als bij Tekenen. Buiten het vel telt de rand.
+  const pt = e => { const m = traceInv; if (!m) return null; const x = m.a*e.clientX + m.c*e.clientY + m.e, y = m.b*e.clientX + m.d*e.clientY + m.f;
+    return [Math.round(Math.max(0, Math.min(C.size, x))), Math.round(Math.max(0, Math.min(C.size, y)))]; };
+  const add = q => {
+    const cur = TR && TR.cur; if (!q || !cur) return;
+    const n = cur.length; if (n && Math.hypot(q[0]-cur[n-2], q[1]-cur[n-1]) < C.step) return;
+    if (TR.pts >= C.maxPts) return;
+    cur.push(q[0], q[1]); TR.pts++; traceSoon();
+  };
+  svg.addEventListener('pointerdown', e => {
+    if (!iTrace() || tracePtr != null || e.button > 0) return;
+    e.preventDefault();
+    if (TR.loops.length >= C.maxLoops || TR.pts >= C.maxPts){ toast(t('traceFull')); return; }
+    const m = svg.getScreenCTM(); if (!m) return;
+    traceInv = m.inverse(); tracePtr = e.pointerId;
+    try { svg.setPointerCapture(e.pointerId); } catch(_){}
+    TR.cur = []; add(pt(e));
+  });
+  svg.addEventListener('pointermove', e => {
+    if (e.pointerId !== tracePtr || !TR || !TR.cur) return;
+    const evs = e.getCoalescedEvents ? e.getCoalescedEvents() : [];
+    for (const ev of evs.length ? evs : [e]) add(pt(ev));
+  });
+  const end = e => {
+    if (e.pointerId !== tracePtr) return;
+    tracePtr = null;
+    const cur = TR && TR.cur; if (!cur) return;
+    TR.cur = null;
+    // Een lus moet een vlak zijn: een tik of een streepje telt niet.
+    if (cur.length >= 6 && loopArea(cur) >= C.minLoop && iTrace()){ TR.loops.push(cur); beep(620, .03); tracePin(); }
+    else TR.pts -= cur.length / 2;
+    traceSoon();
+  };
+  ['pointerup', 'pointercancel', 'lostpointercapture'].forEach(ev => svg.addEventListener(ev, end));
+  const edit = f => { if (!iTrace() || tracePtr != null || !TR.loops.length) return; f(); TR.pts = TR.loops.reduce((a, l) => a + l.length/2, 0); beep(520, .05); tracePin(); traceSoon(); };
+  $('#traceUndo').addEventListener('click', () => edit(() => TR.loops.pop()));
+  $('#traceClear').addEventListener('click', () => edit(() => { TR.loops = []; }));
+  $('#traceDone').addEventListener('click', traceDone);
+  document.addEventListener('keydown', e => { if ((e.ctrlKey || e.metaKey) && !e.shiftKey && e.key.toLowerCase() === 'z' && iTrace() && document.activeElement.tagName !== 'INPUT'){ e.preventDefault(); edit(() => TR.loops.pop()); } });
+}
+
 /* ================= HINTS ================= */
 // r = rang (laag = vaag), g = groep (aan/uit in lobby), f = familie (max 1 per ronde in het midden)
 const HINT_DEFS = [
@@ -2777,7 +3059,7 @@ const DEFAULT_SETTINGS = { mode:'map', rounds:5, roundTime:60, hintEvery:10, hin
 const TOUR_SETS = { tourModes:{ all:TOUR_MODES, name:m => t(m) }, tourConts:{ all:CONTS, name:c => t(c), solo:true }, tourProvs:{ all:PROV, name:p => t('p'+p), solo:true } };
 const roundsOf = s => s.mode === 'tour' ? s.tourRounds || CONFIG.tour.rounds : s.rounds;
 // Toegestane waarden per instelling. Een OP stuurt instellingen over het netwerk, dus alles wat hier niet in staat wordt genegeerd.
-const SETTING_OPTS = { mode:['map','street','dutch','hunt','darts','shape','draw','tour'], tourOrder:['mix','cycle','block'], tourDiff:['easy','normal','hard','rise'], nlPlaces:['all','big','towns'], nlView:['sat','photo'], rounds:[5,10,15], roundTime:[30,60,90],
+const SETTING_OPTS = { mode:['map','street','dutch','hunt','darts','shape','draw','trace','tour'], tourOrder:['mix','cycle','block'], tourDiff:['easy','normal','hard','rise'], nlPlaces:['all','big','towns'], nlView:['sat','photo'], rounds:[5,10,15], roundTime:[30,60,90],
   difficulty:['easy','normal','hard'], continent:['ALL','EU','AM','AS','OC','AF'], weighting:['uniform','area'], hintCount:[4,6,8], hintEvery:[5,10,15,20] };
 function cleanSettings(p){
   const out = {};
@@ -2980,6 +3262,7 @@ function electHost(oldHostPeer){
       if (myAnswer && myAnswer.roundId===S.round.id) sendMsg({ t:'answer', p:{...myAnswer, resend:true} }, S.hostPeer);
       else if (HS && HS.pin && HS.roundId===S.round.id) sendMsg({ t:'pin', p:{ roundId:HS.roundId, pin:HS.pin, scans:S.round.hunt.scans-HS.left } }, S.hostPeer);
       else if (DS && DS.pin && DS.roundId===S.round.id) sendMsg({ t:'pin', p:{ roundId:DS.roundId, pin:DS.pin, dbl:DS.dbl } }, S.hostPeer);
+      else if (TR && TR.loops.length && TR.roundId===S.round.id) sendMsg({ t:'pin', p:{ roundId:TR.roundId, tr:TR.loops } }, S.hostPeer);
     }, 1500);
   }
 }
@@ -3059,6 +3342,7 @@ function hostHandle(msg, peerId){
       if (!player || H.phase !== 'round' || !r || p.roundId !== r.id || r.answers[player.id] || sabOut(r, player.id, CONFIG.score.latencyMs)) break;
       if (r.hunt && huntValidPin(p.pin)) r.pins[player.id] = { pin:p.pin, scans:huntCount(r, player.id, p.pin, p.scans) };
       else if (r.darts && dartValidPin(p.pin)) r.pins[player.id] = { pin:p.pin, dbl:!!p.dbl };
+      else if (r.trace){ const tr = traceClean(p.tr); if (tr && tr.length) r.pins[player.id] = { tr }; else if (tr) delete r.pins[player.id]; }
       break;
     }
     case 'settings': {
@@ -3102,7 +3386,8 @@ function hostHandle(msg, peerId){
       if (!player || H.phase !== 'round' || !H.round || p.roundId !== H.round.id || H.finding) return;   // finding: de ronde wordt net vervangen door een andere foto
       if (H.round.answers[player.id]) return;  // eerste telt
       if (H.round.draw && H.round.draw.by === player.id) return;   // de tekenaar raadt niet
-      if (H.round.hunt ? !huntValidPin(p.pin) : H.round.darts ? !dartValidPin(p.pin) : !own(isNL({ mode: H.round.mode }) ? CITIES : COUNTRIES, p.code)) return;
+      const tr = H.round.trace ? traceClean(p.tr) : null;
+      if (H.round.trace ? !(tr && tr.length) : H.round.hunt ? !huntValidPin(p.pin) : H.round.darts ? !dartValidPin(p.pin) : !own(isNL({ mode: H.round.mode }) ? CITIES : COUNTRIES, p.code)) return;
       // De eigen klok van de speler telt: met Jetlag loopt die sneller dan de ronde (sabRem). lagF: de vertraging die we compenseren, als deel van de ronde.
       const el = now() - H.round.startAt, lagF = CONFIG.score.latencyMs * sabRate(H.round, player.id, el) / H.round.durationMs;
       let hintsSeen = H.round.hints.length, frac = sabRem(H.round, player.id, H.round.durationMs - el) / H.round.durationMs;
@@ -3119,7 +3404,7 @@ function hostHandle(msg, peerId){
         hintsSeen = Math.max(sure, Math.min(hintsSeen, cs));
         frac = Math.min(1, Math.max(frac, Math.min(cf, frac + lagF)));
       }
-      const a = H.round.answers[player.id] = { code: p.code, hintsSeen, frac, ms: Math.round(H.round.durationMs*(1-frac)), order: H.round.order++, pin: p.pin, scans: 0, hit: false, dbl: !!p.dbl };
+      const a = H.round.answers[player.id] = { code: H.round.trace ? null : p.code, tr, hintsSeen, frac, ms: Math.round(H.round.durationMs*(1-frac)), order: H.round.order++, pin: p.pin, scans: 0, hit: false, dbl: !!p.dbl };
       if (H.round.hunt){
         // Scans en "geraakt" komen van de speler: de host telt zelf mee en controleert een raak op naam.
         a.scans = huntCount(H.round, player.id, p.pin, p.scans);
@@ -3187,7 +3472,7 @@ async function nextRound(){
   let loc = null;
   // Tekenen vraagt twee spelers. Alleen wordt het een silhouet: hetzelfde soort ronde, zonder tekenaar.
   const drawer = s.mode === 'draw' ? pickDrawer() : null;
-  const nl = isNL(s), hunt = s.mode === 'hunt', darts = s.mode === 'darts', shape = s.mode === 'shape' || (s.mode === 'draw' && !drawer);
+  const nl = isNL(s), hunt = s.mode === 'hunt', darts = s.mode === 'darts', shape = s.mode === 'shape' || (s.mode === 'draw' && !drawer), trace = s.mode === 'trace';
   if (s.mode === 'draw' && !drawer) toast(t('drawSolo'));
   const photoMode = s.mode === 'street' || ((s.mode === 'dutch' || darts) && s.nlView === 'photo');
   if (photoMode || hunt){
@@ -3197,7 +3482,7 @@ async function nextRound(){
     if (H !== h) return;  // host is tijdens het zoeken vertrokken
     if (!loc) toast(t(hunt ? 'noArea' : 'noPhoto'));
   }
-  loc = loc || (nl ? nlLocation(s, H.used) : shape || drawer ? shapeLocation(s, H.used) : randomLocation(s, H.used));
+  loc = loc || (nl ? nlLocation(s, H.used) : trace ? shapeLocation(s, H.used, traceOk(s.difficulty)) : shape || drawer ? shapeLocation(s, H.used) : randomLocation(s, H.used));
   if (!loc) return finish();
   // Geen straatdata of foto: de ronde telt als wat er echt gespeeld wordt.
   const mode = hunt && !loc.hunt ? 'dutch' : s.mode === 'street' && !loc.photo ? 'map' : s.mode === 'draw' && !drawer ? 'shape' : s.mode;
@@ -3207,7 +3492,8 @@ async function nextRound(){
   const total = roundsOf(H.settings), final = H.settings.mode === 'tour' && !!H.settings.tourFinal && total > 1 && H.roundN === total;
   const durationMs = H.settings.roundTime*1000, hintIntervalMs = H.settings.hintEvery*1000;
   const wanted = Math.min(H.settings.hintCount || 6, Math.max(2, Math.ceil(durationMs / hintIntervalMs)));
-  const hintKeys = loc.hunt ? huntHintKeys(loc.hunt, wanted) : chooseHints(loc.code, wanted, H.settings.hintGroups, s.continent, drawer ? ['flag'] : null), hintTotal = hintKeys.length;
+  // Grens trekken: geen hints, de naam staat al op het vel.
+  const hintKeys = trace ? [] : loc.hunt ? huntHintKeys(loc.hunt, wanted) : chooseHints(loc.code, wanted, H.settings.hintGroups, s.continent, drawer ? ['flag'] : null), hintTotal = hintKeys.length;
   // Sabotage: bij de eerste ronde begint iedereen met een lege hand en krijgt de startkaart. Niet opnieuw als die ronde overnieuw begint (andere foto).
   if (sabOn(H.settings) && H.roundN === 1 && !H.redo){
     for (const p of H.players) Object.assign(p, { cards:[], fx:[], played:0, sp:0, sh:0 });
@@ -3215,15 +3501,20 @@ async function nextRound(){
     for (let i = 0; i < CONFIG.sab.start; i++) sabDeal(total <= 1);
   }
   H.round = { id: Math.random().toString(36).slice(2,9), n: H.roundN, mode, continent: s.continent, final, lat: loc.lat, lng: loc.lng, code: loc.code, photo: loc.photo || null,
-    hunt: loc.hunt || null, darts, pins: {}, shape: shape ? shapeSpec(s.difficulty) : null,
+    hunt: loc.hunt || null, darts, pins: {}, shape: shape ? shapeSpec(s.difficulty) : null, trace: trace ? traceSpec(s.difficulty) : null,
     // Tekenaar: makkelijk met de echte vlag als voorbeeld, moeilijk alleen de kwast (geen rechthoek of rondje).
     draw: drawer ? { by:drawer.id, ref:s.difficulty === 'easy', brush:s.difficulty === 'hard' } : null,
-    zoom: loc.hunt ? 14 : (nl ? CONFIG.nl.zoom : CONFIG.zoom)[s.difficulty], pan: loc.hunt ? 1 : shape || drawer ? 0 : (nl ? CONFIG.nl.pan : CONFIG.pan)[s.difficulty], difficulty: s.difficulty,
+    zoom: loc.hunt ? 14 : (nl ? CONFIG.nl.zoom : CONFIG.zoom)[s.difficulty], pan: loc.hunt ? 1 : shape || drawer || trace ? 0 : (nl ? CONFIG.nl.pan : CONFIG.pan)[s.difficulty], difficulty: s.difficulty,
     durationMs, hintIntervalMs, hintTotal, hintKeys, hints: [], startAt: now(), answers: {}, order: 0, forced: 0, wants: {}, skips: {}, redo: !!H.redo };
   H.redo = false;
   H.phase = 'round'; H.result = null;
   // Sabotage die op deze ronde wachtte. Wie tekent raadt niet: bij die speler wacht het een ronde langer.
-  for (const p of H.players) if (p.fx && p.fx.length && !(drawer && drawer.id === p.id)){ for (const e of p.fx) sabApply(H.round, p, e, 0, s); p.fx = []; }
+  // Grens trekken heeft geen hints: Delusion wacht daar op de volgende ronde met hints.
+  for (const p of H.players) if (p.fx && p.fx.length && !(drawer && drawer.id === p.id)){
+    const now_ = trace ? p.fx.filter(e => e.k !== 'de') : p.fx;
+    for (const e of now_) sabApply(H.round, p, e, 0, s);
+    p.fx = p.fx.filter(e => !now_.includes(e));
+  }
   releaseHints(); broadcast();
 }
 function releaseHints(){
@@ -3462,10 +3753,10 @@ function endRound(){
   const r = H.round; if (!r || H.phase !== 'round') return;
   if (r.draw && DR && DR.roundId === r.id) drawFlush();   // host tekent zelf: het laatste stukje lijn gaat nog mee
   // Straatjacht en darts: wie niet vastzette maar wel een pin had, krijgt die pin (zonder tijdbonus).
-  const pinMode = r.hunt || r.darts, by = r.draw ? r.draw.by : null;
+  const pinMode = r.hunt || r.darts || r.trace, by = r.draw ? r.draw.by : null;
   const ansOf = p => r.answers[p.id] || (pinMode && r.pins && r.pins[p.id] ? { ...r.pins[p.id], frac:0, ms:null, order:98, hintsSeen:r.hints.length } : undefined);
   const base = {};
-  for (const p of H.players) if (p.id !== by){ const a = ansOf(p); base[p.id] = r.hunt ? huntScore(a, r) : r.darts ? dartScore(a, r) : scoreFor(a, r); }
+  for (const p of H.players) if (p.id !== by){ const a = ansOf(p); base[p.id] = r.trace ? traceScore(a, r) : r.hunt ? huntScore(a, r) : r.darts ? dartScore(a, r) : scoreFor(a, r); }
   if (by) base[by] = drawerScore(r, base);
   const rows = H.players.map(p => {
     const a = p.id === by ? undefined : ansOf(p);
@@ -3475,12 +3766,13 @@ function endRound(){
     if (H.settings.mode === 'tour'){ p.bm = p.bm || {}; p.bm[r.mode] = (p.bm[r.mode] || 0) + s.pts; }
     if (s.kind==='good'){ p.correct++; if (a && a.ms != null && (p.fastest==null || a.ms < p.fastest)) p.fastest = a.ms; }
     if (s.pts > p.best) p.best = s.pts;
-    return { id:p.id, guess: a && !pinMode ? a.code : null, ms: a ? a.ms : null, hints: a ? a.hintsSeen : null, pts: s.pts, kind: s.kind, total: p.score, order: a ? a.order : 99, pin: a && pinMode ? a.pin : null, dist: pinMode ? s.dist : null, scans: a && r.hunt ? a.scans : null,
-      ring: r.darts ? s.ring : null, dbl: !!(r.darts && a && a.dbl), drew: s.drew || null };
+    return { id:p.id, guess: a && !pinMode ? a.code : null, ms: a ? a.ms : null, hints: a ? a.hintsSeen : null, pts: s.pts, kind: s.kind, total: p.score, order: a ? a.order : 99, pin: a && pinMode && !r.trace ? a.pin : null, dist: pinMode && !r.trace ? s.dist : null, scans: a && r.hunt ? a.scans : null,
+      ring: r.darts ? s.ring : null, dbl: !!(r.darts && a && a.dbl), drew: s.drew || null,
+      ...(r.trace ? { tr: a && a.tr ? a.tr : null, pct: s.pct != null ? s.pct : null } : {}) };
   }).sort((a,b)=> b.pts-a.pts || a.order-b.order);
   const mid = r.hunt ? huntMid(r.hunt.g) : [r.lat, r.lng];
   H.result = { roundId: r.id, n: r.n, mode: r.mode, final: !!r.final, code: r.code, lat: mid[0], lng: mid[1], photo: r.photo, rows, last: H.roundN >= roundsOf(H.settings), nextAt: CONFIG.resultAutoMs, darts: !!r.darts,
-    dkm: r.darts ? dartKm(r) : null, shape: r.shape || null,
+    dkm: r.darts ? dartKm(r) : null, shape: r.shape || null, trace: r.trace || null,
     draw: r.draw ? { by:r.draw.by, ops: DR && DR.roundId === r.id ? DR.ops.slice() : [] } : null,
     hunt: r.hunt ? { n:r.hunt.n, k:r.hunt.k, city:r.hunt.city, g:r.hunt.g } : null,
     fx: r.fx || null };   // sabotage van deze ronde: hier komt ook Delusion uit
@@ -3510,7 +3802,7 @@ function publicState(){
     // Sabotage: hand (cards), in welke ronde je voor het laatst speelde (played), wat op de volgende ronde wacht (fx) en de tellers voor het eindscherm.
     players: H.players.map(({id,peerId,name,color,avatar,joinIdx,score,connected,correct,best,fastest,op,bm,drew,drewAt,cards,played,fx,sp,sh}) => ({id,peerId,name,color,avatar,joinIdx,score,connected,correct,best,fastest,op:!!op,...(bm ? {bm} : {}),...(drew ? {drew,drewAt} : {}),
       ...(sab ? { cards: cards || [], played: played || 0, fx: fx || [], sp: sp || 0, sh: sh || 0 } : {})})),
-    round: r ? { id:r.id, n:r.n, mode:r.mode, continent:r.continent, final:!!r.final, lat:r.lat, lng:r.lng, photo:r.photo, hunt:r.hunt||null, darts:!!r.darts, shape:r.shape||null, draw:r.draw||null, drawN: r.draw && DR && DR.roundId === r.id ? DR.ops.length : 0, zoom:r.zoom, pan:r.pan, difficulty:r.difficulty, durationMs:r.durationMs, hintIntervalMs:r.hintIntervalMs, hintTotal:r.hintTotal,
+    round: r ? { id:r.id, n:r.n, mode:r.mode, continent:r.continent, final:!!r.final, lat:r.lat, lng:r.lng, photo:r.photo, hunt:r.hunt||null, darts:!!r.darts, shape:r.shape||null, trace:r.trace||null, draw:r.draw||null, drawN: r.draw && DR && DR.roundId === r.id ? DR.ops.length : 0, zoom:r.zoom, pan:r.pan, difficulty:r.difficulty, durationMs:r.durationMs, hintIntervalMs:r.hintIntervalMs, hintTotal:r.hintTotal,
       hints: r.hints, remainingMs: Math.max(0, r.durationMs - (now()-r.startAt)), answered: Object.keys(r.answers), wants: Object.keys(r.wants||{}), skips: Object.keys(r.skips||{}), redo: !!r.redo,
       ...(r.fx ? { fx: r.fx, alt: r.alt || {} } : {}) } : null,
     ...(sab && H.ev && H.ev.length ? { ev: H.ev } : {}),
@@ -3592,10 +3884,11 @@ function renderLobby(){
   }).join('');
   const tour = S.settings.mode === 'tour', modeKey = tour ? 'tour' : isNL(S.settings) ? S.settings.mode : 'world', tm = S.settings.tourModes || TOUR_MODES;
   // data-for noemt een groep (world, dutch, hunt, tour) of een losse modus (darts). data-tm: in een toernooi alleen als een van die modi meedoet.
-  document.querySelectorAll('[data-for]').forEach(el => {
-    const f = el.dataset.for.split(' ');
+  document.querySelectorAll('[data-for],[data-not]').forEach(el => {
+    const f = (el.dataset.for || modeKey).split(' ');
     let vis = f.includes(modeKey) || f.includes(S.settings.mode);
     if (vis && tour && el.dataset.tm) vis = el.dataset.tm.split(' ').some(m => tm.includes(m));
+    if (vis && el.dataset.not && el.dataset.not.split(' ').includes(S.settings.mode)) vis = false;   // data-not: niet bij deze modus
     el.hidden = !vis;
   });
   // Straatjacht in een vaste plaats: plaatsen en provincies doen dan niets (in een toernooi alleen als Nederland niet meedoet).
@@ -3698,7 +3991,7 @@ function addTiles(m){
 let shapeRO = null;
 // De variabelen staan op #game, zodat Silhouet en Tekenen ze allebei lezen.
 function shapeFit(){
-  if ($('#shape').hidden && $('#draw').hidden) return;
+  if ($('#shape').hidden && $('#draw').hidden && $('#trace').hidden) return;
   const el = $('#game');
   const pr = $('.panel').getBoundingClientRect(), side = pr.left > innerWidth*.3 && pr.top < innerHeight*.5;
   el.style.setProperty('--shB', (side ? 16 : Math.max(16, innerHeight - pr.top + 12)) + 'px');
@@ -3988,8 +4281,9 @@ function renderGame(){
     renderedRound = r.id;
     if (!myAnswer || myAnswer.roundId !== r.id) myAnswer = null;
     huntClear(); HS = null; dartReset(r);
-    $('#shape').hidden = !r.shape; $('#shapeTag').hidden = !r.shape; $('#draw').hidden = !r.draw; $('#drawTag').hidden = !r.draw;
-    if (r.draw){ dropPano(); showDraw(r); }
+    $('#shape').hidden = !r.shape; $('#shapeTag').hidden = !r.shape; $('#draw').hidden = !r.draw; $('#drawTag').hidden = !r.draw; $('#trace').hidden = !r.trace;
+    if (r.trace){ dropPano(); showTrace(r); }
+    else if (r.draw){ dropPano(); showDraw(r); }
     else if (r.shape){ dropPano(); showShape(r); }
     else if (r.hunt){ dropPano(); huntReset(r); showHuntMap(r); }
     else if (r.photo) showPano(r);
@@ -4011,18 +4305,20 @@ function renderGame(){
   $('#scoreChip').textContent = mine ? mine.score : 0;
   // Sabotage op mij. Blackout: het beeld gaat op zwart (in Straatjacht alleen het satellietbeeld: de kaart blijft daar het speelveld).
   // Jetlag: mijn klok loopt sneller, zie tick(). Delusion: mijn hints komen uit myHints, zonder dat er iets aan te zien is.
-  const fx = myFx(r), dark = !!fx.bo && !r.hunt, bx = $('#blackout'), boBy = fx.bo && playerById(fx.bo.by);
+  // Grens trekken: Blackout laat het vel staan, maar je ziet je eigen lijnen niet meer (blind tekenen).
+  const fx = myFx(r), dark = !!fx.bo && !r.hunt && !r.trace, bx = $('#blackout'), boBy = fx.bo && playerById(fx.bo.by);
   if (fx.bo && boShown !== r.id){ boShown = r.id; bx.classList.toggle('hit', !first); beep(196, .3, 'sawtooth', .05); setTimeout(() => beep(98, .45, 'sawtooth', .05), 170); }
   bx.hidden = !dark; $('#map').classList.toggle('dark', !!fx.bo && !!r.hunt);
   $('#boBy').textContent = boBy ? t('sabBy', { n: boBy.name }) : '';
-  const ft = $('#fxTag'); ft.hidden = !(fx.bo && r.hunt);
-  if (!ft.hidden) ft.innerHTML = `<svg viewBox="0 0 24 24" aria-hidden="true"><use href="#s-bo"/></svg><span>${esc(t('sab_bo') + (boBy ? ' ' + t('sabBy', { n: boBy.name }) : ''))}</span>`;
+  const ft = $('#fxTag'); ft.hidden = !(fx.bo && (r.hunt || r.trace));
+  $('#trace').classList.toggle('blind', !!(fx.bo && r.trace));
+  if (!ft.hidden) ft.innerHTML = `<svg viewBox="0 0 24 24" aria-hidden="true"><use href="#s-bo"/></svg><span>${esc(t('sab_bo') + (boBy ? ' ' + t('sabBy', { n: boBy.name }) : '') + (r.trace ? ': ' + t('traceBlind') : ''))}</span>`;
   if (r.shape) $('#shapeTag').hidden = dark;
   $('#timerChip').parentElement.classList.toggle('jet', !!fx.jl);
   $('#timeLbl').textContent = fx.jl ? t('sab_jl') + ' x' + (1 + fx.jl.at.length) : t('timeLbl');
   if (first && fx.jl) toast(t('jlHit'));
   $('#mapctl').classList.toggle('off', r.pan === 0 || dark);
-  $('#hintsBox').hidden = drawMe(r);   // de tekenaar kent het antwoord: zonder hints blijft er meer vel over
+  $('#hintsBox').hidden = drawMe(r) || !!r.trace;   // de tekenaar kent het antwoord: zonder hints blijft er meer vel over
   const hl = $('#hintList'), sig = r.id + ':' + lang + ':' + r.hints.length;
   if (hl.dataset.sig !== sig){
     const prevCount = hl.dataset.sig && hl.dataset.sig.startsWith(r.id + ':' + lang + ':') ? hl.children.length : 0;
@@ -4050,8 +4346,11 @@ function renderGame(){
   sb.textContent = conn > 1 ? t(iSkip ? 'skipVoted' : 'skipVote', { a: skips.length, b: conn }) : t('skipPhoto');
   $('#who').innerHTML = S.players.length > 1 ? S.players.map(p => { const ok = r.answered.includes(p.id), dr = r.draw && r.draw.by === p.id;
     return `<span class="${ok?'done':''} ${p.connected?'':'off'}">${dotHtml(p)}${esc(p.name)}${fxIcons(r.fx && r.fx[p.id])}${dr ? '<svg class="ic"><use href="#i-pen"/></svg>' : ok ? ' &#10003;' : ''}</span>`; }).join('') : '';
-  $('#answerBox').style.display = locked || out || r.hunt || r.darts || drawMe(r) ? 'none' : '';
+  $('#answerBox').style.display = locked || out || r.hunt || r.darts || r.trace || drawMe(r) ? 'none' : '';
   $('#drawPanel').hidden = !drawMe(r);
+  $('#tracePanel').hidden = !r.trace || locked || out;
+  $('#trace').classList.toggle('done', !!r.trace && (locked || out));
+  if (r.trace){ if (!TR || TR.roundId !== r.id) traceReset(r); traceSoon(); }
   if (r.draw) drawHud(r);
   $('#huntBox').hidden = !r.hunt || locked || out;
   if (r.hunt && !HS) huntReset(r);
@@ -4062,6 +4361,7 @@ function renderGame(){
   const lb = $('#lockedBox');
   lb.style.display = (locked || out) && !r.darts ? '' : 'none'; lb.classList.toggle('out', out);
   if (out) lb.innerHTML = `<svg class="ic" viewBox="0 0 24 24"><use href="#s-jl"/></svg><b>${t('jlOut')}</b><span>${t('sab_jl')}</span>`;
+  else if (locked && r.trace) lb.innerHTML = `<svg class="ic"><use href="#i-lock"/></svg><b>${esc(t('traceSent'))}</b><span>${esc(plain(cname(countryAt(r.lat, r.lng))))}</span>`;
   else if (locked) lb.innerHTML = r.hunt
     ? `<svg class="ic"><use href="#i-pin"/></svg><b>${esc(plain(mineLocked && myAnswer.name || t('huntPinned')))}</b><span>${t('lockedAs')}</span>`
     : mineLocked ? `${flagImg(myAnswer.code, 40)}<b>${esc(plain(cname(myAnswer.code)))}</b><span>${t('lockedAs')}</span>` : `<b>${t('lockedAs')}</b>`;
@@ -4183,6 +4483,10 @@ function renderResult(){
     rd.innerHTML = `<figure><div class="dpane drawing">${drawSvg(RD.ops)}</div><figcaption>${dotHtml(dp)}<span>${esc(t('drawBy', { n: dp.name }))}</span></figcaption></figure>`
       + `<figure><div class="dpane real">${flagImg(R.code, 320)}</div><figcaption>${esc(t('drawReal'))}</figcaption></figure>`;
   }
+  // Grens trekken: ieders omtrek over de echte vorm, de beste met een gouden rand.
+  const rt = $('#resTrace');
+  rt.hidden = !R.trace;
+  if (R.trace && rt.dataset.k !== R.roundId + lang){ rt.dataset.k = R.roundId + lang; rt.innerHTML = traceCard(R); }
   // Sabotage van deze ronde: wie wie dwarszat. Delusion komt hier pas uit, met het land waar de valse hints over gingen.
   const fxs = [], rs = $('#resSab'), who = id => playerById(id) || { name:'?', color:'#888' };
   for (const [pid, f] of Object.entries(R.fx || {})) for (const k of SAB_TYPES) if (f[k]) fxs.push({ k, to: pid, by: f[k].by, code: f[k].code });
@@ -4195,7 +4499,8 @@ function renderResult(){
   const firstPaint = renderedResult !== R.roundId;
   $('#resBody').innerHTML = R.rows.map((row, i) => {
     const p = playerById(row.id) || { name:'?', color:'#888' };
-    const g = row.drew ? `<span class="${row.kind}"><svg class="ic pen"><use href="#i-pen"/></svg>${esc(t('drawGot', { a: row.drew[0], b: row.drew[1] }))}</span>`
+    const g = R.trace ? (row.tr ? `<span class="${row.kind}">${esc(t('traceMatch', { p: row.pct || 0 }))}</span>` : `<span class="sub">${t('noAnswer')}</span>`)
+      : row.drew ? `<span class="${row.kind}"><svg class="ic pen"><use href="#i-pen"/></svg>${esc(t('drawGot', { a: row.drew[0], b: row.drew[1] }))}</span>`
       : row.dist != null && R.darts ? `<span class="${row.kind}">${t('dr' + row.ring)}, ${row.dist.toLocaleString(lang === 'nl' ? 'nl-NL' : 'en-GB')} km</span>${row.dbl ? ' <b class="x2">x2</b>' : ''}`
       : row.dist != null ? `<span class="${row.kind}">${row.dist} m</span>`
       : row.guess ? `<span class="${row.kind}">${flagImg(row.guess,20)}${esc(cname(row.guess))}</span>` : `<span class="sub">${t('noAnswer')}</span>`;
@@ -4281,7 +4586,7 @@ function drawResultMap(R){
   const [a,b,c,d] = poly.bbox;
   rmap.fitBounds([[b,a],[d,c]], { padding:[20,20], maxZoom:7, animate:false });
   L.geoJSON(g.feature, { style: { color:'#fff', weight:2.5, fillColor:'#e8552a', fillOpacity:.3 } }).addTo(rmap);
-  if (!R.shape && !R.draw) L.circleMarker([R.lat, R.lng], { radius:8, color:'#fff', weight:3, fillColor:'#e8552a', fillOpacity:1 }).addTo(rmap);
+  if (!R.shape && !R.draw && !R.trace) L.circleMarker([R.lat, R.lng], { radius:8, color:'#fff', weight:3, fillColor:'#e8552a', fillOpacity:1 }).addTo(rmap);
 }
 function renderFinal(){
   show('final');
