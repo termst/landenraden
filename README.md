@@ -93,7 +93,8 @@ punten = 1000 x nauwkeurigheid x hintfactor x tijdfactor
 | Darts | e^(-(d-25 km)/1500 km), geschaald per continent. x2: dubbel binnen de binnenring, anders 0 |
 | Silhouet | Als Satelliet. De plek is het punt in het hoofddeel dat het dichtst bij het midden ligt |
 | Tekenen | Raders als Silhouet. Tekenaar: het gemiddelde van de punten van de raders |
-| Grens trekken | (overlap - overlap van een cirkel) / ((1 - overlap van een cirkel) x 0,85), tussen 0 en 1. Geen hints en geen tijdbonus |
+| Grens trekken | 0,6 x min(1, (overlap / 0,85)²) + 0,4 x overlap / beste overlap van de ronde. Geen hints en geen tijdbonus |
+| Duel (precies 2 spelers) | Bovenop elke modus: rondewinst +200 en inzet x1 tot x2 (zie Duel) |
 | Toernooi | Per ronde als de modus van die ronde. Finale aan: de laatste ronde x2 |
 
 Fout telt met dezelfde hint- en tijdfactor, dus op hetzelfde moment wint goed altijd van fout. Het juiste continent of de juiste provincie geeft geen vaste punten meer: die staan al in de eerste hint.
@@ -233,26 +234,57 @@ Kies in de lobby de modus **Tekenen**. Eén speler tekent de vlag van een land u
 
 ## Grens trekken
 
-Kies in de lobby de modus **Grens trekken**. Iedereen ziet dezelfde landnaam en tekent de omtrek op een leeg vel. Wie de vorm het best raakt, krijgt de meeste punten.
+Kies in de lobby de modus **Grens trekken**. Iedereen ziet dezelfde landnaam en een lege kaart van de omgeving: land en zee, zonder grenzen. Teken de grens van het land op de goede plek. Wie het dichtst bij de echte grens zit, krijgt de meeste punten.
 
+* **Lege kaart:** al het land in beeld is één vlak, de zee een ander. Kustlijnen zie je dus, landsgrenzen niet. Het land ligt op een willekeurige plek op de kaart, niet in het midden.
 * **Tekenen:** elke lijn die je trekt sluit zichzelf tot een lus en wordt een vlak. Eilanden teken je als losse lussen. Een tik of een streepje telt niet. Terug (ook Ctrl+Z) en wissen staan naast **Klaar**.
 * **Klaar** zet je tekening vast. Druk je niet, dan telt je laatste tekening bij het einde van de tijd. De host kent die steeds (zoals een pin bij Darts).
-* **Plek en grootte maken niets uit.** De host maakt jouw tekening even groot als de echte vorm (zelfde oppervlakte), legt de zwaartepunten op elkaar en schuift nog een paar pixels voor de beste plek. Dan telt de overlap: doorsnede gedeeld door vereniging. De stand telt wel: noord is boven.
-* **De nul is een rondje.** Een cirkel met dezelfde oppervlakte geeft 0 punten. Zo levert een rond land als Frankrijk niet vanzelf veel op, en een lang land als Chili niet vanzelf weinig. Volle punten krijg je bij 85% van de weg van rondje naar perfect (`CONFIG.trace.full`).
-* **Geen hints en geen tijdbonus:** alleen de vorm telt. Vanaf 60% raak telt de ronde als goed, vanaf 25% als half (`good`, `half`).
-* **Echte vorm:** zoals bij Silhouet, noord boven, lengte geschaald met cos(breedte). Overzeese delen vallen weg, eilanden tellen mee vanaf een deel van het hoofddeel.
+* **Plek en grootte tellen mee.** Tekening en echt land liggen op dezelfde kaart. De host schuift je tekening hoogstens 3 pixels op een raster van 240 (`shift`, `grid`) en telt de overlap: doorsnede gedeeld door vereniging.
+* **Dynamische punten:** 60% komt uit je eigen overlap, 40% uit jouw overlap gedeeld door de beste van de ronde (`rel`). Bij een moeilijk land verdient de beste dus nog steeds goed, en elk procent dichter bij de beste telt.
 
-| Moeilijkheid | Landen | Eilanden tellen vanaf | Extra |
+```
+eigen  = min(1, (overlap / 0,85)²)
+ronde  = overlap / beste overlap x min(1, eigen van de beste / 0,3)
+punten = 1000 x (0,6 x eigen + 0,4 x ronde)
+```
+
+| Tekening | Overlap | Eigen | Punten als beste | Punten als de beste 85% haalt |
+|---|---|---|---|---|
+| Strak langs de grens | 85% | 1,00 | 1000 | 1000 |
+| Redelijk | 65% | 0,58 | 751 | 657 |
+| Kader om het land | 55% | 0,42 | 651 | 510 |
+| Verkeerde plek | 25% | 0,09 | 167 | 170 |
+
+* Is de beste tekening zelf slecht (eigen onder 0,3, `relMin`), dan krimpt het rondedeel mee. Een krabbel wint dus geen 400 punten.
+* Alleen, of als enige met een tekening: alleen je eigen overlap telt.
+* **Geen hints en geen tijdbonus.** Vanaf 0,6 eigen telt de ronde als goed, vanaf 0,25 als half (`good`, `half`).
+* **Echte vorm:** noord boven, lengte geschaald met cos(breedte). Overzeese delen vallen weg, eilanden tellen mee vanaf een deel van het hoofddeel.
+* **Geen eilandstaten:** landen zonder landgrens doen niet mee, daar staat het antwoord al op de kaart.
+
+| Moeilijkheid | Landen | Kaart (x lange kant van het land) | Eilanden tellen vanaf |
 |---|---|---|---|
-| Makkelijk | Vanaf 250.000 km² | 8% van het hoofddeel | Kader in de verhouding van het land |
-| Normaal | Vanaf 60.000 km² | 3% | Geen |
-| Moeilijk | Vanaf 8.000 km² | 1% | Geen |
+| Makkelijk | Vanaf 250.000 km² | 1,5 | 8% van het hoofddeel |
+| Normaal | Vanaf 60.000 km² | 2,1 | 3% |
+| Moeilijk | Vanaf 8.000 km² | 3 | 1% |
 
-* Op het uitslagscherm zie je per speler de tekening over de echte vorm, even groot gemaakt zoals de host rekende. De beste krijgt een gouden rand.
+* Op het uitslagscherm zie je per speler de tekening over het echte land, op de lege kaart. De beste krijgt een gouden rand.
 * Continent, kleine landen en verdeling (gelijk of naar oppervlakte) werken zoals bij Satelliet. Aantal hints, hint elke en soorten hints zijn hier verborgen.
-* **Sabotage:** Blackout laat het vel staan maar verbergt je eigen lijnen (blind tekenen). Jetlag werkt gewoon. Delusion wacht op de volgende ronde met hints.
-* **Netwerk:** alleen de lussen gaan naar de host (gehele getallen op een vel van 1000 x 1000, hoogstens 30 lussen en 1200 punten). Elke speler rekent het plaatje op het uitslagscherm zelf na uit de eigen GeoJSON.
+* **Sabotage:** Blackout laat de kaart staan maar verbergt je eigen lijnen (blind tekenen). Jetlag werkt gewoon. Delusion wacht op de volgende ronde met hints.
+* **Netwerk:** de host stuurt het stuk kaart (drie getallen) en na afloop de lussen (gehele getallen op een vel van 1000 x 1000, hoogstens 30 lussen en 1200 punten). Elke speler bouwt kaart en uitslag zelf uit de eigen GeoJSON.
 * Instellingen staan in `CONFIG.trace`.
+
+## Duel
+
+Staat **Duel** aan in de lobby (standaard aan) en zijn er precies 2 verbonden spelers, dan gelden twee extra regels. Met 1 of met 3 of meer spelers verandert er niets.
+
+| Regel | Wat | Waarom |
+|---|---|---|
+| Rondewinst | Wie als enige de meeste punten haalt, krijgt +200 (`CONFIG.duel.win`). Gelijk: niemand | Raden jullie allebei goed, dan is het verschil anders een paar punten tijdbonus |
+| Oplopende inzet | Ronde 1 telt x1, de laatste x2, daartussen gelijkmatig in stappen van 0,25 (`rise`, `step`) | Een voorsprong uit de eerste rondes beslist het potje niet, de laatste ronde doet er altijd toe |
+
+* Punten van een ronde = (punten + rondewinst) x inzet. De inzet staat naast de rondeteller en op het uitslagscherm, de rondewinst achter het antwoord van de winnaar.
+* Toernooifinale (x2) en inzet stapelen niet: de hoogste van de twee telt.
+* Valt een speler weg of komt er een derde bij, dan geldt dat vanaf de volgende ronde.
 
 ## Sabotage
 
