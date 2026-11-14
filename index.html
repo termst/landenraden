@@ -1501,8 +1501,8 @@ const CONFIG = {
   appId: 'landenraden-p2p-v1',
   maxPlayers: 6,
   reserveMs: 30000,
-  joinTimeoutMs: 15000,
-  resultAutoMs: 8000,
+  joinTimeoutMs: 25000,
+  resultAutoMs: 12000,
   // Punten per ronde = max x nauwkeurigheid x hintfactor x tijdfactor (zie scoreFor, huntScore, dartScore).
   // hintCut: alle hints gezien kost zoveel. giveaway: factor na een hint die het antwoord verklapt (naam).
   // nearShare/nearKm/nlNearKm: fout maar dichtbij, max deel en afvalafstand. latencyMs: zoveel vertraging compenseert de host.
@@ -3428,6 +3428,7 @@ function broadcast(){
 function onNet(msg, peerId){
   if (!msg || typeof msg !== 'object') return;
   if (msg.t === 'draw' || msg.t === 'drawsync' || msg.t === 'drawfull') return drawNet(msg, peerId);   // tekening: tussen spelers, buiten de host om
+  if (msg.t === 'state' && (!msg.p || typeof msg.p !== 'object')) return;
   if (isHost && msg.t === 'state') return hostConflict(msg.p, peerId);
   if (isHost) return hostHandle(msg, peerId);
   switch (msg.t){
@@ -3544,6 +3545,9 @@ function hostAddPlayer(p, peerId){
 }
 // De host mag alles. Een OP mag de instellingen aanpassen en de lobby starten.
 const isOp = peerId => peerId === selfId || H.players.some(x => x.peerId === peerId && x.op);
+// Per peer en soort: hoogstens een bericht per ms milliseconden, zodat niemand de host kan overspoelen.
+const rateSeen = {};
+function rateOk(peerId, kind, ms){ const k = kind + ':' + peerId, n = Date.now(); if (n - (rateSeen[k] || 0) < ms) return false; rateSeen[k] = n; return true; }
 function hostHandle(msg, peerId){
   const p = msg.p || {};
   const player = H.players.find(x => x.peerId === peerId);
@@ -3553,7 +3557,7 @@ function hostHandle(msg, peerId){
       if (res !== true) { sendMsg && sendMsg({ t: res==='kicked'?'kick':'reject', p: res }, peerId); return; }
       broadcast(); beep(880,.06); break;
     }
-    case 'sync': broadcast(); break;
+    case 'sync': if (rateOk(peerId, 'sync', 1000)) broadcast(); break;
     case 'pin': {
       const r = H.round;
       if (!player || H.phase !== 'round' || !r || p.roundId !== r.id || r.answers[player.id] || sabOut(r, player.id, CONFIG.score.latencyMs)) break;
@@ -3567,7 +3571,7 @@ function hostHandle(msg, peerId){
       const clean = cleanSettings(p);
       if (!Object.keys(clean).length) return;
       H.settings = { ...H.settings, ...clean };
-      try { store.set('lr_settings', JSON.stringify(H.settings)); } catch(e){}
+      if (peerId === selfId) { try { store.set('lr_settings', JSON.stringify(H.settings)); } catch(e){} }   // een OP overschrijft de opgeslagen keuze van de host niet
       broadcast(); break;
     }
     case 'wantskip': {
@@ -3578,6 +3582,7 @@ function hostHandle(msg, peerId){
       break;
     }
     case 'wanthint': {
+      if (!rateOk(peerId, 'wanthint', 300)) return;
       if (!player || H.phase !== 'round' || !H.round || H.finding) return;
       // Alleen wie nog moet antwoorden stemt mee: wie al klaar is heeft de hint niet meer nodig.
       const r = H.round; if (r.hints.length >= r.hintKeys.length || !waiting().includes(player)) return;
@@ -5160,6 +5165,7 @@ function receiveChat(m, peerId){
     addChat({ ...who, emote: m.emote, mine:false }); showEmote(who, m.emote); return;
   }
   if (typeof m.text !== 'string' || !m.text.trim()) return;
+  { const k = 'txt:' + (peerId || who.name), n = Date.now(); if (n - (emoSeen[k] || 0) < 400) return; emoSeen[k] = n; }
   addChat({ ...who, text: m.text.slice(0,500), mine:false });
 }
 $('#chatBtn').addEventListener('click', () => { closeEmoTray(); closeSabTray(); $('#chat').classList.add('on'); unread = 0; renderChat(); $('#chatIn').focus(); });

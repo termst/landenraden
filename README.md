@@ -23,7 +23,7 @@ Online multiplayer aardrijkskundespel voor 2 tot 6 spelers, ook op de telefoon. 
 
 * Host: vul naam in, klik **Maak kamer**, deel de link of de 4 letter code.
 * Vrienden: open de link (join gaat automatisch) of typ de code en klik **Join**. De hele link in het codeveld plakken werkt ook.
-* Verbinden duurt 1 tot 15 seconden.
+* Verbinden duurt 1 tot 15 seconden (na 25 seconden volgt een foutmelding).
 * OP: de host zet in de lobby bij een speler de knop **OP** aan. Een OP kan de instellingen aanpassen en de lobby starten. Kicken, OP geven, volgende ronde en rematch blijven bij de host. OP blijft behouden als de host wisselt.
 
 ## Testen
