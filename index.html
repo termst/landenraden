@@ -259,25 +259,29 @@ span.pill{cursor:default}
 /* Weergave-instellingen: iconen in plaats van tekst, per groep een kopregel met een lijn */
 .shead{display:flex;justify-content:space-between;align-items:center;gap:12px}
 .set{display:flex;flex-direction:column;gap:8px}
-.sh{display:flex;align-items:center;gap:10px;color:var(--mute);margin-top:2px}
-.sh::after{content:'';flex:1;height:2px;border-radius:1px;background:var(--line)}
+.sh{display:flex;align-items:center;gap:12px;color:var(--mute);margin-top:2px}
+.sh~.sh{margin-top:8px}
+.sh::after{content:'';flex:1;height:1px;background:var(--line)}
 .sh .ic{width:22px;height:22px}
 .set .toggle>.ic{width:22px;height:22px;color:var(--mute)}
-.set .toggle .seg{width:168px}
-.set .toggle.duo{gap:10px}
-.set .toggle.duo .seg{width:auto;flex:1}
-.set .toggle.duo .seg+.ic{margin-left:4px}
-.swatches{display:flex;gap:9px}
-.swatches button{width:28px;height:28px;border-radius:50%;border:0;padding:0;cursor:pointer;background:var(--acc);box-shadow:0 2px 0 var(--acc-edge);transition:transform .1s,box-shadow .15s}
+.set .toggle{display:grid;grid-template-columns:22px minmax(0,1fr);gap:12px}
+.set .toggle.duo{grid-template-columns:22px minmax(0,1fr) minmax(0,1fr)}
+.set .toggle.duo .seg+.seg{margin-left:-4px}
+.set .toggle .seg{width:auto}
+.set .seg button{min-height:34px}
+.set .toggle .sw{justify-self:end}
+.shead .iconbtn{background:transparent;box-shadow:none;border-color:transparent;color:var(--mute)}
+.swatches{display:flex;gap:8px}
+.swatches button{flex:1;height:30px;border-radius:5px;border:0;padding:0;cursor:pointer;background:var(--acc);box-shadow:0 2px 0 var(--acc-edge);transition:transform .1s,box-shadow .15s}
 .swatches button:active{transform:translateY(2px);box-shadow:0 0 0 var(--acc-edge)}
 .swatches button.on{box-shadow:0 0 0 2px var(--card),0 0 0 4px var(--ink)}
 .seg .op{width:18px;height:18px;border-radius:4px;border:1.5px solid var(--ink);background:color-mix(in srgb,var(--ink) calc(var(--o)*100%),transparent)}
 .set .seg .ic{width:20px;height:20px}
 .set .seg button[data-vol="0"].on .ic{color:var(--bad)}
-.pv{position:relative;height:104px;border-radius:6px;border:1px solid var(--line);overflow:hidden;pointer-events:none;background:linear-gradient(135deg,transparent 47%,color-mix(in srgb,var(--sea) 34%,transparent) 48% 52%,transparent 53%) 0 0/30px 30px,color-mix(in srgb,var(--sea) 16%,var(--card2))}
+.pv{position:relative;height:128px;border-radius:6px;border:1px solid var(--line);overflow:hidden;pointer-events:none;background:linear-gradient(135deg,transparent 47%,color-mix(in srgb,var(--sea) 18%,transparent) 48% 52%,transparent 53%) 0 0/30px 30px,color-mix(in srgb,var(--sea) 16%,var(--card2))}
 .pv .hud{padding:8px 8px 0}
-.pv .mapctl{position:absolute;right:8px;bottom:8px;top:auto;flex-direction:row}
-.pv .mapctl button{cursor:default}
+.pv .mapctl{position:absolute;right:8px;left:auto;bottom:8px;top:auto;flex-direction:row}
+.pv .mapctl button{cursor:default;width:34px;height:34px}
 /* Accentkleur: oranje is de standaard. Elke kleur heeft een licht en een donker thema. Het bolletje in de instellingen leest zijn eigen kleur. */
 [data-acc]{--acc-hi:var(--acc)}
 [data-acc=orange]{--acc:#d4461b;--acc-d:#c13d15;--acc-edge:#8c2b0c}
@@ -307,6 +311,10 @@ html[data-fx=off] *,html[data-fx=off] *::before,html[data-fx=off] *::after{anima
 .chips.ico{display:grid;grid-template-columns:repeat(6,1fr);gap:6px}
 .chips.ico .chipbtn{display:grid;place-items:center;min-width:0;height:40px;padding:0;border-radius:5px}
 .chips.ico .chipbtn .ic{width:22px;height:22px}
+/* Zichtbaarheid van HUD-onderdelen: aan ziet eruit als een gekozen segment, uit is gedimd */
+#hideTiles .chipbtn{height:40px;color:var(--mute);opacity:.5}
+#hideTiles .chipbtn.on{background:var(--sel);border-color:var(--line);color:var(--ink);opacity:1}
+#hideTiles .chipbtn .ic{width:20px;height:20px}
 .chips.ico.ro .chipbtn{pointer-events:auto;cursor:default}
 .chips.ico.ro .chipbtn:not(.on){opacity:.6}
 details.card>summary{font-family:var(--display);text-transform:uppercase;font-size:20px;cursor:pointer;list-style:none;display:flex;justify-content:space-between;align-items:center}
@@ -1148,6 +1156,7 @@ td .fxi{margin-left:5px}
   <symbol id="i-vol2" viewBox="0 0 24 24"><path d="M4 9.500v5h3.500l4.500 4v-13l-4.500 4z"/><path d="M15.500 9.500a3.500 3.500 0 0 1 0 5M18.200 6.800a7 7 0 0 1 0 10.400"/></symbol>
   <symbol id="i-sparkle" viewBox="0 0 24 24"><path d="M11 3l1.900 5.100L18 10l-5.100 1.900L11 17l-1.900-5.100L4 10l5.100-1.900z"/><path d="M19 15l.7 1.800 1.800.7-1.800.7-.7 1.800-.7-1.800-1.800-.7 1.800-.7z"/></symbol>
   <symbol id="i-size" viewBox="0 0 24 24"><path d="M14 4h6v6M10 20H4v-6M20 4l-7 7M4 20l7-7"/></symbol>
+  <symbol id="i-eye" viewBox="0 0 24 24"><path d="M2 12s3.600-7 10-7 10 7 10 7-3.600 7-10 7-10-7-10-7z"/><circle cx="12" cy="12" r="3"/></symbol>
   <symbol id="i-drop" viewBox="0 0 24 24"><path d="M12 3s6 6.400 6 11a6 6 0 0 1-12 0c0-4.600 6-11 6-11z"/></symbol>
   <symbol id="i-flag" viewBox="0 0 24 24"><path d="M5 21V4M5 4h12l-2.500 4L17 12H5"/></symbol>
   <symbol id="i-wifi" viewBox="0 0 24 24"><path d="M2.500 9a14 14 0 0 1 19 0M5.500 12.500a9.500 9.500 0 0 1 13 0M8.800 16a5 5 0 0 1 6.400 0M12 19.500v.01"/></symbol>
@@ -1387,7 +1396,8 @@ td .fxi{margin-left:5px}
     <div class="sh" data-ti="ui_gui"><svg class="ic"><use href="#i-win"/></svg></div>
     <div class="toggle duo" role="group"><svg class="ic" data-ti="language"><use href="#i-globe"/></svg><div class="seg" id="langSeg" data-ti="language"><button data-lang="nl">NL</button><button data-lang="en">EN</button></div><div class="seg" id="themeSeg" data-ti="theme"><button data-th="light" aria-label="light"><svg class="ic"><use href="#i-sun"/></svg></button><button data-th="dark" aria-label="dark"><svg class="ic"><use href="#i-moon"/></svg></button></div></div>
     <div class="toggle" role="group" data-ti="ui_acc"><svg class="ic"><use href="#i-palette"/></svg><div class="swatches" id="accSeg"><button data-acc="orange" aria-label="orange"></button><button data-acc="blue" aria-label="blue"></button><button data-acc="green" aria-label="green"></button><button data-acc="purple" aria-label="purple"></button><button data-acc="pink" aria-label="pink"></button></div></div>
-    <div class="toggle duo" role="group"><svg class="ic" data-ti="sound"><use href="#i-vol2"/></svg><div class="seg" id="volSeg" data-ti="sound"><button data-vol="0" aria-label="mute"><svg class="ic"><use href="#i-vol0"/></svg></button><button data-vol="1" aria-label="low"><svg class="ic"><use href="#i-vol1"/></svg></button><button data-vol="2" aria-label="high"><svg class="ic"><use href="#i-vol2"/></svg></button></div><svg class="ic" data-ti="ui_fx"><use href="#i-sparkle"/></svg><button class="sw" id="fxBtn" data-ti="ui_fx"></button></div>
+    <div class="toggle" role="group"><svg class="ic" data-ti="sound"><use href="#i-vol2"/></svg><div class="seg" id="volSeg" data-ti="sound"><button data-vol="0" aria-label="mute"><svg class="ic"><use href="#i-vol0"/></svg></button><button data-vol="1" aria-label="low"><svg class="ic"><use href="#i-vol1"/></svg></button><button data-vol="2" aria-label="high"><svg class="ic"><use href="#i-vol2"/></svg></button></div></div>
+    <div class="toggle" role="group"><svg class="ic" data-ti="ui_fx"><use href="#i-sparkle"/></svg><button class="sw" id="fxBtn" data-ti="ui_fx"></button></div>
     <div class="sh" data-ti="ui_hud"><svg class="ic"><use href="#i-hud"/></svg></div>
     <div class="pv" aria-hidden="true">
       <div class="hud">
@@ -1401,14 +1411,14 @@ td .fxi{margin-left:5px}
     </div>
     <div class="toggle" role="group" data-ti="ui_size"><svg class="ic"><use href="#i-size"/></svg><div class="seg" id="hzSeg"><button data-hz="s">S</button><button data-hz="m">M</button><button data-hz="l">L</button></div></div>
     <div class="toggle" role="group" data-ti="ui_opa"><svg class="ic"><use href="#i-drop"/></svg><div class="seg" id="hoSeg"><button data-ho="1" aria-label="100%"><span class="op" style="--o:1"></span></button><button data-ho="2" aria-label="75%"><span class="op" style="--o:.55"></span></button><button data-ho="3" aria-label="50%"><span class="op" style="--o:.15"></span></button></div></div>
-    <div class="chips ico" id="hideTiles" role="group">
+    <div class="toggle" role="group"><svg class="ic" data-ti="ui_show"><use href="#i-eye"/></svg><div class="chips ico" id="hideTiles">
       <button class="chipbtn on" data-hk="round" data-ti="ui_round"><svg class="ic"><use href="#i-flag"/></svg></button>
       <button class="chipbtn on" data-hk="score" data-ti="ui_score"><svg class="ic"><use href="#i-trophy"/></svg></button>
       <button class="chipbtn on" data-hk="net" data-ti="ui_net"><svg class="ic"><use href="#i-wifi"/></svg></button>
       <button class="chipbtn on" data-hk="zoom" data-ti="ui_zoom"><svg class="ic"><use href="#i-zoom"/></svg></button>
       <button class="chipbtn on" data-hk="chat" data-ti="ui_chat"><svg class="ic"><use href="#i-chat"/></svg></button>
       <button class="chipbtn on" data-hk="hints" data-ti="ui_hints"><svg class="ic"><use href="#i-bulb"/></svg></button>
-    </div>
+    </div></div>
   </div>
   <button class="btn sec" id="setLeave" hidden><svg class="ic"><use href="#i-exit"/></svg><span data-i="leaveGame"></span></button>
   <button class="btn pri" id="setClose" data-i="close"></button>
@@ -1614,7 +1624,7 @@ const I18N = {
   left:'links', right:'rechts', landlocked:'geen kust', coast:'aan zee', island:'geen landgrenzen', nbCount:'{n} buurlanden',
   pop0:'minder dan 1 miljoen', pop1:'1 tot 10 miljoen', pop2:'10 tot 50 miljoen', pop3:'50 tot 150 miljoen', pop4:'meer dan 150 miljoen',
   capLetter:'begint met {l}', nameLetter:'begint met {l}, {n} letters',
-  chat:'Chat', chatPh:'Bericht...', chatEmpty:'Nog geen berichten', emotes:'Emotes', em_hit:'Raak!', em_lost:'Waar?!', em_hurry:'Schiet op', em_splash:'Plons!', em_king:'Kaartkoning', appSettings:'Instellingen', theme:'Thema', ui_gui:'Weergave', ui_hud:'HUD', ui_size:'HUD grootte', ui_opa:'HUD doorzichtigheid', ui_acc:'Accentkleur', ui_fx:'Animaties', ui_round:'Ronde', ui_score:'Score', ui_net:'Verbinding', ui_zoom:'Zoomknoppen', ui_chat:'Chat en emotes', ui_hints:'Hints open bij start', ui_reset:'Standaard herstellen', hintMin:'Houd minstens één soort aan', hintOn:'{g}: aan', hintOff:'{g}: uit', roundLbl:'Ronde', scoreLbl:'Score', timeLbl:'Tijd', hintsTitle:'Hints', hintNow:'Hint nu', hintNowVote:'Hint nu ({a}/{b})', hintVoted:'Wachten ({a}/{b})',
+  chat:'Chat', chatPh:'Bericht...', chatEmpty:'Nog geen berichten', emotes:'Emotes', em_hit:'Raak!', em_lost:'Waar?!', em_hurry:'Schiet op', em_splash:'Plons!', em_king:'Kaartkoning', appSettings:'Instellingen', theme:'Thema', ui_gui:'Weergave', ui_hud:'HUD', ui_size:'HUD grootte', ui_opa:'HUD doorzichtigheid', ui_acc:'Accentkleur', ui_fx:'Animaties', ui_round:'Ronde', ui_score:'Score', ui_net:'Verbinding', ui_zoom:'Zoomknoppen', ui_chat:'Chat en emotes', ui_hints:'Hints open bij start', ui_show:'Tonen in HUD', ui_reset:'Standaard herstellen', hintMin:'Houd minstens één soort aan', hintOn:'{g}: aan', hintOff:'{g}: uit', roundLbl:'Ronde', scoreLbl:'Score', timeLbl:'Tijd', hintsTitle:'Hints', hintNow:'Hint nu', hintNowVote:'Hint nu ({a}/{b})', hintVoted:'Wachten ({a}/{b})',
   hintCount:'Aantal hints', hintTypes:'Soorten hints',
   dutch:'Nederland', nlPlaces:'Plaatsen', nlView:'Beeld', all:'Alle', big:'Steden', towns:'Dorpen', sat:'Satelliet', photo:'Straatbeeld',
   guessPhNl:'Plaats...', unknownNl:'Kies een plaats uit de lijst',
@@ -1732,7 +1742,7 @@ const I18N = {
   left:'left', right:'right', landlocked:'landlocked', coast:'coastal', island:'no land borders', nbCount:'{n} neighbours',
   pop0:'under 1 million', pop1:'1 to 10 million', pop2:'10 to 50 million', pop3:'50 to 150 million', pop4:'over 150 million',
   capLetter:'starts with {l}', nameLetter:'starts with {l}, {n} letters',
-  chat:'Chat', chatPh:'Message...', chatEmpty:'No messages yet', emotes:'Emotes', em_hit:'Bullseye!', em_lost:'Where?!', em_hurry:'Hurry up', em_splash:'Splash!', em_king:'Map king', appSettings:'Settings', theme:'Theme', ui_gui:'Display', ui_hud:'HUD', ui_size:'HUD size', ui_opa:'HUD opacity', ui_acc:'Accent color', ui_fx:'Animations', ui_round:'Round', ui_score:'Score', ui_net:'Connection', ui_zoom:'Zoom buttons', ui_chat:'Chat and emotes', ui_hints:'Hints open at start', ui_reset:'Reset to default', hintMin:'Keep at least one type on', hintOn:'{g}: on', hintOff:'{g}: off', roundLbl:'Round', scoreLbl:'Score', timeLbl:'Time', hintsTitle:'Hints', hintNow:'Hint now', hintNowVote:'Hint now ({a}/{b})', hintVoted:'Waiting ({a}/{b})',
+  chat:'Chat', chatPh:'Message...', chatEmpty:'No messages yet', emotes:'Emotes', em_hit:'Bullseye!', em_lost:'Where?!', em_hurry:'Hurry up', em_splash:'Splash!', em_king:'Map king', appSettings:'Settings', theme:'Theme', ui_gui:'Display', ui_hud:'HUD', ui_size:'HUD size', ui_opa:'HUD opacity', ui_acc:'Accent color', ui_fx:'Animations', ui_round:'Round', ui_score:'Score', ui_net:'Connection', ui_zoom:'Zoom buttons', ui_chat:'Chat and emotes', ui_hints:'Hints open at start', ui_show:'Show in HUD', ui_reset:'Reset to default', hintMin:'Keep at least one type on', hintOn:'{g}: on', hintOff:'{g}: off', roundLbl:'Round', scoreLbl:'Score', timeLbl:'Time', hintsTitle:'Hints', hintNow:'Hint now', hintNowVote:'Hint now ({a}/{b})', hintVoted:'Waiting ({a}/{b})',
   hintCount:'Number of hints', hintTypes:'Hint types',
   dutch:'Netherlands', nlPlaces:'Places', nlView:'View', all:'All', big:'Cities', towns:'Villages', sat:'Satellite', photo:'Street view',
   guessPhNl:'Place...', unknownNl:'Pick a place from the list',
