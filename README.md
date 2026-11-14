@@ -297,12 +297,31 @@ Zet in de lobby **Sabotage** aan (vanaf 2 spelers). Spelers krijgen kaarten en s
 | **Jetlag** | De klok van het doelwit loopt twee keer zo snel. Tijd op: invoer dicht | Meteen, of vanaf de start van de volgende ronde |
 
 * **Varianten:** willekeurige speler (gewone rand), kies een speler (zilver), iedereen (goud).
-* **Kaarten krijgen:** 1 bij de start, daarna elke 2 rondes, hoogstens 3 in je hand. Wie achter staat krijgt vaker een sterke variant (`CONFIG.sab.odds`).
+* **Kaarten krijgen (lader):** elke speler heeft een lader van 0 tot 100, het lege kaartje naast je hand. Hij begint op 60 en krijgt er na elke ronde 30 (koploper) tot 50 (laatste) bij, ertussen gelijkmatig. Vol is een kaart, wat over is schuift door. Hoogstens 3 kaarten in je hand: is die vol, dan blijft de lader vol staan tot er plek is.
+* **Hoe vaak:** niemand heeft een kaart in ronde 1. Over 10 rondes krijgt de koploper er 3, het midden 4 en de laatste 5 (was 5 voor iedereen). Over 5 rondes: 1 voor de koploper, 2 voor de rest (was 3). Na de laatste ronde komt er niets meer.
+* **Instellen:** `CONFIG.sab.charge` (`start`, `lead`, `last`). Hogere getallen is vaker kaarten. Wie achter staat krijgt ook vaker een sterke variant (`CONFIG.sab.odds`).
 * **Spelen:** hoogstens één kaart per ronde. Tik op een kaartje naast de chatknop.
 * De tekenaar is niet te raken: een kaart die op hem wacht, wacht een ronde langer.
 * `CONFIG.sab.mix: true` laat Delusion elke hint uit een ander land halen (losse onzin in plaats van één vals spoor).
 * Alles staat in de gewone snapshot, net als de plek van de ronde. Wie in de browser zoekt kan het vinden.
 * Het eindscherm toont de saboteur, het mikpunt en het aantal gespeelde kaarten.
+
+## Overgangen
+
+Bij elke schermwissel (ook van ronde naar uitslag en naar de volgende ronde) brengt een dier het logo door beeld, om de beurt van links en van rechts. Vier soorten, nooit twee keer dezelfde achter elkaar:
+
+| Soort | Dier | Wat je ziet |
+|---|---|---|
+| **trek** | Nijlpaard | Trekt de kar met het logo aan een touw langs de rivier. Schuine rand (/) met twee strepen ervoor en erachter |
+| **duw** | Neushoorn | Duwt de kar met zijn hoorn over de savanne. Schuine rand de andere kant op (\\) |
+| **zwem** | Nijlpaard | Het water komt op van onderen, het nijlpaard zwemt met het logo op een vlot, daarna zakt het water |
+| **rond** | Een van de twee | Een cirkel die met het dier meeloopt, met de wereldbol van het logo als achtergrond |
+
+* De wissel zelf gebeurt meteen: alleen het beeld wacht. Het oude scherm blijft staan tot de achtergrond alles bedekt.
+* Duur: `SW_MS` (1150 ms). Bedekt van 30% tot 70% daarvan.
+* Uit met **Animaties** in de instellingen en bij "minder beweging" op het apparaat.
+* Elke soort heeft eigen vaste kleuren (los van het thema). De wereldbol volgt de accentkleur.
+* Een soort toevoegen: een achtergrond in `SW_SCENE`, een luchtkleur in `SW_SKY` en een tak in `swipe()`. Een dier toevoegen: een tekening in `SW_ANI` (van opzij, kijkend naar rechts, poten op y = 110).
 
 ## Toernooi
 

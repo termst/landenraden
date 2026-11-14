@@ -757,6 +757,13 @@ body[data-screen=game] #sabHand{top:calc(max(10px,env(safe-area-inset-top)) + 61
 body[data-screen=game] #sabHand .sc.sel{transform:translateY(3px)}
 #sabHand.used .sc{filter:grayscale(.85);opacity:.55}
 #sabHand .sc.new{animation:scNew .7s cubic-bezier(.2,1.5,.4,1)}
+/* Lader: een leeg kaartje dat van onderen volloopt. Vol is de volgende kaart. */
+.sc-ch{position:relative;flex:none;width:34px;aspect-ratio:5/7;padding:0;border:0;border-radius:6px;overflow:hidden;cursor:pointer;background:var(--glass);box-shadow:inset 0 0 0 1.5px var(--line),var(--shadow-up);display:grid;place-items:center;transition:transform .12s}
+.sc-ch:active{transform:scale(.9)}
+.sc-ch i{position:absolute;left:0;right:0;bottom:0;height:var(--ch);background:var(--acc);opacity:.85;transition:height .6s cubic-bezier(.3,1.3,.5,1)}
+.sc-ch b{position:relative;font-family:var(--display);font-weight:400;font-size:13px;line-height:1;color:var(--ink);text-shadow:0 1px 0 var(--card)}
+.sc-ch.full{box-shadow:inset 0 0 0 1.5px var(--acc-edge),var(--shadow-up)}
+.sc-ch.full b{color:var(--on-acc);text-shadow:none}
 @keyframes scNew{from{transform:translateY(18px) rotate(-14deg) scale(.4);opacity:0}}
 #sabTray{position:fixed;left:max(12px,env(safe-area-inset-left));bottom:calc(max(12px,env(safe-area-inset-bottom)) + 58px);z-index:1750;display:none;flex-direction:column;gap:10px;width:min(336px,calc(100vw - 24px));padding:12px;background:var(--card);border:1px solid var(--line);border-radius:8px;box-shadow:var(--shadow-up)}
 #sabTray.on{display:flex;animation:slide .18s ease}
@@ -857,6 +864,65 @@ td .fxi{margin-left:5px}
   .podium{min-height:170px}
   #blackout{padding:0 min(430px,54vw) 0 20px}
 }
+/* Overgang tussen schermen: een nijlpaard of neushoorn brengt het logo door beeld, op een eigen achtergrond met eigen kleuren (los van het thema).
+   Het oude scherm blijft staan (.sw-old) en het nieuwe wacht onzichtbaar (.sw-new) tot de achtergrond alles bedekt. Maten komen uit --gw (breedte van de stoet) en --sl (schuinte van de rand). */
+#sw{position:fixed;inset:0;z-index:1900;display:none;overflow:hidden;--hz:54%}
+#sw.on{display:block}
+.screen.sw-old{display:flex;pointer-events:none}
+.screen.sw-new{visibility:hidden}
+body.sw-wait :is(#chatBtn,#emoBtn,#sabHand){visibility:hidden}
+.sw-train,.sw-rise{position:absolute;top:0;left:0;height:100%;will-change:transform}
+.sw-rise{width:100%}
+.sw-st{position:absolute;top:0;height:100%;background:var(--c)}
+.sw-pan{position:absolute;top:0;height:100%;overflow:hidden;background:var(--sky)}
+.sw-train .sw-pan,.sw-st{clip-path:polygon(var(--sl) 0,100% 0,calc(100% - var(--sl)) 100%,0 100%)}
+.sw-train.rev .sw-pan,.sw-train.rev .sw-st{clip-path:polygon(0 0,calc(100% - var(--sl)) 0,100% 100%,var(--sl) 100%)}
+.sw-pan>*{position:absolute}
+.sw-sun{border-radius:50%;background:var(--c);width:calc(var(--gw)*var(--d));height:calc(var(--gw)*var(--d));left:calc(50% + var(--gw)*var(--x));bottom:calc(100% - var(--hz) + var(--gw)*var(--y))}
+.sw-cl{left:calc(50% + var(--gw)*var(--x));bottom:calc(100% - var(--hz) + var(--gw)*var(--y));width:calc(var(--gw)*var(--w));height:calc(var(--gw)*var(--w)*.2);border-radius:99px;background:var(--c);box-shadow:calc(var(--gw)*var(--w)*.28) calc(var(--gw)*var(--w)*-.14) 0 calc(var(--gw)*var(--w)*-.025) var(--c)}
+.sw-far{left:0;right:0;bottom:calc(100% - var(--hz));height:calc(var(--gw)*var(--h));background:var(--t) repeat-x 50% 100%/calc(var(--gw)*var(--w)) 100%}
+.sw-gnd{left:0;right:0;top:var(--hz);bottom:0;background:var(--t) repeat 50% calc(var(--gw)*.05)/calc(var(--gw)*.5) calc(var(--gw)*.19),var(--gnd);box-shadow:inset 0 calc(var(--gw)*.012) 0 var(--edge)}
+.sw-prop{left:calc(50% + var(--gw)*var(--x));bottom:calc(100% - var(--hz));width:calc(var(--gw)*var(--w));height:auto}
+.sw-grp{left:50%;bottom:calc(100% - var(--hz) - var(--gw)*.045);width:var(--gw);margin-left:calc(var(--gw)/-2);will-change:transform}
+.sw-g{display:block;width:100%;overflow:visible}
+.sw-g text{font-family:var(--display);fill:#1c1b18}
+#sw[data-dir="-1"] .sw-g{transform:scaleX(-1)}
+#sw[data-dir="-1"] .sw-logo{transform-box:fill-box;transform-origin:center;transform:scaleX(-1)}
+/* Water (zwem): banden met een golfrand die elk een eigen kant op drijven. De voorste band valt over de poten en de wielen. */
+.sw-wv{left:-30%;width:160%;top:var(--y);bottom:0;background:var(--t) repeat-x 0 0/calc(var(--gw)*.24) calc(var(--gw)*.034),linear-gradient(transparent calc(var(--gw)*.033),var(--c) 0);animation:swDrift var(--s,2.4s) linear infinite}
+.sw-wv.rv{animation-direction:reverse}
+@keyframes swDrift{to{transform:translateX(calc(var(--gw)*.24))}}
+.sw-crest{position:absolute;left:0;right:0;bottom:100%;height:calc(var(--gw)*.07);background:var(--t) repeat-x 0 100%/calc(var(--gw)*.24) calc(var(--gw)*.034),var(--t2) repeat-x calc(var(--gw)*.12) 0/calc(var(--gw)*.24) calc(var(--gw)*.034)}
+/* Rond: de lijnen van de wereldbol uit het logo, zo groot als het scherm. De evenaar is de weg. */
+.sw-globe{left:50%;top:var(--hz);width:calc(var(--gw)*3.4);height:calc(var(--gw)*3.4);min-width:150vmax;min-height:150vmax;transform:translate(-50%,-50%)}
+/* De dieren: poten om en om, het lijf veert, de kop knikt, de staart zwaait, de wielen draaien. Bij duwen stuitert de kar tegen de neus. */
+.sw-leg{transform-box:fill-box;transform-origin:50% 14%;animation:swLeg .46s ease-in-out infinite}
+.sw-leg.b{animation-delay:-.23s}
+@keyframes swLeg{0%,100%{transform:rotate(19deg)}50%{transform:rotate(-19deg)}}
+.sw-bob{animation:swBob .23s ease-in-out infinite alternate}
+@keyframes swBob{to{transform:translateY(-2.6px)}}
+.sw-head{transform-box:fill-box;transform-origin:12% 60%;animation:swNod .46s ease-in-out infinite alternate}
+@keyframes swNod{from{transform:rotate(-2deg)}to{transform:rotate(2.5deg)}}
+.sw-tail{transform-box:fill-box;transform-origin:100% 0;animation:swTail .3s ease-in-out infinite alternate}
+@keyframes swTail{from{transform:rotate(-14deg)}to{transform:rotate(16deg)}}
+.sw-ear{transform-box:fill-box;transform-origin:50% 100%;animation:swTail .38s ease-in-out infinite alternate}
+.sw-wheel{transform-box:fill-box;transform-origin:center;animation:sp .55s linear infinite}
+.sw-dust circle{transform-box:fill-box;transform-origin:center;animation:swDust .5s ease-out infinite}
+.sw-dust circle:nth-child(2){animation-delay:-.17s}
+.sw-dust circle:nth-child(3){animation-delay:-.34s}
+@keyframes swDust{from{transform:translate(8px,2px) scale(.3);opacity:.9}to{transform:translate(-16px,-9px) scale(1.25);opacity:0}}
+/* Het tuig (band met ring) hoort bij het touw. */
+.sw-g[data-act=push] .sw-har{display:none}
+.sw-g[data-act=push] .sw-cart{transform-box:fill-box;transform-origin:0 100%;animation:swBump .23s ease-in-out infinite alternate}
+@keyframes swBump{from{transform:rotate(0)}to{transform:translateX(3px) rotate(1.4deg)}}
+/* Zwemmen: geen stof en geen wielen, het bord ligt op een balk. De poten staan stil onder water en alles dobbert traag. */
+.sw-raft{display:none}
+#sw[data-kind=zwem] :is(.sw-dust,.sw-shade,.sw-wheel,.sw-axle){display:none}
+#sw[data-kind=zwem] .sw-raft{display:block}
+#sw[data-kind=zwem] .sw-leg{animation:none}
+#sw[data-kind=zwem] .sw-bob{animation:swFloat .7s ease-in-out infinite alternate}
+#sw[data-kind=zwem] .sw-cart{transform-box:fill-box;transform-origin:50% 100%;animation:swFloat .8s -.3s ease-in-out infinite alternate}
+@keyframes swFloat{from{transform:translateY(3px) rotate(-1.2deg)}to{transform:translateY(-4px) rotate(1.4deg)}}
 @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
 </style>
 </head>
@@ -1434,6 +1500,7 @@ td .fxi{margin-left:5px}
 <div id="sabTray" role="dialog"></div>
 <div id="emoLayer" aria-live="polite"></div>
 <div id="chat"><div class="chead"><h2 data-i="chat"></h2><button class="x" id="chatClose" aria-label="close">&times;</button></div><div id="chatLog"></div><div class="emostrip" id="emoStrip" role="toolbar"></div><form id="chatForm" autocomplete="off"><input type="text" id="chatIn" maxlength="500" enterkeyhint="send"><button class="btn pri" aria-label="send"><svg class="ic"><use href="#i-send"/></svg></button></form></div>
+<div id="sw" aria-hidden="true"></div>
 <div class="toast" id="toast"></div>
 
 <script>
@@ -1461,6 +1528,7 @@ td .fxi{margin-left:5px}
   }
   const LIST='.pl,.who>span,tbody tr,.stat,.msg,.chipbtn,.colors button';
   function stagger(list,step=55,base=0){
+    base+=Math.max(0,(window.swOpenAt||0)-performance.now());   // loopt er een overgang, dan wacht de intro tot het scherm weer vrijkomt
     let i=0; list.forEach(e=>{ if(vis(e)) reveal(e,base+i++*R(step*.5,step*1.4)); });
   }
   function screenOn(s){
@@ -1555,11 +1623,13 @@ const CONFIG = {
     view: { easy: 1.5, normal: 2.1, hard: 3 }, margin: .08, grid: 240, shift: 3, full: .85, pow: 2, rel: .4, relMin: .3, good: .6, half: .25 },
   // Duel: regels voor precies twee spelers. win: bonus voor wie de ronde wint. rise: de laatste ronde telt zoveel keer, daarvoor loopt het gelijkmatig op vanaf x1 (stappen van step).
   duel: { win: 200, rise: 2, step: .25 },
-  // Sabotage: hand = hoogstens zoveel kaarten, start = kaarten bij het begin, every = daarna om de zoveel rondes een kaart erbij.
+  // Sabotage: hand = hoogstens zoveel kaarten. Kaarten komen uit een lader per speler (0 tot 100): vol is een kaart, wat over is schuift door.
+  // charge.start: lading bij het begin. charge.lead en charge.last: lading na elke ronde voor de koploper en voor de laatste; ertussen loopt het gelijkmatig.
+  // Met 60, 30 en 50: niemand heeft een kaart in ronde 1, de koploper krijgt er om de 3 a 4 rondes een, de laatste om de 2.
   // odds: kans op de variant (willekeurige speler, kies een speler, iedereen) voor de koploper en voor de laatste; ertussen loopt het gelijkmatig.
   // maxJet: zo vaak stapelt Jetlag op één speler (elke keer loopt de klok een keer sneller).
   // mix: Delusion haalt elke hint uit een ander willekeurig land (onzin die je kunt doorzien). Uit: alle hints uit hetzelfde verkeerde land (een samenhangend vals spoor).
-  sab: { hand: 3, start: 1, every: 2, odds: { lead: [60, 32, 8], last: [28, 42, 30] }, maxJet: 2, mix: false },
+  sab: { hand: 3, charge: { start: 60, lead: 30, last: 50 }, odds: { lead: [60, 32, 8], last: [28, 42, 30] }, maxJet: 2, mix: false },
   // Toernooi: aantal rondes (min, max, standaard) en hoe lang het rondekaartje in beeld blijft.
   tour: { min: 3, max: 30, rounds: 12, cardMs: 3200 },
   // Kaartlaag. Satelliet zonder labels. Wissel hier voor Mapbox/Google tiles (zie README).
@@ -1661,6 +1731,7 @@ const I18N = {
   sabw_r:'Raakt een willekeurige andere speler.', sabw_c:'Jij kiest wie.', sabw_a:'Raakt alle andere spelers.',
   sabNow:'Werkt meteen, tot het einde van deze ronde', sabNext:'Werkt de hele volgende ronde', sabPlayRnd:'Speel', sabPlayAll:'Speel op iedereen',
   sabUsed:'Je hebt deze ronde al een kaart gespeeld', sabNoNext:'Er komt geen ronde meer', sabNoTarget:'Iedereen is al klaar: er is niemand om te raken', sabNotNow:'Nu even niet',
+  sabCh:'Volgende kaart: {n}%. De lader vult na elke ronde, het snelst voor wie achter staat.', sabChFull:'Lader vol. Je hand ook: speel een kaart en de nieuwe komt na de ronde.', sabChTip:'Lader voor je volgende kaart',
   sabNew:'Nieuwe kaart', sabBy:'door {n}', sabAll:'iedereen', sabNextShort:'volgende ronde', sabSecret:'geheim, volgende ronde',
   boSub:'De kaart is weg. Je hints werken nog.', jlHit:'Jetlag: je klok loopt sneller', jlOut:'Tijd op',
   sabList:'Sabotage deze ronde', sabs_bo:'zag de kaart niet', sabs_jl:'klok liep sneller', deOf:'hints gingen over {c}', deOfHunt:'hints wezen naar een andere plek',
@@ -1717,7 +1788,7 @@ const I18N = {
    <li><b>Silhouet</b>: je ziet alleen de omtrek van een land. <b>Makkelijk</b>: noord boven, met lengte en breedtelijnen en een schaal. <b>Normaal</b>: ${CONFIG.shape.rot[0]} tot ${CONFIG.shape.rot[1]} graden gedraaid, kleine eilanden weg. <b>Moeilijk</b>: willekeurig gedraaid, soms gespiegeld, alleen het grootste deel. Punten zoals bij Satelliet.</li>
    <li><b>Tekenen</b>: één speler ziet de naam van een land en tekent de vlag uit het hoofd, met acht kleuren, een kwast, een rechthoek en een rondje. De rest ziet de vlag ontstaan en raadt het land, met hints en punten zoals bij Satelliet: sneller is meer. De hint met de vlag vervalt. Geen letters of cijfers tekenen. De tekenaar krijgt het gemiddelde van de raders: hoe minder het raden, hoe minder punten. Raadt minstens ${pc(CONFIG.draw.half)}, dan telt het voor de tekenaar als goed. <b>Makkelijk</b>: de tekenaar ziet de vlag als voorbeeld. <b>Moeilijk</b>: alleen de kwast, geen vormen. Iedereen tekent om de beurt. Met één speler wordt het Silhouet.</li>
    <li><b>Grens trekken</b>: iedereen ziet dezelfde landnaam en een lege kaart van de omgeving: land en zee, zonder grenzen. Teken de grens van het land op de goede plek. Elke lus is een eigen vlak, dus eilanden teken je los. De host meet de overlap met het echte land: plek en grootte tellen dus mee. Zestig procent van je punten komt uit je eigen overlap, veertig procent uit hoe dicht je bij de beste tekening van de ronde zit. Geen hints en geen tijdbonus. Klaar zet je tekening vast, anders telt hij bij het einde van de tijd. <b>Makkelijk</b>: grote landen, kaart dicht op het land. <b>Moeilijk</b>: ook kleine landen, een veel ruimere kaart. Landen zonder landgrens doen niet mee.</li>
-   <li><b>Sabotage</b> zet de host aan in de lobby, vanaf 2 spelers. Je krijgt ${CONFIG.sab.start} kaart bij de start en daarna elke ${CONFIG.sab.every} rondes een nieuwe, hoogstens ${CONFIG.sab.hand} in je hand. Je speelt hoogstens één kaart per ronde. <b>Blackout</b>: het doelwit ziet de kaart niet meer. <b>Delusion</b>: de hele volgende ronde gaan de hints van het doelwit over een ander land, en dat krijgt het doelwit niet te horen. Het komt pas uit op het uitslagscherm. <b>Jetlag</b>: de klok van het doelwit loopt twee keer zo snel. Blackout en Jetlag werken meteen, of de hele volgende ronde als je ze op het uitslagscherm speelt. Elke kaart bestaat in drie varianten: een willekeurige speler, een speler die jij kiest, of iedereen. Wie achter staat krijgt vaker een sterke variant. De tekenaar is niet te raken.</li>
+   <li><b>Sabotage</b> zet de host aan in de lobby, vanaf 2 spelers. Kaarten komen uit je lader, het lege kaartje naast je hand. Die begint op ${CONFIG.sab.charge.start}% en krijgt er na elke ronde ${CONFIG.sab.charge.lead} tot ${CONFIG.sab.charge.last}% bij: wie achter staat het meest. Vol is een nieuwe kaart, hoogstens ${CONFIG.sab.hand} in je hand. Je speelt hoogstens één kaart per ronde. <b>Blackout</b>: het doelwit ziet de kaart niet meer. <b>Delusion</b>: de hele volgende ronde gaan de hints van het doelwit over een ander land, en dat krijgt het doelwit niet te horen. Het komt pas uit op het uitslagscherm. <b>Jetlag</b>: de klok van het doelwit loopt twee keer zo snel. Blackout en Jetlag werken meteen, of de hele volgende ronde als je ze op het uitslagscherm speelt. Elke kaart bestaat in drie varianten: een willekeurige speler, een speler die jij kiest, of iedereen. Wie achter staat krijgt vaker een sterke variant. De tekenaar is niet te raken.</li>
    <li><b>Gelijke stand</b>: meeste goed wint, daarna het snelste goede antwoord.</li>
   </ul>`,
  },
@@ -1780,6 +1851,7 @@ const I18N = {
   sabw_r:'Hits a random other player.', sabw_c:'You pick who.', sabw_a:'Hits all other players.',
   sabNow:'Works right away, until this round ends', sabNext:'Works for the whole next round', sabPlayRnd:'Play', sabPlayAll:'Play on everyone',
   sabUsed:'You already played a card this round', sabNoNext:'There is no next round', sabNoTarget:'Everyone is done: there is nobody to hit', sabNotNow:'Not right now',
+  sabCh:'Next card: {n}%. The charger fills after every round, fastest for whoever is behind.', sabChFull:'Charger full. So is your hand: play a card and the new one comes after the round.', sabChTip:'Charger for your next card',
   sabNew:'New card', sabBy:'by {n}', sabAll:'everyone', sabNextShort:'next round', sabSecret:'secret, next round',
   boSub:'The map is gone. Your hints still work.', jlHit:'Jetlag: your clock is running faster', jlOut:'Out of time',
   sabList:'Sabotage this round', sabs_bo:'could not see the map', sabs_jl:'clock ran faster', deOf:'hints were about {c}', deOfHunt:'hints pointed to another spot',
@@ -1836,7 +1908,7 @@ const I18N = {
    <li><b>Silhouette</b>: you only see the outline of a country. <b>Easy</b>: north up, with grid lines and a scale. <b>Normal</b>: rotated ${CONFIG.shape.rot[0]} to ${CONFIG.shape.rot[1]} degrees, small islands left out. <b>Hard</b>: random rotation, sometimes mirrored, only the largest part. Points work as in Satellite.</li>
    <li><b>Draw</b>: one player sees the name of a country and draws its flag from memory, with eight colors, a brush, a rectangle and a circle. The others watch the flag appear and guess the country, with hints and points as in Satellite: faster is more. The flag hint is left out. No letters or numbers. The drawer gets the average of the guessers: the fewer get it, the fewer points. If at least ${pc(CONFIG.draw.half)} get it, it counts as correct for the drawer. <b>Easy</b>: the drawer sees the flag as an example. <b>Hard</b>: brush only, no shapes. Everyone takes turns. With one player it becomes Silhouette.</li>
    <li><b>Outline</b>: everyone sees the same country name and an empty map of the region: land and sea, no borders. Draw the border of the country in the right place. Each loop is its own area, so draw islands separately. The host measures the overlap with the real country, so position and size count. Sixty percent of your points come from your own overlap, forty percent from how close you are to the best drawing of the round. No hints and no time bonus. Done locks your drawing, otherwise it counts when time runs out. <b>Easy</b>: large countries, map close to the country. <b>Hard</b>: small countries too, a much wider map. Countries without a land border are left out.</li>
-   <li><b>Sabotage</b> is switched on by the host in the lobby, from 2 players. You get ${CONFIG.sab.start} card at the start and a new one every ${CONFIG.sab.every} rounds, with at most ${CONFIG.sab.hand} in your hand. You play at most one card per round. <b>Blackout</b>: the target can no longer see the map. <b>Delusion</b>: for the whole next round the hints of the target are about a different country, and they are not told. It only comes out on the results screen. <b>Jetlag</b>: the clock of the target runs twice as fast. Blackout and Jetlag work right away, or for the whole next round when you play them on the results screen. Every card comes in three variants: a random player, a player you pick, or everyone. Players who are behind get the strong variants more often. The drawer cannot be hit.</li>
+   <li><b>Sabotage</b> is switched on by the host in the lobby, from 2 players. Cards come from your charger, the empty card next to your hand. It starts at ${CONFIG.sab.charge.start}% and gains ${CONFIG.sab.charge.lead} to ${CONFIG.sab.charge.last}% after every round: most for whoever is behind. Full means a new card, with at most ${CONFIG.sab.hand} in your hand. You play at most one card per round. <b>Blackout</b>: the target can no longer see the map. <b>Delusion</b>: for the whole next round the hints of the target are about a different country, and they are not told. It only comes out on the results screen. <b>Jetlag</b>: the clock of the target runs twice as fast. Blackout and Jetlag work right away, or for the whole next round when you play them on the results screen. Every card comes in three variants: a random player, a player you pick, or everyone. Players who are behind get the strong variants more often. The drawer cannot be hit.</li>
    <li><b>Ties</b>: most correct wins, then the fastest correct answer.</li>
   </ul>`,
  }
@@ -1891,7 +1963,14 @@ const fmtTime = ms => { const s = Math.max(0, Math.ceil(ms/1000)); return Math.f
 let toastT;
 // Een langere tekst blijft langer staan.
 function toast(msg){ const el=$('#toast'); el.textContent=msg; el.classList.add('on'); clearTimeout(toastT); toastT=setTimeout(()=>el.classList.remove('on'), Math.min(6000, Math.max(2600, String(msg).length*55))); }
-function show(id){ if (id !== 'game') dropPano(); if (document.body.dataset.screen === id) return; document.body.dataset.screen = id; updateChat(); document.querySelectorAll('.screen').forEach(s=>s.classList.toggle('on', s.id===id)); }
+// Scherm wisselen. Met een overgang (swipe) blijft het oude scherm nog even staan en verdwijnt een panorama pas als alles bedekt is.
+function show(id){
+  const prev = document.body.dataset.screen, go = prev !== id && swCan(prev);
+  if (id !== 'game' && !go) dropPano();
+  if (prev === id) return;
+  document.body.dataset.screen = id; updateChat(); document.querySelectorAll('.screen').forEach(s=>s.classList.toggle('on', s.id===id));
+  if (go) swipe($('#' + prev), $('#' + id));
+}
 function overlay(text, sub='', cancel=false){ const o=$('#ovLoad'); if(!text){o.classList.remove('on');return;} $('#ovText').textContent=text; $('#ovSub').textContent=sub; $('#ovCancel').style.display=cancel?'':'none'; o.classList.add('on'); }
 const cname = code => code && CITIES[code] ? CITIES[code].name : code && COUNTRIES[code] ? COUNTRIES[code][lang] || COUNTRIES[code].en : '?';
 // Vlaggen als plaatje (Windows toont vlag-emoji als letters)
@@ -1909,6 +1988,145 @@ function buildCurrencies(){
 const sig2 = x => +x.toPrecision(2);
 const curSym = cc => { try { return new Intl.NumberFormat(lang,{style:'currency',currency:cc,currencyDisplay:'narrowSymbol'}).formatToParts(1).find(p=>p.type==='currency').value; } catch(e){ return cc; } };
 const curName = cc => { try { return new Intl.DisplayNames([lang],{type:'currency'}).of(cc); } catch(e){ return cc; } };
+
+/* ================= OVERGANG =================
+   Bij elke schermwissel (ook van ronde naar uitslag en terug) brengt een dier het logo door beeld, om de beurt van links en van rechts.
+   Vier soorten, nooit twee keer dezelfde achter elkaar:
+   trek = nijlpaard trekt de kar met het logo aan een touw langs de rivier, schuine rand (/).
+   duw  = neushoorn duwt de kar met zijn hoorn over de savanne, schuine rand de andere kant op (\).
+   zwem = het water komt op van onderen, het nijlpaard zwemt met het logo op sleeptouw, daarna zakt het water weer.
+   rond = een cirkel die met het dier meeloopt, met de wereldbol van het logo als achtergrond.
+   De wissel zelf gebeurt meteen (show): alleen het beeld wacht. Het oude scherm blijft staan tot de achtergrond alles bedekt (30% tot 70% van SW_MS).
+   Uit bij "animaties uit" en bij "minder beweging" van het apparaat. Komt er een wissel tijdens een overgang, dan stopt die en gaat het zonder. */
+const SW_MS = 1150;
+let swN = 0, swLast = '', swRun = null;
+window.swOpenAt = 0;   // het moment dat het nieuwe scherm weer vrijkomt: de intro-animaties (het script bovenaan) wachten daarop
+// Plaatje als achtergrond: tegel van w x h die zich herhaalt. // Het komt in een style-attribuut te staan: enkele aanhalingstekens om de url, en geen enkele erin.
+const swTile = (w, h, inner) => `url('data:image/svg+xml,${encodeURIComponent(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${w} ${h}" preserveAspectRatio="none">${inner}</svg>`).replace(/'/g, '%27')}')`;
+const swWave = c => swTile(120, 17, `<path fill='${c}' d='M0 17V9Q15 0 30 9T60 9T90 9T120 9V17Z'/>`);
+const swHills = c => swTile(400, 80, `<path fill='${c}' d='M0 80V48C36 22 76 18 118 42C150 60 184 30 222 24C270 17 300 58 340 50C364 45 384 42 400 48V80Z'/>`);
+const swDash = c => swTile(200, 76, `<g fill='${c}'><rect x='14' y='8' width='34' height='5' rx='2.5'/><rect x='118' y='22' width='22' height='5' rx='2.5'/><rect x='62' y='42' width='40' height='5' rx='2.5'/><rect x='160' y='56' width='26' height='5' rx='2.5'/><rect x='4' y='64' width='18' height='5' rx='2.5'/></g>`);
+const SW_LINES = '<path d="M3 32h58"/><path d="M8 18c7 3 15 4.5 24 4.5S49 21 56 18M8 46c7-3 15-4.5 24-4.5S49 43 56 46"/><ellipse cx="32" cy="32" rx="13" ry="29"/>';
+// De kar: een bord met het logo op twee wielen. 292 breed, de wielen raken de grond op y = 150.
+const SW_CART = `<g class="sw-cart"><ellipse class="sw-shade" cx="146" cy="151" rx="140" ry="5" fill="#000" opacity=".16"/>
+  <g class="sw-dust" fill="#fff" opacity=".5"><circle cx="24" cy="146" r="6"/><circle cx="30" cy="148" r="5"/><circle cx="18" cy="147" r="4"/></g>
+  <rect class="sw-axle" x="26" y="126" width="240" height="8" rx="4" fill="#2b2622"/><rect class="sw-raft" x="-8" y="122" width="304" height="13" rx="6.5" fill="#7a4a2e"/>
+  <rect x="4" y="60" width="288" height="72" rx="10" fill="#000" opacity=".22"/><rect x="0" y="54" width="288" height="72" rx="10" fill="#fffdf8"/>
+  <g class="sw-logo"><g transform="translate(13 67) scale(.72)"><circle cx="32" cy="32" r="29" fill="var(--acc)"/><g fill="none" stroke="#fff" stroke-opacity=".78" stroke-width="2.6">${SW_LINES}</g></g>
+    <text x="68" y="106" font-size="44" textLength="208" lengthAdjust="spacingAndGlyphs">GEO<tspan fill="var(--acc)">FLATTER</tspan></text></g>
+  ${[62, 228].map(x => `<g class="sw-wheel"><circle cx="${x}" cy="137" r="13" fill="#2b2622"/><path d="M${x} 127v20M${x - 10} 137h20" stroke="#f2e6c9" stroke-width="3.2" stroke-linecap="round"/><circle cx="${x}" cy="137" r="4.2" fill="var(--acc)"/></g>`).join('')}</g>`;
+// De dieren van opzij, kijkend naar rechts, in een vak van ongeveer 180 x 112 met de poten op y = 110. hx, hy: waar het touw vastzit.
+const SW_ANI = {
+  hippo: { hx: 91, hy: 57, svg: `<ellipse class="sw-shade" cx="86" cy="111" rx="72" ry="5" fill="#000" opacity=".16"/><g class="sw-bob">
+    <path class="sw-tail" d="M13 50c-9 2-11 9-8 18" fill="none" stroke="#756b90" stroke-width="5.5" stroke-linecap="round"/>
+    <rect class="sw-leg b" x="30" y="64" width="25" height="46" rx="11" fill="#756b90"/><rect class="sw-leg a" x="97" y="64" width="25" height="46" rx="11" fill="#756b90"/>
+    <path d="M10 60C10 32 36 19 70 19c34 0 60 13 62 39 2 24-16 38-50 38H48C24 96 10 84 10 60Z" fill="#9288ab"/>
+    <path d="M17 78c8 12 20 18 31 18h34c22 0 37-6 46-20-13 9-30 11-52 11H56c-16 0-30-3-39-9Z" fill="#756b90" opacity=".45"/>
+    <g class="sw-leg a"><rect x="42" y="68" width="27" height="42" rx="12" fill="#9288ab"/><path d="M49 106h4M58 106h4" stroke="#c9c1d9" stroke-width="3" stroke-linecap="round"/></g>
+    <g class="sw-leg b"><rect x="84" y="68" width="27" height="42" rx="12" fill="#9288ab"/><path d="M91 106h4M100 106h4" stroke="#c9c1d9" stroke-width="3" stroke-linecap="round"/></g>
+    <g class="sw-har"><path d="M84 21l13 1 4 73-14 1Z" fill="var(--acc)"/><circle cx="91" cy="57" r="5" fill="#f2e6c9"/></g>
+    <g class="sw-head"><ellipse class="sw-ear" cx="122" cy="19" rx="6" ry="7.5" fill="#756b90"/>
+      <path d="M99 42C100 25 117 15 130 21c8 4 12 10 21 8 13-3 22 7 22 24s-8 27-22 28c-17 1-37 2-47-7-6-6-6-20-5-32Z" fill="#9288ab"/>
+      <path d="M151 29c13-3 22 7 22 24s-8 27-22 28c-7 0-11-5-11-13V43c0-8 4-12 11-14Z" fill="#b6adc9"/>
+      <g class="sw-ear"><ellipse cx="112" cy="18" rx="7.5" ry="9" fill="#9288ab"/><ellipse cx="112" cy="19.5" rx="3.6" ry="5" fill="#e79aa6"/></g>
+      <circle cx="128" cy="34" r="3.6" fill="#2b2535"/><ellipse cx="162" cy="38" rx="3.4" ry="2.3" fill="#756b90"/>
+      <path d="M172 59c-10 5-22 6-33 3" fill="none" stroke="#756b90" stroke-width="2.8" stroke-linecap="round"/><rect x="156" y="52" width="6.5" height="9" rx="2.6" fill="#fff8ea"/></g></g>` },
+  rhino: { hx: 86, hy: 55, svg: `<ellipse class="sw-shade" cx="90" cy="111" rx="76" ry="5" fill="#000" opacity=".16"/><g class="sw-bob">
+    <path class="sw-tail" d="M12 44c-9 3-11 12-7 22" fill="none" stroke="#a3988a" stroke-width="4.5" stroke-linecap="round"/>
+    <rect class="sw-leg b" x="30" y="60" width="22" height="50" rx="9" fill="#a3988a"/><rect class="sw-leg a" x="100" y="60" width="22" height="50" rx="9" fill="#a3988a"/>
+    <path d="M10 56C10 34 28 22 56 22c16 0 27-6 45-4 22 2 35 15 35 38 0 26-16 40-46 40H46C22 96 10 80 10 56Z" fill="#cdc3b2"/>
+    <path d="M95 19c-9 21-9 53 3 75M50 23c-9 22-8 50 2 72" fill="none" stroke="#a3988a" stroke-width="3.2" stroke-linecap="round"/>
+    <g class="sw-leg a"><rect x="40" y="64" width="24" height="46" rx="10" fill="#cdc3b2"/><path d="M46 106h4M54 106h4" stroke="#f1eadb" stroke-width="3" stroke-linecap="round"/></g>
+    <g class="sw-leg b"><rect x="90" y="64" width="24" height="46" rx="10" fill="#cdc3b2"/><path d="M96 106h4M104 106h4" stroke="#f1eadb" stroke-width="3" stroke-linecap="round"/></g>
+    <g class="sw-har"><path d="M79 21l13-2 3 76-13 1Z" fill="var(--acc)"/><circle cx="86" cy="55" r="5" fill="#f2e6c9"/></g>
+    <g class="sw-head"><path class="sw-ear" d="M127 24c-3-10 0-17 6-21 4 7 5 14 2 22Z" fill="#a3988a"/>
+      <path d="M110 36c6-11 23-13 35-5 12 8 31 17 35 31 3 12-5 20-18 20-17 0-39-2-51-11-7-6-7-23-1-35Z" fill="#cdc3b2"/>
+      <path class="sw-ear" d="M117 27c-4-10-2-18 4-23 5 7 8 15 6 24Z" fill="#cdc3b2"/>
+      <circle cx="146" cy="49" r="3.4" fill="#2a2520"/><path d="M179 71c-8 4-16 4-24 2" fill="none" stroke="#a3988a" stroke-width="2.8" stroke-linecap="round"/>
+      <path d="M149 41c0-9 3-15 8-19 3 7 4 15 2 22Z" fill="#f7efdc"/><path d="M161 51c2-15 9-26 20-33 3 15 1 29-6 41Z" fill="#f7efdc"/></g></g>` },
+};
+// De stoet in één tekening van 520 x 170. Trekken: kar achter het dier met een touw ertussen. Duwen: het dier erachter, neus tegen de kar.
+// lift: zoveel hoger staat de kar (in het water drijft het bord, zodat het logo boven de golven blijft).
+function swGroup(ani, act, lift = 0){
+  const pull = act === 'pull', A = SW_ANI[ani], cx = pull ? 2 : 192, ax = pull ? 336 : 4, rx = cx + 288, ry = 104 - lift, tx = ax + A.hx, ty = 40 + A.hy;
+  const rope = `d="M${rx} ${ry}Q${(rx + tx)/2} ${Math.max(ry, ty) + 10} ${tx} ${ty}" fill="none" stroke-linecap="round"`;
+  return `<svg class="sw-g" data-act="${act}" viewBox="0 0 520 170" aria-hidden="true"><g transform="translate(${cx} ${-lift})">${SW_CART}</g><g transform="translate(${ax} 40)">${A.svg}</g>`
+    + (pull ? `<path ${rope} stroke="#2b2622" stroke-width="6.5"/><path ${rope} stroke="#f2e6c9" stroke-width="3.5"/>` : '') + '</svg>';
+}
+const swCloud = (c, list) => list.map(([x, y, w]) => `<i class="sw-cl" style="--c:${c};--x:${x};--y:${y};--w:${w}"></i>`).join('');
+const swProp = (x, w, vb, inner) => `<svg class="sw-prop" style="--x:${x};--w:${w}" viewBox="${vb}" aria-hidden="true">${inner}</svg>`;
+const SW_REED = c => `<g fill="none" stroke="${c}" stroke-width="3.4" stroke-linecap="round"><path d="M14 80V26M32 80V10M48 80V34M22 80c-2-12-8-20-16-24M40 80c2-14 8-22 16-26"/></g><g fill="#7a4a2e"><rect x="10" y="18" width="8" height="24" rx="4"/><rect x="28" y="2" width="8" height="26" rx="4"/><rect x="44" y="26" width="8" height="22" rx="4"/></g>`;
+const SW_TREE = c => `<path d="M58 100l3-48L36 32M61 54l28-22M60 60l-4-36" fill="none" stroke="${c}" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/><g fill="${c}"><ellipse cx="34" cy="28" rx="34" ry="11"/><ellipse cx="90" cy="26" rx="30" ry="10"/><ellipse cx="58" cy="15" rx="32" ry="11"/></g>`;
+// Achtergrond per soort (g = de stoet). Kleuren staan hier vast: lucht, zon, verte, grond.
+const SW_SCENE = {
+  trek: g => `<i class="sw-sun" style="--c:#f7e2a4;--d:.48;--x:-.03;--y:.05"></i>${swCloud('#f3d691', [[-.5, .44, .3], [.24, .66, .2], [-.22, .98, .26], [.2, 1.36, .3]])}<i class="sw-far" style="--t:${swHills('#f4a261')};--h:.2;--w:1.05"></i>
+    <i class="sw-far" style="--t:${swWave('#2a9d8f')};--h:.07;--w:.24"></i>
+    ${swProp(-.56, .12, '0 0 60 80', SW_REED('#1d3742'))}${swProp(.41, .1, '0 0 60 80', SW_REED('#1d3742'))}
+    <i class="sw-gnd" style="--gnd:#264653;--edge:#1d3742;--t:${swDash('#2f5a69')}"></i>${g}`,
+  duw: g => `<i class="sw-sun" style="--c:#f9dc9c;--d:.62;--x:-.52;--y:-.3"></i>${swCloud('#ee8468', [[.08, .5, .3], [-.44, .8, .22], [.14, 1.08, .26], [-.3, 1.42, .3]])}<i class="sw-far" style="--t:${swHills('#cf5a40')};--h:.13;--w:1.3"></i>
+    ${swProp(-.6, .4, '0 0 120 100', SW_TREE('#3d2c2e'))}${swProp(.33, .25, '0 0 120 100', SW_TREE('#3d2c2e'))}
+    <i class="sw-gnd" style="--gnd:#3d2c2e;--edge:#2c1f21;--t:${swDash('#5a4043')}"></i>${g}`,
+  zwem: g => `<i class="sw-sun" style="--c:#fff7e0;--d:.26;--x:.14;--y:0;bottom:auto;top:6%"></i><i class="sw-wv" style="--y:22%;--c:#7fcabd;--t:${swWave('#7fcabd')};--s:3.4s"></i><i class="sw-wv rv" style="--y:38%;--c:#4db3a4;--t:${swWave('#4db3a4')};--s:2.8s"></i>${g}
+    <i class="sw-wv" style="--y:calc(var(--hz) - var(--gw)*.088);--c:#2a9d8f;--t:${swWave('#2a9d8f')};--s:2.2s"></i><i class="sw-wv rv" style="--y:72%;--c:#1f7f76;--t:${swWave('#1f7f76')};--s:2.6s"></i><i class="sw-wv" style="--y:87%;--c:#264653;--t:${swWave('#264653')};--s:3s"></i>`,
+  rond: g => `<svg class="sw-globe" viewBox="0 0 64 64" aria-hidden="true"><g fill="none" stroke="#fff" stroke-opacity=".24" stroke-width="1.5">${SW_LINES}</g></svg>${g}`,
+};
+const SW_SKY = { trek:'#e9c46a', duw:'#e76f51', zwem:'#a8dcd2', rond:'var(--acc)' };
+// Mag er een overgang komen? prev: het scherm dat nu aan staat (bij de allereerste keer is er geen).
+function swCan(prev){
+  if (swRun){ swEnd(); return false; }
+  return !!prev && ui.fx && !document.hidden && !!Element.prototype.animate && !matchMedia('(prefers-reduced-motion:reduce)').matches;
+}
+function swipe(oldEl, newEl){
+  const el = $('#sw'), W = innerWidth, Hh = innerHeight, dir = swN++ % 2 ? -1 : 1;
+  // De eerste keer het nijlpaard met het touw, daarna steeds een andere soort dan de vorige.
+  const kind = swLast = swLast ? rnd(Object.keys(SW_SCENE).filter(k => k !== swLast)) : 'trek';
+  const ani = kind === 'duw' ? 'rhino' : kind === 'rond' ? rnd(['hippo', 'rhino']) : 'hippo', act = kind === 'duw' ? 'push' : kind === 'rond' ? rnd(['pull', 'push']) : 'pull';
+  const gw = Math.min(W * .94, 720), sl = Math.round(Math.min(Hh * .22, W * .34)), M = Math.max(24, W * .05);
+  const pan = css => `<div class="sw-pan" style="--sky:${SW_SKY[kind]};${css}">${SW_SCENE[kind](`<div class="sw-grp">${swGroup(ani, act, kind === 'zwem' ? 20 : 0)}</div>`)}</div>`;
+  const IN = 'cubic-bezier(.25,.6,.3,1)', OUT = 'cubic-bezier(.65,0,.8,.45)', T = { duration: SW_MS, fill: 'both' };
+  // Vier stappen: begin, bedekt (30%), nog bedekt (70%), weg.
+  const steps = (prop, v) => [{ [prop]: v[0], easing: IN }, { [prop]: v[1], offset: .3, easing: 'linear' }, { [prop]: v[2], offset: .7, easing: OUT }, { [prop]: v[3] }];
+  el.dataset.kind = kind; el.dataset.dir = dir; el.style.setProperty('--gw', gw + 'px'); el.style.setProperty('--sl', sl + 'px');
+  let main, r;
+  if (kind === 'trek' || kind === 'duw'){
+    // Een trein van strepen en het paneel: twee strepen ervoor, twee erachter, allemaal even schuin. Het paneel is breder dan het scherm, zodat het bedekt kan doorschuiven (2 x M).
+    const w1 = Math.max(26, W * .09), w2 = Math.max(12, W * .04), g = Math.max(10, W * .028), E = w1 + w2 + 2*g, PW = W + 2*sl + 2*M;
+    const c1 = kind === 'trek' ? 'var(--acc)' : '#f9dc9c', c2 = kind === 'trek' ? '#264653' : '#3d2c2e';
+    const st = (x, w, c) => `<i class="sw-st" style="left:${x}px;width:${w + sl}px;--c:${c}"></i>`;
+    el.innerHTML = `<div class="sw-train${kind === 'duw' ? ' rev' : ''}" style="width:${PW + 2*E}px">${st(0, w2, c2)}${st(w2 + g, w1, c1)}${st(E + PW - sl + g, w1, c1)}${st(E + PW - sl + 2*g + w1, w2, c2)}${pan(`left:${E}px;width:${PW}px`)}</div>`;
+    const xs = [-(PW + 2*E), -E - sl - 2*M, -E - sl, W];
+    main = el.firstChild.animate(steps('transform', (dir > 0 ? xs : xs.reverse()).map(x => `translateX(${x}px)`)), T);
+    r = Math.max(20, (PW - 1.2*sl - gw)/2 - 6);   // zover kan de stoet binnen het schuine paneel opschuiven
+  } else if (kind === 'zwem'){
+    el.innerHTML = `<div class="sw-rise"><i class="sw-crest" style="--t:${swWave(SW_SKY.zwem)};--t2:${swWave('#fff7e0')}"></i>${pan('left:0;width:100%')}</div>`;
+    const dn = `translateY(${Math.round(Hh + gw * .08)}px)`;
+    main = el.firstChild.animate(steps('transform', [dn, 'translateY(0)', 'translateY(0)', dn]), T);
+    r = W * .3;
+  } else {
+    el.innerHTML = pan('left:0;width:100%');
+    const R = Math.ceil(Math.hypot(W, Hh) * .62), c = (rad, x) => `circle(${rad}px at ${x}% 54%)`;
+    main = el.firstChild.animate(steps('clipPath', [c(0, dir > 0 ? 0 : 100), c(R, 50), c(R, 50), c(0, dir > 0 ? 100 : 0)]), T);
+    r = W * .5 + gw * .18;
+  }
+  const walk = el.querySelector('.sw-grp').animate([{ transform: `translateX(${-r * dir}px)` }, { transform: `translateX(${r * dir}px)` }], { ...T, easing: 'cubic-bezier(.35,.1,.65,.9)' });
+  oldEl.classList.add('sw-old'); newEl.classList.add('sw-new'); el.classList.add('on'); document.body.classList.add('sw-wait');
+  window.swOpenAt = performance.now() + SW_MS * .66;
+  swRun = { anims: [main, walk], old: oldEl, neu: newEl, t1: setTimeout(swCover, SW_MS * .34), t2: setTimeout(swEnd, SW_MS + 600) };
+  main.finished.then(() => { if (swRun && swRun.anims[0] === main) swEnd(); }).catch(() => {});
+}
+// Alles is bedekt: nu pas wisselt het beeld eronder.
+function swCover(){
+  if (!swRun) return;
+  swRun.old.classList.remove('sw-old'); swRun.neu.classList.remove('sw-new'); document.body.classList.remove('sw-wait');
+  if (document.body.dataset.screen !== 'game') dropPano();
+}
+function swEnd(){
+  if (!swRun) return;
+  const r = swRun; swCover(); swRun = null; window.swOpenAt = 0;
+  clearTimeout(r.t1); clearTimeout(r.t2);
+  r.anims.forEach(a => { try { a.cancel(); } catch(e){} });
+  const el = $('#sw'); el.classList.remove('on'); el.innerHTML = '';
+}
 
 /* Weergave: alleen voor dit apparaat. Accentkleur, HUD en animaties staan niet in de spelinstellingen van de lobby. */
 const UI_HIDE = ['round','score','net','zoom','chat','hints'], UI_ACC = ['orange','blue','green','purple','pink'];
@@ -3686,7 +3904,7 @@ function hostHandle(msg, peerId){
       if (peerId !== selfId) return;
       H.phase = 'lobby'; H.roundN = 0; H.used = []; H.result = null; H.final = null; H.round = null; H.huntUsed = []; H.huntPre = null; H.plan = null; H.cfg = null; H.ev = [];
       H.players = H.players.filter(x=>x.connected);
-      H.players.forEach(x=>Object.assign(x,{score:0,correct:0,best:0,fastest:null,bm:null,drew:0,drewAt:0,cards:[],fx:[],played:0,sp:0,sh:0}));
+      H.players.forEach(x=>Object.assign(x,{score:0,correct:0,best:0,fastest:null,bm:null,drew:0,drewAt:0,cards:[],fx:[],played:0,sp:0,sh:0,ch:CONFIG.sab.charge.start}));
       broadcast(); break;
   }
 }
@@ -3762,11 +3980,10 @@ async function nextRound(){
   const wanted = Math.min(H.settings.hintCount || 6, Math.max(2, Math.ceil(durationMs / hintIntervalMs)));
   // Grens trekken: geen hints, de naam staat al op het vel.
   const hintKeys = trace ? [] : loc.hunt ? huntHintKeys(loc.hunt, wanted) : chooseHints(loc.code, wanted, H.settings.hintGroups, s.continent, drawer ? ['flag'] : null), hintTotal = hintKeys.length;
-  // Sabotage: bij de eerste ronde begint iedereen met een lege hand en krijgt de startkaart. Niet opnieuw als die ronde overnieuw begint (andere foto).
+  // Sabotage: bij de eerste ronde begint iedereen met een lege hand en een deels gevulde lader. Niet opnieuw als die ronde overnieuw begint (andere foto).
   if (sabOn(H.settings) && H.roundN === 1 && !H.redo){
-    for (const p of H.players) Object.assign(p, { cards:[], fx:[], played:0, sp:0, sh:0 });
+    for (const p of H.players) Object.assign(p, { cards:[], fx:[], played:0, sp:0, sh:0, ch:CONFIG.sab.charge.start });
     H.ev = [];
-    for (let i = 0; i < CONFIG.sab.start; i++) sabDeal(total <= 1);
   }
   H.round = { id: Math.random().toString(36).slice(2,9), n: H.roundN, mode, continent: s.continent, final, lat: loc.lat, lng: loc.lng, code: loc.code, photo: loc.photo || null,
     hunt: loc.hunt || null, darts, pins: {}, shape: shape ? shapeSpec(s.difficulty) : null, trace: trace ? traceSpec(s.difficulty, loc.code) : null, duel: duelStake(H.roundN, total),
@@ -3884,16 +4101,20 @@ const sabRate = (r, pid, el) => { const j = r && r.fx && r.fx[pid] && r.fx[pid].
 const sabOut = (r, pid, slack = 0) => sabRem(r, pid, r.durationMs - (now() - r.startAt) + slack) <= 0;
 // Wie een kaart kan raken: elke verbonden speler behalve jezelf. Werkt de kaart meteen, dan niet de tekenaar en niet wie al klaar is (done).
 const sabCanHit = (r, p, byId, direct, done) => p.id !== byId && p.connected && !(direct && r && ((r.draw && r.draw.by === p.id) || done(p)));
-// Elke verbonden speler met plek in de hand krijgt een kaart. Wie achter staat krijgt vaker een sterke variant.
-// lastChance: er komt nog maar één ronde, dus geen Delusion (die werkt pas de ronde na het spelen).
-function sabDeal(lastChance){
+// Lader: na elke ronde krijgt elke verbonden speler lading, de laatste het meest. Bij 100 komt er een kaart en schuift de rest door.
+// Is de hand vol, dan blijft de lader vol staan en komt de kaart na de eerstvolgende ronde waarin er plek is.
+// Wie achter staat krijgt ook vaker een sterke variant. lastChance: er komt nog maar één ronde, dus geen Delusion (die werkt pas de ronde na het spelen).
+function sabCharge(lastChance){
   const C = CONFIG.sab, ps = H.players.filter(p => p.connected);
   if (ps.length < 2) return;
   for (const p of ps){
-    p.cards = p.cards || [];
-    if (p.cards.length >= C.hand) continue;
     const ahead = ps.filter(x => x.score > p.score).length, behind = ps.filter(x => x.score < p.score).length;
     const q = ahead + behind ? ahead / (ahead + behind) : .5;   // 0 = koploper, 1 = laatste
+    p.cards = p.cards || [];
+    p.ch = Math.round((p.ch ?? C.charge.start) + C.charge.lead + (C.charge.last - C.charge.lead) * q);
+    if (p.ch < 100) continue;
+    if (p.cards.length >= C.hand){ p.ch = 100; continue; }
+    p.ch -= 100;
     const v = pickWeighted([0, 1, 2], i => C.odds.lead[i] + (C.odds.last[i] - C.odds.lead[i]) * q);
     // Liever een soort die je nog niet in je hand hebt.
     const types = SAB_TYPES.filter(k => !(lastChance && k === 'de')), fresh = types.filter(k => !p.cards.some(c => sabType(c) === k));
@@ -4061,9 +4282,9 @@ function endRound(){
     hunt: r.hunt ? { n:r.hunt.n, k:r.hunt.k, city:r.hunt.city, g:r.hunt.g } : null,
     fx: r.fx || null };   // sabotage van deze ronde: hier komt ook Delusion uit
   H.phase = 'result'; H.round = null;
-  // Sabotage: om de zoveel rondes een nieuwe kaart, behalve na de laatste ronde.
+  // Sabotage: na elke ronde laden de laders op (vol is een kaart), behalve na de laatste ronde.
   const total = roundsOf(H.settings);
-  if (sabOn(H.settings) && H.roundN < total && H.roundN % CONFIG.sab.every === 0) sabDeal(H.roundN >= total - 1);
+  if (sabOn(H.settings) && H.roundN < total) sabCharge(H.roundN >= total - 1);
   scheduleAutoNext(); huntPreload(H); broadcast();
 }
 function scheduleAutoNext(){
@@ -4083,9 +4304,9 @@ function publicState(){
   const r = H.round, sab = sabOn(H.settings);
   return {
     hostPeer: selfId, term: H.term||0, finding: !!H.finding, phase: H.phase, settings: H.settings, roundN: H.roundN, used: H.used, plan: H.plan || null,
-    // Sabotage: hand (cards), in welke ronde je voor het laatst speelde (played), wat op de volgende ronde wacht (fx) en de tellers voor het eindscherm.
-    players: H.players.map(({id,peerId,name,color,avatar,joinIdx,score,connected,correct,best,fastest,op,bm,drew,drewAt,cards,played,fx,sp,sh}) => ({id,peerId,name,color,avatar,joinIdx,score,connected,correct,best,fastest,op:!!op,...(bm ? {bm} : {}),...(drew ? {drew,drewAt} : {}),
-      ...(sab ? { cards: cards || [], played: played || 0, fx: fx || [], sp: sp || 0, sh: sh || 0 } : {})})),
+    // Sabotage: hand (cards), lader (ch), in welke ronde je voor het laatst speelde (played), wat op de volgende ronde wacht (fx) en de tellers voor het eindscherm.
+    players: H.players.map(({id,peerId,name,color,avatar,joinIdx,score,connected,correct,best,fastest,op,bm,drew,drewAt,cards,played,fx,sp,sh,ch}) => ({id,peerId,name,color,avatar,joinIdx,score,connected,correct,best,fastest,op:!!op,...(bm ? {bm} : {}),...(drew ? {drew,drewAt} : {}),
+      ...(sab ? { cards: cards || [], ch: ch ?? CONFIG.sab.charge.start, played: played || 0, fx: fx || [], sp: sp || 0, sh: sh || 0 } : {})})),
     round: r ? { id:r.id, n:r.n, mode:r.mode, continent:r.continent, final:!!r.final, lat:r.lat, lng:r.lng, photo:r.photo, hunt:r.hunt||null, darts:!!r.darts, shape:r.shape||null, trace:r.trace||null, duel:r.duel||null, draw:r.draw||null, drawN: r.draw && DR && DR.roundId === r.id ? DR.ops.length : 0, zoom:r.zoom, pan:r.pan, difficulty:r.difficulty, durationMs:r.durationMs, hintIntervalMs:r.hintIntervalMs, hintTotal:r.hintTotal,
       hints: r.hints, remainingMs: Math.max(0, r.durationMs - (now()-r.startAt)), answered: Object.keys(r.answers), wants: Object.keys(r.wants||{}), skips: Object.keys(r.skips||{}), redo: !!r.redo,
       ...(r.fx ? { fx: r.fx, alt: r.alt || {} } : {}) } : null,
@@ -5378,13 +5599,16 @@ function renderSabTray(){
 function sabUi(){
   const hand = $('#sabHand'), mine = S && S.players.find(p => p.id === me.id);
   const live = !!(mine && sabOn(S.settings) && (S.phase === 'round' || S.phase === 'result') && S.players.filter(p => p.connected).length > 1);
-  const cards = live ? mine.cards || [] : [], used = live && mine.played === S.roundN, sig = cards.join() + lang;
+  const cards = live ? mine.cards || [] : [], used = live && mine.played === S.roundN;
+  // Lader: een leeg kaartje dat van onderen volloopt. Niet na de laatste ronde: dan komt er geen kaart meer.
+  const ch = live && S.roundN < roundsOf(S.settings) ? Math.max(0, Math.min(100, mine.ch ?? 0)) : -1, sig = cards.join() + lang + ch;
   if (hand.dataset.sig !== sig){
     const grew = cards.length > (+hand.dataset.n || 0);
     hand.dataset.sig = sig; hand.dataset.n = cards.length;
-    hand.innerHTML = cards.map((c, i) => sabCard(c, 'tiny' + (grew && i === cards.length - 1 ? ' new' : ''), i)).join('');
+    hand.innerHTML = cards.map((c, i) => sabCard(c, 'tiny' + (grew && i === cards.length - 1 ? ' new' : ''), i)).join('')
+      + (ch < 0 ? '' : `<button class="sc-ch${ch >= 100 ? ' full' : ''}" type="button" data-ch="${ch}" style="--ch:${ch}%" aria-label="${esc(t('sabChTip'))}" title="${esc(t('sabChTip'))}"><i></i><b>${ch}</b></button>`);
   }
-  hand.classList.toggle('show', cards.length > 0); hand.classList.toggle('used', used);
+  hand.classList.toggle('show', cards.length > 0 || ch >= 0); hand.classList.toggle('used', used);
   if (sabSel >= cards.length) closeSabTray();
   hand.querySelectorAll('.sc').forEach((b, i) => b.classList.toggle('sel', i === sabSel));
   if (sabOpen()) renderSabTray();
@@ -5421,6 +5645,8 @@ function sabNews(prev, snap){
   if (a && b && b.cards && b.cards.length > (a.cards || []).length){ const c = b.cards[b.cards.length - 1]; sabPop(sabType(c), t('sabNew'), esc(t('sab_' + sabType(c)) + ', ' + t('sabv_' + sabVar(c))), '', [[880,0],[1175,90]]); }
 }
 $('#sabHand').addEventListener('click', e => {
+  const c = e.target.closest('[data-ch]');
+  if (c){ toast(+c.dataset.ch >= 100 ? t('sabChFull') : t('sabCh', { n: c.dataset.ch })); beep(560, .04); return; }
   const b = e.target.closest('[data-n]'); if (!b) return;
   const n = +b.dataset.n, same = sabOpen() && sabSel === n;
   closeEmoTray(); $('#chat').classList.remove('on');
