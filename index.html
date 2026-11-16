@@ -453,7 +453,7 @@ body.chat-on .shapetag{top:calc(max(10px,env(safe-area-inset-top)) + 116px)}
 .silmini{display:grid;place-items:center;width:52px;height:52px;margin-left:10px;border-radius:5px;background:var(--card2)}
 .silmini svg{width:42px;height:42px}
 .silmini .sil{fill:var(--ink);stroke:none}
-@media (prefers-reduced-motion:reduce){#shapeSvg .sil{fill-opacity:1;stroke:var(--ink);stroke-dashoffset:0}}
+html[data-fx=off] #shapeSvg .sil{fill-opacity:1;stroke:var(--ink);stroke-dashoffset:0}
 /* Tekenen: het vel is een vlag van 1500 x 1000 (viewBox), lijndikte schaalt mee. Vel en kleuren zijn vast, los van het thema: een vlag heeft echte kleuren. */
 #draw{position:absolute;inset:0;overflow:hidden;background:radial-gradient(color-mix(in srgb,var(--ink) 13%,transparent) 1px,transparent 1.5px) 0 0/22px 22px,var(--paper)}
 #drawArea{position:absolute;left:max(16px,env(safe-area-inset-left));right:var(--shR,16px);top:calc(max(10px,env(safe-area-inset-top)) + 112px);bottom:var(--shB,300px);transition:bottom .3s,right .3s}
@@ -598,7 +598,6 @@ td .ic.pen{width:14px;height:14px;vertical-align:-2px;margin-right:4px}
 .ov.on{display:flex;animation:fade .15s}
 .ov .card{max-width:420px;width:100%;text-align:center;align-items:center;box-shadow:var(--shadow-up)}
 #ovText{font-family:var(--display);font-weight:400;text-transform:uppercase;font-size:20px}
-.spin{width:34px;height:34px;border:3px solid var(--line);border-top-color:var(--acc);border-radius:50%;animation:sp .8s linear infinite}
 @keyframes sp{to{transform:rotate(360deg)}}
 .modal .card{text-align:left;align-items:stretch;max-height:85vh;max-height:85dvh;overflow-y:auto}
 .modal li{color:var(--ink2);line-height:1.45}
@@ -923,7 +922,13 @@ body.sw-wait :is(#chatBtn,#emoBtn,#sabHand){visibility:hidden}
 #sw[data-kind=zwem] .sw-bob{animation:swFloat .7s ease-in-out infinite alternate}
 #sw[data-kind=zwem] .sw-cart{transform-box:fill-box;transform-origin:50% 100%;animation:swFloat .8s -.3s ease-in-out infinite alternate}
 @keyframes swFloat{from{transform:translateY(3px) rotate(-1.2deg)}to{transform:translateY(-4px) rotate(1.4deg)}}
-@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+/* Laden: hetzelfde dier loopt op de plaats in de kaart, de grond schuift onder hem door. */
+.ldr{position:relative;width:100%;max-width:300px;aspect-ratio:520/176;border-radius:6px;overflow:hidden;background:var(--sky)}
+.ldr::before{content:'';position:absolute;right:12%;top:14%;width:22%;aspect-ratio:1;border-radius:50%;background:var(--sun)}
+.ldr-gnd{position:absolute;left:0;top:82%;bottom:0;width:calc(100% + 60px);background:var(--gnd);box-shadow:inset 0 2px 0 var(--edge)}
+.ldr-gnd::after{content:'';position:absolute;left:0;right:0;top:52%;height:3px;border-radius:2px;background:repeating-linear-gradient(90deg,var(--dash) 0 22px,transparent 22px 60px);animation:ldrRun .46s linear infinite}
+@keyframes ldrRun{to{transform:translateX(-60px)}}
+.ldr .sw-g{position:absolute;left:3%;top:0;width:94%}
 </style>
 </head>
 <body>
@@ -1449,7 +1454,7 @@ body.sw-wait :is(#chatBtn,#emoBtn,#sabHand){visibility:hidden}
 </section>
 
 <!-- OVERLAYS -->
-<div class="ov" id="ovLoad"><div class="card"><div class="spin"></div><b id="ovText"></b><p class="sub" id="ovSub"></p><button class="btn sec" id="ovCancel" style="display:none" data-i="cancel"></button></div></div>
+<div class="ov" id="ovLoad"><div class="card"><div class="ldr" id="ovAni"></div><b id="ovText"></b><p class="sub" id="ovSub"></p><button class="btn sec" id="ovCancel" style="display:none" data-i="cancel"></button></div></div>
 <div class="ov modal" id="ovRules"><div class="card">
   <h2 data-i="rules"></h2>
   <div id="rulesBody"></div>
@@ -1515,7 +1520,7 @@ body.sw-wait :is(#chatBtn,#emoBtn,#sabHand){visibility:hidden}
 <script>
 /* Intro animaties: elk element dat verschijnt krijgt hetzelfde effect (oplossen, drijven, veren), maar met telkens andere richting, afstand, draai, schaal, tijd en veer. */
 (()=>{
-  if (matchMedia('(prefers-reduced-motion:reduce)').matches || !Element.prototype.animate) return;
+  if (!Element.prototype.animate) return;
   const R=(a,b)=>a+Math.random()*(b-a), P=a=>a[Math.floor(Math.random()*a.length)];
   function reveal(el,delay=0,big=false){
     if(!el||!el.isConnected||document.documentElement.dataset.fx==='off') return;
@@ -1980,7 +1985,14 @@ function show(id){
   document.body.dataset.screen = id; updateChat(); document.querySelectorAll('.screen').forEach(s=>s.classList.toggle('on', s.id===id));
   if (go) swipe($('#' + prev), $('#' + id));
 }
-function overlay(text, sub='', cancel=false){ const o=$('#ovLoad'); if(!text){o.classList.remove('on');return;} $('#ovText').textContent=text; $('#ovSub').textContent=sub; $('#ovCancel').style.display=cancel?'':'none'; o.classList.add('on'); }
+function overlay(text, sub='', cancel=false){ const o=$('#ovLoad'); if(!text){o.classList.remove('on');return;} $('#ovText').textContent=text; $('#ovSub').textContent=sub; $('#ovCancel').style.display=cancel?'':'none'; if(!o.classList.contains('on')) ldrFill(); o.classList.add('on'); }
+// Het dier in de laadkaart: om de beurt het nijlpaard dat trekt en de neushoorn die duwt, elk met de kleuren van zijn eigen overgang.
+let ldrN = 0;
+function ldrFill(){
+  const rh = ldrN++ % 2, el = $('#ovAni');
+  el.style.cssText = rh ? '--sky:#e76f51;--sun:#f9dc9c;--gnd:#3d2c2e;--edge:#2c1f21;--dash:#5a4043' : '--sky:#e9c46a;--sun:#f7e2a4;--gnd:#264653;--edge:#1d3742;--dash:#2f5a69';
+  el.innerHTML = '<i class="ldr-gnd"></i>' + swGroup(rh ? 'rhino' : 'hippo', rh ? 'push' : 'pull');
+}
 const cname = code => code && CITIES[code] ? CITIES[code].name : code && COUNTRIES[code] ? COUNTRIES[code][lang] || COUNTRIES[code].en : '?';
 // Vlaggen als plaatje (Windows toont vlag-emoji als letters)
 const flagImg = (code, w=40) => code && !CITIES[code] ?`<img src="https://flagcdn.com/w${w}/${code.toLowerCase()}.png" alt="" loading="lazy" onerror="this.replaceWith(document.createTextNode('${COUNTRIES[code]?.flag||''}'))">` : '';
@@ -2006,7 +2018,7 @@ const curName = cc => { try { return new Intl.DisplayNames([lang],{type:'currenc
    zwem = het water komt op van onderen, het nijlpaard zwemt met het logo op sleeptouw, daarna zakt het water weer.
    rond = een cirkel die met het dier meeloopt, met de lijnen van een wereldbol als achtergrond.
    De wissel zelf gebeurt meteen (show): alleen het beeld wacht. Het oude scherm blijft staan tot de achtergrond alles bedekt (30% tot 70% van SW_MS).
-   Uit bij "animaties uit" en bij "minder beweging" van het apparaat. Komt er een wissel tijdens een overgang, dan stopt die en gaat het zonder. */
+   Uit bij "animaties uit". Die schakelaar staat standaard uit als het apparaat om minder beweging vraagt, maar wie hem aanzet krijgt de animaties. Komt er een wissel tijdens een overgang, dan stopt die en gaat het zonder. */
 const SW_MS = 1150;
 let swN = 0, swLast = '', swRun = null;
 window.swOpenAt = 0;   // het moment dat het nieuwe scherm weer vrijkomt: de intro-animaties (het script bovenaan) wachten daarop
@@ -2084,7 +2096,7 @@ const SW_SKY = { trek:'#e9c46a', duw:'#e76f51', zwem:'#a8dcd2', rond:'var(--acc)
 // Mag er een overgang komen? prev: het scherm dat nu aan staat (bij de allereerste keer is er geen).
 function swCan(prev){
   if (swRun){ swEnd(); return false; }
-  return !!prev && ui.fx && !document.hidden && !!Element.prototype.animate && !matchMedia('(prefers-reduced-motion:reduce)').matches;
+  return !!prev && ui.fx && !document.hidden && !!Element.prototype.animate;
 }
 function swipe(oldEl, newEl){
   const el = $('#sw'), W = innerWidth, Hh = innerHeight, dir = swN++ % 2 ? -1 : 1;
