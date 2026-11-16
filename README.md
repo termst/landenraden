@@ -315,7 +315,7 @@ Bij elke schermwissel (ook van ronde naar uitslag en naar de volgende ronde) bre
 | **trek** | Nijlpaard | Trekt de kar met het logo aan een touw langs de rivier. Schuine rand (/) met twee strepen ervoor en erachter |
 | **duw** | Neushoorn | Duwt de kar met zijn hoorn over de savanne. Schuine rand de andere kant op (\\) |
 | **zwem** | Nijlpaard | Het water komt op van onderen, het nijlpaard zwemt met het logo op een vlot, daarna zakt het water |
-| **rond** | Een van de twee | Een cirkel die met het dier meeloopt, met de wereldbol van het logo als achtergrond |
+| **rond** | Een van de twee | Een cirkel die met het dier meeloopt, met de lijnen van een wereldbol als achtergrond |
 
 * De wissel zelf gebeurt meteen: alleen het beeld wacht. Het oude scherm blijft staan tot de achtergrond alles bedekt.
 * Duur: `SW_MS` (1150 ms). Bedekt van 30% tot 70% daarvan.
@@ -372,6 +372,25 @@ Alles staat in de browser (localStorage). Geen account, geen server. Cookies zij
 ## Kaart zonder API key
 
 Er is geen API key nodig. De wereldkaart bij Darts gebruikt CARTO-tegels. Laden die niet, dan schakelt de kaart na drie fouten over op Esri World Imagery. Wil je Mapbox of Google, pas dan `CONFIG.tiles` en `dartTiles()` aan.
+
+## Logo
+
+Een platte aardschijf met een pin erin: de wereld als schijf met dikte, de pin is je gok. Het staat naast de titel op het startscherm, op de kar in de overgangen en als favicon.
+
+* **Gemaakt** met de beeldgenerator van ElevenLabs (GPT Image 2.5). Daarna uitgesneden en opgeschoond: kustlijnen vereenvoudigd, de zijkant van de schijf een tint donkerder dan het land.
+* **Geen los bestand.** De tekening staat als PNG (base64) in `index.html`, in `<symbol id="logo">` van de sprite bovenin. Gebruik: `<svg class="logo" viewBox="0 0 58.5 64"><use href="#logo"/></svg>`.
+* **Vier lagen.** De PNG's zijn maskers (wit met doorzichtigheid, 234 bij 256). Elke laag krijgt een themakleur, dus het logo volgt licht en donker en de accentkleur uit de instellingen:
+
+| Masker | Kleur | Wat |
+|---|---|---|
+| `lg-acc` | `--acc` | Bovenkant van de schijf (de zee) |
+| `lg-edge` | `--acc-edge` | Land, zijkant van de schijf en de schaduw van de pin |
+| `lg-dark` | zwart, 24% | Maakt de zijkant en de schaduw donkerder dan het land |
+| `lg-pin` | `currentColor` | De pin: de tekstkleur, net als "GEO" in de titel |
+
+* **Maat**: `.logo` rekent in `em` met de lettergrootte van de titel. De schijf staat op de regel, de pin steekt boven de letters uit.
+* **Favicon**: dezelfde tekening in oranje op een donker vlak (PNG van 64 bij 64, base64 in de `<link rel="icon">`). Die volgt thema en accentkleur niet.
+* **Vervangen**: maak per laag een masker en zet ze in de vier `<image>`-regels van het symbool. Bij een andere verhouding: pas de `viewBox` aan (symbool en `.brand`), de breedte van `.logo` in de CSS en de maat van het logo op de kar (`SW_CART`).
 
 ## Font
 
