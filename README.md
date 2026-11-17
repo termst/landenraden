@@ -51,7 +51,7 @@ In een kamer staat naast de chatknop een knop met een lachende pin. Eén tik ope
 | Kompas met vraagteken | Waar?! | Where?! | Geen idee |
 | Zandloper | Schiet op | Hurry up | Iemand is te traag |
 | Pin in zee | Plons! | Splash! | Gok ver naast |
-| Wereldbol met kroon | Kaartkoning | Map king | Respect |
+| Schijf met kroon | Kaartkoning | Map king | Respect |
 
 * Anderen zien de sticker met jouw naam, avatar en kleur, ongeveer 3,5 seconden, met een eigen animatie en geluid (volgt de geluidsinstelling). Zelf zie je hem in de chat.
 * Je kunt er één per 1,5 seconde sturen. Een ontvanger negeert meer dan één per 0,7 seconde per speler en toont maximaal 3 stickers tegelijk.
@@ -315,7 +315,7 @@ Bij elke schermwissel (ook van ronde naar uitslag en naar de volgende ronde) bre
 | **trek** | Nijlpaard | Trekt de kar met het logo aan een touw langs de rivier. Schuine rand (/) met twee strepen ervoor en erachter |
 | **duw** | Neushoorn | Duwt de kar met zijn hoorn over de savanne. Schuine rand de andere kant op (\\) |
 | **zwem** | Nijlpaard | Het water komt op van onderen, het nijlpaard zwemt met het logo op een vlot, daarna zakt het water |
-| **rond** | Een van de twee | Een cirkel die met het dier meeloopt, met de lijnen van een wereldbol als achtergrond |
+| **rond** | Een van de twee | Een cirkel die met het dier meeloopt, met de ringen en spaken van de platte kaart als achtergrond |
 
 * De wissel zelf gebeurt meteen: alleen het beeld wacht. Het oude scherm blijft staan tot de achtergrond alles bedekt.
 * Duur: `SW_MS` (1150 ms). Bedekt van 30% tot 70% daarvan.
@@ -401,6 +401,16 @@ De fonts staan als base64 in `index.html`, dus ze laden meteen en zijn voor iede
 * **Madani** (demo, NamelaType): uitleg, hints, labels, invoer en chat. Teruggebracht tot Latijnse letters om de pagina klein te houden. De cijfers in de demo zijn doorgestreepte blokjes en leestekens als `- ' ( ) : / ? !` ontbreken: die komen uit The Bold Font. Met een gekochte versie kun je de cijfers en leestekens gewoon meenemen.
 
 **Let op, licentie.** De demo van The Logo Font mag volgens zijn licentie niet in een website worden ingebed of worden verspreid, ook niet gratis. Koop de volledige versie op [the-bold-font.com](https://www.the-bold-font.com/) voordat je dit online zet (die heeft ook cijfers). De demo van Madani is alleen voor persoonlijk gebruik: koop een licentie op [namelatype.com](https://namelatype.com) voor promotioneel of commercieel gebruik.
+
+## Vormtaal: de schijf
+
+Het logo is een platte aardschijf met een zijkant. Die vorm komt overal terug.
+
+* **Plak.** Knoppen, modustegels, de gekozen optie in een segment, schakelaars en avatars hebben een zijkant en zakken bij indrukken. Kleur en hoogte: `--side` en `--dz` in `:root`.
+* **Rand van de wereld.** Onder het startscherm ligt de schijf (`.edge`), het water loopt over de rand. De kaart is `#fe-land`: de landen uit `data/countries.geojson`, van boven gezien met de noordpool in het midden. De pin staat op Nederland en heeft jouw kleur (`--me`). Op een laag scherm steekt alleen de bovenrand uit en scrol je ernaartoe.
+* **Geen bollen.** De iconen voor werelddelen, de sticker Kaartkoning en de overgang "rond" zijn schijven. Het taalicoon en het hinticoon met de tafelglobe zijn bollen gebleven.
+* **Zonlamp.** Het thema wissel je met een knop waarin zon en maan boven de schijf draaien (`lampDraw`, `lampGo`). Wie vooraan hangt is aan. In het donkere thema valt een zachte plas licht op de titel (`.brand::before`, één regel om weg te halen).
+* **Podium.** De eindstand is een stapel schijven per speler (`podStack`). De winnaar krijgt er `POD_N` (7), de rest naar verhouding van de punten, minstens één.
 
 ## Goed om te weten
 
