@@ -73,11 +73,11 @@ h2{font-size:20px;margin:0}
 .sub{color:var(--mute);margin:0;line-height:1.4;font-size:14px}
 /* Rand van de wereld: de schijf onder het startscherm. Het water loopt over de rand, de pin heeft jouw kleur (--me). */
 #start .wrap{margin-bottom:8px}
-.edge{flex:none;width:100%;max-width:520px;margin:auto auto 0;height:clamp(170px,calc(100vh - 690px),250px);height:clamp(170px,calc(100dvh - 690px),250px);overflow:hidden;pointer-events:none;-webkit-mask-image:linear-gradient(#000 calc(100% - 60px),transparent);mask-image:linear-gradient(#000 calc(100% - 60px),transparent)}
+.edge{flex:none;width:100%;max-width:520px;margin:auto auto 0;margin-bottom:calc(-1*max(24px,env(safe-area-inset-bottom)));pointer-events:none;-webkit-mask-image:linear-gradient(#000 20%,rgba(0,0,0,.35) 60%,transparent);mask-image:linear-gradient(#000 20%,rgba(0,0,0,.35) 60%,transparent)}
 .edge svg{display:block;width:100%;height:auto}
 .ed-sea{fill:var(--acc)}.ed-land,.ed-wall{fill:var(--acc-edge)}
 .ed-fall{fill:none;stroke:url(#edFade);stroke-linecap:round}
-.ed-f0,.ed-f1{stop-color:color-mix(in srgb,var(--acc) 62%,#fff)}.ed-f1{stop-opacity:.12}
+.ed-f0,.ed-f1{stop-color:color-mix(in srgb,var(--acc) 62%,#fff)}.ed-f1{stop-opacity:0}
 .ed-run{fill:none;stroke:color-mix(in srgb,var(--acc) 16%,#fff);stroke-width:2.2;stroke-linecap:round;stroke-dasharray:15 13;animation:edRun 1s linear infinite}
 .ed-run.b{stroke-dasharray:7 21;animation-duration:.8s;opacity:.75}
 @keyframes edRun{to{stroke-dashoffset:-28}}
@@ -1357,12 +1357,12 @@ body.sw-wait :is(#chatBtn,#emoBtn,#sabHand){visibility:hidden}
       <p class="err" id="startErr"></p>
     </div>
   </div>
-  <div class="edge" aria-hidden="true"><svg viewBox="0 12 400 288">
-    <defs><linearGradient id="edFade" gradientUnits="userSpaceOnUse" x1="0" y1="112" x2="0" y2="262"><stop offset="0" class="ed-f0"/><stop offset="1" class="ed-f1"/></linearGradient></defs>
+  <div class="edge" aria-hidden="true"><svg viewBox="0 12 400 1100">
+    <defs><linearGradient id="edFade" gradientUnits="userSpaceOnUse" x1="0" y1="100" x2="0" y2="1080"><stop offset="0" class="ed-f0"/><stop offset="1" class="ed-f1"/></linearGradient></defs>
     <path class="ed-wall" d="M12 72A188 54 0 0 0 388 72V92A188 54 0 0 1 12 92Z"/><path d="M12 72A188 54 0 0 0 388 72V92A188 54 0 0 1 12 92Z" fill="#000" fill-opacity=".24"/>
-    <g class="ed-fall"><path stroke-width="10" d="M30 72V196"/><path stroke-width="5" d="M41 72V158"/><path stroke-width="14" d="M76 72V238"/><path stroke-width="8" d="M90 72V206"/><path stroke-width="4" d="M101 72V172"/><path stroke-width="5" d="M150 72V184"/><path stroke-width="10" d="M160 72V226"/><path stroke-width="4" d="M172 72V168"/><path stroke-width="11" d="M228 72V214"/><path stroke-width="18" d="M242 72V252"/><path stroke-width="6" d="M257 72V190"/><path stroke-width="7" d="M300 72V198"/><path stroke-width="12" d="M311 72V236"/><path stroke-width="14" d="M352 72V216"/><path stroke-width="7" d="M366 72V170"/></g>
-    <path class="ed-run" d="M30 99V186M76 116V228M160 128V216M242 128V242M311 119V226M352 107V206"/>
-    <path class="ed-run b" d="M79 118V222M238 129V236M246 130V240M228 129V204M355 109V200"/>
+    <g class="ed-fall"><path stroke-width="10" d="M30 72V878"/><path stroke-width="5" d="M41 72V631"/><path stroke-width="14" d="M76 72V1151"/><path stroke-width="8" d="M90 72V943"/><path stroke-width="4" d="M101 72V722"/><path stroke-width="5" d="M150 72V800"/><path stroke-width="10" d="M160 72V1073"/><path stroke-width="4" d="M172 72V696"/><path stroke-width="11" d="M228 72V995"/><path stroke-width="18" d="M242 72V1242"/><path stroke-width="6" d="M257 72V839"/><path stroke-width="7" d="M300 72V891"/><path stroke-width="12" d="M311 72V1138"/><path stroke-width="14" d="M352 72V1008"/><path stroke-width="7" d="M366 72V709"/></g>
+    <path class="ed-run" d="M30 99V783M76 116V1056M160 128V978M242 128V1147M311 119V1043M352 107V913"/>
+    <path class="ed-run b" d="M79 118V1017M238 129V1108M246 130V1134M228 129V900M355 109V874"/>
     <ellipse class="ed-sea" cx="200" cy="72" rx="188" ry="54"/>
     <use class="ed-land" href="#fe-land" transform="translate(12 18) scale(1.88 .54)"/>
     <g transform="translate(272 109)"><g class="ed-boat"><path fill="#1c1b18" d="M-9 0H9L5.5 5H-5.5Z"/><path fill="#fff7e6" d="M.8-1.5V-17L9-3.5ZM-1-1.5V-13L-7-3.5Z"/></g></g>
