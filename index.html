@@ -376,6 +376,25 @@ details.card[open]>summary::after{content:'\2212'}
 .chip{background:var(--glass);border:1px solid var(--line);border-radius:6px;padding:6px 11px;font-size:14px;display:flex;flex-direction:column;justify-content:center;line-height:1.15;box-shadow:var(--shadow-up)}
 .chip small{font-size:11px;color:var(--mute)}
 .chip b{font-weight:400;font-size:19px}
+.chip.fire{flex-direction:row;align-items:center;gap:3px;padding:4px 9px 4px 6px;--lv:0}
+.chip.fire b{font-family:var(--display);font-size:18px}
+.chip.fire.pop .flame{animation:firePop .5s cubic-bezier(.3,1.6,.5,1)}
+.chip.fire.max{border-color:#ff9a2e;box-shadow:var(--shadow-up),0 0 14px rgba(255,120,20,.55)}
+.flame{position:relative;display:inline-block;width:22px;height:22px;transform:scale(calc(.7 + var(--lv) * .65));transform-origin:50% 90%;filter:drop-shadow(0 0 calc(2px + var(--lv) * 7px) rgba(255,110,20,calc(.35 + var(--lv) * .5)))}
+.flame svg{width:100%;height:100%;display:block;overflow:visible}
+.flame .fo{fill:#ff6a1a;transform-origin:12px 21px;animation:fireLick 1.1s ease-in-out infinite alternate}
+.flame .fm{fill:#ffa62b;transform-origin:12px 21px;animation:fireLick .8s ease-in-out infinite alternate-reverse}
+.flame .fi{fill:#ffe27a;transform-origin:12px 21px;animation:fireLick .6s ease-in-out infinite alternate}
+.max .flame .fi{fill:#fff6d6}
+.flame i{position:absolute;left:50%;bottom:55%;width:3px;height:3px;border-radius:50%;background:#ffb347;opacity:0;animation:fireEmber 1.4s ease-out infinite}
+.flame i:nth-child(2){animation-delay:.45s;margin-left:-5px}.flame i:nth-child(3){animation-delay:.9s;margin-left:4px}
+.flame[data-e="0"] i{display:none}
+@keyframes fireLick{0%{transform:scale(1,1) skewX(0)}50%{transform:scale(.94,1.07) skewX(-3deg)}100%{transform:scale(1.04,.95) skewX(3deg)}}
+@keyframes fireEmber{0%{opacity:0;transform:translate(0,0)}20%{opacity:1}100%{opacity:0;transform:translate(calc(var(--d,1) * 4px),-16px) scale(.4)}}
+@keyframes firePop{0%{transform:scale(calc(.7 + var(--lv) * .65))}40%{transform:scale(calc(1.1 + var(--lv) * .8)) translateY(-2px)}100%{transform:scale(calc(.7 + var(--lv) * .65))}}
+.fbadge{display:inline-flex;align-items:center;gap:1px;margin-left:5px;font-family:var(--display);font-size:12px;color:#e8641a;vertical-align:-3px}
+.fbadge .flame{width:16px;height:16px}
+.fbadge small{font-size:11px;color:var(--mute);margin-left:3px}
 .chip.timer{min-width:78px;align-items:center;position:relative;overflow:hidden}
 #timerChip{display:flex;justify-content:center}
 #timerChip i{font-style:normal;width:.72em;text-align:center}
@@ -1436,6 +1455,7 @@ body.sw-wait :is(#chatBtn,#emoBtn,#sabHand){visibility:hidden}
     <div class="chip c-round"><small data-i="roundLbl"></small><b id="roundChip"></b></div>
     <div class="grow"></div>
     <div class="chip c-score"><small data-i="scoreLbl"></small><b id="scoreChip"></b></div>
+    <div class="chip c-score fire" id="fireChip" hidden></div>
     <div class="chip timer"><small id="timeLbl" data-i="timeLbl"></small><b id="timerChip"></b><i class="tbar" id="timerBar"></i></div>
     <div class="chip c-net" title="net" style="padding:7px 10px"><span class="netdot" id="netDot"></span></div>
     <button class="iconbtn" id="setBtn3" aria-label="settings"><svg class="ic"><use href="#i-gear"/></svg></button>
@@ -1674,6 +1694,7 @@ const CONFIG = {
   // hintCut: alle hints gezien kost zoveel. giveaway: factor na een hint die het antwoord verklapt (naam).
   // nearShare/nearKm/nlNearKm: fout maar dichtbij, max deel en afvalafstand. latencyMs: zoveel vertraging compenseert de host.
   // resendMs: zo lang na een hostwissel mag een speler zijn eerdere antwoord met eigen tijd en hints opnieuw sturen.
+  streak: { max: 10, step: 25 },   // vuurreeks: elke goede op rij +step, vanaf max blijft de bonus vast
   score: { max: 1000, timeBase: 0.7, timeWeight: 0.3, hintCut: 0.5, giveaway: 0.1, nearShare: 0.25, nearKm: 400, nlNearKm: 10, latencyMs: 1500, resendMs: 10000 },
   zoom: { easy: 6, normal: 7, hard: 8 },
   pan:  { easy: 3, normal: 1.2, hard: 0 },
@@ -1788,7 +1809,7 @@ const I18N = {
   left:'links', right:'rechts', landlocked:'geen kust', coast:'aan zee', island:'geen landgrenzen', nbCount:'{n} buurlanden',
   pop0:'minder dan 1 miljoen', pop1:'1 tot 10 miljoen', pop2:'10 tot 50 miljoen', pop3:'50 tot 150 miljoen', pop4:'meer dan 150 miljoen',
   capLetter:'begint met {l}', nameLetter:'begint met {l}, {n} letters',
-  chat:'Chat', chatPh:'Bericht...', chatEmpty:'Nog geen berichten', emotes:'Emotes', em_hit:'Raak!', em_lost:'Waar?!', em_hurry:'Schiet op', em_splash:'Plons!', em_king:'Kaartkoning', appSettings:'Instellingen', theme:'Thema', ui_gui:'Weergave', ui_hud:'HUD', ui_size:'HUD grootte', ui_opa:'HUD doorzichtigheid', ui_acc:'Accentkleur', ui_fx:'Animaties', ui_round:'Ronde', ui_score:'Score', ui_net:'Verbinding', ui_zoom:'Zoomknoppen', ui_chat:'Chat en emotes', ui_hints:'Hints open bij start', ui_show:'Tonen in HUD', ui_reset:'Standaard herstellen', hintMin:'Houd minstens één soort aan', hintOn:'{g}: aan', hintOff:'{g}: uit', roundLbl:'Ronde', scoreLbl:'Score', timeLbl:'Tijd', hintsTitle:'Hints', hintNow:'Hint nu', hintNowVote:'Hint nu ({a}/{b})', hintVoted:'Wachten ({a}/{b})',
+  chat:'Chat', chatPh:'Bericht...', chatEmpty:'Nog geen berichten', emotes:'Emotes', em_hit:'Raak!', em_lost:'Waar?!', em_hurry:'Schiet op', em_splash:'Plons!', em_king:'Kaartkoning', appSettings:'Instellingen', theme:'Thema', ui_gui:'Weergave', ui_hud:'HUD', ui_size:'HUD grootte', ui_opa:'HUD doorzichtigheid', ui_acc:'Accentkleur', ui_fx:'Animaties', ui_round:'Ronde', ui_score:'Score', ui_net:'Verbinding', ui_zoom:'Zoomknoppen', ui_chat:'Chat en emotes', ui_hints:'Hints open bij start', ui_show:'Tonen in HUD', ui_reset:'Standaard herstellen', hintMin:'Houd minstens één soort aan', hintOn:'{g}: aan', hintOff:'{g}: uit', streakTip:'Vuurreeks {n}: +{b}', roundLbl:'Ronde', scoreLbl:'Score', timeLbl:'Tijd', hintsTitle:'Hints', hintNow:'Hint nu', hintNowVote:'Hint nu ({a}/{b})', hintVoted:'Wachten ({a}/{b})',
   hintCount:'Aantal hints', hintTypes:'Soorten hints',
   dutch:'Nederland', nlPlaces:'Plaatsen', nlView:'Beeld', all:'Alle', big:'Steden', towns:'Dorpen', sat:'Satelliet', photo:'Straatbeeld',
   guessPhNl:'Plaats...', unknownNl:'Kies een plaats uit de lijst',
@@ -1863,6 +1884,7 @@ const I18N = {
    <li>Je eerste antwoord telt.</li>
    <li><b>Punten</b> per ronde, in elke modus: ${CONFIG.score.max} maal hoe goed je zit, maal je hints, maal je tijd.</li>
    <li><b>Hints</b>: de eerste is gratis. Alle hints gezien kost ${pc(CONFIG.score.hintCut)}, sterkere hints kosten meer. Dat geldt ook bij 4 of 8 hints. Na de hint met de naam zelf krijg je nog ${pc(CONFIG.score.giveaway)}.</li>
+   <li><b>Vuurreeks</b>: vanaf 2 goed op rij krijg je ${CONFIG.streak.step} extra per goede op rij. De reeks stopt bij ${CONFIG.streak.max}, daarna blijft de bonus ${CONFIG.streak.step * (CONFIG.streak.max - 1)}. Fout of geen antwoord zet hem op 0.</li>
    <li><b>Tijd</b>: ${pc(CONFIG.score.timeBase)} plus ${pc(CONFIG.score.timeWeight)} van je resterende tijd.</li>
    <li><b>Fout land</b>: hoe dichter je land bij de plek ligt, hoe meer, tot ${pc(CONFIG.score.nearShare)}. Elke ${halfKm(CONFIG.score.nearKm)} km verder halveert het. Op hetzelfde moment wint goed altijd van fout.</li>
    <li><b>Makkelijk</b> is ver uitgezoomd en bewegen mag. <b>Moeilijk</b> is ver ingezoomd en niet bewegen.</li>
@@ -1908,7 +1930,7 @@ const I18N = {
   left:'left', right:'right', landlocked:'landlocked', coast:'coastal', island:'no land borders', nbCount:'{n} neighbours',
   pop0:'under 1 million', pop1:'1 to 10 million', pop2:'10 to 50 million', pop3:'50 to 150 million', pop4:'over 150 million',
   capLetter:'starts with {l}', nameLetter:'starts with {l}, {n} letters',
-  chat:'Chat', chatPh:'Message...', chatEmpty:'No messages yet', emotes:'Emotes', em_hit:'Bullseye!', em_lost:'Where?!', em_hurry:'Hurry up', em_splash:'Splash!', em_king:'Map king', appSettings:'Settings', theme:'Theme', ui_gui:'Display', ui_hud:'HUD', ui_size:'HUD size', ui_opa:'HUD opacity', ui_acc:'Accent color', ui_fx:'Animations', ui_round:'Round', ui_score:'Score', ui_net:'Connection', ui_zoom:'Zoom buttons', ui_chat:'Chat and emotes', ui_hints:'Hints open at start', ui_show:'Show in HUD', ui_reset:'Reset to default', hintMin:'Keep at least one type on', hintOn:'{g}: on', hintOff:'{g}: off', roundLbl:'Round', scoreLbl:'Score', timeLbl:'Time', hintsTitle:'Hints', hintNow:'Hint now', hintNowVote:'Hint now ({a}/{b})', hintVoted:'Waiting ({a}/{b})',
+  chat:'Chat', chatPh:'Message...', chatEmpty:'No messages yet', emotes:'Emotes', em_hit:'Bullseye!', em_lost:'Where?!', em_hurry:'Hurry up', em_splash:'Splash!', em_king:'Map king', appSettings:'Settings', theme:'Theme', ui_gui:'Display', ui_hud:'HUD', ui_size:'HUD size', ui_opa:'HUD opacity', ui_acc:'Accent color', ui_fx:'Animations', ui_round:'Round', ui_score:'Score', ui_net:'Connection', ui_zoom:'Zoom buttons', ui_chat:'Chat and emotes', ui_hints:'Hints open at start', ui_show:'Show in HUD', ui_reset:'Reset to default', hintMin:'Keep at least one type on', hintOn:'{g}: on', hintOff:'{g}: off', streakTip:'Fire streak {n}: +{b}', roundLbl:'Round', scoreLbl:'Score', timeLbl:'Time', hintsTitle:'Hints', hintNow:'Hint now', hintNowVote:'Hint now ({a}/{b})', hintVoted:'Waiting ({a}/{b})',
   hintCount:'Number of hints', hintTypes:'Hint types',
   dutch:'Netherlands', nlPlaces:'Places', nlView:'View', all:'All', big:'Cities', towns:'Villages', sat:'Satellite', photo:'Street view',
   guessPhNl:'Place...', unknownNl:'Pick a place from the list',
@@ -1983,6 +2005,7 @@ const I18N = {
    <li>Your first answer counts.</li>
    <li><b>Points</b> per round, in every mode: ${CONFIG.score.max} times how close you are, times your hints, times your time.</li>
    <li><b>Hints</b>: the first is free. Seeing all hints costs ${pc(CONFIG.score.hintCut)}, stronger hints cost more. Same with 4 or 8 hints. After the hint that shows the name itself you get ${pc(CONFIG.score.giveaway)}.</li>
+   <li><b>Fire streak</b>: from 2 right in a row you get ${CONFIG.streak.step} extra per right answer in a row. The streak caps at ${CONFIG.streak.max}, after that the bonus stays ${CONFIG.streak.step * (CONFIG.streak.max - 1)}. Wrong or no answer resets it to 0.</li>
    <li><b>Time</b>: ${pc(CONFIG.score.timeBase)} plus ${pc(CONFIG.score.timeWeight)} of your remaining time.</li>
    <li><b>Wrong country</b>: the closer your country is to the spot, the more, up to ${pc(CONFIG.score.nearShare)}. It halves every ${halfKm(CONFIG.score.nearKm)} km further. At the same moment, right always beats wrong.</li>
    <li><b>Easy</b> is zoomed out and moving is allowed. <b>Hard</b> is zoomed in with no moving.</li>
@@ -3898,7 +3921,7 @@ function hostAddPlayer(p, peerId){
   if (H.blocked.includes(p.id)) return 'kicked';
   if (H.phase !== 'lobby') return 'started';
   if (H.players.filter(x=>x.connected || (Date.now()-x.leftAt) < CONFIG.reserveMs).length >= CONFIG.maxPlayers) return 'full';
-  H.players.push({ id: p.id, peerId, name: String(p.name||'?').slice(0,16), color: okColor(p.color, COLORS[0]), avatar: avKey(p.avatar), joinIdx: H.nextJoin++, score:0, connected:true, leftAt:null, correct:0, best:0, fastest:null, op:false });
+  H.players.push({ id: p.id, peerId, name: String(p.name||'?').slice(0,16), color: okColor(p.color, COLORS[0]), avatar: avKey(p.avatar), joinIdx: H.nextJoin++, score:0, connected:true, leftAt:null, correct:0, best:0, fastest:null, op:false, stk:0 });
   return true;
 }
 // De host mag alles. Een OP mag de instellingen aanpassen en de lobby starten.
@@ -3998,7 +4021,7 @@ function hostHandle(msg, peerId){
       if (peerId !== selfId) return;
       H.phase = 'lobby'; H.roundN = 0; H.used = []; H.result = null; H.final = null; H.round = null; H.huntUsed = []; H.huntPre = null; H.plan = null; H.cfg = null; H.ev = [];
       H.players = H.players.filter(x=>x.connected);
-      H.players.forEach(x=>Object.assign(x,{score:0,correct:0,best:0,fastest:null,bm:null,drew:0,drewAt:0,cards:[],fx:[],played:0,sp:0,sh:0,ch:CONFIG.sab.charge.start}));
+      H.players.forEach(x=>Object.assign(x,{score:0,correct:0,best:0,fastest:null,stk:0,bm:null,drew:0,drewAt:0,cards:[],fx:[],played:0,sp:0,sh:0,ch:CONFIG.sab.charge.start}));
       broadcast(); break;
   }
 }
@@ -4343,6 +4366,12 @@ function drawerScore(r, base){
   const pts = n ? Math.round(CONFIG.draw.share * gs.reduce((a, p) => a + base[p.id].pts, 0) / n) : 0;
   return { pts, kind: n && right >= n * CONFIG.draw.half ? 'good' : right ? 'half' : 'miss', drew: [right, n] };
 }
+// Vuurreeks per speler: goed = reeks +1 (tot CONFIG.streak.max), anders weer 0. Vanaf 2 op rij step per extra goede, bij max blijft het vast. Telt niet mee in x2 of duelinzet.
+function streakBonus(p, kind){
+  const C = CONFIG.streak;
+  p.stk = kind === 'good' ? Math.min(C.max, (p.stk || 0) + 1) : 0;
+  return p.stk >= 2 ? C.step * (p.stk - 1) : 0;
+}
 function endRound(){
   const r = H.round; if (!r || H.phase !== 'round') return;
   if (r.draw && DR && DR.roundId === r.id) drawFlush();   // host tekent zelf: het laatste stukje lijn gaat nog mee
@@ -4361,12 +4390,13 @@ function endRound(){
     let s = base[p.id];
     const win = p.id === winner ? CONFIG.duel.win : 0;
     if (mult !== 1 || win) s = { ...s, pts: Math.round((s.pts + win) * mult) };   // toernooifinale telt dubbel, duel: bonus en inzet
+    const sb = streakBonus(p, s.kind); if (sb) s = { ...s, pts: s.pts + sb };
     p.score += s.pts;
     if (H.settings.mode === 'tour'){ p.bm = p.bm || {}; p.bm[r.mode] = (p.bm[r.mode] || 0) + s.pts; }
     if (s.kind==='good'){ p.correct++; if (a && a.ms != null && (p.fastest==null || a.ms < p.fastest)) p.fastest = a.ms; }
     if (s.pts > p.best) p.best = s.pts;
     return { id:p.id, guess: a && !pinMode ? a.code : null, ms: a ? a.ms : null, hints: a ? a.hintsSeen : null, pts: s.pts, kind: s.kind, total: p.score, order: a ? a.order : 99, pin: a && pinMode && !r.trace ? a.pin : null, dist: pinMode && !r.trace ? s.dist : null, scans: a && r.hunt ? a.scans : null,
-      ring: r.darts ? s.ring : null, dbl: !!(r.darts && a && a.dbl), drew: s.drew || null, ...(win ? { win } : {}),
+      ring: r.darts ? s.ring : null, dbl: !!(r.darts && a && a.dbl), drew: s.drew || null, ...(win ? { win } : {}), ...(p.stk >= 2 ? { stk: p.stk, sb } : {}),
       ...(r.trace ? { tr: a && a.tr ? a.tr : null, pct: s.pct != null ? s.pct : null } : {}) };
   }).sort((a,b)=> b.pts-a.pts || a.order-b.order);
   const mid = r.hunt ? huntMid(r.hunt.g) : [r.lat, r.lng];
@@ -4399,7 +4429,7 @@ function publicState(){
   return {
     hostPeer: selfId, term: H.term||0, finding: !!H.finding, phase: H.phase, settings: H.settings, roundN: H.roundN, used: H.used, plan: H.plan || null,
     // Sabotage: hand (cards), lader (ch), in welke ronde je voor het laatst speelde (played), wat op de volgende ronde wacht (fx) en de tellers voor het eindscherm.
-    players: H.players.map(({id,peerId,name,color,avatar,joinIdx,score,connected,correct,best,fastest,op,bm,drew,drewAt,cards,played,fx,sp,sh,ch}) => ({id,peerId,name,color,avatar,joinIdx,score,connected,correct,best,fastest,op:!!op,...(bm ? {bm} : {}),...(drew ? {drew,drewAt} : {}),
+    players: H.players.map(({id,peerId,name,color,avatar,joinIdx,score,connected,correct,best,fastest,op,bm,drew,drewAt,cards,played,fx,sp,sh,ch,stk}) => ({id,peerId,name,color,avatar,joinIdx,score,connected,correct,best,fastest,op:!!op,stk:stk||0,...(bm ? {bm} : {}),...(drew ? {drew,drewAt} : {}),
       ...(sab ? { cards: cards || [], ch: ch ?? CONFIG.sab.charge.start, played: played || 0, fx: fx || [], sp: sp || 0, sh: sh || 0 } : {})})),
     round: r ? { id:r.id, n:r.n, mode:r.mode, continent:r.continent, final:!!r.final, lat:r.lat, lng:r.lng, photo:r.photo, hunt:r.hunt||null, darts:!!r.darts, shape:r.shape||null, trace:r.trace||null, duel:r.duel||null, draw:r.draw||null, drawN: r.draw && DR && DR.roundId === r.id ? DR.ops.length : 0, zoom:r.zoom, pan:r.pan, difficulty:r.difficulty, durationMs:r.durationMs, hintIntervalMs:r.hintIntervalMs, hintTotal:r.hintTotal,
       hints: r.hints, remainingMs: Math.max(0, r.durationMs - (now()-r.startAt)), answered: Object.keys(r.answers), wants: Object.keys(r.wants||{}), skips: Object.keys(r.skips||{}), redo: !!r.redo,
@@ -4902,6 +4932,7 @@ function renderGame(){
     : r.n + '/' + total + xTag(r);
   const mine = playerById(me.id);
   $('#scoreChip').textContent = mine ? mine.score : 0;
+  fireChip(mine ? mine.stk || 0 : 0);
   // Sabotage op mij. Blackout: het beeld gaat op zwart (in Straatjacht alleen het satellietbeeld: de kaart blijft daar het speelveld).
   // Jetlag: mijn klok loopt sneller, zie tick(). Delusion: mijn hints komen uit myHints, zonder dat er iets aan te zien is.
   // Grens trekken: Blackout laat het vel staan, maar je ziet je eigen lijnen niet meer (blind tekenen).
@@ -5054,6 +5085,18 @@ function submitGuess(code){
 }
 
 /* ================= RESULT + FINAL ================= */
+// Vuurreeks: vlam groeit met de reeks (--lv 0..1), vanaf 4 vliegen er vonken, bij de max gloeit de chip.
+const flameHtml = n => { const lv = Math.max(0, Math.min(1, (n - 2) / (CONFIG.streak.max - 2)));
+  return `<span class="flame" style="--lv:${lv.toFixed(2)}" data-e="${n >= 4 ? 1 : 0}" aria-hidden="true"><svg viewBox="0 0 24 24"><path class="fo" d="M12 1.5c1.2 3.6 6.5 6.3 6.5 12a6.5 6.5 0 0 1-13 0c0-2.9 1.5-4.7 2.9-5.8.2 2 1.1 3.2 2.2 3.6-.6-3.6-.1-7 1.4-9.8z"/><path class="fm" d="M12 7.5c.8 2.4 4.3 4.3 4.3 8a4.3 4.3 0 0 1-8.6 0c0-1.9 1-3.1 1.9-3.8.1 1.2.7 2 1.4 2.3-.3-2.3 0-4.4 1-6.5z"/><path class="fi" d="M12 13c.5 1.5 2.4 2.5 2.4 4.6a2.4 2.4 0 0 1-4.8 0c0-1.2.6-1.9 1.2-2.4.1.6.4 1 .8 1.2-.1-1.2 0-2.3.4-3.4z"/></svg><i></i><i style="--d:-1"></i><i></i></span>`; };
+let fireShown = 0;
+function fireChip(n){
+  const c = $('#fireChip'); if (!c) return;
+  c.hidden = n < 2;
+  if (n < 2){ fireShown = 0; return; }
+  if (n !== fireShown){ c.innerHTML = flameHtml(n) + `<b>${n}</b>`; c.title = t('streakTip', { n, b: CONFIG.streak.step * (n - 1) });
+    c.classList.toggle('max', n >= CONFIG.streak.max);
+    if (fireShown){ c.classList.remove('pop'); void c.offsetWidth; c.classList.add('pop'); } fireShown = n; }
+}
 function renderResult(){
   show('result');
   const R = S.result;
@@ -5103,7 +5146,7 @@ function renderResult(){
       : row.dist != null && R.darts ? `<span class="${row.kind}">${t('dr' + row.ring)}, ${row.dist.toLocaleString(lang === 'nl' ? 'nl-NL' : 'en-GB')} km</span>${row.dbl ? ' <b class="x2">x2</b>' : ''}`
       : row.dist != null ? `<span class="${row.kind}">${row.dist} m</span>`
       : row.guess ? `<span class="${row.kind}">${flagImg(row.guess,20)}${esc(cname(row.guess))}</span>` : `<span class="sub">${t('noAnswer')}</span>`;
-    return `<tr style="${firstPaint ? 'animation-delay:'+(i*90)+'ms' : 'animation:none'}"><td><span class="row" style="gap:6px">${dotHtml(p)}<span>${esc(p.name)}${fxIcons(R.fx && R.fx[row.id], true)}</span></span></td><td>${g}${row.win ? ` <b class="x2">${esc(t('duelWin', { n: row.win }))}</b>` : ''}</td><td class="n">${row.ms!=null?(row.ms/1000).toFixed(1)+'s':''}</td><td class="n plus ${row.kind}">+${row.pts}</td><td class="n">${row.total}</td></tr>`;
+    return `<tr style="${firstPaint ? 'animation-delay:'+(i*90)+'ms' : 'animation:none'}"><td><span class="row" style="gap:6px">${dotHtml(p)}<span>${esc(p.name)}${fxIcons(R.fx && R.fx[row.id], true)}</span></span></td><td>${g}${row.win ? ` <b class="x2">${esc(t('duelWin', { n: row.win }))}</b>` : ''}</td><td class="n">${row.ms!=null?(row.ms/1000).toFixed(1)+'s':''}</td><td class="n plus ${row.kind}">+${row.pts}${row.stk ? `<span class="fbadge" title="${esc(t('streakTip', { n: row.stk, b: row.sb }))}">${flameHtml(row.stk)}${row.stk}<small>+${row.sb}</small></span>` : ''}</td><td class="n">${row.total}</td></tr>`;
   }).join('');
   const host = isMeHost();
   $('#nextBtn').style.display = host ? '' : 'none';
