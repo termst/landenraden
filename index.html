@@ -227,7 +227,7 @@ button.pill:active,.iconbtn:active{transform:translateY(var(--dz));box-shadow:0 
 .seg.modes button:active{transform:translateY(var(--dz));box-shadow:0 0 0 var(--side)}
 /* Kleur per modus: knoppen, tegels, schema en HUD lezen allemaal --mc */
 [data-m]{--mc:var(--acc)}
-[data-m=map]{--mc:#3f78a8}[data-m=street]{--mc:#3e8a63}[data-m=dutch]{--mc:#c26c2e}[data-m=hunt]{--mc:#7563b0}[data-m=darts]{--mc:#b44f63}[data-m=shape]{--mc:#a8823a}[data-m=draw]{--mc:#23919a}[data-m=trace]{--mc:#808a2c}[data-m=tour]{--mc:var(--gold)}
+[data-m=map]{--mc:#3f78a8}[data-m=street]{--mc:#3e8a63}[data-m=dutch]{--mc:#c26c2e}[data-m=hunt]{--mc:#7563b0}[data-m=darts]{--mc:#b44f63}[data-m=shape]{--mc:#a8823a}[data-m=draw]{--mc:#23919a}[data-m=trace]{--mc:#808a2c}[data-m=blitz]{--mc:#d0452b}[data-m=tour]{--mc:var(--gold)}
 #modeDesc{font-size:13px;line-height:1.35}
 /* Oneven aantal modi: de laatste over de hele breedte */
 .seg.modes button:last-child:nth-child(odd),.seg.modes button:nth-last-child(2):nth-child(odd){grid-column:1/-1}
@@ -501,6 +501,22 @@ body.chat-on #dmap .leaflet-top.leaflet-left{top:calc(max(10px,env(safe-area-ins
 /* Silhouet: landvorm op papier met stippenraster. --shB en --shR houden de vorm vrij van het paneel (zet showShape). */
 #shape{position:absolute;inset:0;overflow:hidden;background:radial-gradient(color-mix(in srgb,var(--ink) 13%,transparent) 1px,transparent 1.5px) 0 0/22px 22px,var(--paper)}
 #shapeBox{position:absolute;left:max(16px,env(safe-area-inset-left));right:var(--shR,16px);top:calc(max(10px,env(safe-area-inset-top)) + 112px);bottom:var(--shB,300px);transition:bottom .3s,right .3s}
+/* Blitz: een vlag of silhouet per vraag, zo snel mogelijk achter elkaar. Zelfde vrije ruimte als Silhouet (--shB, --shR). */
+#blitz{position:absolute;inset:0;overflow:hidden;background:radial-gradient(color-mix(in srgb,var(--ink) 13%,transparent) 1px,transparent 1.5px) 0 0/22px 22px,var(--paper)}
+#bzBox{position:absolute;left:max(16px,env(safe-area-inset-left));right:var(--shR,16px);top:calc(max(10px,env(safe-area-inset-top)) + 112px);bottom:var(--shB,300px);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;transition:bottom .3s,right .3s}
+#bzPic{flex:1;min-height:0;width:100%;display:grid;place-items:center}
+#bzPic img{max-width:min(100%,420px);max-height:100%;object-fit:contain;border-radius:6px;box-shadow:0 10px 26px rgba(0,0,0,.22)}
+#bzPic svg{display:block;width:100%;height:100%;overflow:visible}
+#bzPic svg .sil{fill:var(--ink);stroke:var(--acc);stroke-width:2;stroke-linejoin:round;vector-effect:non-scaling-stroke}
+#bzPic svg .grat,#bzPic svg .scale{display:none}
+#bzPic.in > *{animation:bzIn .22s cubic-bezier(.2,.8,.3,1.2)}
+#bzPic.no > *{animation:bzNo .32s}
+@keyframes bzIn{from{transform:scale(.82);opacity:0}to{transform:none;opacity:1}}
+@keyframes bzNo{20%,60%{transform:translateX(-10px)}40%,80%{transform:translateX(10px)}}
+.bzfoot{display:flex;align-items:center;gap:10px}
+.bzcount{display:flex;align-items:center;gap:6px;font-weight:800;font-size:22px;color:var(--ink)}
+.bzcount svg{width:22px;height:22px;fill:#d0452b}
+.bzcount.pop{animation:bzIn .25s}
 #shapeSvg{display:block;width:100%;height:100%;overflow:visible}
 #shapeSvg .sil{fill:var(--ink);fill-opacity:0;stroke:var(--acc);stroke-width:2.2;stroke-linejoin:round;stroke-linecap:round;vector-effect:non-scaling-stroke;stroke-dasharray:1;stroke-dashoffset:1;animation:silDraw 1.2s cubic-bezier(.4,0,.2,1) forwards,silFill .6s 1s ease forwards}
 #shapeSvg .shadow{filter:drop-shadow(0 10px 16px rgba(0,0,0,.22))}
@@ -1316,6 +1332,7 @@ body.sw-wait :is(#chatBtn,#emoBtn,#sabHand){visibility:hidden}
   <symbol id="m-street" viewBox="0 0 24 24"><rect x="11" y="2" width="2" height="19.5" rx="1"/><rect x="7.5" y="20.4" width="9" height="1.8" rx=".9"/><path d="M5 4.5h11.5l3.5 3-3.5 3H5a1 1 0 0 1-1-1v-4a1 1 0 0 1 1-1z"/><path opacity=".45" d="M19 12.5H7.5l-3.5 3 3.5 3H19a1 1 0 0 0 1-1v-4a1 1 0 0 0-1-1z"/></symbol>
   <symbol id="m-dutch" viewBox="0 0 24 24"><path fill-rule="evenodd" d="M9.8 11h4.4L16.6 22.5H7.4zM10.9 22.5v-3.2a1.1 1.1 0 0 1 2.2 0v3.2z"/><g transform="translate(12 9.6) rotate(45)"><g><rect x="-1.9" y="-9.6" width="3.8" height="7.6" rx=".9" opacity=".5"/><rect x="-.55" y="-9.6" width="1.1" height="9.6" rx=".5"/></g><g transform="rotate(90)"><rect x="-1.9" y="-9.6" width="3.8" height="7.6" rx=".9" opacity=".5"/><rect x="-.55" y="-9.6" width="1.1" height="9.6" rx=".5"/></g><g transform="rotate(180)"><rect x="-1.9" y="-9.6" width="3.8" height="7.6" rx=".9" opacity=".5"/><rect x="-.55" y="-9.6" width="1.1" height="9.6" rx=".5"/></g><g transform="rotate(270)"><rect x="-1.9" y="-9.6" width="3.8" height="7.6" rx=".9" opacity=".5"/><rect x="-.55" y="-9.6" width="1.1" height="9.6" rx=".5"/></g></g><circle cx="12" cy="9.6" r="2"/></symbol>
   <symbol id="m-hunt" viewBox="0 0 24 24"><circle cx="10.5" cy="10.5" r="6.4" fill-opacity=".45" stroke="currentColor" stroke-width="2.2"/><path d="M16.2 16.2l5 5" stroke="currentColor" stroke-width="3" stroke-linecap="round"/><path fill-rule="evenodd" d="M10.5 15s3.1-2.6 3.1-5.2a3.1 3.1 0 1 0-6.2 0c0 2.6 3.1 5.2 3.1 5.2zM10.5 8.7a1.1 1.1 0 1 1 0 2.2 1.1 1.1 0 0 1 0-2.2z"/></symbol>
+  <symbol id="m-blitz" viewBox="0 0 24 24"><path d="M13.6 1.5L4.2 13.4h6.3l-1.6 9.1 9.9-12.4h-6.6z"/></symbol>
   <symbol id="m-darts" viewBox="0 0 24 24"><circle cx="10.5" cy="13.5" r="9.5" opacity=".45"/><path fill-rule="evenodd" d="M10.5 7a6.5 6.5 0 1 1 0 13 6.5 6.5 0 0 1 0-13zm0 3.4a3.1 3.1 0 1 0 0 6.2 3.1 3.1 0 0 0 0-6.2z"/><circle cx="10.5" cy="13.5" r="1.5"/><path d="M10.5 13.5l8.6-8.6" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"/><path d="M18.4 5.6l.3-4.4 2 2.1zM18.4 5.6l4.4-.3-2.1-2z"/></symbol>
   <symbol id="m-trace" viewBox="0 0 24 24"><path fill-rule="evenodd" d="M5 6.5 9 4l4 1.5 3-1 2.5 3-1 3.5 1.5 3-3 3.5-4-.5-3 2-3-2.5.5-4L3 10zM6.68 7.76 9.56 5.96 12.44 7.04 14.6 6.32 16.4 8.48 15.68 11 16.76 13.16 14.6 15.68 11.72 15.32 9.56 16.76 7.4 14.96 7.76 12.08 5.24 10.28z"/><path d="M13.5 22.5l1-3.6 6.3-6.3a1.4 1.4 0 0 1 2 0l.6.6a1.4 1.4 0 0 1 0 2l-6.3 6.3z"/></symbol>
   <symbol id="m-shape" viewBox="0 0 24 24"><path d="M19.4 9.7 18.5 9.9 17.1 12.4 18.2 12.0 18.6 13.0 18.3 13.3 18.8 14.0 18.0 14.6 18.6 15.4 18.4 16.0 19.5 16.6 19.2 17.2 17.9 18.4 16.9 18.6 15.9 17.9 15.4 18.0 14.3 17.7 13.2 18.9 13.4 19.9 12.6 20.1 11.7 20.0 11.3 19.6 10.0 19.1 9.7 19.4 8.2 19.2 7.0 18.7 7.1 18.3 6.5 18.0 7.0 17.7 7.5 15.4 7.3 15.5 7.5 13.8 8.1 14.6 7.9 13.9 7.4 13.4 7.6 13.3 7.4 12.2 6.6 11.8 6.1 11.1 6.1 10.4 6.6 10.4 5.6 10.2 5.7 9.9 5.2 9.6 3.1 9.2 2.6 8.8 3.1 8.5 2.8 8.3 3.2 8.3 2.5 8.0 2.8 7.6 4.6 7.2 5.3 7.8 7.1 7.6 6.5 5.5 7.3 5.5 7.4 6.1 8.8 6.3 9.6 6.0 9.2 5.9 9.3 5.5 10.9 4.7 11.2 3.3 11.6 2.9 12.4 2.7 12.8 3.4 13.2 3.4 14.0 4.3 14.7 4.4 14.7 5.0 15.6 4.6 15.6 5.3 16.5 5.9 17.5 5.9 18.2 6.6 20.1 6.9 19.4 8.5zM21.9 19.2 22.0 20.5 21.5 22.0 21.0 21.6 20.9 20.7 20.9 19.7 21.7 19.4 21.8 18.7z"/></symbol>
@@ -1403,7 +1420,7 @@ body.sw-wait :is(#chatBtn,#emoBtn,#sabHand){visibility:hidden}
       <div class="players" id="lobbyPlayers"></div>
     </div>
     <div class="card" id="settingsCard">
-      <div class="field"><label data-i="mode"></label><div class="seg modes" data-set="mode" data-opts="map,street,dutch,hunt,darts,shape,draw,trace,tour"></div><p class="sub" id="modeDesc"></p></div>
+      <div class="field"><label data-i="mode"></label><div class="seg modes" data-set="mode" data-opts="map,street,dutch,hunt,darts,shape,draw,trace,blitz,tour"></div><p class="sub" id="modeDesc"></p></div>
       <div class="field" data-for="tour"><div class="lrow"><label data-i="tourModes"></label><button class="mini" data-all="tourModes" data-i="allOn"></button></div><div class="chips ico" id="tourModes" data-tset="tourModes" role="group"></div></div>
       <div class="field" data-for="tour"><label data-i="tourOrder"></label><div class="seg" data-set="tourOrder" data-opts="mix,cycle,block"></div></div>
       <div class="toggle" data-for="tour"><div class="tl"><label data-i="rounds"></label><small id="tourSplit"></small></div>
@@ -1414,12 +1431,12 @@ body.sw-wait :is(#chatBtn,#emoBtn,#sabHand){visibility:hidden}
       <div class="field" data-for="hunt tour" data-tm="hunt"><label id="huntCityLbl" data-i="huntCity" for="huntCity"></label><select id="huntCity"></select></div>
       <div class="field" data-for="dutch hunt tour" data-tm="dutch hunt" id="nlPlacesField"><label data-i="nlPlaces"></label><div class="seg" data-set="nlPlaces" data-opts="all,big,towns"></div></div>
       <div class="field" data-for="dutch darts tour" data-tm="dutch darts"><label data-i="nlView"></label><div class="seg" data-set="nlView" data-opts="sat,photo"></div></div>
-      <div class="field" data-for="world dutch hunt"><label data-i="rounds"></label><div class="seg" data-set="rounds" data-opts="5,10,15"></div></div>
-      <div class="field"><label data-i="roundTime"></label><div class="seg" data-set="roundTime" data-opts="30,60,90" data-suf="s"></div></div>
+      <div class="field" data-for="world dutch hunt" data-not="blitz"><label data-i="rounds"></label><div class="seg" data-set="rounds" data-opts="5,10,15"></div></div>
+      <div class="field" data-not="blitz"><label data-i="roundTime"></label><div class="seg" data-set="roundTime" data-opts="30,60,90" data-suf="s"></div></div>
       <div class="field" data-for="world dutch hunt"><label data-i="difficulty"></label><div class="seg diff" data-set="difficulty" data-opts="easy,normal,hard"></div></div>
       <div class="field" data-for="world"><label data-i="continent"></label><div class="seg sm cont" data-set="continent" data-opts="ALL,EU,AM,AS,OC,AF"></div></div>
       <div class="toggle" data-for="tour"><div class="tl"><label data-i="tourFinal"></label><small data-i="tourFinalSub"></small></div><button class="sw" data-sw="tourFinal" aria-label="toggle"></button></div>
-      <div class="toggle"><div class="tl"><label data-i="sabotage"></label><small data-i="sabotageSub"></small></div><button class="sw" data-sw="sabotage" aria-label="toggle"></button></div>
+      <div class="toggle" data-not="blitz"><div class="tl"><label data-i="sabotage"></label><small data-i="sabotageSub"></small></div><button class="sw" data-sw="sabotage" aria-label="toggle"></button></div>
       <div class="toggle"><div class="tl"><label data-i="duel"></label><small data-i="duelSub"></small></div><button class="sw" data-sw="duel" aria-label="toggle"></button></div>
       <div class="sabdeck" id="sabDeck" hidden></div>
     </div>
@@ -1428,9 +1445,9 @@ body.sw-wait :is(#chatBtn,#emoBtn,#sabHand){visibility:hidden}
       <div class="more">
       <div class="field" data-for="world tour" data-tm="map street darts shape draw trace"><label data-i="weighting"></label><div class="seg" data-set="weighting" data-opts="uniform,area"></div></div>
       <div class="toggle" data-for="world tour" data-tm="map street darts shape draw trace"><label data-i="smallCountries"></label><button class="sw" data-sw="small" aria-label="toggle"></button></div>
-      <div class="field" data-not="trace"><label data-i="hintCount"></label><div class="seg" data-set="hintCount" data-opts="4,6,8"></div></div>
-      <div class="field" data-not="trace"><label data-i="hintEvery"></label><div class="seg" data-set="hintEvery" data-opts="5,10,15,20" data-suf="s"></div></div>
-      <div class="field" data-for="world tour" data-tm="map street darts shape draw" data-not="trace"><label data-i="hintTypes"></label><div class="chips ico" id="hintChips" role="group"></div></div>
+      <div class="field" data-not="trace blitz"><label data-i="hintCount"></label><div class="seg" data-set="hintCount" data-opts="4,6,8"></div></div>
+      <div class="field" data-not="trace blitz"><label data-i="hintEvery"></label><div class="seg" data-set="hintEvery" data-opts="5,10,15,20" data-suf="s"></div></div>
+      <div class="field" data-for="world tour" data-tm="map street darts shape draw" data-not="trace blitz"><label data-i="hintTypes"></label><div class="chips ico" id="hintChips" role="group"></div></div>
       </div>
     </details>
     <button class="btn pri" id="startBtn"><svg class="ic"><use href="#i-play"/></svg><span id="startTxt"></span></button>
@@ -1448,6 +1465,7 @@ body.sw-wait :is(#chatBtn,#emoBtn,#sabHand){visibility:hidden}
   <div id="draw" hidden><div id="drawArea" class="drawing"><svg id="drawSvg" viewBox="-28 -28 1556 1056" preserveAspectRatio="xMidYMid meet" aria-hidden="true"><rect class="paper" x="0" y="0" width="1500" height="1000" rx="5"/><path class="ticks" d="M500-22v14M750-24v16M1000-22v14M500 1008v14M750 1008v16M1000 1008v14M-22 333h14M-24 500h16M-22 667h14M1508 333h14M1508 500h16M1508 667h14"/><svg id="drawG" x="0" y="0" width="1500" height="1000" viewBox="0 0 1500 1000"></svg><text id="drawWait" x="750" y="516"></text></svg></div></div>
   <div class="chip shapetag" id="drawTag" hidden></div>
   <div id="trace" hidden><div id="traceArea" class="drawing"><svg id="traceSvg" viewBox="-20 -20 1040 1040" preserveAspectRatio="xMidYMid meet" aria-hidden="true"><rect class="paper" x="0" y="0" width="1000" height="1000" rx="5"/><clipPath id="traceClip"><rect x="0" y="0" width="1000" height="1000" rx="5"/></clipPath><g id="traceLand" clip-path="url(#traceClip)"></g><g id="traceG"></g><text id="traceWait" x="500" y="512"></text></svg></div></div>
+  <div id="blitz" hidden><div id="bzBox"><div id="bzPic"></div><div class="bzfoot"><span class="bzcount" id="bzCount"></span><button class="mini" id="bzSkip" type="button" data-i="bzSkip"></button></div></div></div>
   <div id="blackout" hidden><div class="bo-in"><span class="bo-ring"></span><b data-i="sab_bo"></b><small id="boBy"></small><i data-i="boSub"></i></div></div>
   <div class="chip shapetag" id="fxTag" hidden></div>
   <div id="tourCard" aria-live="polite"></div>
@@ -1712,6 +1730,7 @@ const CONFIG = {
   // Silhouet: welke delen van het land meedoen en hoe de vorm draait. reach: eilanden binnen reach x de grootte van het hoofddeel
   // (in graden, tussen reachMin en reachMax) doen mee, als ze minstens keep x de oppervlakte van het hoofddeel hebben.
   // rot: graden. Normaal draait tussen de twee waarden, links of rechts. Moeilijk draait willekeurig en spiegelt de helft van de keren.
+  blitz: { ms: 60000, pts: 100, n: 150 },   // Blitz: duur, punten per goed antwoord, lengte van de rij vragen
   shape: { reach: 1.5, reachMin: 5, reachMax: 25, keep: { easy: .002, normal: .01 }, rot: [15, 60], flipChance: .5, pad: .08 },
   // Tekenen: het vel is een vlag van w x h. flushMs: zo vaak gaan nieuwe punten de deur uit. step: punten dichter bij elkaar vallen weg.
   // maxPts en maxOps: grens per ronde (de host stuurt de hele tekening mee naar het uitslagscherm). syncMs: zo lang stil en achter, dan opvragen.
@@ -1825,6 +1844,7 @@ const I18N = {
   shape:'Silhouet', md_shape:'Raad het land aan alleen zijn omtrek.',
   draw:'Tekenen', md_draw:'Eén speler tekent een vlag uit het hoofd, de rest raadt het land.', drawYou:'Teken de vlag van', drawYouTour:'Jij tekent. Onderin zie je welke vlag.', drawIs:'{n} tekent een vlag', drawWaitTxt:'{n} gaat tekenen...', drawHere:'Teken hier de vlag',
   drawGot:'{a} van {b} geraden', drawBy:'Tekening van {n}', drawReal:'De echte vlag', drawSolo:'Geen raders, deze ronde silhouet', drawNeed2:'Met één speler wordt elke ronde Silhouet.', drawFull:'Het vel is vol',
+  blitz:'Blitz', md_blitz:'60 seconden. Vlaggen en silhouetten achter elkaar: zoveel mogelijk goed. Fout? Probeer opnieuw of sla over.', bzSkip:'Overslaan', bzWrong:'Niet goed', bzRes:'{a} goed, {b} overgeslagen', bzSub:'{n} vragen in {s} seconden',
   trace:'Grens trekken', md_trace:'Iedereen tekent de grens van hetzelfde land op een lege kaart. Wie het dichtst bij de echte grens zit, wint.', traceYou:'Teken de grens van', traceDone:'Klaar', traceHere:'Trek een lijn rond het land', traceMore:'Eiland? Nog een lus', traceFull:'Genoeg lijnen', traceNeed:'Teken eerst een lus', traceSent:'Ingeleverd', traceMatch:'{p}% raak', traceBest:'Dichtst bij de echte grens', traceNone:'geen tekening', traceReal:'Echte vorm', traceBlind:'Je ziet je lijnen niet',
   drawUndo:'Terug', drawClear:'Wissen', drawRefTip:'De vlag als voorbeeld, tik om te vergroten',
   c_black:'Zwart', c_white:'Wit, ook als gum', c_red:'Rood', c_orange:'Oranje', c_yellow:'Geel', c_green:'Groen', c_sky:'Lichtblauw', c_blue:'Blauw',
@@ -1895,6 +1915,7 @@ const I18N = {
    <li><b>Toernooi</b>: jij kiest welke modi meedoen, ${CONFIG.tour.min} tot ${CONFIG.tour.max} rondes, de volgorde, continenten en provincies. <b>Oplopend</b> gaat van makkelijk naar moeilijk. Met <b>finale</b> telt de laatste ronde dubbel. Elke ronde telt zoals in zijn eigen modus. Op het eindscherm zie je de punten per modus.</li>
    <li><b>Silhouet</b>: je ziet alleen de omtrek van een land. <b>Makkelijk</b>: noord boven, met lengte en breedtelijnen en een schaal. <b>Normaal</b>: ${CONFIG.shape.rot[0]} tot ${CONFIG.shape.rot[1]} graden gedraaid, kleine eilanden weg. <b>Moeilijk</b>: willekeurig gedraaid, soms gespiegeld, alleen het grootste deel. Punten zoals bij Satelliet.</li>
    <li><b>Tekenen</b>: één speler ziet de naam van een land en tekent de vlag uit het hoofd, met acht kleuren, een kwast, een rechthoek en een rondje. De rest ziet de vlag ontstaan en raadt het land, met hints en punten zoals bij Satelliet: sneller is meer. De hint met de vlag vervalt. Geen letters of cijfers tekenen. De tekenaar krijgt ${pc(CONFIG.draw.share)} van het gemiddelde van de raders: hoe minder het raden, hoe minder punten. Raadt minstens ${pc(CONFIG.draw.half)}, dan telt het voor de tekenaar als goed. <b>Makkelijk</b>: de tekenaar ziet de vlag als voorbeeld. <b>Moeilijk</b>: alleen de kwast, geen vormen. Iedereen tekent om de beurt. Met één speler wordt het Silhouet.</li>
+   <li><b>Blitz</b>: één ronde van ${CONFIG.blitz.ms/1000} seconden. Iedereen krijgt dezelfde rij landen en werkt die in eigen tempo af. Elk goed antwoord is ${CONFIG.blitz.pts} punten, fout kost alleen tijd, overslaan mag. <b>Makkelijk</b>: vlaggen. <b>Normaal</b>: vlaggen en silhouetten door elkaar. <b>Moeilijk</b>: gedraaide silhouetten.</li>
    <li><b>Grens trekken</b>: iedereen ziet dezelfde landnaam en een lege kaart van de omgeving: land en zee, zonder grenzen. Teken de grens van het land op de goede plek. Elke lus is een eigen vlak, dus eilanden teken je los. De host meet de overlap met het echte land: plek en grootte tellen dus mee. Zestig procent van je punten komt uit je eigen overlap, veertig procent uit hoe dicht je bij de beste tekening van de ronde zit. Geen hints en geen tijdbonus. Klaar zet je tekening vast, anders telt hij bij het einde van de tijd. <b>Makkelijk</b>: grote landen, kaart dicht op het land. <b>Moeilijk</b>: ook kleine landen, een veel ruimere kaart. Landen zonder landgrens doen niet mee.</li>
    <li><b>Sabotage</b> zet de host aan in de lobby, vanaf 2 spelers. Kaarten komen uit je lader, het lege kaartje naast je hand. Die begint op ${CONFIG.sab.charge.start}% en krijgt er na elke ronde ${CONFIG.sab.charge.lead} tot ${CONFIG.sab.charge.last}% bij: wie achter staat het meest. Vol is een nieuwe kaart, hoogstens ${CONFIG.sab.hand} in je hand. Je speelt hoogstens één kaart per ronde. <b>Blackout</b>: het doelwit ziet de kaart niet meer. <b>Delusion</b>: de hele volgende ronde gaan de hints van het doelwit over een ander land, en dat krijgt het doelwit niet te horen. Het komt pas uit op het uitslagscherm. <b>Jetlag</b>: de klok van het doelwit loopt twee keer zo snel. Blackout en Jetlag werken meteen, of de hele volgende ronde als je ze op het uitslagscherm speelt. Elke kaart bestaat in drie varianten: een willekeurige speler, een speler die jij kiest, of iedereen. Wie achter staat krijgt vaker een sterke variant. De tekenaar is niet te raken.</li>
    <li><b>Gelijke stand</b>: meeste goed wint, daarna het snelste goede antwoord.</li>
@@ -1946,6 +1967,7 @@ const I18N = {
   shape:'Silhouette', md_shape:'Guess the country from its outline alone.',
   draw:'Draw', md_draw:'One player draws a flag from memory, the rest guess the country.', drawYou:'Draw the flag of', drawYouTour:'You draw. The flag to draw is at the bottom.', drawIs:'{n} is drawing a flag', drawWaitTxt:'{n} is about to draw...', drawHere:'Draw the flag here',
   drawGot:'{a} of {b} guessed', drawBy:'Drawing by {n}', drawReal:'The real flag', drawSolo:'No one to guess, silhouette this round', drawNeed2:'With one player every round becomes Silhouette.', drawFull:'The sheet is full',
+  blitz:'Blitz', md_blitz:'60 seconds. Flags and silhouettes in a row: get as many right as you can. Wrong? Try again or skip.', bzSkip:'Skip', bzWrong:'Not right', bzRes:'{a} right, {b} skipped', bzSub:'{n} questions in {s} seconds',
   trace:'Outline', md_trace:'Everyone draws the border of the same country on an empty map. Whoever gets closest to the real border wins.', traceYou:'Draw the border of', traceDone:'Done', traceHere:'Draw a line around the country', traceMore:'Island? Another loop', traceFull:'That is enough lines', traceNeed:'Draw a loop first', traceSent:'Handed in', traceMatch:'{p}% match', traceBest:'Closest to the real border', traceNone:'no drawing', traceReal:'Real shape', traceBlind:'You cannot see your lines',
   drawUndo:'Undo', drawClear:'Clear', drawRefTip:'The flag as an example, tap to enlarge',
   c_black:'Black', c_white:'White, also the eraser', c_red:'Red', c_orange:'Orange', c_yellow:'Yellow', c_green:'Green', c_sky:'Light blue', c_blue:'Blue',
@@ -2016,6 +2038,7 @@ const I18N = {
    <li><b>Tournament</b>: you pick which modes take part, ${CONFIG.tour.min} to ${CONFIG.tour.max} rounds, the order, continents and provinces. <b>Rising</b> goes from easy to hard. With the <b>final</b> on, the last round counts double. Each round scores as in its own mode. The final screen shows points per mode.</li>
    <li><b>Silhouette</b>: you only see the outline of a country. <b>Easy</b>: north up, with grid lines and a scale. <b>Normal</b>: rotated ${CONFIG.shape.rot[0]} to ${CONFIG.shape.rot[1]} degrees, small islands left out. <b>Hard</b>: random rotation, sometimes mirrored, only the largest part. Points work as in Satellite.</li>
    <li><b>Draw</b>: one player sees the name of a country and draws its flag from memory, with eight colors, a brush, a rectangle and a circle. The others watch the flag appear and guess the country, with hints and points as in Satellite: faster is more. The flag hint is left out. No letters or numbers. The drawer gets ${pc(CONFIG.draw.share)} of the average of the guessers: the fewer get it, the fewer points. If at least ${pc(CONFIG.draw.half)} get it, it counts as correct for the drawer. <b>Easy</b>: the drawer sees the flag as an example. <b>Hard</b>: brush only, no shapes. Everyone takes turns. With one player it becomes Silhouette.</li>
+   <li><b>Blitz</b>: one round of ${CONFIG.blitz.ms/1000} seconds. Everyone gets the same row of countries and works through it at their own pace. Each right answer is ${CONFIG.blitz.pts} points, wrong only costs time, skipping is allowed. <b>Easy</b>: flags. <b>Normal</b>: flags and silhouettes mixed. <b>Hard</b>: rotated silhouettes.</li>
    <li><b>Outline</b>: everyone sees the same country name and an empty map of the region: land and sea, no borders. Draw the border of the country in the right place. Each loop is its own area, so draw islands separately. The host measures the overlap with the real country, so position and size count. Sixty percent of your points come from your own overlap, forty percent from how close you are to the best drawing of the round. No hints and no time bonus. Done locks your drawing, otherwise it counts when time runs out. <b>Easy</b>: large countries, map close to the country. <b>Hard</b>: small countries too, a much wider map. Countries without a land border are left out.</li>
    <li><b>Sabotage</b> is switched on by the host in the lobby, from 2 players. Cards come from your charger, the empty card next to your hand. It starts at ${CONFIG.sab.charge.start}% and gains ${CONFIG.sab.charge.lead} to ${CONFIG.sab.charge.last}% after every round: most for whoever is behind. Full means a new card, with at most ${CONFIG.sab.hand} in your hand. You play at most one card per round. <b>Blackout</b>: the target can no longer see the map. <b>Delusion</b>: for the whole next round the hints of the target are about a different country, and they are not told. It only comes out on the results screen. <b>Jetlag</b>: the clock of the target runs twice as fast. Blackout and Jetlag work right away, or for the whole next round when you play them on the results screen. Every card comes in three variants: a random player, a player you pick, or everyone. Players who are behind get the strong variants more often. The drawer cannot be hit.</li>
    <li><b>Ties</b>: most correct wins, then the fastest correct answer.</li>
@@ -3653,9 +3676,9 @@ const DEFAULT_SETTINGS = { mode:'map', rounds:5, roundTime:60, hintEvery:10, hin
   tourModes:[...TOUR_MODES], tourConts:[...CONTS], tourProvs:[...PROV], tourRounds:CONFIG.tour.rounds, tourOrder:'mix', tourDiff:'normal', tourFinal:true };
 // Lijsten die je in een toernooi aan- en uitzet. solo: tik vanuit "alles aan" kiest alleen die ene.
 const TOUR_SETS = { tourModes:{ all:TOUR_MODES, name:m => t(m) }, tourConts:{ all:CONTS, name:c => t(c), solo:true }, tourProvs:{ all:PROV, name:p => t('p'+p), solo:true } };
-const roundsOf = s => s.mode === 'tour' ? s.tourRounds || CONFIG.tour.rounds : s.rounds;
+const roundsOf = s => s.mode === 'blitz' ? 1 : s.mode === 'tour' ? s.tourRounds || CONFIG.tour.rounds : s.rounds;
 // Toegestane waarden per instelling. Een OP stuurt instellingen over het netwerk, dus alles wat hier niet in staat wordt genegeerd.
-const SETTING_OPTS = { mode:['map','street','dutch','hunt','darts','shape','draw','trace','tour'], tourOrder:['mix','cycle','block'], tourDiff:['easy','normal','hard','rise'], nlPlaces:['all','big','towns'], nlView:['sat','photo'], rounds:[5,10,15], roundTime:[30,60,90],
+const SETTING_OPTS = { mode:['map','street','dutch','hunt','darts','shape','draw','trace','blitz','tour'], tourOrder:['mix','cycle','block'], tourDiff:['easy','normal','hard','rise'], nlPlaces:['all','big','towns'], nlView:['sat','photo'], rounds:[5,10,15], roundTime:[30,60,90],
   difficulty:['easy','normal','hard'], continent:['ALL','EU','AM','AS','OC','AF'], weighting:['uniform','area'], hintCount:[4,6,8], hintEvery:[5,10,15,20] };
 function cleanSettings(p){
   const out = {};
@@ -3885,7 +3908,12 @@ function becomeHost(oldHostPeer){
     nextJoin: Math.max(...snap.players.map(p=>p.joinIdx)) + 1, result: snap.result, final: snap.final, round: null, blocked: [], term: (snap.term||0) + 1, termAt: now(),
     ev: snap.ev || [], evN: (snap.ev || []).reduce((a, e) => Math.max(a, e.id), 0),   // sabotage: handen en wat er loopt staan al in de snapshot
   };
-  if (snap.phase === 'round' && snap.round){
+  if (snap.phase === 'round' && snap.round && snap.round.blitz){
+    // Blitz: de rij vragen en ieders voortgang staan in de snapshot. Mijn eigen stand kan verder zijn dan de host nog meldde.
+    const r = snap.round, bz = JSON.parse(JSON.stringify(r.blitz));
+    if (BZ && BZ.roundId === r.id){ const m = bz.p[me.id] = bz.p[me.id] || { i:0, ok:0, sk:0, log:'' }; if (BZ.log.length > m.log.length) Object.assign(m, { i:BZ.i, ok:BZ.ok, sk:BZ.log.length - BZ.ok, log:BZ.log }); }
+    H.round = { ...r, blitz:bz, code:bz.q[0], pins:{}, hintKeys:[], hints:[], startAt: now() - (r.durationMs - Math.max(0, r.remainingMs - (now()-recvAt))), answers:{}, order:0, forced:0, wants:{}, skips:{} };
+  } else if (snap.phase === 'round' && snap.round){
     const r = snap.round;
     // De laatste uit "used" is het antwoord van deze ronde. Terugrekenen vanuit de coördinaten kan misgaan op een kustlijn.
     const code = (snap.used || []).at(-1) || (isNL({ mode: r.mode || snap.settings.mode }) ? nlNearest(r.lat, r.lng).id : countryAt(r.lat, r.lng));
@@ -3970,6 +3998,7 @@ function hostHandle(msg, peerId){
       r.wants[player.id] = true; checkWants();
       broadcast(); break;
     }
+    case 'bz': blitzStep(player, p); break;
     case 'card': sabPlay(player, p); break;
     case 'start':
       if (H.phase === 'lobby' ? !isOp(peerId) : peerId !== selfId) return;
@@ -4072,6 +4101,7 @@ async function nextRound(){
   if (h.finding) return;
   if (h.roundN >= roundsOf(h.settings)) return finish();
   const s = roundCfg(h);
+  if (s.mode === 'blitz') return blitzRound(s);
   let loc = null;
   // Tekenen vraagt twee spelers. Alleen wordt het een silhouet: hetzelfde soort ronde, zonder tekenaar.
   const drawer = s.mode === 'draw' ? pickDrawer() : null;
@@ -4205,7 +4235,7 @@ function startHostLoop(){
 // Zo werkt een hostwissel vanzelf. Wie in de browser gaat zoeken kan het vinden, net als het antwoord zelf.
 const SAB_TYPES = ['bo', 'de', 'jl'], SAB_VARS = ['r', 'c', 'a'], SAB_CARDS = SAB_TYPES.flatMap(k => SAB_VARS.map(v => k + v));
 const sabType = c => String(c).slice(0, 2), sabVar = c => String(c)[2];
-const sabOn = s => !!(s && s.sabotage);
+const sabOn = s => !!(s && s.sabotage && s.mode !== 'blitz');
 // Jetlag: vanaf "at" (ms na de start van de ronde) loopt de klok van die speler een keer zo snel. Twee keer geraakt is drie keer zo snel.
 // rem: tijd die de ronde nog duurt. Uitkomst: tijd die deze speler nog heeft.
 function sabRem(r, pid, rem){
@@ -4372,8 +4402,60 @@ function streakBonus(p, kind){
   p.stk = kind === 'good' ? Math.min(C.max, (p.stk || 0) + 1) : 0;
   return p.stk >= 2 ? C.step * (p.stk - 1) : 0;
 }
+/* ================= BLITZ ================= */
+// Eén ronde van CONFIG.blitz.ms. De host maakt een rij landen; iedereen werkt dezelfde rij in eigen tempo af.
+// Per vraag k: 'f' vlag of 's' silhouet. Voortgang per speler in blitz.p: i (bij welke vraag), ok, sk (overgeslagen), log ('o' goed, 's' overgeslagen).
+// De rij staat in de snapshot, net als het antwoord in andere modi: wie in de browser gaat zoeken kan het vinden.
+function blitzQueue(s){
+  const C = CONFIG.blitz, all = countryPool(s, []), q = [];
+  let pool = [];
+  while (q.length < C.n && all.length){
+    if (!pool.length) pool = all.filter(c => c !== q[q.length-1]);
+    const c = pickCountry(s, pool); q.push(c); pool = pool.filter(x => x !== c);
+  }
+  return q;
+}
+function blitzRound(s){
+  const q = blitzQueue(s); if (!q.length) return finish();
+  const d = s.difficulty, k = q.map(() => d === 'easy' ? 'f' : d === 'hard' ? 's' : Math.random() < .5 ? 'f' : 's').join('');
+  const sh = q.map((c, i) => k[i] === 's' ? (d === 'hard' ? { rot:Math.round(Math.random()*360), flip:false, keep:CONFIG.shape.keep.normal, main:false, grid:false } : { rot:0, flip:false, keep:CONFIG.shape.keep.normal, main:false, grid:false }) : null);
+  H.used.push(q[0]); H.roundN++;
+  H.round = { id: Math.random().toString(36).slice(2,9), n: H.roundN, mode:'blitz', continent: s.continent, final:false, lat:0, lng:0, code:q[0], photo:null, hunt:null, darts:false, pins:{}, shape:null, trace:null,
+    duel: duelStake(H.roundN, 1), draw:null, zoom:0, pan:0, difficulty:d, durationMs: CONFIG.blitz.ms, hintIntervalMs: CONFIG.blitz.ms, hintTotal:0, hintKeys:[], hints:[], startAt: now(), answers:{}, order:0, forced:0, wants:{}, skips:{},
+    blitz: { q, k, sh, p:{} } };
+  H.phase = 'round'; H.result = null; broadcast();
+}
+// Speler meldt een stap: i is de vraag, code het antwoord of skip. Alleen de vraag waar de speler volgens de host staat telt.
+function blitzStep(player, p){
+  const r = H.round;
+  if (!player || H.phase !== 'round' || !r || !r.blitz || p.roundId !== r.id) return;
+  if (now() - r.startAt > r.durationMs + CONFIG.score.latencyMs) return;
+  const B = r.blitz, m = B.p[player.id] = B.p[player.id] || { i:0, ok:0, sk:0, log:'' };
+  if (p.i !== m.i || m.i >= B.q.length) return;
+  if (p.skip){ m.sk++; m.log += 's'; }
+  else if (p.code === B.q[m.i]){ m.ok++; m.log += 'o'; }
+  else return;
+  m.i++; broadcast();
+}
+function blitzEnd(r){
+  const B = r.blitz, C = CONFIG.blitz, mult = roundX(r);
+  const base = Object.fromEntries(H.players.map(p => { const m = B.p[p.id]; return [p.id, m ? m.ok * C.pts : 0]; }));
+  const top = Math.max(0, ...Object.values(base));
+  const winner = r.duel && top > 0 && Object.values(base).filter(v => v === top).length === 1 ? H.players.find(p => base[p.id] === top).id : null;
+  const rows = H.players.map(p => {
+    const m = B.p[p.id] || { i:0, ok:0, sk:0, log:'' }, win = p.id === winner ? CONFIG.duel.win : 0, pts = Math.round((base[p.id] + win) * mult);
+    p.score += pts; p.correct += m.ok; if (pts > p.best) p.best = pts;
+    return { id:p.id, guess:null, ms:null, hints:null, pts, kind: m.ok ? 'good' : 'miss', total:p.score, order: -m.ok, bz:{ ok:m.ok, sk:m.sk, log:m.log }, ...(win ? { win } : {}) };
+  }).sort((a,b) => b.pts - a.pts || a.order - b.order);
+  const n = Math.max(1, ...rows.map(x => x.bz.log.length));
+  H.result = { roundId:r.id, n:r.n, mode:'blitz', final:false, code:B.q[0], lat:0, lng:0, photo:null, rows, last:true, nextAt:CONFIG.resultAutoMs, darts:false, dkm:null, shape:null, trace:null, duel:r.duel || null, draw:null, hunt:null, fx:null,
+    blitz:{ q:B.q.slice(0, n), k:B.k.slice(0, n) } };
+  H.phase = 'result'; H.round = null;
+  scheduleAutoNext(); broadcast();
+}
 function endRound(){
   const r = H.round; if (!r || H.phase !== 'round') return;
+  if (r.blitz) return blitzEnd(r);
   if (r.draw && DR && DR.roundId === r.id) drawFlush();   // host tekent zelf: het laatste stukje lijn gaat nog mee
   // Straatjacht en darts: wie niet vastzette maar wel een pin had, krijgt die pin (zonder tijdbonus).
   const pinMode = r.hunt || r.darts || r.trace, by = r.draw ? r.draw.by : null;
@@ -4431,7 +4513,7 @@ function publicState(){
     // Sabotage: hand (cards), lader (ch), in welke ronde je voor het laatst speelde (played), wat op de volgende ronde wacht (fx) en de tellers voor het eindscherm.
     players: H.players.map(({id,peerId,name,color,avatar,joinIdx,score,connected,correct,best,fastest,op,bm,drew,drewAt,cards,played,fx,sp,sh,ch,stk}) => ({id,peerId,name,color,avatar,joinIdx,score,connected,correct,best,fastest,op:!!op,stk:stk||0,...(bm ? {bm} : {}),...(drew ? {drew,drewAt} : {}),
       ...(sab ? { cards: cards || [], ch: ch ?? CONFIG.sab.charge.start, played: played || 0, fx: fx || [], sp: sp || 0, sh: sh || 0 } : {})})),
-    round: r ? { id:r.id, n:r.n, mode:r.mode, continent:r.continent, final:!!r.final, lat:r.lat, lng:r.lng, photo:r.photo, hunt:r.hunt||null, darts:!!r.darts, shape:r.shape||null, trace:r.trace||null, duel:r.duel||null, draw:r.draw||null, drawN: r.draw && DR && DR.roundId === r.id ? DR.ops.length : 0, zoom:r.zoom, pan:r.pan, difficulty:r.difficulty, durationMs:r.durationMs, hintIntervalMs:r.hintIntervalMs, hintTotal:r.hintTotal,
+    round: r ? { id:r.id, n:r.n, mode:r.mode, continent:r.continent, final:!!r.final, lat:r.lat, lng:r.lng, photo:r.photo, hunt:r.hunt||null, darts:!!r.darts, shape:r.shape||null, trace:r.trace||null, duel:r.duel||null, draw:r.draw||null, drawN: r.draw && DR && DR.roundId === r.id ? DR.ops.length : 0, zoom:r.zoom, pan:r.pan, difficulty:r.difficulty, durationMs:r.durationMs, hintIntervalMs:r.hintIntervalMs, hintTotal:r.hintTotal, ...(r.blitz ? { blitz:r.blitz } : {}),
       hints: r.hints, remainingMs: Math.max(0, r.durationMs - (now()-r.startAt)), answered: Object.keys(r.answers), wants: Object.keys(r.wants||{}), skips: Object.keys(r.skips||{}), redo: !!r.redo,
       ...(r.fx ? { fx: r.fx, alt: r.alt || {} } : {}) } : null,
     ...(sab && H.ev && H.ev.length ? { ev: H.ev } : {}),
@@ -4620,7 +4702,7 @@ function addTiles(m){
 let shapeRO = null;
 // De variabelen staan op #game, zodat Silhouet en Tekenen ze allebei lezen.
 function shapeFit(){
-  if ($('#shape').hidden && $('#draw').hidden && $('#trace').hidden) return;
+  if ($('#shape').hidden && $('#draw').hidden && $('#trace').hidden && $('#blitz').hidden) return;
   const el = $('#game');
   const pr = $('.panel').getBoundingClientRect(), side = pr.left > innerWidth*.3 && pr.top < innerHeight*.5;
   el.style.setProperty('--shB', (side ? 16 : Math.max(16, innerHeight - pr.top + 12)) + 'px');
@@ -4910,8 +4992,10 @@ function renderGame(){
     renderedRound = r.id;
     if (!myAnswer || myAnswer.roundId !== r.id) myAnswer = null;
     huntClear(); HS = null; dartReset(r);
+    $('#blitz').hidden = !r.blitz;
     $('#shape').hidden = !r.shape; $('#shapeTag').hidden = !r.shape; $('#draw').hidden = !r.draw; $('#drawTag').hidden = !r.draw; $('#trace').hidden = !r.trace;
-    if (r.trace){ dropPano(); showTrace(r); }
+    if (r.blitz){ dropPano(); $('#map').hidden = true; $('#pano').hidden = true; BZ = null; fitWatch(); }
+    else if (r.trace){ dropPano(); showTrace(r); }
     else if (r.draw){ dropPano(); showDraw(r); }
     else if (r.shape){ dropPano(); showShape(r); }
     else if (r.hunt){ dropPano(); huntReset(r); showHuntMap(r); }
@@ -4948,7 +5032,8 @@ function renderGame(){
   $('#timeLbl').textContent = fx.jl ? t('sab_jl') + ' x' + (1 + fx.jl.at.length) : t('timeLbl');
   if (first && fx.jl) toast(t('jlHit'));
   $('#mapctl').classList.toggle('off', r.pan === 0 || dark);
-  $('#hintsBox').hidden = drawMe(r) || !!r.trace;   // de tekenaar kent het antwoord: zonder hints blijft er meer vel over
+  $('#hintsBox').hidden = drawMe(r) || !!r.trace || !!r.blitz;
+  if (r.blitz) showBlitz(r);   // de tekenaar kent het antwoord: zonder hints blijft er meer vel over
   const hl = $('#hintList'), sig = r.id + ':' + lang + ':' + r.hints.length;
   if (hl.dataset.sig !== sig){
     const prevCount = hl.dataset.sig && hl.dataset.sig.startsWith(r.id + ':' + lang + ':') ? hl.children.length : 0;
@@ -4975,8 +5060,9 @@ function renderGame(){
   sb.classList.toggle('voted', iSkip);
   sb.textContent = conn > 1 ? t(iSkip ? 'skipVoted' : 'skipVote', { a: skips.length, b: conn }) : t('skipPhoto');
   $('#who').innerHTML = S.players.length > 1 ? S.players.map(p => { const ok = r.answered.includes(p.id), dr = r.draw && r.draw.by === p.id;
-    return `<span class="${ok?'done':''} ${p.connected?'':'off'}">${dotHtml(p)}${esc(p.name)}${fxIcons(r.fx && r.fx[p.id])}${dr ? '<svg class="ic"><use href="#i-pen"/></svg>' : ok ? ' &#10003;' : ''}</span>`; }).join('') : '';
-  $('#answerBox').style.display = locked || out || r.hunt || r.darts || r.trace || drawMe(r) ? 'none' : '';
+    const bz = r.blitz ? ' ' + (p.id === me.id && BZ ? BZ.ok : (r.blitz.p[p.id] || { ok:0 }).ok) : '';
+    return `<span class="${ok?'done':''} ${p.connected?'':'off'}">${dotHtml(p)}${esc(p.name)}${bz}${fxIcons(r.fx && r.fx[p.id])}${dr ? '<svg class="ic"><use href="#i-pen"/></svg>' : ok ? ' &#10003;' : ''}</span>`; }).join('') : '';
+  $('#answerBox').style.display = (locked || out || r.hunt || r.darts || r.trace || drawMe(r)) && !r.blitz ? 'none' : '';
   $('#drawPanel').hidden = !drawMe(r);
   $('#tracePanel').hidden = !r.trace || locked || out;
   $('#trace').classList.toggle('done', !!r.trace && (locked || out));
@@ -4996,6 +5082,50 @@ function renderGame(){
     ? `<svg class="ic"><use href="#i-pin"/></svg><b>${esc(plain(mineLocked && myAnswer.name || t('huntPinned')))}</b><span>${t('lockedAs')}</span>`
     : mineLocked ? `${flagImg(myAnswer.code, 40)}<b>${esc(plain(cname(myAnswer.code)))}</b><span>${t('lockedAs')}</span>` : `<b>${t('lockedAs')}</b>`;
 }
+
+/* Blitz op het scherm. BZ: mijn eigen stand, die loopt voor op de host (die bevestigt alleen). */
+let BZ = null;
+function blitzSync(r){
+  const m = r.blitz.p[me.id];
+  if (!BZ || BZ.roundId !== r.id) BZ = { roundId:r.id, i:0, ok:0, log:'', shown:-1 };
+  if (m && m.log.length > BZ.log.length) Object.assign(BZ, { i:m.i, ok:m.ok, log:m.log });   // na opnieuw verbinden weet de host meer
+}
+function showBlitz(r){
+  blitzSync(r);
+  const B = r.blitz, i = BZ.i, pic = $('#bzPic');
+  $('#bzCount').innerHTML = `<svg viewBox="0 0 24 24" aria-hidden="true"><use href="#m-blitz"/></svg>${BZ.ok}`;
+  if (BZ.shown === i) return;
+  BZ.shown = i;
+  const code = B.q[i];
+  pic.innerHTML = !code ? '' : B.k[i] === 'f'
+    ? `<img src="https://flagcdn.com/w640/${code.toLowerCase()}.png" alt="">`
+    : (shapeSvg(code, B.sh[i]) || '<svg></svg>');
+  pic.classList.remove('in', 'no'); void pic.offsetWidth; pic.classList.add('in');
+  // De volgende vlag alvast laden, dan staat hij er meteen.
+  const nx = B.q[i+1]; if (nx && B.k[i+1] === 'f') new Image().src = `https://flagcdn.com/w640/${nx.toLowerCase()}.png`;
+}
+function blitzSend(p){
+  const r = S.round;
+  const i = BZ.i;
+  BZ.log += p.skip ? 's' : 'o'; if (!p.skip) BZ.ok++; BZ.i++;   // eerst zelf, dan de host: als host verwerk ik het meteen
+  act({ t:'bz', p:{ roundId:r.id, i, ...p } });
+  if (S.phase !== 'round' || !S.round) return;
+  $('#guess').value = ''; closeAc();
+  showBlitz(r); renderGame();
+}
+function blitzGuess(code){
+  const r = S.round; if (!r || !r.blitz || myRem(r) <= 0) return;
+  blitzSync(r);
+  if (!code){ const exact = SEARCH.find(s => s.keys.includes(norm($('#guess').value))); code = exact && exact.code; }
+  if (!code){ toast(t('unknown')); return; }
+  if (code === r.blitz.q[BZ.i]){ beep(990, .07); const c = $('#bzCount'); c.classList.remove('pop'); void c.offsetWidth; c.classList.add('pop'); blitzSend({ code }); }
+  else { beep(200, .12, 'square', .05); $('#guess').value = ''; closeAc(); const pic = $('#bzPic'); pic.classList.remove('in', 'no'); void pic.offsetWidth; pic.classList.add('no'); toast(t('bzWrong')); }
+  $('#guess').focus();
+}
+$('#bzSkip').addEventListener('click', () => {
+  const r = S && S.phase === 'round' && S.round; if (!r || !r.blitz || myRem(r) <= 0) return;
+  blitzSync(r); beep(440, .05, 'triangle'); blitzSend({ skip:true }); $('#guess').focus();
+});
 
 /* ================= TIMER LOOP (lokaal) ================= */
 // De cijfers hebben geen vaste breedte: elk teken een eigen vakje, anders schudt de klok.
@@ -5060,7 +5190,8 @@ function renderAc(){
   if (!acItems.length){ ac.classList.remove('on'); return; }
   const q = norm($('#guess').value);
   const hl = name => { const n = esc(name); const i = norm(name).indexOf(q); if (i !== 0 || !q) return n; let seen = 0, end = 0; for (let j=0;j<name.length && seen<q.length;j++){ if (norm(name[j])) seen++; end = j+1; } return `<mark>${esc(name.slice(0,end))}</mark>${esc(name.slice(end))}`; };
-  ac.innerHTML = acItems.map((c,i)=>`<div class="${i===acSel?'sel':''}" data-code="${c}">${flagImg(c,40)}<span>${hl(cname(c))}</span></div>`).join('');
+  const bzNow = S && S.phase === 'round' && S.round && S.round.blitz;   // Blitz: geen vlaggen in de lijst, anders zoek je gewoon de vlag op
+  ac.innerHTML = acItems.map((c,i)=>`<div class="${i===acSel?'sel':''}" data-code="${c}">${bzNow ? '' : flagImg(c,40)}<span>${hl(cname(c))}</span></div>`).join('');
   ac.classList.add('on');
 }
 $('#guess').addEventListener('input', e => { acItems = search(e.target.value); acSel = 0; renderAc(); });
@@ -5073,6 +5204,7 @@ $('#guess').addEventListener('keydown', e => {
 $('#ac').addEventListener('pointerdown', e => { const d = e.target.closest('[data-code]'); if (d){ e.preventDefault(); submitGuess(d.dataset.code); } });
 $('#guessBtn').addEventListener('click', () => submitGuess(acItems[acSel]));
 function submitGuess(code){
+  if (S && S.phase === 'round' && S.round && S.round.blitz) return blitzGuess(code);
   if (!S || S.phase!=='round' || !S.round || S.round.hunt || drawMe(S.round) || myAnswer || sabOutId === S.round.id) return;
   const nl = nlNow();
   if (!code){ const exact = (nl ? CITY_SEARCH : SEARCH).find(s => s.keys.includes(norm($('#guess').value))); code = exact && exact.code; }
@@ -5109,8 +5241,9 @@ function renderResult(){
     + (S.settings.tourFinal && S.plan.length > 1 ? '<span class="x2">x2</span>' : '');
   $('#resFlag').innerHTML = flagImg(R.code, 80) + (R.shape ? `<span class="silmini" title="${esc(t('shSeen'))}">${shapeSvg(R.code, R.shape, true)}</span>` : '');
   $('#resName').textContent = plain(R.hunt ? R.hunt.n : cname(R.code));
+  if (R.blitz){ $('#resFlag').innerHTML = '<span class="hicon"><svg class="ic" viewBox="0 0 24 24" style="fill:#d0452b;stroke:none"><use href="#m-blitz"/></svg></span>'; $('#resName').textContent = t('blitz'); }
   if (R.hunt) $('#resFlag').innerHTML = `<span class="hicon"><svg class="ic"><use href="#i-${HUNT_ICON[R.hunt.k]}"/></svg></span>`;
-  $('#resSub').textContent = R.hunt ? t('huntIn', { k: t('k_' + R.hunt.k), c: cname(R.code) })
+  $('#resSub').textContent = R.blitz ? t('bzSub', { n: R.blitz.q.length, s: CONFIG.blitz.ms/1000 }) : R.hunt ? t('huntIn', { k: t('k_' + R.hunt.k), c: cname(R.code) })
     : city ? t('p'+city.prov) + ', ' + t('np' + nlHintValue('n_pop', city.id))
     : [t(c.cont), lang==='nl' ? (SUB_NL[c.sub]||c.sub) : c.sub, c.cap].filter(Boolean).join(', ');
   const P = R.photo;
@@ -5141,7 +5274,7 @@ function renderResult(){
   const firstPaint = renderedResult !== R.roundId;
   $('#resBody').innerHTML = R.rows.map((row, i) => {
     const p = playerById(row.id) || { name:'?', color:'#888' };
-    const g = R.trace ? (row.tr ? `<span class="${row.kind}">${esc(t('traceMatch', { p: row.pct || 0 }))}</span>` : `<span class="sub">${t('noAnswer')}</span>`)
+    const g = row.bz ? `<span class="${row.kind}">${esc(t('bzRes', { a: row.bz.ok, b: row.bz.sk }))}</span>` : R.trace ? (row.tr ? `<span class="${row.kind}">${esc(t('traceMatch', { p: row.pct || 0 }))}</span>` : `<span class="sub">${t('noAnswer')}</span>`)
       : row.drew ? `<span class="${row.kind}"><svg class="ic pen"><use href="#i-pen"/></svg>${esc(t('drawGot', { a: row.drew[0], b: row.drew[1] }))}</span>`
       : row.dist != null && R.darts ? `<span class="${row.kind}">${t('dr' + row.ring)}, ${row.dist.toLocaleString(lang === 'nl' ? 'nl-NL' : 'en-GB')} km</span>${row.dbl ? ' <b class="x2">x2</b>' : ''}`
       : row.dist != null ? `<span class="${row.kind}">${row.dist} m</span>`
@@ -5168,6 +5301,18 @@ function drawResultMap(R){
   rmap.invalidateSize();
   rmap.eachLayer(l => { if (!(l instanceof L.TileLayer)) rmap.removeLayer(l); });
   if (resLabels){ resLabels.remove(); resLabels = null; }
+  if (R.blitz){
+    // Blitz: mijn rij op de kaart. Goed groen, overgeslagen oranje, niet bereikt grijs.
+    const mine = R.rows.find(x => x.id === me.id), log = mine && mine.bz ? mine.bz.log : '', fit = L.latLngBounds([]);
+    R.blitz.q.forEach((c, i) => {
+      const g = GEO[c]; if (!g) return;
+      const col = log[i] === 'o' ? '#3e8a63' : log[i] === 's' ? '#e8552a' : '#888';
+      const lay = L.geoJSON(g.feature, { style:{ color:'#fff', weight:1.5, fillColor:col, fillOpacity:.55 } }).bindTooltip(esc(cname(c)), { direction:'top', className:'scanTip' }).addTo(rmap);
+      if (log[i]) fit.extend(lay.getBounds());
+    });
+    if (fit.isValid()) rmap.fitBounds(fit, { padding:[20,20], maxZoom:5, animate:false }); else rmap.setView([20, 0], 1, { animate:false });
+    return;
+  }
   if (R.hunt){
     // Doel oplichten, iedereen zijn pin, en nu wel de straatnamen op de kaart.
     const g = R.hunt.g, lines = g.l ? g.l.map(line => { const p = []; for (let i=0; i<line.length; i+=2) p.push([line[i], line[i+1]]); return p; }) : [];

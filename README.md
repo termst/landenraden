@@ -94,6 +94,7 @@ punten = 1000 x nauwkeurigheid x hintfactor x tijdfactor
 | Silhouet | Als Satelliet. De plek is het punt in het hoofddeel dat het dichtst bij het midden ligt |
 | Tekenen | Raders als Silhouet. Tekenaar: het gemiddelde van de punten van de raders |
 | Grens trekken | 0,6 x min(1, (overlap / 0,85)²) + 0,4 x overlap / beste overlap van de ronde. Geen hints en geen tijdbonus |
+| Blitz | 100 punten per goed antwoord (`CONFIG.blitz.pts`). Fout en overslaan: 0 |
 | Duel (precies 2 spelers) | Bovenop elke modus: rondewinst +200 en inzet x1 tot x2 (zie Duel) |
 | Toernooi | Per ronde als de modus van die ronde. Finale aan: de laatste ronde x2 |
 
@@ -209,6 +210,17 @@ Kies in de lobby de modus **Silhouet**. Je ziet alleen de omtrek van een land op
 * Continent, landkeuze, kleine landen en soorten hints werken zoals bij Satelliet. Kleine landen staan standaard uit, want een stadstaat is een vlek.
 * Op het uitslagscherm zie je het land op de kaart en naast de vlag de vorm zoals jij hem zag.
 * Instellingen staan in `CONFIG.shape`.
+
+## Blitz
+
+Kies in de lobby de modus **Blitz**. Eén ronde van 60 seconden (`CONFIG.blitz.ms`): zoveel mogelijk landen goed.
+
+* De host maakt een rij van 150 landen uit het gekozen continent. Iedereen krijgt dezelfde rij en werkt die in eigen tempo af.
+* Goed: meteen de volgende. Fout: het beeld schudt, je probeert opnieuw. **Overslaan** mag altijd, het kost alleen tijd.
+* **Makkelijk**: vlaggen. **Normaal**: vlaggen en silhouetten door elkaar. **Moeilijk**: gedraaide silhouetten.
+* In de lijst met landen staan geen vlaggen, anders zoek je de vlag gewoon op.
+* Geen hints, geen Sabotage. Rondes en rondetijd staan vast. Duel werkt wel (rondewinst +200).
+* Op het uitslagscherm zie je jouw rij op de kaart: groen goed, oranje overgeslagen.
 
 ## Tekenen
 
