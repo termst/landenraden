@@ -1388,6 +1388,7 @@ body.sw-wait :is(#chatBtn,#emoBtn,#sabHand){visibility:hidden}
         <div class="ddp" id="avPanel" hidden><div class="avatars" id="avatars" role="radiogroup"></div></div></div>
     </div>
     <div class="acts">
+      <button class="btn" id="rejoinBtn" hidden><svg class="ic"><use href="#i-enter"/></svg><span></span></button>
       <button class="btn pri" id="createBtn"><svg class="ic"><use href="#i-plus"/></svg><span data-i="create"></span></button>
       <div class="row"><input type="text" id="codeIn" maxlength="4" placeholder="ABCD" autocomplete="off" autocorrect="off" autocapitalize="characters" spellcheck="false" enterkeyhint="go"><button class="btn" id="joinBtn"><svg class="ic"><use href="#i-enter"/></svg><span data-i="join"></span></button></div>
       <button class="btn sec" id="soloBtn"><svg class="ic"><use href="#i-user"/></svg><span data-i="solo"></span></button>
@@ -1695,19 +1696,32 @@ body.sw-wait :is(#chatBtn,#emoBtn,#sabHand){visibility:hidden}
 </script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
 <script type="module">
-// Trystero apart laden: valt de CDN weg (netwerk, adblocker), dan blijft solo gewoon werken.
-let joinRoom = null, netSelf = null, selfId = 'local-' + Math.random().toString(36).slice(2,10);
-const netReady = Promise.race([
-  import('https://cdn.jsdelivr.net/npm/trystero@0.26.0/nostr/+esm').then(m => { joinRoom = m.joinRoom; netSelf = m.selfId; }),
-  new Promise(res => setTimeout(res, 12000)),
-]).catch(()=>{});
+// PeerJS apart laden: valt de CDN weg (netwerk, adblocker), dan blijft solo gewoon werken. Lukt de eerste CDN niet, dan de tweede.
+let PJ = null, selfId = 'local-' + Math.random().toString(36).slice(2,10);
+const loadScript = src => new Promise((res, rej) => { const s = document.createElement('script'); s.src = src; s.async = true; s.crossOrigin = 'anonymous'; s.onload = res; s.onerror = () => { s.remove(); rej(); }; document.head.appendChild(s); });
+let netReady = null;
+const loadNet = () => netReady = netReady || (async () => {
+  for (const src of CONFIG.net.lib){
+    try { await Promise.race([loadScript(src), new Promise((_, rej) => setTimeout(rej, 8000))]); } catch(e){ continue; }
+    if (window.peerjs && window.peerjs.Peer){ PJ = window.peerjs; return; }
+  }
+  netReady = null;   // volgende poging opnieuw laden
+})();
 
 /* ================= CONFIG ================= */
 const CONFIG = {
-  appId: 'landenraden-p2p-v1',
+  // Multiplayer via PeerJS (zie README). De host meldt zich bij de server aan onder het adres van de kamer, iedereen verbindt met de host.
+  // server: de gratis PeerJS cloud. Eigen server: npx peerjs --port 9000, en vul host, port, path en secure in.
+  // doors: zoveel kameradressen proberen we tegelijk bij het joinen (na elke hostwissel schuift het adres een plek op).
+  net: {
+    prefix: 'landenraden-v2',
+    server: { host: '0.peerjs.com', port: 443, path: '/', secure: true, key: 'peerjs' },
+    lib: ['https://cdn.jsdelivr.net/npm/peerjs@1.5.5/dist/peerjs.min.js', 'https://unpkg.com/peerjs@1.5.5/dist/peerjs.min.js'],
+    // graceMs: na een hostwissel tellen spelers zo lang mee terwijl ze opnieuw verbinden. lostMs: zo lang proberen we het na verlies van de host.
+    doors: 6, openMs: 10000, knockMs: 12000, settleMs: 700, deadMs: 12000, graceMs: 8000, lostMs: 45000, lastMs: 3 * 3600e3,
+  },
   maxPlayers: 6,
   reserveMs: 30000,
-  joinTimeoutMs: 25000,
   resultAutoMs: 12000,
   // Punten per ronde = max x nauwkeurigheid x hintfactor x tijdfactor (zie scoreFor, huntScore, dartScore).
   // hintCut: alle hints gezien kost zoveel. giveaway: factor na een hint die het antwoord verklapt (naam).
@@ -1764,12 +1778,13 @@ const CONFIG = {
     main: { url: 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', attr: 'Tiles &copy; Esri', maxZoom: 18 },
     fallback: { url: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png', attr: '&copy; OpenStreetMap', maxZoom: 19 },
   },
-  // TURN fallback voor strikte netwerken (zie README). Leeg laten werkt meestal ook.
+  // Extra TURN servers voor strikte netwerken (zie README). PeerJS heeft er zelf al een, deze komen erbij.
   turn: [
     // { urls: 'turn:global.relay.metered.ca:80', username: 'JOUW_USERNAME', credential: 'JOUW_CREDENTIAL' },
     // { urls: 'turn:global.relay.metered.ca:443?transport=tcp', username: 'JOUW_USERNAME', credential: 'JOUW_CREDENTIAL' },
   ],
 };
+loadNet();
 const COLORS = ['#c2432b','#1f5868','#b9801a','#5b6ee1','#8a4fa8','#2d7a4d','#d46a8f','#4a5258',
   '#e53935','#fb8c00','#fdd835','#c0ca33','#43a047','#00897b','#00acc1','#1e88e5','#3949ab','#8e24aa','#ec407a','#6d4c41','#78909c','#212121','#f5f5f5','#ffe082'];
 // Elke geldige #rrggbb mag (kleurkiezer). Lichte kleuren krijgen een donker icoon, zodat het altijd leesbaar blijft.
@@ -1816,8 +1831,8 @@ const I18N = {
   stGames:'Potjes', stMulti:'{n} met anderen', stWins:'Gewonnen', stOf:'van {n}', stPoints:'Punten', stAvg:'Gemiddeld per ronde', stPerRound:'gemiddeld per ronde', stBestGame:'Beste potje', stRounds:'Rondes', stModes:'Per modus', stRecent:'Laatste potjes', stBest:'Beste per ronde',
   stEmpty:'Nog geen potjes. Speel er een uit tot het eindscherm.', backup:'Back-up', backupHelp:'Kopieer de code en plak hem op een ander apparaat of na het wissen van je browser. Naam, kleur, avatar, instellingen en statistieken gaan mee.',
   bkCopy:'Kopieer code', bkLoad:'Herstel', bkCopied:'Code gekopieerd', bkPaste:'Plak eerst een code', bkBad:'Ongeldige code', bkConfirm:'Dit vervangt je profiel en statistieken op dit apparaat. Doorgaan?', stReset:'Statistieken wissen', stResetQ:'Alle statistieken wissen? Dit kan niet terug.', newRecord:'Nieuw record!',
-  searching:'Kamer {c} zoeken', searchingSub:'Kan 5 tot 10 seconden duren.',
-  notFound:'Kamer niet gevonden. Controleer de code.', connFail:'Kamer gevonden, maar dit netwerk blokkeert de verbinding. Probeer wifi of stel TURN in (zie README).', full:'Kamer is vol, max 6.', started:'Spel is al bezig.',
+  searching:'Kamer {c} zoeken', searchingSub:'Duurt meestal 1 tot 5 seconden.', reconnecting:'Verbinding weg, opnieuw verbinden', reconnected:'Weer verbonden.', lostConn:'Verbinding met de kamer verloren.', rejoin:'Terug naar kamer {c}', reopened:'Kamer {c} opnieuw geopend.', srvFail:'De multiplayer server is niet bereikbaar. Controleer je internet en probeer het opnieuw.',
+  notFound:'Kamer niet gevonden. Controleer de code.', connFail:'Kamer gevonden, maar de host reageert niet. Probeer het opnieuw, of wissel van netwerk (wifi of 4G).', full:'Kamer is vol, max 6.', started:'Spel is al bezig.',
   kicked:'Van de schijf geduwd: de host heeft je uit de kamer gezet.', hostLeft:'Host weg, nieuwe host kiezen', youHost:'Jij bent nu host.',
   op:'OP', opGive:'OP geven', opTake:'OP afnemen', opGot:'Je bent nu OP: je kunt de instellingen aanpassen en starten.', opLost:'Je bent geen OP meer.',
   loading:'Laden', copied:'Link gekopieerd', cancel:'Annuleren', close:'Sluiten', dataFail:'Data laden mislukt. Draai via een webserver.',
@@ -1939,8 +1954,8 @@ const I18N = {
   stGames:'Games', stMulti:'{n} with others', stWins:'Won', stOf:'of {n}', stPoints:'Points', stAvg:'Average per round', stPerRound:'average per round', stBestGame:'Best game', stRounds:'Rounds', stModes:'Per mode', stRecent:'Recent games', stBest:'Best per round',
   stEmpty:'No games yet. Play one through to the final screen.', backup:'Backup', backupHelp:'Copy the code and paste it on another device or after clearing your browser. Name, color, avatar, settings and stats are included.',
   bkCopy:'Copy code', bkLoad:'Restore', bkCopied:'Code copied', bkPaste:'Paste a code first', bkBad:'Invalid code', bkConfirm:'This replaces your profile and stats on this device. Continue?', stReset:'Clear stats', stResetQ:'Clear all stats? This cannot be undone.', newRecord:'New record!',
-  searching:'Looking for room {c}', searchingSub:'Can take 5 to 10 seconds.',
-  notFound:'Room not found. Check the code.', connFail:'Room found, but this network blocks the connection. Try wifi or set up TURN (see README).', full:'Room is full, max 6.', started:'Game already running.',
+  searching:'Looking for room {c}', searchingSub:'Usually takes 1 to 5 seconds.', reconnecting:'Connection lost, reconnecting', reconnected:'Connected again.', lostConn:'Lost the connection to the room.', rejoin:'Back to room {c}', reopened:'Room {c} reopened.', srvFail:'Cannot reach the multiplayer server. Check your internet and try again.',
+  notFound:'Room not found. Check the code.', connFail:'Room found, but the host does not respond. Try again, or switch network (wifi or 4G).', full:'Room is full, max 6.', started:'Game already running.',
   kicked:'Pushed off the disc: the host removed you from the room.', hostLeft:'Host left, picking a new host', youHost:'You are now host.',
   op:'OP', opGive:'Make OP', opTake:'Remove OP', opGot:'You are now OP: you can edit the settings and start.', opLost:'You are no longer OP.',
   loading:'Loading', copied:'Link copied', cancel:'Cancel', close:'Close', dataFail:'Could not load data. Run from a web server.',
@@ -2102,6 +2117,7 @@ function show(id){
   if (id !== 'game' && !go) dropPano();
   if (prev === id) return;
   document.body.dataset.screen = id; updateChat(); document.querySelectorAll('.screen').forEach(s=>s.classList.toggle('on', s.id===id));
+  if (id === 'start') renderRejoin();
   if (go) swipe($('#' + prev), $('#' + id));
 }
 function overlay(text, sub='', cancel=false){ const o=$('#ovLoad'); if(!text){o.classList.remove('on');return;} $('#ovText').textContent=text; $('#ovSub').textContent=sub; $('#ovCancel').style.display=cancel?'':'none'; if(!o.classList.contains('on')) ldrFill(); o.classList.add('on'); }
@@ -3773,7 +3789,7 @@ let S = null;               // laatste publieke snapshot (iedereen)
 let H = null;               // host-only private state
 let recvAt = 0, latency = 0;
 let myAnswer = null;        // { roundId, code, hintsSeen, frac }
-let sendMsg = null, joinTimer = null, hostWatch = null;
+let sendMsg = null, joinTimer = null;
 // Eén maak-, join- of solo-actie tegelijk. Een tweede klik of Enter startte anders een tweede zoektimer die niemand meer stopte:
 // je kwam binnen en werd 15 s later met "kamer niet gevonden" uit de lobby gezet. Een nieuwe kamer wacht ook tot de vorige verlaten is.
 let entering = false, leaving = Promise.resolve();
@@ -3781,46 +3797,239 @@ const busy = () => entering || !!room || !!S;
 async function enter(fn){
   if (busy()) return;
   entering = true;
-  try { await leaving; await fn(); } finally { entering = false; }
+  try { await leaving; await fn(); } finally { entering = false; renderRejoin(); }
 }
 
-/* ================= NETWORK ================= */
-function connect(code){
-  roomCode = code;
-  if (netSelf) selfId = netSelf;
-  room = joinRoom({ appId: CONFIG.appId, turnConfig: CONFIG.turn.length ? CONFIG.turn : undefined }, 'LR-' + code, { onJoinError: () => {
-    // De kamer is wel gevonden, maar het netwerk laat geen directe verbinding toe. Dat is iets anders dan "kamer niet gevonden".
-    if (S || isHost || code !== roomCode) return;
-    clearTimeout(joinTimer); overlay(null); disconnect().then(() => { show('start'); $('#startErr').textContent = t('connFail'); });
-  } });
-  const action = room.makeAction('m');
-  sendMsg = (msg, target) => action.send(msg, target ? { target } : undefined).catch(()=>{});
-  action.onMessage = (msg, ctx) => onNet(msg, ctx.peerId);
-  const chatAct = room.makeAction('c');
-  sendChat = msg => chatAct.send(msg).catch(()=>{});
-  chatAct.onMessage = (m, ctx) => receiveChat(m, typeof ctx === 'string' ? ctx : ctx && ctx.peerId);
-  room.onPeerJoin = peerId => {
-    if (isHost) return; // host wacht op hello
-    sendMsg({ t:'hello', p: helloPayload() }, peerId);
+/* ================= NETWORK =================
+   PeerJS, als ster. De host meldt zich bij de PeerJS-server aan onder het adres van de kamer: de deur. Iedereen verbindt met de host,
+   berichten tussen spelers onderling (tekening, chat) stuurt de host door. Bestaat de deur niet, dan zegt de server dat binnen een paar
+   seconden, en een code die al in gebruik is geeft de server niet nog eens uit.
+   Na een hostwissel krijgt de kamer een nieuwe deur (ABCD, ABCD-1, ABCD-2): de oude kan nog even bezet blijven als de host zomaar wegviel.
+   Wie met de code binnenkomt klopt op een paar deuren tegelijk en kiest de hoogste termijn. Over de lijn gaat JSON, net als vroeger. */
+const door = (code, term) => CONFIG.net.prefix + '-' + code + (term ? '-' + term : '');
+const clientId = () => CONFIG.net.prefix + '-c-' + Math.random().toString(36).slice(2, 12);
+const wire = o => JSON.stringify(o);
+const unwire = raw => { try { return typeof raw === 'string' ? JSON.parse(raw) : null; } catch(e){ return null; } };
+const sleep = ms => new Promise(res => setTimeout(res, ms));
+const closeConn = c => { if (!c) return; c.removeAllListeners(); try { c.close(); } catch(e){} };
+// netSeq: hoort een lopende join of herverbinding nog bij de huidige kamer? netAborts: lopende wachttijden die Annuleren meteen afbreekt.
+let netSeq = 0;
+const netAborts = new Set();
+
+function newPeer(id){
+  const o = { ...CONFIG.net.server, debug: 0 };
+  // Eigen config overschrijft die van PeerJS, dus de standaard servers (STUN en de PeerJS TURN) houden we erbij.
+  if (CONFIG.turn.length) o.config = { iceServers: [...((PJ.util && PJ.util.defaultConfig && PJ.util.defaultConfig.iceServers) || []), ...CONFIG.turn] };
+  return new PJ.Peer(id, o);
+}
+// Aanmelden bij de server. Geeft de peer, of de soort fout: unavailable-id (adres bezet), timeout, cancel of iets met het netwerk.
+function openPeer(id){
+  return new Promise((res, rej) => {
+    const p = newPeer(id);
+    const done = err => { clearTimeout(tm); netAborts.delete(abort); p.off('open', ok); p.off('error', bad); if (err){ try { p.destroy(); } catch(e){} rej(err); } else res(p); };
+    const ok = () => done(null), bad = e => { if (!e || e.type !== 'peer-unavailable') done((e && e.type) || 'network'); }, abort = () => done('cancel');
+    const tm = setTimeout(() => done('timeout'), CONFIG.net.openMs);
+    netAborts.add(abort); p.on('open', ok); p.on('error', bad);
+  });
+}
+// Klop op deur from tot from+n-1 tegelijk. Wie opendoet stuurt zijn termijn; na de eerste wachten we heel even op de rest en kiezen de hoogste.
+// Geeft de verbinding (met .term), of: notFound (geen enkele deur bestaat), connFail (een deur bestaat maar niemand doet open), offline, cancel.
+function knock(peer, code, from = 0, n = CONFIG.net.doors, ms = CONFIG.net.knockMs){
+  return new Promise(resolve => {
+    if (!peer || peer.destroyed || peer.disconnected) return resolve('offline');
+    const ids = Array.from({ length: n }, (_, i) => door(code, from + i)), gone = new Set(), got = [], conns = [];
+    let settle = null, done = false;
+    const finish = why => {
+      if (done) return; done = true;
+      clearTimeout(settle); clearTimeout(tm); peer.off('error', onErr); netAborts.delete(abort);
+      got.sort((a, b) => b.term - a.term);
+      const win = why === 'cancel' ? null : got[0] && got[0].conn;
+      for (const c of conns) if (c !== win) closeConn(c);
+      if (win){ win.removeAllListeners(); win.term = got[0].term; }
+      resolve(why === 'cancel' ? 'cancel' : win || (gone.size === ids.length ? 'notFound' : 'connFail'));
+    };
+    const check = () => { if (gone.size + got.length >= ids.length) finish(); };
+    const onErr = e => {
+      if (!e || e.type !== 'peer-unavailable') return;
+      const id = String(e.message || '').split(' ').pop();
+      if (ids.includes(id)){ gone.add(id); check(); }
+    };
+    const abort = () => finish('cancel');
+    const tm = setTimeout(finish, ms);
+    netAborts.add(abort); peer.on('error', onErr);
+    for (const id of ids){
+      const c = peer.connect(id, { reliable: true });
+      if (!c) return finish();
+      conns.push(c);
+      c.on('data', raw => {
+        const d = unwire(raw);
+        if (done || !d || d.k !== 'door' || got.some(g => g.conn === c)) return;
+        got.push({ conn: c, term: +d.term || 0 }); check();
+        if (!settle) settle = setTimeout(finish, CONFIG.net.settleMs);
+      });
+    }
+  });
+}
+
+// De kamer: één PeerJS-peer met zijn verbindingen. Als host met alle spelers, als speler alleen met de host.
+// k: 'm' spelberichten, 'c' chat. to: doorsturen via de host ('*' is iedereen). f: van wie het doorgestuurde bericht kwam.
+// Hartslag: de speler stuurt elke 3 s iets, de host gooit een verbinding die deadMs stil is weg (een telefoon zonder bereik sluit niet netjes af).
+function makeRoom(peer, host){
+  const R = { peer, host, conns: new Map(), seen: new Map(), hostConn: null, pings: {}, onData: null, onPeerLeave: null, onSignal: null, dead: false, retry: 0, timer: null };
+  const send = (c, o) => { if (c && c.open) try { c.send(wire(o)); } catch(e){} };
+  const deliver = (k, d, from) => { if (R.onData && (k === 'm' || k === 'c')) R.onData(k, d, from); };
+  R.drop = (c, bye) => {
+    if (R.dead) return;
+    if (R.host){ if (R.conns.get(c.peer) !== c) return; R.conns.delete(c.peer); R.seen.delete(c.peer); }
+    else if (R.hostConn === c) R.hostConn = null;
+    else return;
+    R.onPeerLeave && R.onPeerLeave(c.peer, bye);
   };
-  room.onPeerLeave = peerId => onPeerLeave(peerId);
+  const onWire = (c, d) => {
+    if (R.dead || !d || typeof d !== 'object') return;
+    if (R.host){
+      if (R.conns.get(c.peer) !== c) return;
+      R.seen.set(c.peer, Date.now());
+      if (d.k === 'pi') return send(c, { k:'po', n:d.n });
+      if (d.k === 'bye'){ R.drop(c, true); return closeConn(c); }
+      if (d.k !== 'm' && d.k !== 'c') return;
+      if (d.to === '*') for (const [id, o] of R.conns){ if (id !== c.peer) send(o, { k:d.k, d:d.d, f:c.peer }); }
+      else if (d.to && d.to !== peer.id) return send(R.conns.get(d.to), { k:d.k, d:d.d, f:c.peer });
+      deliver(d.k, d.d, c.peer);
+    } else {
+      if (R.hostConn !== c) return;
+      if (d.k === 'po'){ const f = R.pings[d.n]; if (f){ delete R.pings[d.n]; f(); } return; }
+      if (d.k === 'bye'){ R.drop(c, true); return closeConn(c); }
+      deliver(d.k, d.d, typeof d.f === 'string' ? d.f : c.peer);
+    }
+  };
+  R.watch = c => {
+    c.on('data', raw => onWire(c, unwire(raw)));
+    c.on('close', () => R.drop(c));
+    c.on('error', () => { R.drop(c); closeConn(c); });
+  };
+  R.send = (k, d, target) => {
+    if (R.host){ if (target) send(R.conns.get(target), { k, d }); else for (const c of R.conns.values()) send(c, { k, d }); }
+    else if (R.hostConn) send(R.hostConn, target === R.hostConn.peer ? { k, d } : { k, d, to: target || '*' });
+  };
+  R.toHost = (k, d) => send(R.hostConn, { k, d });
+  R.getPeers = () => {
+    const o = {};
+    if (R.host){ for (const [id, c] of R.conns) if (c.open) o[id] = c; }
+    else if (R.hostConn && R.hostConn.open) o[R.hostConn.peer] = R.hostConn;
+    return o;
+  };
+  R.ping = () => new Promise((res, rej) => {
+    if (R.host || !R.hostConn || !R.hostConn.open) return rej();
+    const n = Math.random().toString(36).slice(2, 8), t0 = performance.now();
+    R.pings[n] = () => res(performance.now() - t0); send(R.hostConn, { k:'pi', n });
+    setTimeout(() => { delete R.pings[n]; rej(); }, 3000);
+  });
+  // Speler: de verbinding met de host (uit knock) in gebruik nemen.
+  R.attach = c => { if (R.hostConn && R.hostConn !== c) closeConn(R.hostConn); R.hostConn = c; R.watch(c); };
+  // Host wordt speler (er bleek een nieuwere host te zijn): alle verbindingen dicht, de spelers kloppen zelf bij de nieuwe.
+  R.toClient = () => { R.bye(); R.host = false; for (const c of R.conns.values()) closeConn(c); R.conns.clear(); R.seen.clear(); };
+  // Netjes weg (Verlaten, tabblad dicht, herladen): even zeggen, dan hoeft niemand op de hartslag te wachten.
+  R.bye = () => { if (R.host) for (const c of R.conns.values()) send(c, { k:'bye' }); else send(R.hostConn, { k:'bye' }); };
+  // Binnenkomend: spelers, en wie alleen even klopt. Wie al verbonden was en opnieuw binnenkomt, krijgt de nieuwe verbinding.
+  peer.on('connection', c => {
+    if (!R.host || R.dead) return closeConn(c);
+    c.on('open', () => {
+      if (!R.host || R.dead) return closeConn(c);
+      const old = R.conns.get(c.peer); if (old && old !== c) closeConn(old);
+      R.conns.set(c.peer, c); R.seen.set(c.peer, Date.now());
+      send(c, { k:'door', term: H ? H.term || 0 : 0 });
+    });
+    R.watch(c);
+  });
+  // Verbinding met de server weg (slaapstand, ander netwerk): de spelverbindingen blijven, maar nieuwe spelers komen er niet in. Opnieuw aanmelden.
+  peer.on('disconnected', () => {
+    if (R.dead) return;
+    clearTimeout(R.timer);
+    R.timer = setTimeout(() => { if (!R.dead && peer.disconnected && !peer.destroyed) try { peer.reconnect(); } catch(e){} }, Math.min(10000, 1000 * 2 ** R.retry++));
+  });
+  peer.on('open', () => { R.retry = 0; R.onSignal && R.onSignal(); });
+  peer.on('error', () => {});
+  R.beat = setInterval(() => {
+    if (R.dead) return;
+    if (!R.host) return send(R.hostConn, { k:'ka' });
+    const n = Date.now();
+    for (const [id, c] of R.conns) if (n - (R.seen.get(id) || 0) > CONFIG.net.deadMs){ R.drop(c); closeConn(c); }
+  }, 3000);
+  R.leave = () => { if (R.dead) return; R.bye(); R.dead = true; clearInterval(R.beat); clearTimeout(R.timer); setTimeout(() => { try { peer.destroy(); } catch(e){} }, 150); };
+  return R;
+}
+
+// Kamer in gebruik nemen: berichten naar het spel, en de code in de adresbalk zodat herladen je terugbrengt.
+function useRoom(R, code){
+  room = R; roomCode = code; selfId = R.peer.id; lastSaved = 0;
+  sendMsg = (msg, target) => R.send('m', msg, target);
+  sendChat = msg => R.send('c', msg);
+  R.onData = (k, d, from) => k === 'm' ? onNet(d, from) : receiveChat(d, from);
+  R.onPeerLeave = (peerId, bye) => onPeerLeave(peerId, bye);
+  R.onSignal = () => { if (isHost) checkNewer(); };
   location.hash = 'room=' + code;
+}
+// Nieuwe kamer als host. Is de code al in gebruik, dan een andere. Met code: precies die (een kamer heropenen). Geeft true of een fout.
+async function createRoom(code){
+  const seq = netSeq;
+  for (let i = 0; i < 4; i++){
+    const c = code || makeCode();
+    let peer;
+    try { peer = await openPeer(door(c, 0)); }
+    catch(e){ if (seq !== netSeq || e === 'cancel') return 'cancel'; if (e === 'unavailable-id' && !code) continue; return e === 'unavailable-id' ? 'notFound' : 'srvFail'; }
+    if (seq !== netSeq){ peer.destroy(); return 'cancel'; }
+    useRoom(makeRoom(peer, true), c); hostInit();
+    return true;
+  }
+  return 'srvFail';
+}
+// Joinen met een code: aanmelden bij de server, kloppen, hello naar de host. Geeft true of een fout (srvFail, notFound, connFail, cancel).
+async function joinRoomCode(code){
+  const seq = netSeq;
+  let peer;
+  try { peer = await openPeer(clientId()); } catch(e){ return e === 'cancel' || seq !== netSeq ? 'cancel' : 'srvFail'; }
+  if (seq !== netSeq){ peer.destroy(); return 'cancel'; }
+  const R = makeRoom(peer, false), res = await knock(peer, code);
+  if (seq !== netSeq || typeof res === 'string'){ R.leave(); return seq !== netSeq ? 'cancel' : res === 'offline' ? 'srvFail' : res; }
+  R.attach(res); useRoom(R, code);
+  sendMsg({ t:'hello', p: helloPayload() }, res.peer);
+  return true;
 }
 const helloPayload = () => ({ id: me.id, name: me.name, color: me.color, avatar: me.avatar });
 function disconnect(){ return leaving = leaving.then(doDisconnect, doDisconnect); }
 async function doDisconnect(){
-  clearTimeout(joinTimer); clearInterval(hostWatch);
+  netSeq++; for (const f of [...netAborts]) f(); netAborts.clear();
+  clearTimeout(joinTimer);
   if (H) { clearInterval(H.loop); clearTimeout(H.autoNext); }
-  if (room) { try { await room.leave(); } catch(e){} }
+  if (room) room.leave();
   room = null; sendMsg = null; sendChat = null; chatLog = []; unread = 0; $('#chat').classList.remove('on'); closeEmoTray(); $('#emoLayer').innerHTML = ''; isHost = false; solo = false; S = null; H = null; myAnswer = null; roomCode = null; lastSig = ''; HS = null; dartReset(null); DR = null; ovFinding = false;
   sabSeen = 0; sabOutId = null; sabUi();
   history.replaceState(null, '', location.pathname + location.search);
 }
+// Join of verbinding mislukt: terug naar het startscherm met de reden.
+function bail(key){ clearTimeout(joinTimer); overlay(null); return disconnect().then(() => { show('start'); $('#startErr').textContent = t(key); renderRejoin(); }); }
 
-// Actie van mezelf: host verwerkt lokaal, peer stuurt naar host.
+// Laatste kamer onthouden: na herladen, een gesloten tabblad of een verloren verbinding kun je terug, met dezelfde speler en score.
+let lastSaved = 0, lastH = false;
+function getLast(){
+  try { const v = JSON.parse(store.get('lr_last') || 'null'); return v && typeof v.c === 'string' && /^[A-Z0-9]{4}$/.test(v.c) && Date.now() - v.at < CONFIG.net.lastMs ? v : null; } catch(e){ return null; }
+}
+function saveLast(){
+  if (!roomCode || solo || (Date.now() - lastSaved < 15000 && lastH === isHost)) return;
+  lastSaved = Date.now(); lastH = isHost; store.set('lr_last', JSON.stringify({ c: roomCode, at: lastSaved, h: isHost }));
+}
+function clearLast(code){ const l = getLast(); if (!code || (l && l.c === code)) store.del('lr_last'); renderRejoin(); }
+function renderRejoin(){
+  const b = $('#rejoinBtn'); if (!b) return;
+  const l = getLast(); b.hidden = !l || busy();
+  if (l) b.querySelector('span').textContent = t('rejoin', { c: l.c });
+}
+
+// Actie van mezelf: host verwerkt lokaal, speler stuurt naar host.
 function act(msg){
   if (isHost) hostHandle(msg, selfId);
-  else if (S && sendMsg) sendMsg(msg, S.hostPeer);
+  else if (S && room) room.toHost('m', msg);
 }
 // Host stuurt snapshot naar iedereen en verwerkt hem zelf.
 function broadcast(){
@@ -3832,17 +4041,17 @@ function broadcast(){
 
 function onNet(msg, peerId){
   if (!msg || typeof msg !== 'object') return;
-  if (msg.t === 'draw' || msg.t === 'drawsync' || msg.t === 'drawfull') return drawNet(msg, peerId);   // tekening: tussen spelers, buiten de host om
+  if (msg.t === 'draw' || msg.t === 'drawsync' || msg.t === 'drawfull') return drawNet(msg, peerId);   // tekening: tussen spelers, via de host
   if (msg.t === 'state' && (!msg.p || typeof msg.p !== 'object')) return;
-  if (isHost && msg.t === 'state') return hostConflict(msg.p, peerId);
+  if (isHost && msg.t === 'state') return;
   if (isHost) return hostHandle(msg, peerId);
   switch (msg.t){
     case 'state':
       if (msg.p.hostPeer !== peerId) return;  // alleen de host is bron van waarheid
       clearTimeout(joinTimer); overlay(null); lastHostMsg = now();
       onState(msg.p); break;
-    case 'reject': clearTimeout(joinTimer); overlay(null); disconnect().then(()=>{ show('start'); $('#startErr').textContent = t(msg.p); }); break;
-    case 'kick': overlay(null); disconnect().then(()=>{ show('start'); $('#startErr').textContent = t('kicked'); }); break;
+    case 'reject': bail(msg.p === 'kicked' || msg.p === 'full' || msg.p === 'started' ? msg.p : 'notFound'); break;
+    case 'kick': clearLast(roomCode); bail('kicked'); break;
   }
 }
 
@@ -3850,9 +4059,9 @@ function onNet(msg, peerId){
 let lastHostMsg = 0;
 setInterval(() => {
   if (!room || isHost || !S || solo) return;
-  if (now() - lastHostMsg > 9000 && (ovFinding || !$('#ovLoad').classList.contains('on'))) electHost(S.hostPeer);
+  if (now() - lastHostMsg > 9000 && (ovFinding || !$('#ovLoad').classList.contains('on'))) hostLost();
 }, 1000);
-function onPeerLeave(peerId){
+function onPeerLeave(peerId, bye){
   if (isHost) {
     const p = H && H.players.find(p=>p.peerId===peerId);
     if (p) {
@@ -3863,48 +4072,92 @@ function onPeerLeave(peerId){
     }
     return;
   }
-  if (S && peerId === S.hostPeer) electHost(peerId);
+  if (S) hostLost(bye);   // een speler heeft alleen een verbinding met de host
+}
+// Na opnieuw verbinden: mijn antwoord of pin nog eens sturen, voor het geval de host het mist (nieuwe host, of het ging verloren).
+function resendMine(to){
+  setTimeout(() => {
+    if (!S || !S.round || !sendMsg || isHost) return;
+    if (myAnswer && myAnswer.roundId===S.round.id) sendMsg({ t:'answer', p:{...myAnswer, resend:true} }, to);
+    else if (HS && HS.pin && HS.roundId===S.round.id) sendMsg({ t:'pin', p:{ roundId:HS.roundId, pin:HS.pin, scans:S.round.hunt.scans-HS.left } }, to);
+    else if (DS && DS.pin && DS.roundId===S.round.id) sendMsg({ t:'pin', p:{ roundId:DS.roundId, pin:DS.pin, dbl:DS.dbl } }, to);
+    else if (TR && TR.loops.length && TR.roundId===S.round.id) sendMsg({ t:'pin', p:{ roundId:TR.roundId, tr:TR.loops } }, to);
+  }, 1500);
 }
 
-// Host migratie: verbonden speler met laagste joinIdx wordt host.
-function electHost(oldHostPeer){
-  if (isHost || !S || S.hostPeer !== oldHostPeer) return;
-  lastHostMsg = now();
-  const peers = room ? Object.keys(room.getPeers()) : [];
-  const alive = S.players.filter(p => p.peerId !== oldHostPeer && (p.peerId === selfId || peers.includes(p.peerId)) && p.connected);
-  alive.sort((a,b)=>a.joinIdx-b.joinIdx);
-  const next = alive[0];
-  if (!next) return;
-  toast(t('hostLeft'));
-  if (next.peerId === selfId) becomeHost(oldHostPeer);
-  else {
-    S.hostPeer = next.peerId;
-    // stuur eigen antwoord opnieuw zodat de nieuwe host het kent
-    setTimeout(()=>{
-      if (!S || !S.round || !sendMsg) return;
-      if (myAnswer && myAnswer.roundId===S.round.id) sendMsg({ t:'answer', p:{...myAnswer, resend:true} }, S.hostPeer);
-      else if (HS && HS.pin && HS.roundId===S.round.id) sendMsg({ t:'pin', p:{ roundId:HS.roundId, pin:HS.pin, scans:S.round.hunt.scans-HS.left } }, S.hostPeer);
-      else if (DS && DS.pin && DS.roundId===S.round.id) sendMsg({ t:'pin', p:{ roundId:DS.roundId, pin:DS.pin, dbl:DS.dbl } }, S.hostPeer);
-      else if (TR && TR.loops.length && TR.roundId===S.round.id) sendMsg({ t:'pin', p:{ roundId:TR.roundId, tr:TR.loops } }, S.hostPeer);
-    }, 1500);
-  }
+// Host weg: de verbinding ging dicht, of 9 s niets. Eerst opnieuw kloppen bij de host en de deuren erna (misschien lag het aan mijn eigen netwerk,
+// of er is al een nieuwe host). Bestaat de deur van de host niet meer, of blijft hij dicht, dan neemt een speler de volgende deur:
+// wie het langst in de kamer zit eerst, de anderen kloppen nog een keer en nemen hem pas als die ook niet komt. De server laat maar één
+// speler dezelfde deur nemen, dus er komt nooit een tweede host op hetzelfde adres.
+// Zei de host netjes gedag (bye), dan weten we het zeker: de eerstvolgende neemt meteen de volgende deur, de rest klopt even later aan.
+let recovering = false;
+async function hostLost(bye){
+  if (recovering || !room || isHost || !S || solo) return;
+  recovering = true;
+  const R = room, seq = netSeq, t0 = S.term || 0, old = S.hostPeer, start = now();
+  const cands = S.players.filter(p => p.connected && p.peerId !== old).sort((a, b) => a.joinIdx - b.joinIdx);
+  let rank = cands.findIndex(p => p.id === me.id); if (rank < 0) rank = cands.length;
+  toast(t(bye ? 'hostLeft' : 'reconnecting')); $('#netDot').className = 'netdot bad';
+  try {
+    if (bye && rank === 0 && await claimHost(R, t0 + 1, old)) return;
+    if (bye) await sleep(1200);
+    for (let tries = 0; seq === netSeq && room === R && !isHost; ){
+      if (now() - start > CONFIG.net.lostMs){ bail('lostConn'); return; }
+      if (R.peer.destroyed){ bail('lostConn'); return; }
+      if (R.peer.disconnected){ await sleep(1000); continue; }   // eerst mijn eigen verbinding met de server terug
+      const res = await knock(R.peer, roomCode, t0, 3, CONFIG.net.knockMs / 2);
+      if (seq !== netSeq || room !== R || isHost) return;
+      if (typeof res !== 'string'){
+        R.attach(res); lastHostMsg = now();
+        sendMsg({ t:'hello', p: helloPayload() }, res.peer);
+        resendMine(res.peer);
+        toast(t(res.term > t0 ? 'hostLeft' : 'reconnected'));
+        return;
+      }
+      if (res === 'offline'){ await sleep(1000); continue; }
+      tries++;
+      if ((rank === 0 || tries > rank) && await claimHost(R, t0 + 1, old)) return;
+      await sleep(800);
+    }
+  } finally { recovering = false; }
 }
-// Een host die terugkomt (telefoon uit de slaapstand) terwijl er al een nieuwe is: de hoogste termijn wint, de ander wordt gewone speler.
-function hostConflict(snap, peerId){
-  if (!snap || snap.hostPeer !== peerId) return;
-  const o = snap.term || 0, mine = H.term || 0;
-  if (o < mine || (o === mine && peerId > selfId)) { H.termAt = now(); return; }   // de oude host stuurt zo zijn antwoord opnieuw
-  clearInterval(H.loop); clearTimeout(H.autoNext);
-  isHost = false; H = null; lastHostMsg = now();
-  onState(snap);
-  sendMsg({ t:'hello', p: helloPayload() }, peerId);
-  if (myAnswer && S.round && myAnswer.roundId === S.round.id) sendMsg({ t:'answer', p:{ ...myAnswer, resend:true } }, peerId);
+// De volgende deur nemen en host worden. Is hij al bezet, dan was een ander net sneller: hostLost klopt dan gewoon opnieuw.
+async function claimHost(R, term, old){
+  let peer;
+  try { peer = await openPeer(door(roomCode, term)); } catch(e){ return false; }
+  if (room !== R || isHost || !S){ peer.destroy(); return false; }
+  const code = roomCode;
+  R.leave();
+  useRoom(makeRoom(peer, true), code);
+  becomeHost(old);
+  return true;
 }
+// Host: kwam ik terug uit de slaapstand en hebben de anderen intussen een nieuwe host gekozen? Dan word ik gewone speler bij die host.
+let checkingNewer = false;
+async function checkNewer(){
+  if (checkingNewer || !room || !isHost || solo || !H || !room.peer.open) return;
+  checkingNewer = true;
+  const R = room;
+  try {
+    const res = await knock(R.peer, roomCode, (H.term || 0) + 1, 2, CONFIG.net.knockMs / 2);
+    if (typeof res === 'string') return;
+    if (room !== R || !isHost || !H || res.term <= (H.term || 0)){ closeConn(res); return; }
+    clearInterval(H.loop); clearTimeout(H.autoNext);
+    isHost = false; H = null;
+    R.toClient(); R.attach(res); lastHostMsg = now();
+    sendMsg({ t:'hello', p: helloPayload() }, res.peer);
+    resendMine(res.peer);
+    toast(t('hostLeft'));
+  } finally { checkingNewer = false; }
+}
+setInterval(() => { if (isHost && !solo && document.visibilityState === 'visible') checkNewer(); }, 30000);
 function becomeHost(oldHostPeer){
   isHost = true;
   const snap = S;
   H = {
-    players: snap.players.map(p => ({ ...p, connected: p.peerId===oldHostPeer ? false : p.connected, leftAt: p.peerId===oldHostPeer ? Date.now() : null })),
+    // Ik heb een nieuw adres (de nieuwe deur). De anderen kloppen zo aan; tot graceMs tellen ze mee zoals ze in de laatste snapshot stonden.
+    players: snap.players.map(p => p.id === me.id ? { ...p, peerId: selfId, connected: true, leftAt: null }
+      : { ...p, connected: p.peerId===oldHostPeer ? false : p.connected, leftAt: p.peerId===oldHostPeer ? Date.now() : p.leftAt }),
     settings: snap.settings, phase: snap.phase, roundN: snap.roundN, used: snap.used || [], plan: Array.isArray(snap.plan) ? snap.plan.slice() : null,
     nextJoin: Math.max(...snap.players.map(p=>p.joinIdx)) + 1, result: snap.result, final: snap.final, round: null, blocked: [], term: (snap.term||0) + 1, termAt: now(),
     ev: snap.ev || [], evN: (snap.ev || []).reduce((a, e) => Math.max(a, e.id), 0),   // sabotage: handen en wat er loopt staan al in de snapshot
@@ -4167,9 +4420,23 @@ function releaseHints(){
   }
   return changed;
 }
+// Vlak na een hostwissel zijn de anderen nog onderweg naar de nieuwe host. Tot graceMs tellen ze mee, zodat een ronde niet meteen eindigt
+// omdat de nieuwe host als enige "verbonden" is. Daarna is wie niet terugkwam weg (graceEnd).
+const inGrace = () => !!(H && H.termAt && !H.graced && now() - H.termAt < CONFIG.net.graceMs);
 function connectedPlayers(){
+  const peers = room ? Object.keys(room.getPeers()) : [], grace = inGrace();
+  return H.players.filter(p => p.peerId === selfId || (p.connected && (grace || peers.includes(p.peerId))));
+}
+function graceEnd(){
+  if (!H || !H.termAt || H.graced || inGrace()) return false;
+  H.graced = true;
   const peers = room ? Object.keys(room.getPeers()) : [];
-  return H.players.filter(p => p.peerId === selfId || (p.connected && peers.includes(p.peerId)));
+  let n = 0;
+  for (const p of H.players) if (p.peerId !== selfId && p.connected && !peers.includes(p.peerId)){ p.connected = false; p.leftAt = Date.now(); n++; }
+  if (!n) return false;
+  checkWants();
+  if (!checkSkip() && !checkAllAnswered()) broadcast();
+  return true;
 }
 // Wie raadt: iedereen behalve de tekenaar. Telt voor "iedereen klaar" en "hint nu".
 const guessers = () => connectedPlayers().filter(p => !(H.round && H.round.draw && p.id === H.round.draw.by));
@@ -4216,6 +4483,7 @@ function checkAllAnswered(){
 function startHostLoop(){
   clearInterval(H.loop);
   H.loop = setInterval(() => {
+    if (graceEnd()) return;
     // reserveringen opruimen in lobby
     if (H.phase === 'lobby'){
       const before = H.players.length;
@@ -4531,7 +4799,7 @@ let renderedRound = null, renderedResult = null, map = null, rmap = null, pano =
 let sabSel = -1, sabSeen = 0, sabOutId = null, boShown = null;
 function onState(snap){
   const prev = S;
-  S = snap; recvAt = now();
+  S = snap; recvAt = now(); saveLast();
   if (prev && !isHost && opOf(prev) !== opOf(snap)) toast(t(opOf(snap) ? 'opGot' : 'opLost'));
   // Spelers even laten weten dat de host een foto of buurt aan het zoeken is.
   if (!isHost && !!S.finding !== ovFinding){ ovFinding = !!S.finding; overlay(ovFinding ? t('loading') : null); }
@@ -5169,7 +5437,7 @@ setInterval(tick, 200);
 setInterval(async () => {
   const d = $('#netDot');
   if (!room || isHost || !S) { d.className = 'netdot'; return; }
-  try { const ms = await Promise.race([room.ping(S.hostPeer), new Promise((_,rej)=>setTimeout(()=>rej(),3000))]); latency = ms/2; d.className = 'netdot' + (ms>400?' mid':''); }
+  try { const ms = await room.ping(); latency = ms/2; d.className = 'netdot' + (ms>400?' mid':''); }
   catch(e){ d.className = 'netdot bad'; }
 }, 4000);
 
@@ -5562,7 +5830,7 @@ $('#codeIn').addEventListener('paste', e => {
   e.preventDefault(); e.target.value = codeFrom(txt);
 });
 $('#codeIn').addEventListener('keydown', e => { if (e.key==='Enter' && !e.repeat) $('#joinBtn').click(); });
-$('#langSeg').addEventListener('click', e => { const b = e.target.closest('[data-lang]'); if (b){ lang = b.dataset.lang; store.set('lr_lang', lang); applyI18n(); } });
+$('#langSeg').addEventListener('click', e => { const b = e.target.closest('[data-lang]'); if (b){ lang = b.dataset.lang; store.set('lr_lang', lang); applyI18n(); renderRejoin(); } });
 const uiPick = (id, attr, fn) => $(id).addEventListener('click', e => { const b = e.target.closest('[data-' + attr + ']'); if (b){ fn(b.dataset[attr]); saveUi(); applyUi(); } });
 uiPick('#hzSeg', 'hz', v => { ui.hz = v; beep(480 + (v === 'l') * 120, .04); });
 uiPick('#hoSeg', 'ho', v => { ui.ho = +v; beep(520, .04); });
@@ -5660,14 +5928,20 @@ function makeCode(){ const A='ABCDEFGHJKLMNPQRSTUVWXYZ23456789'; let s=''; for(l
 
 // Multiplayer-bibliotheek afwachten (normaal al klaar) voordat er een kamer wordt gemaakt of gezocht.
 async function netOk(){
-  if (joinRoom) return true;
-  overlay(t('loading')); await netReady; overlay(null);
-  if (!joinRoom) $('#startErr').textContent = t('netFail');
-  return !!joinRoom;
+  if (PJ) return true;
+  overlay(t('loading')); await loadNet(); overlay(null);
+  if (!PJ) $('#startErr').textContent = t('netFail');
+  return !!PJ;
 }
 $('#createBtn').addEventListener('click', () => {
   if (busy() || needName()) return;
-  enter(async () => { if (await netOk()){ connect(makeCode()); hostInit(); } });
+  enter(async () => {
+    if (!(await netOk())) return;
+    overlay(t('loading'), '', true);
+    const res = await createRoom();
+    overlay(null);
+    if (res !== true && res !== 'cancel') $('#startErr').textContent = t('srvFail');
+  });
 });
 $('#soloBtn').addEventListener('click', () => {
   if (busy() || needName()) return;
@@ -5680,13 +5954,30 @@ $('#joinBtn').addEventListener('click', () => {
   $('#codeIn').value = code;
   joinAsPeer(code);
 });
+$('#rejoinBtn').addEventListener('click', () => {
+  const l = getLast();
+  if (!l || busy() || needName()) return;
+  $('#codeIn').value = l.c;
+  joinAsPeer(l.c);
+});
 function joinAsPeer(code){
   return enter(async () => {
     if (!(await netOk())) return;
-    connect(code);
+    $('#startErr').textContent = '';
     overlay(t('searching', { c: code }), t('searchingSub'), true);
-    clearTimeout(joinTimer);
-    joinTimer = setTimeout(() => { overlay(null); disconnect().then(()=>{ show('start'); $('#startErr').textContent = t('notFound'); }); }, CONFIG.joinTimeoutMs);
+    const res = await joinRoomCode(code);
+    if (res === 'cancel') return;
+    if (res === true){
+      // Binnen. De host antwoordt met de stand, of met een weigering (vol, al bezig, eruit gezet).
+      clearTimeout(joinTimer);
+      joinTimer = setTimeout(() => { if (!S) bail('connFail'); }, CONFIG.net.knockMs);
+      return;
+    }
+    // Kamer weg terwijl ik er kort geleden host van was (herladen, browser dicht): dezelfde code opnieuw openen, de anderen kennen hem al.
+    const l = getLast();
+    if (res === 'notFound' && l && l.c === code && l.h && Date.now() - l.at < 30 * 60e3 && await createRoom(code) === true){ overlay(null); toast(t('reopened', { c: code })); return; }
+    if (res === 'notFound') clearLast(code);
+    overlay(null); show('start'); $('#startErr').textContent = t(res);
   });
 }
 // Link met #room=ABCD: bij het laden, en ook als de pagina al open stond en alleen de hash verandert (dan laadt de browser niet opnieuw).
@@ -5696,8 +5987,8 @@ function joinFromHash(){
   $('#codeIn').value = m[1].toUpperCase();
   if (me.name) joinAsPeer(m[1].toUpperCase());
 }
-$('#ovCancel').addEventListener('click', () => { overlay(null); disconnect().then(()=>show('start')); });
-async function leave(){ await disconnect(); huntClear(); renderedRound = null; renderedResult = null; show('start'); }
+$('#ovCancel').addEventListener('click', () => { overlay(null); disconnect().then(()=>{ show('start'); renderRejoin(); }); });
+async function leave(){ const c = roomCode; await disconnect(); clearLast(c); huntClear(); renderedRound = null; renderedResult = null; show('start'); }
 $('#leaveBtn').addEventListener('click', leave);
 $('#leaveBtn2').addEventListener('click', leave);
 $('#copyBtn').addEventListener('click', async () => {
@@ -5725,8 +6016,17 @@ $('#startBtn').addEventListener('click', () => act({ t:'start' }));
 $('#nextBtn').addEventListener('click', () => act({ t:'start' }));
 $('#rematchBtn').addEventListener('click', () => act({ t:'rematch' }));
 
-// Telefoon terug uit vergrendeling: state opnieuw opvragen
-document.addEventListener('visibilitychange', () => { if (document.visibilityState==='visible' && room && !isHost && S) act({ t:'sync' }); });
+// Telefoon terug uit vergrendeling, of netwerk terug: opnieuw aanmelden bij de server, en de stand opvragen of opnieuw verbinden.
+// De host kijkt of de anderen intussen een nieuwe host kozen.
+function netWake(){
+  if (!room || solo) return;
+  if (room.peer.disconnected && !room.peer.destroyed) try { room.peer.reconnect(); } catch(e){}
+  if (isHost) checkNewer();
+  else if (S){ if (room.hostConn && room.hostConn.open) act({ t:'sync' }); else hostLost(); }
+}
+document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'visible') netWake(); });
+window.addEventListener('online', netWake);
+window.addEventListener('pagehide', () => { if (room) room.bye(); });
 window.addEventListener('resize', () => { map && map.invalidateSize(); rmap && rmap.invalidateSize(); dmap && dmap.invalidateSize(); });
 // Telefoontoetsenbord: op iOS blijft het scherm even hoog, dus het paneel moet zelf boven het toetsenbord gaan staan.
 let fullH = innerHeight;
@@ -5983,7 +6283,7 @@ document.addEventListener('keydown', e => { if (e.key === 'Escape' && sabOpen())
 
 /* ================= BOOT ================= */
 (async function boot(){
-  $('#name').value = me.name; renderColors(); applyI18n(); show('start');
+  $('#name').value = me.name; renderColors(); applyI18n(); show('start'); renderRejoin();
   try { await loadData(); } catch(e){ overlay(t('dataFail')); return; }
   joinFromHash();
   window.addEventListener('hashchange', joinFromHash);

@@ -1,6 +1,6 @@
 # Geoflatter
 
-Online multiplayer aardrijkskundespel voor 2 tot 6 spelers, ook op de telefoon. Peer to peer (WebRTC via Trystero), geen server, geen account, geen kosten.
+Online multiplayer aardrijkskundespel voor 2 tot 6 spelers, ook op de telefoon. Peer to peer (WebRTC via PeerJS), geen eigen server, geen account, geen kosten.
 
 ## Bestanden
 
@@ -23,17 +23,33 @@ Online multiplayer aardrijkskundespel voor 2 tot 6 spelers, ook op de telefoon. 
 
 * Host: vul naam in, klik **Maak kamer**, deel de link of de 4 letter code.
 * Vrienden: open de link (join gaat automatisch) of typ de code en klik **Join**. De hele link in het codeveld plakken werkt ook.
-* Verbinden duurt 1 tot 15 seconden (na 25 seconden volgt een foutmelding).
+* Verbinden duurt meestal 1 tot 5 seconden. Een code die niet bestaat zegt het spel na ongeveer 5 seconden.
+* Terug in de kamer: herladen brengt je vanzelf terug (de code staat in de link). Tabblad dicht of verbinding kwijt? Op het startscherm staat **Terug naar kamer ABCD** (3 uur lang). Je houdt je plek en score.
+* Verbinding kort weg (tunnel, telefoon op slot): het spel verbindt zelf opnieuw, 45 seconden lang.
 * OP: de host zet in de lobby bij een speler de knop **OP** aan. Een OP kan de instellingen aanpassen en de lobby starten. Kicken, OP geven, volgende ronde en rematch blijven bij de host. OP blijft behouden als de host wisselt.
 
 ## Testen
 
 * Twee tabbladen: maak een kamer in tabblad 1, join in tabblad 2 met de code.
-* Telefoon op 4G/5G (wifi uit) joinen bij een laptop op wifi. Lukt dat niet, stel TURN in (hieronder).
+* Telefoon op 4G/5G (wifi uit) joinen bij een laptop op wifi. Lukt dat niet, stel extra TURN in (hieronder).
+* Hostwissel: sluit het tabblad van de host. Binnen een paar seconden gaat het spel verder bij een andere host, met dezelfde code en dezelfde ronde. Telefoon van de host op slot: na ongeveer 15 seconden. Komt de oude host terug, dan wordt die gewone speler.
 
-## TURN instellen (alleen als verbinden op mobiel faalt)
+## Hoe multiplayer werkt
 
-Sommige mobiele netwerken blokkeren directe verbindingen. Een gratis TURN server lost dat op.
+* De host meldt zich bij de gratis PeerJS server (`0.peerjs.com`) aan onder het adres van de kamer, `landenraden-v2-ABCD`. Spelers vragen de server om dat adres en verbinden daarna rechtstreeks met de host (WebRTC). De server ziet geen spelberichten.
+* Ster: iedereen is verbonden met de host, niet met elkaar. Chat en tekeningen stuurt de host door. Met 6 spelers zijn dat 5 verbindingen in plaats van 15.
+* Bestaat het adres niet, dan meldt de server dat: "kamer niet gevonden" komt na ongeveer 5 seconden en hoeft niet op een timer te wachten. Een code die al in gebruik is, geeft de server niet nog eens uit.
+* Hostwissel: valt de host weg, dan neemt de speler die het langst in de kamer zit de volgende deur, `ABCD-1`. De server laat maar één speler dat adres nemen, dus er komen nooit twee hosts. De oude deur kan nog even bezet blijven als de host zomaar wegviel (telefoon op slot), daarom een nieuwe. Wie met de code joint, klopt op `ABCD` tot `ABCD-5` tegelijk en kiest de hoogste.
+* Hartslag: spelers sturen elke 3 seconden een teken, de host stuurt minstens elke 3 seconden de stand. 12 seconden stil is weg. Wie netjes weggaat (Verlaten, tabblad dicht, herladen) zegt dat eerst, dan hoeft niemand te wachten.
+* Is de PeerJS server een keer onbereikbaar, dan zie je "De multiplayer server is niet bereikbaar". Solo werkt altijd.
+
+### Eigen PeerJS server (optioneel)
+
+De gratis cloud is genoeg voor een groep vrienden. Wil je hem niet gebruiken: `npx peerjs --port 9000` op een eigen server (achter HTTPS), en zet in `CONFIG.net.server` je eigen `host`, `port`, `path` en `secure`.
+
+## Extra TURN instellen (alleen als verbinden op mobiel faalt)
+
+Sommige mobiele netwerken blokkeren directe verbindingen. PeerJS heeft zelf al een TURN server ingebouwd. Lukt het toch niet, dan kun je er een eigen gratis TURN server bij zetten.
 
 1. Maak een gratis account op metered.ca (Open Relay, 20 GB per maand gratis).
 2. Maak een app aan en kopieer je **username** en **credential**.
@@ -66,6 +82,7 @@ Alles staat in het `CONFIG` object bovenaan het script in `index.html`:
 * `tiles`: kaartlaag. Standaard Esri satelliet (geen labels, geen key nodig). Wil je Mapbox: zet je URL met key in `tiles.main.url` en beperk de key in Mapbox op je GitHub Pages domein.
 * `street`: zoekinstellingen voor straatbeeld
 * `maxPlayers`, `resultAutoMs`
+* `net`: PeerJS server, adresvoorvoegsel en de wachttijden voor joinen, hartslag en hostwissel (zie Hoe multiplayer werkt)
 * `CUR_FIX` (valuta-correcties op landcode) en `HINT_DEFS` (alle hinttypes, rang en groep) en `ANCHORS` (ijklanden voor de hint "vanaf")
 
 ## Puntentelling
@@ -426,11 +443,11 @@ Het logo is een platte aardschijf met een zijkant. Die vorm komt overal terug.
 
 ## Goed om te weten
 
-* De host bepaalt alles (locatie, hints, timer, score). Valt de host weg, dan neemt de speler die het eerst joinde het over (binnen ongeveer 9 seconden).
-* Iemand die wegvalt kan terugkomen via dezelfde link en houdt zijn score.
+* De host bepaalt alles (locatie, hints, timer, score). Valt de host weg, dan neemt de speler die het eerst joinde het over (binnen een paar seconden als de host netjes weggaat, anders ongeveer 15 seconden).
+* Iemand die wegvalt kan terugkomen via dezelfde link of de knop **Terug naar kamer** en houdt zijn score.
 * De coördinaten van de ronde gaan naar elke speler (de kaart heeft ze nodig). Wie wil valsspelen kan ze in de browser opzoeken. Bij vrienden prima.
 * Lokaal openen door dubbelklikken werkt niet (de browser blokkeert het laden van de data). Gebruik GitHub Pages, of lokaal `python -m http.server` in de map.
 
 ## Bronnen
 
-Natural Earth (publiek domein), world-countries (ODbL), Esri World Imagery, OpenStreetMap en Nominatim (ODbL), CARTO, Panoramax, Leaflet, Pannellum, Trystero, The Logo Font, The Bold Font.
+Natural Earth (publiek domein), world-countries (ODbL), Esri World Imagery, OpenStreetMap en Nominatim (ODbL), CARTO, Panoramax, Leaflet, Pannellum, PeerJS, The Logo Font, The Bold Font.
